@@ -1,0 +1,834 @@
+/**
+*
+* Generic CSS for CakePHP
+*
+* CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+* Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
+*
+* Licensed under The MIT License
+* Redistributions of files must retain the above copyright notice.
+*
+* @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
+* @link          http://cakephp.org CakePHP(tm) Project
+* @package       cake
+* @subpackage    cake.app.webroot.css
+* @since         CakePHP(tm)
+* @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+*/
+
+* {
+    margin:0;
+    padding:0;
+}
+
+
+/** General Style Info **/
+body {
+    font-family: "jaf-bernino-sans","Lucida Grande","Lucida Sans Unicode","Lucida Sans",Geneva,Verdana,sans-serif;
+    font-size:0.9em;
+    margin: 0;
+}
+p {
+    padding-bottom: 10px;
+    font: normal 1em Arial,sans-serif;
+    line-height: 170%;
+}
+a {
+    color:#cc0000;
+    text-decoration:underline;
+}
+a:hover {
+    color:#cc0000;
+    text-decoration:none;
+}
+a img {
+    border:none;
+}
+h1, h2, h3, h4 {
+    font-weight: normal;
+    margin-bottom:0.5em;
+}
+h1 {
+    color: #cc0000;
+    font-size: 200%;
+}
+h2 {
+    /*color: #cc0000;*/
+    font-size: 190%;
+}
+h3 {
+    /*color: #cc0000;*/
+/* 	font-family:'Gill Sans','lucida grande', helvetica, arial, sans-serif; */
+    font-size: 165%;
+}
+h4 {
+    /*color: #993;*/
+    font-weight: normal;
+}
+/* don't change, used for menus, TODO */
+ul, li {
+    margin: 0 12px;
+}
+#content ul {
+    margin: 10px;
+}
+
+/** main page layout */
+#subjects {
+    margin: 0 auto;
+}
+#subjects li {
+        text-align: center;
+        padding: 5px;
+        width: 368px;
+        min-height: 150px;
+        /*border: 1px solid #000;*/
+        display: -moz-inline-stack;
+        display: inline-block;
+        vertical-align: top;
+        margin: 5px;
+        zoom: 1;
+        *display: inline;
+        _height: 250px;
+        
+}
+
+/** menu */
+#menu {
+    background: #f5f5f5 url('button_blend.png') repeat-x;
+    float: left;
+/*     list-style: none; */
+    padding: 0;
+    width: 100%;
+    border-top: 1px solid #bdbdbd;
+    border-bottom: 1px solid black;
+    box-shadow: 0px 3px 5px #999;
+}
+#menu li {
+    float: left;
+    margin-left: -12px;
+    padding: 0;
+    list-style: none;
+    border-right: 1px solid #bdbdbd;
+}
+
+#menu a{
+    background: #f5f5f5 url('button_blend.png') repeat-x;
+    color: black;
+/*     display: block; */
+    float: left;
+    margin: 0;
+    padding: 8px 8px;
+    text-decoration: none;
+}
+
+#menu a:hover{
+    background: #dddddd;
+    padding-bottom: 8px;
+}
+
+#menu li ul {
+display: none;
+position: absolute; 
+top: 1em;
+left: 0;
+}
+#menu li > ul {
+    top: auto;
+    left: auto;
+}
+
+#menu li:hover ul, li.over ul {
+    display: block;
+}
+
+#menu .admin_button {
+    color: #cc0000;
+}
+
+/** Layout **/
+
+#login {
+    float: right;
+    margin-right: 10px;
+    margin-top: -70px;
+    padding: 10px;
+    background-color: #f5f5f5;
+    height: 25px;
+    border-bottom-left-radius: 5px 5px;
+    border-bottom-right-radius: 5px 5px;
+    border-top-left-radius: 5px 5px;
+    border-top-right-radius: 5px 5px;
+
+}
+#login img {
+    display: inline-block;
+    float: left;
+    margin-right: 3px;*/
+    border-bottom-left-radius: 3px 3px;
+    border-bottom-right-radius: 3px 3px;
+    border-top-left-radius: 3px 3px;
+    border-top-right-radius: 3px 3px;
+}
+/* in case of long usernames, don't wrap */
+#login_links {
+    display: inline-block;
+}
+
+#score {
+    font-size: 0.8em;
+    font-weight: bold;
+}
+#container {
+    text-align: left;
+}
+
+#header{
+    padding: 10px 0px;
+    /*background: #f5f5f5;*/
+    background: #fff;
+}
+#header h1 {
+    line-height:20px;
+    padding: 0px 30px;
+}
+#header h1 a {
+    font-weight: normal;
+    text-decoration: none;
+}
+#logo h1{
+    position: absolute;
+    margin-top: -40px;
+    margin-left: 40px;
+}
+
+#content{
+    background-color: #fff;
+    margin-top: 5px;
+    clear: both;
+    color: #333;
+    padding: 20px 20px 40px 20px;
+    overflow: auto;
+    width: 55%;
+    margin: 0 auto;
+    min-height: 500px;
+}
+#footer {
+    border-top: 1px dotted #bdbdbd;
+    clear: both;
+    padding: 6px 10px;
+    text-align: center;
+    margin-top: 70px;
+    margin-left: 40px;
+    margin-right: 40px;
+}
+#crumbs {
+    font-size: 0.8em;
+    margin-bottom: 10px;
+}
+/* download page */
+#resource_details {
+    overflow: hidden;
+}
+#uploader {
+    padding:5px 0;
+}
+#syllabus {
+    padding:5px 0;
+    font-size: 0.7em;
+    color: #999;
+}
+#rating {
+    padding:5px 0;
+}
+#description {
+    padding:15px;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    background-color: #f5f5f5;
+    border: 1px solid #cc0000;
+    
+}
+
+#author {
+    padding:5px 0;
+    font-size:0.8em;
+}
+#published {
+    font-size: 0.7em;
+    color: #999;
+    padding:5px 0;
+}
+.actions {
+    margin: 15px 0;
+}
+
+/** extra stuff */
+hr {
+    border: 1px solid #cc0000;
+    margin-bottom: 10px;
+    margin-top: 10px;
+
+}
+#unread {
+    float: right;
+    margin-right: -10px;
+}
+#unread a {
+    background: url('../img/unmarked_on.png') no-repeat;
+    background-position: center center;
+}
+#unread a:hover {
+    background: #dddddd url('../img/unmarked_on.png') no-repeat;
+    background-position: center center;
+}
+#attachment {
+}
+#attachment_icon {
+    float: left;
+}
+#marking_unread {
+/*     position: relative; */
+    color: white;
+    text-align: center;
+    font-size: 0.7em;
+    width: 7px;
+    background-color: #cc0000;
+    border: ;
+    border-bottom-left-radius: 2px 2px;
+    border-bottom-right-radius: 2px 2px;
+    border-top: 0px;
+    border-top-left-radius: 2px 2px;
+    border-top-right-radius: 2px 2px;
+    padding: 1px 1px 0px;
+    padding-top: 1px;
+    padding-right: 1px;
+    padding-bottom: 0px;
+    padding-left: 1px;
+}
+.pass {
+    background-color: green;
+    color: white;
+}
+
+.fail {
+    background-color: #cc0000;
+    color: white;
+}
+/** containers **/
+div.form,
+div.index,
+div.view {
+}
+div.actions {
+    /*padding: 0px 20px 20px 20px;
+    background-color: #f5f5f5;
+    height: 100%;
+    float:right;
+    width:16%;
+    
+    margin-top: 30px;
+    border-left: 1px solid #bdbdbd;
+    border-top: 1px solid #d9d8d9;
+    border-bottom: 1px solid #bdbdbd;*/
+}
+div.actions h3 {
+    padding-top:0;
+    color:#777;
+}
+.paging {
+    font-size: 120%;
+}
+
+/** Tables **/
+table {
+    background: #fff;
+    border-right:0;
+    clear: both;
+    color: #333;
+    margin-bottom: 10px;
+/*     width: 100%; */
+}
+th {
+/*     border:0; */
+    border-bottom:1px solid #bdbdbd;
+    text-align: center;
+    padding:4px;
+}
+th a {
+    display: block;
+    padding: 2px 4px;
+    text-decoration: none;
+}
+th a.asc:after {
+    content: ' ⇣';
+}
+th a.desc:after {
+    content: ' ⇡';
+}
+table {
+    white-space: nowrap;
+    width: 1%;
+    border-collapse:collapse;
+}
+
+table tr td{
+    background: #fff;
+    padding: 6px;
+    text-align: left;
+    vertical-align: top;
+    border:1px solid #ddd;
+}
+table tr:nth-child(2n) td {
+    background: #f5f5f5;
+}
+table .altrow td {
+    background: #f5f5f5;
+}
+td.actions {
+    text-align: left;
+    white-space: nowrap;
+}
+table td.actions a {
+    margin: 0px 6px;
+    padding:2px 5px;
+}
+.cake-sql-log table {
+    background: #f4f4f4;
+}
+.cake-sql-log td {
+    padding: 4px 8px;
+    text-align: left;
+    font-family: Monaco, Consolas, "Courier New", monospaced;
+}
+.cake-sql-log caption {
+    color:#fff;
+}
+
+/** Paging **/
+div.paging {
+    background:#fff;
+    color: #ccc;
+    margin-top: 1em;
+    clear:both;
+}
+div.paging span.disabled {
+    color: #ddd;
+    display: inline;
+}
+div.paging span a {
+}
+
+/** Scaffold View **/
+dl {
+    line-height: 2em;
+    margin: 0em 0em;
+    width: 60%;
+}
+dl .altrow {
+    background: #f4f4f4;
+}
+dt {
+    font-weight: bold;
+    padding-left: 4px;
+    vertical-align: top;
+}
+dd {
+    margin-left: 10em;
+    margin-top: -2em;
+    vertical-align: top;
+}
+
+/** Forms **/
+form {
+    clear: both;
+    margin-right: 20px;
+    padding: 0;
+    width: 95%;
+}
+fieldset {
+    border: 1px dotted #ccc;
+    margin-bottom: 1em;
+    padding: 16px 20px;
+}
+fieldset legend {
+    color: #cc0000;
+    font-size: 190%;
+    border: 1px dotted #ccc;
+    background:#fff;
+    padding-left: 3px;
+    padding-right: 3px;
+}
+fieldset fieldset {
+    margin-top: 0px;
+    margin-bottom: 20px;
+    padding: 16px 10px;
+}
+fieldset fieldset legend {
+    font-size: 120%;
+    font-weight: normal;
+}
+fieldset fieldset div {
+    clear: left;
+    margin: 0 20px;
+}
+form div {
+    clear: both;
+    margin-bottom: 1em;
+    padding: .5em;
+    vertical-align: text-top;
+}
+form .input {
+    color: #444;
+}
+form .required {
+    font-weight: bold;
+}
+form .required label:after {
+    color: #e32;
+    content: '*';
+    display:inline;
+}
+form div.submit {
+    border: 0;
+    clear: both;
+    margin-top: 10px;
+}
+label {
+    color: #cc0000;
+    display: block;
+    font-size: 165%;
+    margin-bottom:3px;
+}
+.small_label label {
+    font-size: 100%;
+    color: black;
+    margin-bottom:3px;
+}   
+    
+input, textarea {
+    clear: both;
+    font-size: 140%;
+/* 	font-family: "frutiger linotype", "lucida grande", "verdana", sans-serif; */
+    padding: 1%;
+    width:98%;
+}
+select {
+    clear: both;
+    font-size: 120%;
+    vertical-align: text-bottom;
+}
+select[multiple=multiple] {
+    width: 100%;
+}
+option {
+    font-size: 120%;
+    padding: 0 3px;
+}
+input[type=checkbox] {
+    clear: left;
+    float: left;
+    margin: 0px 6px 7px 2px;
+    width: auto;
+}
+div.checkbox label {
+    display: inline;
+}
+input[type=radio] {
+    float:left;
+    width:auto;
+    margin: 0 3px 7px 0;
+}
+div.radio label {
+    margin: 0 0 6px 20px;
+}
+input[type=submit] {
+    display: inline;
+    font-size: 110%;
+    width: auto;
+}
+form .submit input[type=submit] {
+    background:#62af56;
+    background: -webkit-gradient(linear, left top, left bottom, from(#a8ea9c), to(#62af56));
+    background-image: -moz-linear-gradient(top, #a8ea9c, #62af56);
+    border-color: #2d6324;
+    color: #000;
+    text-shadow: #8cee7c 0px 1px 0px;
+}
+form .submit input[type=submit]:hover {
+    background:#4ca83d;
+    background: -webkit-gradient(linear, left top, left bottom, from(#85e573), to(#4ca83d));
+    background-image: -moz-linear-gradient(top, #85e573, #4ca83d);
+}
+
+/** Notices and Errors **/
+
+.banner {
+    clear: both;
+    font-size: 120%;
+    border:1px solid #CCCCA3;
+    font-weight: bold;
+    margin: 0 0 1em 0;
+/* 	background: #c73e14 url('../img/info.png') no-repeat; */
+    background: #ffc;
+    /*padding: 5px;*/
+    border-bottom-left-radius: 5px 5px;
+    border-bottom-right-radius: 5px 5px;
+    border-top-left-radius: 5px 5px;
+    border-top-right-radius: 5px 5px;
+    padding-top: 5px;
+    padding-right: 1px;
+    padding-bottom: 1px;
+    padding-left: 7px;
+    margin-left: -20px;
+    margin-right: -20px;
+}
+div.message {
+    clear: both;
+    color: #fff;
+    font-size: 140%;
+    font-weight: bold;
+    margin: 0 0 1em 0;
+/* 	background: #c73e14 url('../img/info.png') no-repeat; */
+    background: #cc0000;
+    background-position:left center; 
+    padding: 5px;
+        border: ;
+    border-bottom-left-radius: 7px 7px;
+    border-bottom-right-radius: 7px 7px;
+    border-top: 0px;
+    border-top-left-radius: 7px 7px;
+    border-top-right-radius: 7px 7px;
+    padding: 1px 1px 0px;
+    padding-top: 1px;
+    padding-right: 1px;
+    padding-bottom: 0px;
+    padding-left: 7px;
+}
+div.error-message {
+    clear: both;
+    color: #fff;
+    font-weight: bold;
+    background: #cc0000;
+}
+p.error {
+    background-color: #e32;
+    color: #fff;
+    font-family: Courier, monospace;
+    font-size: 120%;
+    line-height: 140%;
+    padding: 0.8em;
+    margin: 1em 0;
+}
+p.error em {
+    color: #000;
+    font-weight: normal;
+    line-height: 140%;
+}
+.notice {
+    background: #ffcc00;
+    color: #000;
+    display: block;
+    font-family: Courier, monospace;
+    font-size: 120%;
+    line-height: 140%;
+    padding: 0.8em;
+    margin: 1em 0;
+}
+.success {
+    background: green;
+    color: #fff;
+}
+
+/**  Actions  **/
+div.actions ul {
+    margin: 0;
+    padding: 0;
+}
+div.actions li {
+    margin:0 0 0.5em 0;
+    list-style-type: none;
+    white-space: nowrap;
+    padding: 0;
+}
+div.actions ul li a {
+    font-weight: normal;
+    display: block;
+    clear: both;
+}
+div.actions ul li a:hover {
+    text-decoration: underline;
+}
+
+input[type=submit],
+.actions ul li a,
+.actions a,
+.paging a {
+    font-weight:normal;
+    padding: 4px 8px;
+    background: #dddddd;
+    background: -webkit-gradient(linear, left top, left bottom, from(#f5f5f5), to(#dddddd));
+    background-image: -moz-linear-gradient(top, #f5f5f5, #dddddd);
+    color:#333;
+    border: 1px solid #999;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    text-decoration:none;
+    text-shadow: #fff 0px 1px 0px;
+    min-width: 0;
+    behavior: url(../../marx/css/PIE.htc);
+}
+.paging .disabled {
+    behavior: url('marx/css/PIE.htc');
+    background: #f5f5f5;
+    font-weight:normal;
+    padding: 4px 8px;
+    color:#333;
+    border:1px solid #bdbdbd;
+    -webkit-border-radius:4px;
+    -moz-border-radius:4px;
+    border-radius:4px;
+    text-decoration:none;
+    text-shadow: #fff 0px 1px 0px;
+    min-width: 0;
+    
+}
+.paging .current {
+        behavior: url('marx/css/PIE.htc');
+
+    color: #333;
+    background: #bababa;
+    font-weight:normal;
+    padding: 4px 8px;
+    border:1px solid #bdbdbd;
+    -webkit-border-radius:4px;
+    -moz-border-radius:4px;
+    border-radius:4px;
+    text-decoration:none;
+    min-width: 0;
+    
+}
+input[type=submit]:hover,
+.actions ul li a:hover,
+.actions a:hover,
+td.actions a:hover,
+.paging a:hover {
+    background: #bababa;
+    background: -webkit-gradient(linear, left top, left bottom, from(#dddddd), to(#bababa));
+    text-decoration: none;
+    text-shadow: none;
+}
+
+/** Related **/
+div.related {
+    margin-bottom: 15px;
+    clear: both;
+    display: block;
+}
+
+/** Debugging **/
+pre {
+    color: #000;
+    background: #f0f0f0;
+    padding: 1em;
+}
+pre.cake-debug {
+    background: #ffcc00;
+    font-size: 120%;
+    line-height: 140%;
+    margin-top: 1em;
+    overflow: auto;
+    position: relative;
+}
+div.cake-stack-trace {
+    background: #fff;
+    color: #333;
+    margin: 0px;
+    padding: 6px;
+    font-size: 120%;
+    line-height: 140%;
+    overflow: auto;
+    position: relative;
+}
+div.cake-code-dump pre {
+    position: relative;
+    overflow: auto;
+}
+div.cake-stack-trace pre, div.cake-code-dump pre {
+    color: #000;
+    background-color: #F0F0F0;
+    margin: 0px;
+    padding: 1em;
+    overflow: auto;
+}
+div.cake-code-dump pre, div.cake-code-dump pre code {
+    clear: both;
+    font-size: 12px;
+    line-height: 15px;
+    margin: 4px 2px;
+    padding: 4px;
+    overflow: auto;
+}
+div.cake-code-dump span.code-highlight {
+    background-color: #ff0;
+    padding: 4px;
+}
+div.code-coverage-results div.code-line {
+    padding-left:5px;
+    display:block;
+    margin-left:10px;
+}
+div.code-coverage-results div.uncovered span.content {
+    background:#ecc;
+}
+div.code-coverage-results div.covered span.content {
+    background:#cec;
+}
+div.code-coverage-results div.ignored span.content {
+    color:#aaa;
+}
+div.code-coverage-results span.line-num {
+    color:#666;
+    display:block;
+    float:left;
+    width:20px;
+    text-align:right;
+    margin-right:5px;
+}
+div.code-coverage-results span.line-num strong {
+    color:#666;
+}
+div.code-coverage-results div.start {
+    border:1px solid #aaa;
+    border-width:1px 1px 0px 1px;
+    margin-top:30px;
+    padding-top:5px;
+}
+div.code-coverage-results div.end {
+    border:1px solid #aaa;
+    border-width:0px 1px 1px 1px;
+    margin-bottom:30px;
+    padding-bottom:5px;
+}
+div.code-coverage-results div.realstart {
+    margin-top:0px;
+}
+div.code-coverage-results p.note {
+    color:#bbb;
+    padding:5px;
+    margin:5px 0 10px;
+    font-size:10px;
+}
+div.code-coverage-results span.result-bad {
+    color: #a00;
+}
+div.code-coverage-results span.result-ok {
+    color: #fa0;
+}
+div.code-coverage-results span.result-good {
+    color: #0a0;
+}
+legend{
+    margin-top: 1em;
+}

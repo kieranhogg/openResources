@@ -1,0 +1,45 @@
+{% extends 'uploader/base.html' %}
+{% block body_block %}
+{% load static %}
+{% get_static_prefix as STATIC_PREFIX %}
+        <h2>Welcome</h2>
+        <div class="banner"><p>We are currently looking for subject moderators.
+        If you have a good knowledge of a subject, preferably having taught
+        several different syllabuses, contact me on twitter:
+        <a href="https://twitter.com/@kieranhogg">@kieranhogg</a></p></div>
+        <p>
+            Why another teaching resource site? We all know that teachers are 
+            re-inventing the wheel with resources despite the fact there's lots 
+            of great resources out there.
+        </p>
+        <p>
+            The biggest problem is that resources that are aimed at specific 
+            courses are harder to find than generic ones. A resource teaching 
+            fractions to 11 year olds is going to be different from those for 16 
+            year olds. <strong>openTeach</strong>'s aim is to try and collect the best resources 
+            for each exam syllabus rather than try to collect as many resources 
+            as possible.
+        </p>
+        <p>
+            Over time the site will become smarter, similiar topics will be 
+            linked and resources will be shared between exam boards where 
+            appropriate.
+        </p>
+        <h3>Subjects</h3>
+        <div id="subjects"
+        {% if subjects %}
+        <ul>
+        {% for subject in subjects %}
+            <a href="{% url 'uploader:subject' subject.id subject.subject_name|slugify %}">
+                <li>
+                    <img src="{{ STATIC_PREFIX }}uploader/img/{{ subject.subject_name|slugify }}.jpg" width="368px" />
+                    {{ subject.subject_name }}
+                </li>
+            </a>
+        {% endfor %}
+        </ul>
+        </div>
+    {% else %}
+        <p>No subjects :(</p>
+    {% endif %}
+{% endblock %}

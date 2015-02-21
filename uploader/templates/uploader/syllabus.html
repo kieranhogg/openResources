@@ -1,0 +1,25 @@
+{% extends 'uploader/base.html' %}
+{% block body_block %}
+<div id="crumbs">
+    <a href="/uploader/">Home</a> > 
+    <a href="{% url 'uploader:subject' syllabus.subject.id syllabus.subject.subject_name|slugify %}">
+        {{ syllabus.subject.subject_name }}</a> >
+    <a href="{% url 'uploader:syllabuses' syllabus.subject.id syllabus.subject.subject_name|slugify syllabus.exam_level.id syllabus.exam_level.level_name|slugify %}">
+     {{ syllabus.exam_level.level_name }}</a> >
+     {{ syllabus }}
+</div>
+<h2>{{ syllabus }}</h2>
+{% if units %}
+<p>I found the following units:</p>
+    <ul>
+    {% for unit in units %}
+              <li><a href="{% url 'uploader:unit' unit.id unit.title|slugify %}">{{ unit.title }}</a></li> 
+    {% endfor %}
+    </ul>
+    {% else %}
+        No resources :(
+        
+        <a href="{% url 'uploader:new_resource_blank' %}">Add some?</a>
+        
+    {% endif %}
+{% endblock %}

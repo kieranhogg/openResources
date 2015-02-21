@@ -1,0 +1,34 @@
+{% extends 'uploader/base.html' %}
+{% block body_block %}
+<div id="crumbs">
+    <a href="/uploader/">Home</a> > 
+    <a href="{% url 'uploader:subject' unit.syllabus.subject.id unit.syllabus.subject.subject_name|slugify %}">
+        {{ unit.syllabus.subject.subject_name }}</a> >
+    <a href="{% url 'uploader:syllabuses' unit.syllabus.subject.id unit.syllabus.subject.subject_name|slugify unit.syllabus.exam_level.id unit.syllabus.exam_level.level_name|slugify %}">
+     {{ unit.syllabus.exam_level.level_name }}</a> >
+    <a href="{% url 'uploader:syllabus' unit.syllabus.id unit.syllabus|slugify %}"> 
+     {{ unit.syllabus|truncatechars:25 }}</a> >
+     {{ unit.title }}
+  
+
+</div>
+<h2>{{ unit }}</h2>
+<!-- TODO write * -> <li> filter -->
+<div id="description">
+{% if unit.description %}
+    {{ unit.description|safe }}
+{% else %}
+<!-- TODO add link -->
+    No description :( <a>Add one</a>?
+{% endif %}
+</div>
+{% if resources %}
+<ul>
+{% for resource in resources %}
+          <li><a href="{% url 'uploader:resource' resource.id resource.title|slugify %}">{{ resource.title }}</a></li> 
+{% endfor %}
+</ul>
+{% else %}
+No resources :(
+{% endif %}
+{% endblock %}

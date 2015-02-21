@@ -1,0 +1,65 @@
+{% load gravatar %}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-GB" lang="en-GB" prefix="og: http://ogp.me/ns#">
+<head>
+<title>openTeach</title>
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'uploader/style.css' %}" />
+
+</head>
+<body>
+<div id="container">
+    <div id="header">
+        <div id="logo">
+            <img src="{% static 'uploader/logo_s.png' %}" />
+            <h1>openTeach</h1>
+        </div>
+        <div id="login">
+                <div id='login_links'>
+            {% if user.is_authenticated %}
+                <!-- FIXME -->
+                <span id='user_icon'>
+                <a href="{% url 'uploader:profile' %}">
+                    <img src="{% gravatar_url user.email 24 %}" />
+                </span>
+                    <span id='username'>{{ user.get_username }}</span>
+                </a>
+                {% with user.userprofile_set.all|first as userprofile %}
+                <span id="score">({{ userprofile.score }})</span>
+                {% endwith %}
+                | <a href="/accounts/logout/">Logout</a>
+                </p>
+            {% else %}
+                <p>Not logged in | <a href="/accounts/login/">Login</a></p>
+            {% endif %}
+                </div>
+        </div>
+        <div id="search">
+            <!--Search-->
+        </div>
+    </div>
+    <div id="menu">
+        <ul>
+            <li><a href="/uploader/">Home</a></li>
+            <li><a href="{% url 'uploader:new_resource_blank' %}">Submit Resource</a></li>
+            <li><a href="{% url 'uploader:about' %}">About</a></li>
+            <li><a>Contact</a></li>
+            {% if user.is_superuser or user.is_staff %}
+            <li id="admin_button"><a href="/admin/">Admin</a></li>
+            {% endif %}
+        </ul>
+    </div>
+    <div id="content">
+        {% block body_block %}{% endblock %}
+    </div>
+    <div id="footer">
+        <p>
+        A site by <a href="http://kieranhogg.com">Kieran Hogg</a>. Source code 
+        available at <a href="https://github.com/xerosis/openteach">Github</a> 
+        for bugs or improvements.
+        </p>
+    </div>
+
+</div>
+</body>
+</html>

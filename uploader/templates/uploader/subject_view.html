@@ -1,0 +1,21 @@
+{% extends 'uploader/base.html' %}
+{% block body_block %}
+<div id="crumbs">
+    <a href="/uploader/">Home</a> > {{ subject.subject_name }}
+</div>
+<h2>{{ subject.subject_name }}</h2>
+<p>Choose which country syllabus you are looking for:</p>
+<div id="resouce_list">
+    {% regroup exam_levels by country as country_list %}
+    {% for country in country_list %}
+        <h3>{{ country.grouper }}</h3>
+        <ul>
+            {% for item in country.list %}
+              <!--<li>{{ item.name }}: {{ item.population }}</li>-->
+              <li><a href="{% url 'uploader:syllabuses' subject.id subject.subject_name|slugify item.id item.level_name|slugify %}">{{ item.level_name }}</a></li> 
+            {% endfor %}
+        </ul>
+        </li>
+    {% endfor %}
+    {% endblock %}
+</div>

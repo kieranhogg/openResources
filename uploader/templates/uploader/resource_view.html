@@ -1,0 +1,43 @@
+{% extends 'uploader/base.html' %}
+{% load static %}
+{% block body_block %}
+<h2>{{ resource.title }}</h2>
+<div id="resource_details">
+    <div id="syllabus">Suitable for: <strong>{{ resource.syllabus }}</strong></div>
+    <div id="rating">{{ rating }}</div>
+    <div id="uploader">{{ resource.uploader }}</div>
+    <div id="topics">
+        {% if resource.topics.all %}
+        <p>Topics: 
+            {% for topic in resource.topics.all %}
+                {% if not forloop.first %}
+                {% if forloop.last %} &amp; {% else %}, {% endif %}
+                {% endif %}
+                <strong>{{ topic }}</strong>
+            {% endfor %}
+        </p>
+        {% endif %}
+    </div>
+</div>
+<!--<hr />-->
+<div id="description">{{ resource.description }}</div>
+
+
+<div id="author">Resource created by <a href="{{ resource.author_link }}">{{ resource.author }}</a> under 
+<a href="{{ resource.licence.link }}">{{ resource.licence }} licence</a></div>
+<div id="published">Uploaded {{ resource.pub_date }}</div>
+
+<div class="actions">
+    {% if resource.file %}
+    <!--<div id="attachment_icon">
+        <img src="{% static 'uploader/filetypes/application_vnd.openxmlformats-officedocument.presentationml.presentation.png' %}" />
+    </div>-->
+    <a href='{{ MEDIA_URL }}{{ resource.file.file }}'>Download</a>
+    {{ MEDIA_URL }}
+    {% elif resource.link %}
+    <a href='{{ resource.link }}'>Open link</a>
+    {% else %}
+    Something has gone terribly wrong
+    {% endif %}
+</div>
+{% endblock %}
