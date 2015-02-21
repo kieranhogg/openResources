@@ -17,6 +17,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     # Required by allauth template tags
     "django.core.context_processors.request",
     "django.contrib.auth.context_processors.auth",
+    "django.contrib.messages.context_processors.messages",
     # allauth specific context processors
     "allauth.account.context_processors.account",
     "allauth.socialaccount.context_processors.socialaccount",
@@ -64,18 +65,6 @@ INSTALLED_APPS = (
 )
 # Allauth
 SITE_ID = 1
-# if Debug:
-#     ENV_PATH = os.path.abspath(os.path.dirname(__file__))
-#     MEDIA_ROOT = os.path.join(ENV_PATH, 'media/')
-# else:
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-AWS_S3_SECURE_URLS = False       # use http instead of https
-AWS_QUERYSTRING_AUTH = False     # don't add complex authentication-related query parameters for requests
-AWS_S3_ACCESS_KEY_ID = 'AKIAIMZED62NUZAAQ6DA'
-AWS_S3_SECRET_ACCESS_KEY = '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'
-AWS_STORAGE_BUCKET_NAME = 'openteach.uploads'
-MEDIA_URL = 'http://openteach.uploads.s3.amazonaws.com/'
-SITE_TITLE = 'openResources'
 
 REGISTRATION_OPEN = True                # If True, users can register
 ACCOUNT_ACTIVATION_DAYS = 7     # One-week activation window; you may, of course, use a different value.
@@ -99,21 +88,6 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'openteach.urls'
 
 WSGI_APPLICATION = 'openteach.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/1.7/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'openteach',
-        'USER': 'postgres',
-        'PASSWORD': '1066',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
-    }
-}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
