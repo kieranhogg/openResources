@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-GB" lang="en-GB" prefix="og: http://ogp.me/ns#">
 <head>
-<title>openTeach</title>
+<title>{{ SITE_NAME }}</title>
 {% load staticfiles %}
 <link rel="stylesheet" type="text/css" href="{% static 'uploader/style.css' %}" />
 
@@ -12,7 +12,7 @@
     <div id="header">
         <div id="logo">
             <img src="{% static 'uploader/logo_s.png' %}" />
-            <h1>openTeach</h1>
+            <h1>{{ SITE_NAME }}</h1>
         </div>
         <div id="login">
                 <div id='login_links'>
@@ -68,9 +68,9 @@
     </div>
     <div id="footer">
         <p>
-        A site by <a href="http://kieranhogg.com">Kieran Hogg</a>. Source code 
-        available at <a href="https://github.com/xerosis/openteach">Github</a> 
-        for bugs or improvements.
+        A site by <a href="http://kieranhogg.com">Kieran Hogg</a>. Powered
+        by <a href="https://github.com/xerosis/openteach">openTeach</a> 
+        v{{ APP_VERSION}}.
         </p>
     </div>
 
