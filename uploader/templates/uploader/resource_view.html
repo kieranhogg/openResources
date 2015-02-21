@@ -27,7 +27,7 @@
 <a href="{{ resource.licence.link }}">{{ resource.licence }} licence</a></div>
 <div id="published">Uploaded {{ resource.pub_date }}</div>
 
-<div class="actions">
+<div class="action">
     {% if resource.file %}
     <!--<div id="attachment_icon">
         <img src="{% static 'uploader/filetypes/application_vnd.openxmlformats-officedocument.presentationml.presentation.png' %}" />
@@ -35,7 +35,12 @@
     <a href='{{ MEDIA_URL }}{{ resource.file.file }}'>Download</a>
     {{ MEDIA_URL }}
     {% elif resource.link %}
-    <a href='{{ resource.link }}'>Open link</a>
+    <div id="link">
+        <a href='{{ resource.link }}'>
+            <img src="{% static 'uploader/img/' %}Link-32.png" />
+            Open link
+        </a>
+    </div>
     {% else %}
     Something has gone terribly wrong
     {% endif %}

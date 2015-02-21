@@ -71,7 +71,7 @@ class Unit(models.Model):
     description = models.TextField(
         blank=True, 
         null=True, 
-        help_text='E.g. the expected topics taught'
+        help_text='A brief overview of the content'
     )
     pub_date = models.DateTimeField('date published')
     def __unicode__(self):
@@ -90,7 +90,12 @@ class Topic(models.Model):
 class UnitTopic(models.Model):
     title = models.CharField('Title', max_length=200)
     unit = models.ForeignKey(Unit)
-    topic = models.ManyToManyField(Topic)
+    topic = models.ManyToManyField(Topic, blank=True, null=True)
+    description = models.TextField(
+        blank=True, 
+        null=True, 
+        help_text='E.g. the expected topics taught'
+    )
     pub_date = models.DateTimeField('date published')
     def __unicode__(self):
        return str(self.title)

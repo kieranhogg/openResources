@@ -14,18 +14,10 @@
 </div>
 <h2>{{ unit }}</h2>
 <!-- TODO write * -> <li> filter -->
-<div id="description">
-{% if unit.description %}
-    {{ unit.description|safe }}
-{% else %}
-<!-- TODO add link -->
-    No description :( <a>Add one</a>?
-{% endif %}
-</div>
-{% if resources %}
+{% if unit_topics %}
 <ul>
-{% for resource in resources %}
-          <li><a href="{% url 'uploader:resource' resource.id resource.title|slugify %}">{{ resource.title }}</a></li> 
+{% for unit_topic in unit_topics %}
+  <li><a href="{% url 'uploader:unit_topic' unit_topic.id unit_topic.title|slugify %}">{{ unit_topic.title }}</a></li> 
 {% endfor %}
 </ul>
 {% else %}

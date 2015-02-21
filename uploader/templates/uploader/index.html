@@ -28,7 +28,7 @@
         {% for subject in subjects %}
             <a href="{% url 'uploader:subject' subject.id subject.subject_name|slugify %}">
                 <li>
-                    <img src="{{ STATIC_PREFIX }}uploader/img/{{ subject.subject_name|slugify }}.jpg" width="368px" />
+                    <img src="{{ STATIC_PREFIX }}uploader/img/subjects/{{ subject.subject_name|slugify }}.jpg" width="368px" />
                     {{ subject.subject_name }}
                 </li>
             </a>

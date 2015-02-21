@@ -226,6 +226,7 @@ left: 0;
     font-size: 0.8em;
     margin-bottom: 10px;
 }
+
 /* download page */
 #resource_details {
     overflow: hidden;
@@ -247,7 +248,6 @@ left: 0;
     margin-top: 20px;
     background-color: #f5f5f5;
     border: 1px solid #cc0000;
-    
 }
 
 #author {
@@ -258,6 +258,9 @@ left: 0;
     font-size: 0.7em;
     color: #999;
     padding:5px 0;
+}
+#link a {
+    vertical-align: middle;
 }
 .actions {
     margin: 15px 0;

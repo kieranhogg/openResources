@@ -3,15 +3,17 @@ from django.shortcuts import (render, get_object_or_404, get_list_or_404,
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext, loader
 from uploader.models import (Subject, ExamLevel, Syllabus, Resource, Unit, File, 
-    Rating)
+    Rating, UnitTopic)
 from uploader.forms import ResourceForm
 from django.core.urlresolvers import reverse
 from django.forms.models import modelformset_factory
+from django.contrib import messages
 
 # Homepage view, shows subject
 def index(request):
     subjects = Subject.objects.filter(active=1)
     context = {'subjects': subjects}
+    messages.success(request, 'Profile details updated.')
     return render(request, 'uploader/index.html', context)
 
 # View one subject, shows exam levels, e.g. GCSE
@@ -47,10 +49,24 @@ def syllabus(request, syllabus_id, slug=None):
 
 # A single unit view
 def unit(request, unit_id, slug=None):
-    resources = Resource.objects.filter(unit__id = unit_id)
+    #resources = Resource.objects.filter(unit__id = unit_id)
     unit = get_object_or_404(Unit, pk=unit_id)
-    context = {'resources': resources, 'unit': unit}
+    unit_topics = UnitTopic.objects.filter(unit__id = unit_id)
+    context = {
+        #'resources': resources, 
+        'unit': unit,
+        'unit_topics': unit_topics,
+    }
     return render(request, 'uploader/unit.html', context)
+    
+def unit_topic(request, unit_topic_id, slug = None):
+    resources = Resource.objects.filter(unittopic__id = unit_topic_id)
+    unit_topic = get_object_or_404(UnitTopic, pk=unit_topic_id)
+    context = {
+        'resources': resources, 
+        'unit_topic': unit_topic,
+    }
+    return render(request, 'uploader/unit_topic.html', context)
     
 # A single resource view
 def resource(request, resource_id, slug=None):
