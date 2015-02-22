@@ -54,7 +54,7 @@ INSTALLED_APPS = (
     'openteach',
     'django_gravatar',
     'bootstrap3',
-        'allauth',
+    'allauth',
     'allauth.account',
     'allauth.socialaccount',
     # ... include the providers you want to enable:

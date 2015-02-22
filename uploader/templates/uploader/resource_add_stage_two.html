@@ -1,0 +1,41 @@
+{% extends 'uploader/base.html' %}
+{% block body_block %}
+<h2>New Resource</h2>
+<p>If you are not logged in, your resource will wait to be approved. To skip 
+this in future, please register and log in first.</p>
+{% if form.non_field_errors %}
+<div id="error">
+{% for error in form.non_field_errors %}
+    {{error}}
+{% endfor %}
+</div>
+{% endif %}
+
+<form enctype="multipart/form-data" action method="post" novalidate>
+    {% csrf_token %}  
+    {{ form.non_field_errors }}
+    
+    {% for field in form.visible_fields %}
+    <div class="field_content">
+        <label>
+        {% if field.field.required %}
+            <span class="required">{{ field.label_tag }}</span>
+        {% else %}
+            {{ field.label_tag }}
+        {% endif %}
+        </label>  
+    <div class="field">
+        {% if field.help_text %}
+        <div class = "help_text">
+            {{ field.help_text }}
+        </div>
+        {% endif %}
+        {{ field }}
+        <span class="field_error">{{ field.errors }}</span>
+    </div> 
+    </div>
+    {% endfor %}
+    
+<br /><input type="submit" value="Next">
+</form>
+{% endblock %}
