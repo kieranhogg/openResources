@@ -41,7 +41,8 @@
     <div id="menu">
         <ul>
             <li><a href="/uploader/">Home</a></li>
-            <li><a href="{% url 'uploader:new_resource_blank' %}">Submit Resource</a></li>
+            <li><a href="{% url 'uploader:new_resource' %}">Submit Resource</a></li>
+            <li><a>Leaderboard</a></li>
             <li><a href="{% url 'uploader:about' %}">About</a></li>
             <li><a>Contact</a></li>
             {% if user.is_superuser or user.is_staff %}

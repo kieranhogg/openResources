@@ -161,6 +161,7 @@ class File(models.Model):
     filename = models.CharField('Filename', max_length = 200)
     file = models.FileField()
     mimetype = models.CharField('Mimetype', max_length = 200)
+    filesize = models.IntegerField()
     pub_date = models.DateTimeField(
         'Date published', 
         auto_now_add = True, 
@@ -207,6 +208,7 @@ class Resource(models.Model):
     author_link = models.CharField(
         'Author Link', 
         max_length = 200, 
+        blank = True,
         null = True, 
         help_text='A URL or email to credit the original author. If it is ' +
             'you, leave blank'
@@ -221,7 +223,7 @@ class Resource(models.Model):
         blank = True, 
         verbose_name = "Unit Topic"
     )
-    topics = models.ManyToManyField(Topic)
+    topics = models.ManyToManyField(Topic, null = True, blank = True)
     licence = models.ForeignKey(
         Licence, 
         null = True, 

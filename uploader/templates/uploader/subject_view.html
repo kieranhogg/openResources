@@ -1,9 +1,12 @@
 {% extends 'uploader/base.html' %}
+{% load static %}
+{% get_static_prefix as STATIC_PREFIX %}
 {% block body_block %}
 <div id="crumbs">
     <a href="/uploader/">Home</a> > {{ subject.subject_name }}
 </div>
 <h2>{{ subject.subject_name }}</h2>
+<!--<img src="{% static 'uploader/img/subjects/' %}{{ subject.subject_name|slugify }}_large.jpg" />-->
 <p>Choose which country syllabus you are looking for:</p>
 <div id="resouce_list">
     {% regroup exam_levels by country as country_list %}

@@ -1,13 +1,40 @@
 from django import forms
 from django.conf import settings
 
-from uploader.models import Subject, ExamLevel, Syllabus, Resource, Unit, UnitTopic, Licence, Topic
+from uploader.models import (Subject, ExamLevel, Syllabus, Resource, Unit, 
+    UnitTopic, Licence, Topic, File)
 
-class ResourceForm(forms.ModelForm):
-    file = forms.FileField()
+class FileForm(forms.ModelForm):
+    class Meta:
+        model = File
+
+class ResourceStageOneForm(forms.Form):
     class Meta:
         model = Resource
-        exclude = ('syllabus','unit','unittopic','topics', 'approved', 'file')
+    
+    file = forms.FileField(required = False)
+    link = forms.CharField(max_length = '200', required = False)
+        
+        
+class ResourceStageTwoForm(forms.ModelForm):
+    label_suffix=''
+    class Meta:
+        model = Resource
+        exclude = ('approved',)
+        widgets = {
+            'link': forms.HiddenInput(),
+            'file': forms.HiddenInput(),
+            'uploader': forms.HiddenInput()
+        }
+    # file_id = forms.IntegerField(required = False)
+    # link = forms.CharField(
+    #     max_length = '200', 
+    #     required = False
+    # )
+    
+
+
+
 
     # title = forms.CharField()
     # description = forms.CharField(widget=forms.Textarea)
@@ -19,7 +46,7 @@ class ResourceForm(forms.ModelForm):
     #     help_text='A URL or email to credit the original author. If it is ' +
     #     'you, leave blank')
     #Don't really need but its for the forms, FIXME?
-    subject = forms.ModelChoiceField(queryset=Subject.objects.all())
+    #subject = forms.ModelChoiceField(queryset=Subject.objects.all())
     # syllabus = forms.ModelChoiceField(queryset=Syllabus.objects.all())
     # unit = forms.ModelChoiceField(queryset=Unit.objects.all())
     # unittopic = forms.ModelChoiceField(queryset=UnitTopic.objects.all())
@@ -27,7 +54,7 @@ class ResourceForm(forms.ModelForm):
     #     queryset=Topic.objects.all(), 
     #     required=False,
     # )
-    licence = forms.ModelChoiceField(queryset=Licence.objects.all())
+    #licence = forms.ModelChoiceField(queryset=Licence.objects.all())
     # def save(self):
     #     #content_type = self.cleaned_data['file'].content_type
     #     filename = "test.mp3"
@@ -55,3 +82,4 @@ class ResourceForm(forms.ModelForm):
         # except:
         #     pass
         #return file
+        

@@ -4,16 +4,15 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext, loader
 from uploader.models import (Subject, ExamLevel, Syllabus, Resource, Unit, File, 
     Rating, UnitTopic)
-from uploader.forms import ResourceForm
+from uploader.forms import ResourceStageOneForm, ResourceStageTwoForm
 from django.core.urlresolvers import reverse
 from django.forms.models import modelformset_factory
 from django.contrib import messages
 
-# Homepage view, shows subject
+# Homepage view, shows subjects
 def index(request):
     subjects = Subject.objects.filter(active=1)
     context = {'subjects': subjects}
-    messages.success(request, 'Profile details updated.')
     return render(request, 'uploader/index.html', context)
 
 # View one subject, shows exam levels, e.g. GCSE
@@ -111,27 +110,7 @@ def new_resource_blank(request):
 #     context = {"formset": formset, 'syllabus': syllabus, 
 #             'url': request.path, 'syllabus_id': syllabus_id}
 #     return render(request, "uploader/new_resource.html", context)
-    
-def new_resource(request, syllabus_id=None):
-    # must be logged in
-    if not request.user.is_authenticated():
-        return redirect('/accounts/login/?next=%s' % request.path)
-    form = ResourceForm(data=request.POST or None, files=request.FILES or None)
-    if request.method == 'POST':
-        form.instance.file = File.objects.get_or_create(request.FILES['file'])
-        form.save(commit=True)
-        # if form.is_valid():
-        # instance = File(file=request.FILES['file'])
-        # instance.filename = request.FILES['file'].filename
-        # instance.mimetype = request.FILES['file'].
-        # instance.save()
-        # form.file = instance
-        # form.save(commit=True)
-            #process
-        return redirect('/uploader/')
 
-    return render(request, "uploader/new_resource.html", {'form': form})
-    
 def manage_resource(request, syllabus_id):
     ResourceFormSet = modelformset_factory(Resource)
     if request.method == 'POST':
@@ -157,3 +136,70 @@ def profile(request, user_id=None):
     # /profile/1
     else:
         return HttpResponse("User profile")
+        
+def new_resource(request):
+    form = ResourceStageOneForm(
+        request.POST or None, 
+        request.FILES or None,
+        label_suffix=''
+    )
+    
+    # If we've received a submitted form
+    if request.method == 'POST':
+        
+        # if there's neither, or both, refresh with error
+        if (not request.POST['link'] and not request.FILES['file']): #or ('link' in request.POST and 'file' in request.FILES):
+            form.add_error(None, "You must either add a link or file")
+            return render(request, "uploader/resource_add.html", {'form': form})
+            
+        # if there's just a file
+        elif not request.POST['link']:
+            # process file
+            file = request.FILES['file']
+            new_file = File(
+                file=request.FILES['file'], 
+                filename=file.name,
+                mimetype=file.content_type,
+                filesize=file.size
+            )
+            new_file.save()
+            
+            # save the file_id in session to pass to the next stage
+            # TODO is there a cleaner way than this?
+            # we run the risk of orphaned files without resources
+            request.session['_file_id'] = new_file.id
+        
+        # if there's just a link
+        else:
+            request.session['_link'] = request.POST['link']
+
+        return HttpResponseRedirect('stage_two')
+        
+    # no form submitted, show form
+    else:
+        return render(request, "uploader/resource_add.html", {'form': form})
+
+    
+def new_resource_stage_two(request):
+    
+    # get the link or file
+    link = request.session.get('_link')
+    file_id = request.session.get('_file_id')
+    
+    request.session['_link'] = None
+    request.session['_file_id'] = None
+    
+    # create and save
+    form = ResourceStageTwoForm(
+        request.POST or None, 
+        request.FILES or None,
+        initial={'link': link, 'file': file_id},
+        label_suffix=''
+    )
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save(commit = True)
+            messages.success(request, 'Resource added, thank you!')
+            return redirect("/uploader/")
+    
+    return render(request, "uploader/resource_add_stage_two.html", {'form': form})
