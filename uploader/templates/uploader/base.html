@@ -54,10 +54,14 @@
         {% if messages %}
             {% for message in messages %}
                 <div class="{{ message.get_type_display }}">
-                {% if message.get_type_display != "PM" %}
+                {% if message.get_type_display == "Sticky" %}
                     {{ message|safe }}
+                {% elif message.get_type_display == "Announcement" %}
+                    {{ message|safe }}
+                    <div class="message_dismiss">[X]</div>
                 {% else %}
                     {{ message }}
+                    <div class="message_dismiss">[X]</div>
                 {% endif %}
                 </div>
             {% endfor %}
