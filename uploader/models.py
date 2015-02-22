@@ -82,9 +82,9 @@ class Unit(models.Model):
        return str(self.title)
        
     class Meta:
-        ordering = ('title')
+        ordering = ('title',)
        
-    title = models.CharField('Title', max_length = 200)
+    title = models.CharField(max_length = 200)
     syllabus = models.ForeignKey(Syllabus)
     description = models.TextField(
         blank = True, 
@@ -102,7 +102,7 @@ class Topic(models.Model):
     class Meta:
         ordering = ('title',)
         
-    title = models.CharField('Title', max_length = 200)
+    title = models.CharField(max_length = 200)
         
     
 class UnitTopic(models.Model):
@@ -110,9 +110,9 @@ class UnitTopic(models.Model):
        return str(self.title)
        
     class Meta:
-        ordering = ('title')
+        ordering = ('title',)
         
-    title = models.CharField('Title', max_length = 200)
+    title = models.CharField(max_length = 200)
     unit = models.ForeignKey(Unit)
     topic = models.ManyToManyField(Topic, blank = True, null = True)
     description = models.TextField(
@@ -127,7 +127,7 @@ class Licence(models.Model):
     def __unicode__(self):
        return str(self.name)
        
-    name = models.CharField('Title', max_length = 200)
+    name = models.CharField(max_length = 200)
     description = models.TextField(null = True)
     link = models.CharField('URL', max_length = 200)
     
@@ -151,7 +151,7 @@ class Resource(models.Model):
        return str(self.title)
        
     class Meta:
-        ordering = ('title')
+        ordering = ('title',)
        
     PRESENTATION = 1
     LESSON_PLAN = 2
@@ -169,7 +169,7 @@ class Resource(models.Model):
     
     list_display = ('title', 'approved')
     search_fields = ['title', 'approved']
-    title = models.CharField('Title', max_length = 200)
+    title = models.CharField(max_length = 200)
     description = models.TextField('Description', null = True)
     file = models.ForeignKey(File, blank = True, null = True)
     link = models.CharField(max_length=400, blank = True, null = True)
@@ -220,7 +220,7 @@ class Rating(models.Model):
        return str(self.resource) + ': ' + str(self.rating)
        
     class Meta:
-        ordering = ('pub_date')
+        ordering = ('pub_date',)
         
     AWFUL = 0
     VPOOR = 1
@@ -249,7 +249,7 @@ class UserProfile(models.Model):
        return str(self.user)
        
     class Meta:
-        ordering = ('user')
+        ordering = ('user',)
         
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
     score = models.IntegerField(default = 0)
@@ -260,7 +260,7 @@ class Message(models.Model):
        return str(self.message)
        
     class Meta:
-        ordering = ('pub_date')
+        ordering = ('pub_date',)
         
     PM = 1
     ANNOUNCE = 2
