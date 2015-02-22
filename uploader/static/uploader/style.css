@@ -570,11 +570,9 @@ form .submit input[type=submit]:hover {
 
 /** Notices and Errors **/
 
-.banner {
+.Sticky {
     clear: both;
-    font-size: 120%;
     border:1px solid #CCCCA3;
-    font-weight: bold;
     margin: 0 0 1em 0;
 /* 	background: #c73e14 url('../img/info.png') no-repeat; */
     background: #ffc;
@@ -583,10 +581,7 @@ form .submit input[type=submit]:hover {
     border-bottom-right-radius: 5px 5px;
     border-top-left-radius: 5px 5px;
     border-top-right-radius: 5px 5px;
-    padding-top: 5px;
-    padding-right: 1px;
-    padding-bottom: 1px;
-    padding-left: 7px;
+    padding: 10px;
     margin-left: -20px;
     margin-right: -20px;
 }
@@ -618,7 +613,7 @@ div.error-message {
     font-weight: bold;
     background: #cc0000;
 }
-p.error {
+.error {
     background-color: #e32;
     color: #fff;
     font-family: Courier, monospace;

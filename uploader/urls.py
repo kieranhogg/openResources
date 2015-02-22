@@ -22,7 +22,6 @@ urlpatterns = patterns('',
     url(r'unit_topic/(?P<unit_topic_id>\d+)/(?P<slug>[-\w]+)/$', views.unit_topic, name='unit_topic'),
     url(r'resource/(?P<resource_id>\d+)/(?P<slug>[-\w]+)/$', views.resource, name='resource'),
     url(r'resource/(?P<resource_id>\d+)/$', views.resource, name='resource'),
-    url(r'resource/(?P<resource_id>\d+)/edit/$', views.manage_resource, name='manage_resource'),
     url(r'profile/$', views.profile, name='profile'),
     url(r'profile/(?P<user_id>\d+)/$', views.profile, name='profile'),
     

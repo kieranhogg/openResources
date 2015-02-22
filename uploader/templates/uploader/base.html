@@ -51,19 +51,16 @@
         </ul>
     </div>
     <div id="content">
-        <div class="banner"><p>We are currently looking for subject moderators.
-        If you have a good knowledge of a subject, preferably having taught
-        several different syllabuses, contact me on twitter:
-        <a href="https://twitter.com/@kieranhogg">@kieranhogg</a></p></div>
         {% if messages %}
-        <div class="banner">
-            <ul class="messages">
-                {% for message in messages %}
-                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                {% endfor %}
-            </ul>
-        </div>
-
+            {% for message in messages %}
+                <div class="{{ message.get_type_display }}">
+                {% if message.get_type_display != "PM" %}
+                    {{ message|safe }}
+                {% else %}
+                    {{ message }}
+                {% endif %}
+                </div>
+            {% endfor %}
         {% endif %}
         {% block body_block %}{% endblock %}
     </div>

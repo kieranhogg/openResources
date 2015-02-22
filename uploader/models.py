@@ -291,9 +291,9 @@ class Message(models.Model):
     STICKY = 3
 
     MESSAGE_TYPE = (
-        (PM, 'Private Message'),
-        (ANNOUNCE, 'Announcement sent to all users'),
-        (STICKY, 'A message which is stuck to all pages until a certain date')
+        (PM, 'PrivateMessage'),
+        (ANNOUNCE, 'Announcement'),
+        (STICKY, 'Sticky')
     )
     
     message = models.TextField()
@@ -303,16 +303,15 @@ class Message(models.Model):
     )
     user_to = models.ForeignKey(
         settings.AUTH_USER_MODEL, 
-        related_name = 'message_user_to'
+        related_name='message_user_to',
+        null=True,
+        blank=True
     )
     type = models.IntegerField(max_length = 1, choices = MESSAGE_TYPE)
     read = models.BooleanField(default = False)
-    read_date = models.DateTimeField(auto_now_add = True, blank = True)
-    sticky_date = models.DateTimeField(
-        auto_now_add = True, 
-        blank = True, null = True
-    )
-    pub_date = models.DateTimeField(auto_now_add = True, blank = True)
+    read_date = models.DateTimeField(null=True, blank=True)
+    sticky_date = models.DateTimeField(null = True)
+    pub_date = models.DateTimeField(auto_now_add = True)
 
 # cleans up files from AWS when resource is deleted from DB
 @receiver(pre_delete, sender=File)

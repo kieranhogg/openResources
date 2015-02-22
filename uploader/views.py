@@ -3,7 +3,7 @@ from django.shortcuts import (render, get_object_or_404, get_list_or_404,
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext, loader
 from uploader.models import (Subject, ExamLevel, Syllabus, Resource, Unit, File, 
-    Rating, UnitTopic)
+    Rating, UnitTopic, Message)
 from uploader.forms import ResourceStageOneForm, ResourceStageTwoForm
 from django.core.urlresolvers import reverse
 from django.forms.models import modelformset_factory
@@ -12,7 +12,12 @@ from django.contrib import messages
 # Homepage view, shows subjects
 def index(request):
     subjects = Subject.objects.filter(active=1)
-    context = {'subjects': subjects}
+    # get messages
+    messages = Message.objects.filter()
+    context = {
+        'subjects': subjects,
+        'messages': messages
+    }
     return render(request, 'uploader/index.html', context)
 
 # View one subject, shows exam levels, e.g. GCSE
@@ -111,19 +116,6 @@ def new_resource_blank(request):
 #             'url': request.path, 'syllabus_id': syllabus_id}
 #     return render(request, "uploader/new_resource.html", context)
 
-def manage_resource(request, syllabus_id):
-    ResourceFormSet = modelformset_factory(Resource)
-    if request.method == 'POST':
-        formset = ResourceFormSet(request.POST, request.FILES)
-        if formset.is_valid():
-            formset.save(commit=True)
-            # do something.
-    else:
-        formset = ResourceFormSet()
-    return render_to_response("uploader/new_resource.html", {
-        "formset": formset,
-    })
-    
 # TODO
 def profile(request, user_id=None):
     # /profile/ and logged in
@@ -147,13 +139,18 @@ def new_resource(request):
     # If we've received a submitted form
     if request.method == 'POST':
         
-        # if there's neither, or both, refresh with error
-        if (not request.POST['link'] and not request.FILES['file']): #or ('link' in request.POST and 'file' in request.FILES):
-            form.add_error(None, "You must either add a link or file")
-            return render(request, "uploader/resource_add.html", {'form': form})
-            
+        # if we have both
+        if request.POST.get('link') != None and request.FILES.get('file') != None:
+            form.add_error(None, "You must either add a link or a file, " + 
+                "not both")
+            return render(
+                request, 
+                "uploader/resource_add.html", 
+                {'form': form}
+            )
+        
         # if there's just a file
-        elif not request.POST['link']:
+        elif request.FILES.get('file') != None:
             # process file
             file = request.FILES['file']
             new_file = File(
@@ -168,12 +165,24 @@ def new_resource(request):
             # TODO is there a cleaner way than this?
             # we run the risk of orphaned files without resources
             request.session['_file_id'] = new_file.id
-        
-        # if there's just a link
-        else:
-            request.session['_link'] = request.POST['link']
+            return HttpResponseRedirect('stage_two')
 
-        return HttpResponseRedirect('stage_two')
+    
+        # if there's just a link
+        # FIXME for reason link is getting set but to blank,
+        # == None is False, == "" is False so we're checking length as a hack
+        elif len(request.POST.get('link')) > 0:
+            request.session['_link'] = request.POST['link']
+            return HttpResponseRedirect('stage_two')
+
+        # neither
+        else:
+            form.add_error(None, "You must either add a link or a file")
+            return render(
+                request, 
+                "uploader/resource_add.html", 
+                {'form': form}
+            )
         
     # no form submitted, show form
     else:
