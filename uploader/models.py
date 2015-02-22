@@ -61,14 +61,27 @@ class ExamLevel(models.Model):
 
 class Syllabus(models.Model):
     def __unicode__(self):
+        # if we have situations like IB IB, shorten to IB
+        # if we have a subject name set (e.g. Computing not Computer Science),
+        # show that, otherwise default to the subject
         if str(self.exam_level) == str(self.exam_board):
-            return str(self.exam_board) + ' ' + str(self.subject)
+            if not self.subject_name:
+                return str(self.exam_board) + ' ' + str(self.subject)
+            else:
+                return str(self.exam_board) + ' ' + str(self.subject_name)
         else:
-            return (
-                str(self.exam_board) + ' ' + 
-                str(self.subject) +  ' ' +
-                str(self.exam_level)
-            )
+            if not self.subject_name:
+                return (
+                    str(self.exam_board) + ' ' + 
+                    str(self.subject) +  ' ' +
+                    str(self.exam_level)
+                )
+            else:
+                return (
+                    str(self.exam_board) + ' ' + 
+                    str(self.subject_name) +  ' ' +
+                    str(self.exam_level)
+                )
             
     class Meta:
         ordering = ('exam_board','exam_level')
