@@ -7,6 +7,7 @@ from django.dispatch.dispatcher import receiver
 from django.utils.safestring import mark_safe
 from django.contrib.auth.models import AbstractUser
 
+
 class Subject(models.Model):
     def __unicode__(self):
        return self.subject_name
@@ -41,6 +42,7 @@ class ExamLevel(models.Model):
     KS3 = '3'
     KS4 = '4'
     KS5 = '5'
+    
     YEAR_IN_SCHOOL_CHOICES = (
         (NONE, 'None'),
         (KS3, 'KS3'),
@@ -74,6 +76,13 @@ class Syllabus(models.Model):
     subject = models.ForeignKey(Subject)
     exam_board = models.ForeignKey(ExamBoard)
     exam_level = models.ForeignKey(ExamLevel)
+    subject_name = models.CharField(
+        max_length = 200,
+        help_text = ('If the subject name is as above, leave blank otherwise ' +
+            'enter correct name, e.g. Computing or Further Maths'),
+        blank = True,
+        null = True
+    )
     pub_date = models.DateTimeField('Date published')
     
     
