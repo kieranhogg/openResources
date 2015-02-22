@@ -273,8 +273,14 @@ class Message(models.Model):
     )
     
     message = models.TextField()
-    user_from = models.ForeignKey(settings.AUTH_USER_MODEL)
-    user_to = models.ForeignKey(settings.AUTH_USER_MODEL)
+    user_from = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        related_name = 'message_user_from'
+    )
+    user_to = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        related_name = 'message_user_to'
+    )
     type = models.IntegerField(max_length = 1, choices = MESSAGE_TYPE)
     read = models.BooleanField(default = False)
     read_date = models.DateTimeField(auto_now_add = True, blank = True)
