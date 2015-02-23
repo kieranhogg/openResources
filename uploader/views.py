@@ -1,6 +1,6 @@
 from django.shortcuts import (render, get_object_or_404, get_list_or_404, 
     render_to_response, redirect)
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.template import RequestContext, loader
 from uploader.models import (Subject, ExamLevel, Syllabus, Resource, Unit, File, 
     Rating, UnitTopic, Message, UserProfile)
@@ -9,6 +9,7 @@ from uploader.forms import (BookmarkStageOneForm, FileStageOneForm,
 from django.core.urlresolvers import reverse
 from django.forms.models import modelformset_factory
 from django.contrib import messages
+
 
 # Homepage view, shows subjects
 def index(request):
@@ -78,7 +79,8 @@ def unit_topic(request, unit_topic_id, slug = None):
 def resource(request, resource_id, slug=None):
     resource = get_object_or_404(Resource, pk=resource_id)
     context = {'resource': resource, 'rating': get_resource_rating(resource_id)}
-    return render(request, 'uploader/resource_view.html', context)
+    return render_to_response('uploader/resource_view.html', 
+        context_instance=RequestContext(request, context))
 
 # Calculate a resource's rating
 def get_resource_rating(resource_id):
@@ -93,9 +95,6 @@ def get_resource_rating(resource_id):
             total = total + rating.rating
             count = count + 1
         return float(total) / float(count)
-    
-def new_resource_blank(request):
-    return new_resource(request, -1)
     
 # def new_resource(request, syllabus_id):
 #     # must be logged in
@@ -229,3 +228,13 @@ def score_points(user, action):
     user_profile = UserProfile.objects.get(user = user.id)
     user_profile.score += points[action]
     user_profile.save()
+    
+# ajax views
+
+def get_syllabuses(request, subject_id):
+    subject = Subject.objects.get(pk=subject_id)
+    syllabuses = Syllabus.objects.filter(subject=subject)
+    syllabuses_dict = {}
+    for syllabus in syllabuses:
+        syllabuses_dict[syllabus.id] = str(syllabus)
+    return JsonResponse(syllabuses_dict)

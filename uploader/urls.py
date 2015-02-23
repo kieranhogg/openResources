@@ -7,6 +7,8 @@ from uploader import views
 
 urlpatterns = patterns('',
     url(r'^$', views.index, name='index'),
+    url(r'lookup/syllabus/(?P<subject_id>\d+)/$', views.get_syllabuses, name='get_syllabuses'),
+
     url(r'subject/(?P<subject_id>\d+)/$', views.subject, name='subject'),
     url(r'subject/(?P<subject_id>\d+)/(?P<slug>[-\w]+)/$', views.subject, name='subject'),
     url(r'subject/(?P<subject_id>\d+)/exam_level/(?P<exam_level_id>\d+)/$', views.syllabuses, name='syllabuses'),
@@ -26,6 +28,7 @@ urlpatterns = patterns('',
     url(r'resource/(?P<resource_id>\d+)/$', views.resource, name='resource'),
     url(r'profile/$', views.profile, name='profile'),
     url(r'profile/(?P<user_id>\d+)/$', views.profile, name='profile'),
+    url(r'lookup/syllabus/(?P<subject_id>\d+)/$', views.get_syllabuses, name='get_syllabuses'),
     
     # static pages
     url(r'^about',
