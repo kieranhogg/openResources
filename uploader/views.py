@@ -140,7 +140,7 @@ def new_resource(request):
     if request.method == 'POST':
         
         # if we have both
-        if request.POST.get('link') != None and request.FILES.get('file') != None:
+        if len(request.POST.get('link')) > 0 and request.FILES.get('file') != None:
             form.add_error(None, "You must either add a link or a file, " + 
                 "not both")
             return render(
@@ -202,7 +202,11 @@ def new_resource_stage_two(request):
     form = ResourceStageTwoForm(
         request.POST or None, 
         request.FILES or None,
-        initial={'link': link, 'file': file_id},
+        initial={
+            'link': link, 
+            'file': file_id, 
+            'uploader': request.user
+        },
         label_suffix=''
     )
     if request.method == 'POST':
