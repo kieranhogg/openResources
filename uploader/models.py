@@ -68,7 +68,7 @@ class ExamLevel(models.Model):
        return self.level_name
        
     class Meta:
-        ordering = ('level_number','level_name')
+        ordering = ('country', 'level_number','level_name')
  
     
 class ExamLevelAdmin(admin.ModelAdmin):

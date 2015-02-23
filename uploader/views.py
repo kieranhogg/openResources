@@ -3,8 +3,9 @@ from django.shortcuts import (render, get_object_or_404, get_list_or_404,
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext, loader
 from uploader.models import (Subject, ExamLevel, Syllabus, Resource, Unit, File, 
-    Rating, UnitTopic, Message)
-from uploader.forms import BookmarkStageOneForm, FileStageOneForm, ResourceStageTwoForm
+    Rating, UnitTopic, Message, UserProfile)
+from uploader.forms import (BookmarkStageOneForm, FileStageOneForm, 
+    ResourceStageTwoForm)
 from django.core.urlresolvers import reverse
 from django.forms.models import modelformset_factory
 from django.contrib import messages
@@ -207,10 +208,24 @@ def add_resource_stage_two(request):
         },
         label_suffix=''
     )
-    if request.method == 'POST':
-        if form.is_valid():
-            form.save(commit = True)
-            messages.success(request, 'Resource added, thank you!')
-            return redirect("/uploader/")
+    if request.method == 'POST' and form.is_valid():
+        resource = form.save(commit = False)
+        if request.user.is_authenticated():
+            # if we're logged in auto-approve
+            resource.approved = True
+            form.save()
+            score_points(request.user, "Add Resource")
+        messages.success(request, 'Resource added, thank you!')
+
+        return redirect("/uploader/")
     
     return render(request, "uploader/resource_add_stage_two.html", {'form': form})
+    
+def score_points(user, action):
+    points = {
+        "Add Resource": 25,
+        "Vote": 1
+    }
+    user_profile = UserProfile.objects.get(user = user.id)
+    user_profile.score += points[action]
+    user_profile.save()

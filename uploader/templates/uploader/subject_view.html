@@ -7,8 +7,13 @@
 </div>
 <h2>{{ subject.subject_name }}</h2>
 <!--<img src="{% static 'uploader/img/subjects/' %}{{ subject.subject_name|slugify }}_large.jpg" />-->
-<p>Choose which country syllabus you are looking for:</p>
+<p>Choose which syllabus you are looking for:</p>
 <div id="resouce_list">
+    <h3>Any</h3>
+    <ul>
+        <li>General {{ subject.subject_name }} resources (you are likely to 
+        find better resources in syllabuses)</li>
+    </ul>
     {% regroup exam_levels by country as country_list %}
     {% for country in country_list %}
         <h3>{{ country.grouper }}</h3>
