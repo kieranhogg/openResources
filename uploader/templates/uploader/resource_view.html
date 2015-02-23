@@ -1,11 +1,25 @@
 {% extends 'uploader/base.html' %}
 {% load static %}
 {% block body_block %}
-<h2>{{ resource.title }}</h2>
+
+<!-- FIXME all this sucky conditional stuff should be in the view -->
+<h2>
+    {% if resource.file %}
+        {{ resource.file.title }}
+    {% else %}
+        {{ resource.bookmark.title }}
+    {% endif %}
+</h2>
 <div id="resource_details">
     <div id="syllabus">Suitable for: <strong>{{ resource.syllabus }}</strong></div>
     <div id="rating">{{ rating }}</div>
-    <div id="uploader">{{ resource.uploader }}</div>
+    <div id="uploader">
+        {% if resource.file %}
+            {{ resource.file.uploader }}
+        {% else %}
+            {{ resource.bookmark.uploader }}
+        {% endif %}
+    </div>
     <div id="topics">
         {% if resource.topics.all %}
         <p>Topics: 
@@ -20,29 +34,31 @@
     </div>
 </div>
 <!--<hr />-->
-<div id="description">{{ resource.description }}</div>
+<div id="description">
+    {% if resource.file %}
+        {{ resource.file.description }}
+    {% else %}
+        {{ resource.bookmark.description }}
+    {% endif %}
+</div>
 
-
-<div id="author">Resource created by <a href="{{ resource.author_link }}">{{ resource.author }}</a> under 
-<a href="{{ resource.licence.link }}">{{ resource.licence }} licence</a></div>
+{% if resource.file %}
+    <div id="author">Resource created by 
+    {% if resource.file.author == 'me' %}
+    <a href="{{ resource.file.author_link }}">{{ resource.file.uploader }}</a>
+    {% endif %}
+    under 
+    <a href="{{ resource.licence.link }}">{{ resource.file.licence }} licence</a></div>
+{% endif %}
 <div id="published">Uploaded {{ resource.pub_date }}</div>
 
 <div class="action">
     {% if resource.file %}
-    <!--<div id="attachment_icon">
-        <img src="{% static 'uploader/filetypes/application_vnd.openxmlformats-officedocument.presentationml.presentation.png' %}" />
-    </div>-->
     <a href='{{ MEDIA_URL }}{{ resource.file.file }}'>Download</a>
-    {{ MEDIA_URL }}
-    {% elif resource.link %}
-    <div id="link">
-        <a href='{{ resource.link }}'>
-            <img src="{% static 'uploader/img/' %}Link-32.png" />
-            Open link
-        </a>
-    </div>
     {% else %}
-    Something has gone terribly wrong
+        <div id="link">
+            <a href='{{ resource.bookmark.link }}'>Open link</a>
+        </div>
     {% endif %}
 </div>
 {% endblock %}

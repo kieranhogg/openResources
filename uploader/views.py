@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext, loader
 from uploader.models import (Subject, ExamLevel, Syllabus, Resource, Unit, File, 
     Rating, UnitTopic, Message)
-from uploader.forms import ResourceStageOneForm, ResourceStageTwoForm
+from uploader.forms import BookmarkStageOneForm, FileStageOneForm, ResourceStageTwoForm
 from django.core.urlresolvers import reverse
 from django.forms.models import modelformset_factory
 from django.contrib import messages
@@ -64,7 +64,8 @@ def unit(request, unit_id, slug=None):
     return render(request, 'uploader/unit.html', context)
     
 def unit_topic(request, unit_topic_id, slug = None):
-    resources = Resource.objects.filter(unittopic__id = unit_topic_id)
+    _unit_topic_id = unit_topic_id
+    resources = Resource.objects.filter(unit_topic_id = _unit_topic_id)
     unit_topic = get_object_or_404(UnitTopic, pk=unit_topic_id)
     context = {
         'resources': resources, 
@@ -129,70 +130,67 @@ def profile(request, user_id=None):
     else:
         return HttpResponse("User profile")
         
-def new_resource(request):
-    form = ResourceStageOneForm(
+def add_file(request):
+    form = FileStageOneForm(
         request.POST or None, 
         request.FILES or None,
-        label_suffix=''
+        label_suffix='',
+        initial={'uploader': request.user}
+    )
+    
+    # If we've received a submitted form
+    if request.method == 'POST' and form.is_valid():
+        file = form.save(commit=False)
+        
+        # set excluded fields
+        file.filesize = request.FILES['file'].size
+        file.filename = request.FILES['file'].name
+        file.mimetype = request.FILES['file'].content_type
+        file.uploader = request.user
+
+        _file = form.save()
+
+        # save the file_id in session to pass to the next stage
+        # TODO is there a cleaner way than this?
+        # we run the risk of orphaned files without resources
+        request.session['_file_id'] = _file.id
+        return HttpResponseRedirect('stage_two')
+    else:
+        return render(request, "uploader/resource_add_file.html", {'form': form})
+
+def add_bookmark(request):
+    form = BookmarkStageOneForm(
+        request.POST or None, 
+        label_suffix='',
+        initial={'uploader': request.user}
     )
     
     # If we've received a submitted form
     if request.method == 'POST':
-        
-        # if we have both
-        if len(request.POST.get('link')) > 0 and request.FILES.get('file') != None:
-            form.add_error(None, "You must either add a link or a file, " + 
-                "not both")
-            return render(
-                request, 
-                "uploader/resource_add.html", 
-                {'form': form}
-            )
-        
-        # if there's just a file
-        elif request.FILES.get('file') != None:
-            # process file
-            file = request.FILES['file']
-            new_file = File(
-                file=request.FILES['file'], 
-                filename=file.name,
-                mimetype=file.content_type,
-                filesize=file.size
-            )
-            new_file.save()
-            
-            # save the file_id in session to pass to the next stage
-            # TODO is there a cleaner way than this?
-            # we run the risk of orphaned files without resources
-            request.session['_file_id'] = new_file.id
+        if form.is_valid():
+            bookmark = form.save(commit=True)
+            request.session['_bookmark_id'] = bookmark.id
             return HttpResponseRedirect('stage_two')
-
-    
-        # if there's just a link
-        # FIXME for reason link is getting set but to blank,
-        # == None is False, == "" is False so we're checking length as a hack
-        elif len(request.POST.get('link')) > 0:
-            request.session['_link'] = request.POST['link']
-            return HttpResponseRedirect('stage_two')
-
-        # neither
         else:
-            form.add_error(None, "You must either add a link or a file")
             return render(
                 request, 
-                "uploader/resource_add.html", 
+                "uploader/resource_add_bookmark.html", 
                 {'form': form}
             )
         
     # no form submitted, show form
     else:
-        return render(request, "uploader/resource_add.html", {'form': form})
+        return render(request, "uploader/resource_add_bookmark.html", {'form': form})
+
+
+def add_resource(request):
+    return render(request, "uploader/resource_add.html")
 
     
-def new_resource_stage_two(request):
+def add_resource_stage_two(request):
     
     # get the link or file
-    link = request.session.get('_link')
+    bookmark_id = request.session.get('_bookmark_id')
     file_id = request.session.get('_file_id')
     
     request.session['_link'] = None
@@ -203,7 +201,7 @@ def new_resource_stage_two(request):
         request.POST or None, 
         request.FILES or None,
         initial={
-            'link': link, 
+            'bookmark': bookmark_id, 
             'file': file_id, 
             'uploader': request.user
         },

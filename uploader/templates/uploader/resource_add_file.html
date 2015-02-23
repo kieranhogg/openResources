@@ -1,0 +1,22 @@
+{% extends 'uploader/base.html' %}
+{% block body_block %}
+<h2>Add Resource</h2>
+{% if form.non_field_errors %}
+    <div class="error">
+    {% for error in form.non_field_errors %}
+        {{error}}
+    {% endfor %}
+    </div>
+{% endif %}
+
+<p>If you are not logged in, your resource will wait to be approved. To skip 
+this in future, please register and log in first.</p>
+{% if form.non_field_errors %}
+{% endif %}
+
+<form enctype="multipart/form-data" action method="post" novalidate>
+    {% csrf_token %}  
+    {{ form }}
+<br /><input type="submit" value="Next">
+</form>
+{% endblock %}

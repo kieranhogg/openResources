@@ -1,23 +1,32 @@
 from django import forms
 from django.conf import settings
-from uploader.models import Resource
+from uploader.models import Resource, Bookmark, File
 
 
-class ResourceStageOneForm(forms.Form):
-    file = forms.FileField(required=False)
-    link = forms.CharField(required=False)
-    
+class BookmarkStageOneForm(forms.ModelForm):
     class Meta:
-        model = Resource
+        model = Bookmark
+        exclude = ('approved',)
+        widgets = {
+            'description': forms.Textarea(),
+            'uploader': forms.HiddenInput(),
+        }
     
+ 
+class FileStageOneForm(forms.ModelForm):
+    class Meta:
+        model = File
+        exclude = ('approved', 'uploader', 'mimetype', 'filesize', 'filename', 
+            'date_pub')
+        widgets = {'description': forms.Textarea()}
+       
         
 class ResourceStageTwoForm(forms.ModelForm):
-
     class Meta:
         model = Resource
         exclude = ('approved',)
         widgets = {
-            'link': forms.HiddenInput(),
+            'bookmark': forms.HiddenInput(),
             'file': forms.HiddenInput(),
             'uploader': forms.HiddenInput(),
         }

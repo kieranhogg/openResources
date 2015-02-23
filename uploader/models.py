@@ -195,10 +195,43 @@ class LicenceAdmin(admin.ModelAdmin):
     
       
 class File(models.Model):
+    PRESENTATION = 1
+    LESSON_PLAN = 2
+    SOW = 3
+
+    FILE_TYPES = (
+        (PRESENTATION, 'A lesson presentation'),
+        (LESSON_PLAN, 'A lesson plan'),
+        (SOW, 'A scheme of work'),
+    )
+    title = models.CharField(max_length=200)
     filename = models.CharField(max_length=200)
     file = models.FileField()
     mimetype = models.CharField(max_length=200)
     filesize = models.IntegerField()
+    description = models.TextField('Description', null=True)
+    type = models.IntegerField(max_length=2, default=1, choices=FILE_TYPES)
+    uploader = models.ForeignKey(settings.AUTH_USER_MODEL)
+    author = models.CharField(
+        max_length=200, 
+        null=True,
+        help_text='Who is the original author? E.g. John Smith. If you are ' + 
+            'the author, write "me"'
+    )
+    author_link = models.CharField(
+        max_length=200, 
+        blank=True,
+        null=True, 
+        help_text='A URL or email to credit the original author. If it is ' +
+            'you, leave blank'
+    )
+    licence = models.ForeignKey(
+        Licence, 
+        null=True, 
+        help_text=mark_safe('<a href="uploader/licences/">Help with the ' + 
+            'licences</a>')
+    )
+    topics = models.ManyToManyField(Topic, null=True, blank=True)
     pub_date = models.DateTimeField(
         'Date published', 
         auto_now_add=True, 
@@ -216,40 +249,31 @@ class FileAdmin(admin.ModelAdmin):
     list_display = ('filename', 'file', 'mimetype', 'filesize', 'pub_date') 
 
 
-class Resource(models.Model):
-    PRESENTATION = 1
-    LESSON_PLAN = 2
-    SOW = 3
-    WEBPAGE = 4
-    VIDEO = 5
-
-    RESOURCE_TYPES = (
-        (PRESENTATION, 'A lesson presentation'),
-        (LESSON_PLAN, 'A lesson plan'),
-        (SOW, 'A scheme of work'),
-        (WEBPAGE, 'A link to a webpage'),
-        (VIDEO, 'A link to a video'),
-    )
-    
+class Bookmark(models.Model):
     title = models.CharField(max_length=200)
+    link = models.CharField(max_length=400)
     description = models.TextField('Description', null=True)
-    file = models.ForeignKey(File, blank=True, null=True)
-    link = models.CharField(max_length=400, blank=True, null=True)
-    type = models.IntegerField(max_length=2, default=1, choices=RESOURCE_TYPES)
     uploader = models.ForeignKey(settings.AUTH_USER_MODEL)
-    author = models.CharField(
-        max_length=200, 
-        null=True,
-        help_text='Who is the original author? E.g. John Smith. If you are ' + 
-            'the author, write "me"'
+    pub_date = models.DateTimeField(
+        'Date published', 
+        auto_now_add=True, 
+        blank=True
     )
-    author_link = models.CharField(
-        max_length=200, 
-        blank=True,
-        null=True, 
-        help_text='A URL or email to credit the original author. If it is ' +
-            'you, leave blank'
-    )
+        
+    def __unicode__(self):
+        return self.title
+        
+    class Meta:
+        ordering = ('-pub_date',)
+    
+
+class BookmarkAdmin(admin.ModelAdmin):
+    list_display = ('title', 'link', 'uploader', 'pub_date')
+
+class Resource(models.Model):
+    file = models.ForeignKey(File, blank=True, null=True)
+    bookmark = models.ForeignKey(Bookmark, blank=True, null=True)
+    uploader = models.ForeignKey(settings.AUTH_USER_MODEL)
     #Don't really need but its for the forms, FIXME?
     subject = models.ForeignKey(Subject)
     syllabus = models.ForeignKey(Syllabus)
@@ -259,14 +283,6 @@ class Resource(models.Model):
         null=True, 
         blank=True, 
     )
-    topics = models.ManyToManyField(Topic, null=True, blank=True)
-    licence = models.ForeignKey(
-        Licence, 
-        null=True, 
-        help_text=mark_safe('<a href="uploader/licences/">Help with the ' + 
-            'licences</a>')
-        )
-
     approved = models.BooleanField(default=False)
     pub_date = models.DateTimeField(
         'Date published', 
@@ -275,16 +291,18 @@ class Resource(models.Model):
     )
     
     def __unicode__(self):
-       return str(self.title)
+        if self.file is not None:
+            return str(self.file.title)
+        else:
+            return str(self.bookmark.title)
        
     class Meta:
         ordering = ('-pub_date',)
         
  
 class ResourceAdmin(admin.ModelAdmin):
-    list_display = ('title', 'description', 'file', 'link', 'type', 'uploader',
-        'author', 'author_link', 'subject', 'syllabus', 'unit', 'unit_topic', 
-        'licence', 'approved', 'pub_date') 
+    list_display = ('file', 'bookmark', 'uploader', 'subject', 'syllabus', 'unit', 
+        'unit_topic', 'approved', 'pub_date') 
        
 
 class Rating(models.Model):

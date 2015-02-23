@@ -27,7 +27,11 @@
 {% if resources %}
 <ul>
 {% for resource in resources %}
-          <li><a href="{% url 'uploader:resource' resource.id resource.title|slugify %}">{{ resource.title }}</a></li> 
+    {% if resource.bookmark %}
+        <li><a href="{% url 'uploader:resource' resource.id resource.bookmark.title|slugify %}">{{ resource }}</a></li>
+    {% else %}
+        <li><a href="{% url 'uploader:resource' resource.id resource.file.title|slugify %}">{{ resource }}</a></li>
+    {% endif %}
 {% endfor %}
 </ul>
 {% else %}
