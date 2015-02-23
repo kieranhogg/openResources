@@ -3,19 +3,19 @@ from uploader.models import *
 
 
 # Register your models here.
-admin.site.register(Syllabus)
-admin.site.register(ExamBoard)
-admin.site.register(ExamLevel)
-admin.site.register(Subject)
-admin.site.register(Resource)
-admin.site.register(Unit)
-admin.site.register(UnitTopic)
-admin.site.register(Topic)
-admin.site.register(Licence)
-admin.site.register(File)
-admin.site.register(Rating)
-admin.site.register(UserProfile)
-admin.site.register(Message)
+admin.site.register(Syllabus, SyllabusAdmin)
+admin.site.register(ExamBoard, ExamBoardAdmin)
+admin.site.register(ExamLevel, ExamLevelAdmin)
+admin.site.register(Subject, SubjectAdmin)
+admin.site.register(Resource, ResourceAdmin)
+admin.site.register(Unit, UnitAdmin)
+admin.site.register(UnitTopic, UnitTopicAdmin)
+admin.site.register(Topic, TopicAdmin)
+admin.site.register(Licence, LicenceAdmin)
+admin.site.register(File, FileAdmin)
+admin.site.register(Rating, RatingAdmin)
+admin.site.register(UserProfile, UserProfileAdmin)
+admin.site.register(Message, MessageAdmin)
 
 
 
