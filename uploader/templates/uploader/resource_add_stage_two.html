@@ -36,6 +36,10 @@ this in future, please register and log in first.</p>
     </div>
     {% endfor %}
     
-<br /><input type="submit" value="Next">
+    {% for field in form.hidden_fields %}
+        {{ field }}
+    {% endfor %}
+    
+<br /><input type="submit" value="Save">
 </form>
 {% endblock %}
