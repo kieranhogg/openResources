@@ -238,3 +238,19 @@ def get_syllabuses(request, subject_id):
     for syllabus in syllabuses:
         syllabuses_dict[syllabus.id] = str(syllabus)
     return JsonResponse(syllabuses_dict)
+    
+def get_units(request, syllabus_id):
+    syllabus = Syllabus.objects.get(pk=syllabus_id)
+    units = Unit.objects.filter(syllabus=syllabus)
+    units_dict = {}
+    for unit in units:
+        units_dict[unit.id] = str(unit)
+    return JsonResponse(units_dict)
+    
+def get_unit_topics(request, unit_id):
+    unit = Unit.objects.get(pk=unit_id)
+    unit_topics = UnitTopic.objects.filter(unit=unit)
+    unit_topics_dict = {}
+    for unit_topic in unit_topics:
+        unit_topics_dict[unit_topic.id] = str(unit_topic)
+    return JsonResponse(unit_topics_dict)

@@ -8,6 +8,8 @@ from uploader import views
 urlpatterns = patterns('',
     url(r'^$', views.index, name='index'),
     url(r'lookup/syllabus/(?P<subject_id>\d+)/$', views.get_syllabuses, name='get_syllabuses'),
+    url(r'lookup/unit/(?P<syllabus_id>\d+)/$', views.get_units, name='get_units'),
+    url(r'lookup/unit_topic/(?P<unit_id>\d+)/$', views.get_unit_topics, name='get_unit_topics'),
 
     url(r'subject/(?P<subject_id>\d+)/$', views.subject, name='subject'),
     url(r'subject/(?P<subject_id>\d+)/(?P<slug>[-\w]+)/$', views.subject, name='subject'),
