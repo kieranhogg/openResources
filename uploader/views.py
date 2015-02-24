@@ -14,11 +14,15 @@ from django.contrib import messages
 # Homepage view, shows subjects
 def index(request):
     subjects = Subject.objects.filter(active=1)
-    # get messages
-    messages = Message.objects.filter()
+    
+    # get messages TODO use constants
+    user_messages = Message.objects.filter(user_to=request.user)
+    announce_messages = Message.objects.filter(type=2)
+    sticky_messages = Message.objects.filter(type=3)
+
     context = {
         'subjects': subjects,
-        'messages': messages
+        'user_messages': user_messages | announce_messages | sticky_messages
     }
     return render(request, 'uploader/index.html', context)
 

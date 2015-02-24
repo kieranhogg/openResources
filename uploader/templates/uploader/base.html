@@ -55,8 +55,8 @@
         </ul>
     </div>
     <div id="content">
-        {% if messages %}
-            {% for message in messages %}
+        {% if user_messages %}
+            {% for message in user_messages %}
                 <div class="{{ message.get_type_display }}">
                 {% if message.get_type_display == "Sticky" %}
                     {{ message|safe }}
@@ -70,6 +70,15 @@
                 </div>
             {% endfor %}
         {% endif %}
+        
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        
         {% block body_block %}{% endblock %}
     </div>
     <div id="footer">
