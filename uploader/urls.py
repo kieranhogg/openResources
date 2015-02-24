@@ -30,7 +30,10 @@ urlpatterns = patterns('',
     url(r'resource/(?P<resource_id>\d+)/$', views.resource, name='resource'),
     url(r'profile/$', views.profile, name='profile'),
     url(r'profile/(?P<user_id>\d+)/$', views.profile, name='profile'),
+    url(r'profile/resources/$', views.user_resources, name='user_resources'),
     url(r'lookup/syllabus/(?P<subject_id>\d+)/$', views.get_syllabuses, name='get_syllabuses'),
+    url(r'leaderboard/$', views.leaderboard, name='leaderboard'),
+    url(r'rate/(?P<resource_id>\d+)/(?P<rating>\d+)/$', views.rate, name='rate'),
     
     # static pages
     url(r'^about',

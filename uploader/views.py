@@ -9,6 +9,7 @@ from uploader.forms import (BookmarkStageOneForm, FileStageOneForm,
 from django.core.urlresolvers import reverse
 from django.forms.models import modelformset_factory
 from django.contrib import messages
+from django.db import IntegrityError
 
 
 # Homepage view, shows subjects
@@ -82,16 +83,23 @@ def unit_topic(request, unit_topic_id, slug = None):
 # A single resource view
 def resource(request, resource_id, slug=None):
     resource = get_object_or_404(Resource, pk=resource_id)
-    context = {'resource': resource, 'rating': get_resource_rating(resource_id)}
+    context = {
+        'resource': resource, 
+        'rating': get_resource_rating(resource_id),
+        'rating_val': get_resource_rating(resource_id, 'value')
+    }
     return render_to_response('uploader/resource_view.html', 
         context_instance=RequestContext(request, context))
 
 # Calculate a resource's rating
-def get_resource_rating(resource_id):
+def get_resource_rating(resource_id, use='display'):
     ratings = Rating.objects.filter(resource__id = resource_id)
     # TODO hide < a certain number too?
     if len(ratings) == 0:
-        return "No rating yet"
+        if use == 'values':
+            return 0
+        else:
+            return "No rating yet"
     else:
         total = 0
         count = 0
@@ -99,41 +107,7 @@ def get_resource_rating(resource_id):
             total = total + rating.rating
             count = count + 1
         return float(total) / float(count)
-    
-# def new_resource(request, syllabus_id):
-#     # must be logged in
-#     if not request.user.is_authenticated():
-#         return redirect('/accounts/login/?next=%s' % request.path)
-#     ResourceFormSet = modelformset_factory(Resource, ResourceForm)
-#     if (syllabus_id != -1):
-#         syllabus = get_object_or_404(Syllabus, pk=syllabus_id)
-#     else:
-#         syllabus = None
-#     if request.method == 'POST':
-#         formset = ResourceFormSet(request.POST, request.FILES)
-#         if formset.is_valid():
-#             formset.save(commit=True)
-#         else:
-#             context = {'form': formset}
-#     else:
-#         formset = ResourceFormSet(queryset=Resource.objects.none())
-#     context = {"formset": formset, 'syllabus': syllabus, 
-#             'url': request.path, 'syllabus_id': syllabus_id}
-#     return render(request, "uploader/new_resource.html", context)
 
-# TODO
-def profile(request, user_id=None):
-    # /profile/ and logged in
-    if user_id == None and request.user.is_authenticated():
-        user_id = request.user.id
-        return HttpResponse("Own profile")
-    # /profile/ and not logged in
-    elif user_id == None and not request.user.is_authenticated():
-        return HttpResponse("Not logged in")
-    # /profile/1
-    else:
-        return HttpResponse("User profile")
-        
 def add_file(request):
     form = FileStageOneForm(
         request.POST or None, 
@@ -232,6 +206,51 @@ def score_points(user, action):
     user_profile = UserProfile.objects.get(user = user.id)
     user_profile.score += points[action]
     user_profile.save()
+    
+    
+# TODO
+def profile(request, user_id=None):
+    # /profile/ and logged in
+    if user_id == None and request.user.is_authenticated():
+        user_id = request.user.id
+        #
+    # /profile/ and not logged in
+    elif user_id == None and not request.user.is_authenticated():
+        return HttpResponse("Not logged in")
+    # /profile/1
+    else:
+        True
+    return render(request, 'uploader/profile.html', {})
+        
+def user_resources(request, user_id=None):
+    resources = Resource.objects.filter(uploader=request.user)
+    
+    # TODO this could get slow if the user has a lot of resources, maybe store
+    # on the resource table after each rating?
+    for resource in resources:
+        resource.rating = get_resource_rating(resource.id)
+    return render(request, 'uploader/user_resources.html', {'resources': resources})
+    
+def leaderboard(request):
+    users = UserProfile.objects.filter().order_by('-score')[:10]
+    #resources = Resources.objects.filter().order_by('-rating')[:10]
+    context = {'users': users}
+    return render(request, 'uploader/leaderboard.html', context)
+    
+def rate(request, resource_id, rating):
+    if request.user.is_authenticated():
+        _rating = Rating()
+        _rating.user = request.user
+        _rating.resource = get_object_or_404(Resource, pk=resource_id)
+        _rating.rating = rating
+        
+        try:
+            _rating.save()
+        except IntegrityError as e:
+            # silently ignore duplicate votes
+            pass
+    
+    return HttpResponse('')
     
 # ajax views
 

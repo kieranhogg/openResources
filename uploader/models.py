@@ -315,9 +315,7 @@ class ResourceAdmin(admin.ModelAdmin):
             message_bit = "%s resources were" % rows_updated
         # FIXME message_user doesn't work
         self.message_user(request, "%s successfully approved." % message_bit)
-
-
-       
+        
 
 class Rating(models.Model):
     AWFUL = 0
@@ -346,6 +344,7 @@ class Rating(models.Model):
        
     class Meta:
         ordering = ('-pub_date',)
+        unique_together = ["user", "resource"]
    
  
 class RatingAdmin(admin.ModelAdmin):

@@ -212,7 +212,7 @@ left: 0;
     color: #333;
     padding: 20px 20px 40px 20px;
     overflow: auto;
-    width: 55%;
+    width: 75%;
     margin: 0 auto;
     min-height: 500px;
 }
@@ -268,6 +268,27 @@ left: 0;
 }
 .actions {
     margin: 15px 0;
+}
+/** rating */
+
+#rating {
+  unicode-bidi: bidi-override;
+  direction: rtl;
+  margin-left: 5px;
+}
+#rating > span {
+  display: inline-block;
+  position: relative;
+  width: 0.8em;
+}
+#rating > a:hover:before,
+#rating > a:hover ~ a:before {
+   content: "\2605";
+   position: absolute;
+}
+#rating a {
+    text-decoration:none;
+    color: black;
 }
 
 /** extra stuff */
@@ -380,8 +401,8 @@ th a.desc:after {
     content: ' ⇡';
 }
 table {
-    white-space: nowrap;
-    width: 1%;
+    /*white-space: nowrap;
+    width: 1%;*/
     border-collapse:collapse;
 }
 
@@ -645,6 +666,7 @@ p.error em {
     margin: 1em 0;
 }
 .success {
+    padding: 7px;
     background: green;
     color: #fff;
 }
