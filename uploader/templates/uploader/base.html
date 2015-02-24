@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-GB" lang="en-GB" prefix="og: http://ogp.me/ns#">
 <head>
 <script src="{% static 'js/jquery.js' %}"></script>
-<title>{{ SITE_NAME }}</title>
+<title>{{ SITE_NAME }} | {% block head_title %}{% endblock %}</title>
 <link rel="stylesheet" type="text/css" href="{% static 'uploader/style.css' %}" />
 </head>
 <body>
@@ -25,10 +25,12 @@
                     <span id='username'>{{ user.get_username }}</span>
                 </a>
                 <span id="score">({{ user.userprofile.score }})</span>
-                | <a href="/accounts/logout/">Logout</a>
+                | <a href="{% url 'account_logout' %}">Sign Out</a>
                 </p>
             {% else %}
-                <p>Not logged in | <a href="/accounts/login/">Login</a></p>
+                <p>Not logged in | 
+                <a href="{% url 'account_login' %}">Sign In</a> or 
+                <a href="{% url 'account_signup' %}">Sign Up</a></p>
             {% endif %}
                 </div>
         </div>
@@ -72,7 +74,6 @@
             {% endfor %}
         </ul>
         {% endif %}
-        
         {% block body_block %}{% endblock %}
     </div>
     <div id="footer">

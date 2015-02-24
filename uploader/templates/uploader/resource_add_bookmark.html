@@ -9,14 +9,16 @@
     </div>
 {% endif %}
 
+{% if not user.is_authenticated %}
 <p>If you are not logged in, your resource will wait to be approved. To skip 
 this in future, please register and log in first.</p>
+{% endif %}
 {% if form.non_field_errors %}
 {% endif %}
 
 <form action method="post" novalidate>
     {% csrf_token %}
-    {{ form }}
+    {{ form.as_p }}
     
 <br /><input type="submit" value="Next">
 </form>

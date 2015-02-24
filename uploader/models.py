@@ -225,8 +225,9 @@ class File(models.Model):
     )
     licence = models.ForeignKey(
         Licence, 
-        null=True, 
-        help_text=mark_safe('<a href="uploader/licences/">Help with the ' + 
+        null=True,
+        # FIXME hard-coded
+        help_text=mark_safe('<a href="/licences/">Help with the ' + 
             'licences</a>')
     )
     topics = models.ManyToManyField(Topic, null=True, blank=True)

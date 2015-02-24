@@ -56,12 +56,11 @@ h2 {
     /*color: #cc0000;*/
     font-size: 190%;
     text-align: center;
-    border-bottom: 1px solid #bdbdbd;
 }
 h3 {
     /*color: #cc0000;*/
 /* 	font-family:'Gill Sans','lucida grande', helvetica, arial, sans-serif; */
-    font-size: 165%;
+    font-size: 145%;
 }
 h4 {
     /*color: #993;*/
@@ -82,7 +81,7 @@ ul, li {
 #subjects li {
         text-align: center;
         padding: 5px;
-        width: 368px;
+        width: 300px;
         min-height: 150px;
         /*border: 1px solid #000;*/
         display: -moz-inline-stack;
@@ -545,7 +544,6 @@ label {
 input, textarea {
     clear: both;
     font-size: 140%;
-/* 	font-family: "frutiger linotype", "lucida grande", "verdana", sans-serif; */
     padding: 1%;
     width:98%;
 }

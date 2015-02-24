@@ -65,10 +65,11 @@ INSTALLED_APPS = (
     'jquery',
     # ... include the providers you want to enable:
     #'allauth.socialaccount.providers.facebook',
-    #'allauth.socialaccount.providers.github',
-    #'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.github',
+    'allauth.socialaccount.providers.google',
     #'allauth.socialaccount.providers.stackexchange',
-    #   'allauth.socialaccount.providers.twitter',
+    'allauth.socialaccount.providers.twitter',
+    'allauth.socialaccount.providers.openid',
 )
 # Allauth
 SITE_ID = 1
@@ -79,6 +80,7 @@ REGISTRATION_AUTO_LOGIN = True  # If True, the user will be automatically logged
 LOGIN_REDIRECT_URL = '/uploader/'  # The page you want users to arrive at after they successful log in
 LOGIN_URL = '/accounts/login/'  # The page users are directed to if they are not logged in,
                                                                 # and are trying to access pages requiring authentication
+
 TASK_UPLOAD_FILE_TYPES = ['pdf', 'vnd.oasis.opendocument.text','vnd.ms-excel','msword','application',]
 TASK_UPLOAD_FILE_MAX_SIZE = "5242880"
 

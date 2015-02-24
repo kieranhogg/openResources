@@ -13,6 +13,7 @@ from django.db import IntegrityError
 from django.contrib.auth.models import User
 
 
+
 # Homepage view, shows subjects
 def index(request):
     subjects = Subject.objects.filter(active=1)

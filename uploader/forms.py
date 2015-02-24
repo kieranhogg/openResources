@@ -4,6 +4,7 @@ from uploader.models import (Resource, Bookmark, File, Subject, Syllabus, Unit,
     UnitTopic)
 
 
+
 class BookmarkStageOneForm(forms.ModelForm):
     class Meta:
         model = Bookmark
@@ -18,9 +19,9 @@ class FileStageOneForm(forms.ModelForm):
     class Meta:
         model = File
         exclude = ('approved', 'uploader', 'mimetype', 'filesize', 'filename', 
-            'date_pub')
+            'date_pub', 'topics')
         widgets = {'description': forms.Textarea()}
-       
+
         
 class ResourceStageTwoForm(forms.ModelForm):
     syllabus = forms.ModelChoiceField(queryset=Syllabus.objects.none())

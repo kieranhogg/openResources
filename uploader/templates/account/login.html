@@ -1,4 +1,4 @@
-{% extends "account/base.html" %}
+{% extends "uploader/base.html" %}
 
 {% load i18n %}
 {% load account %}
@@ -6,9 +6,9 @@
 
 {% block head_title %}{% trans "Sign In" %}{% endblock %}
 
-{% block content %}
+{% block body_block %}
 
-<h1>{% trans "Sign In" %}</h1>
+<h2>{% trans "Sign In" %}</h2>
 
 {% if socialaccount.providers  %}
 <p>{% blocktrans with site.name as site_name %}Please sign in with one
