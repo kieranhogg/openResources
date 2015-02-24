@@ -3,7 +3,7 @@ from django.shortcuts import (render, get_object_or_404, get_list_or_404,
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.template import RequestContext, loader
 from uploader.models import (Subject, ExamLevel, Syllabus, Resource, Unit, File, 
-    Rating, UnitTopic, Message, UserProfile)
+    Rating, UnitTopic, Message, UserProfile, Licence)
 from uploader.forms import (BookmarkStageOneForm, FileStageOneForm, 
     ResourceStageTwoForm)
 from django.core.urlresolvers import reverse
@@ -11,7 +11,6 @@ from django.forms.models import modelformset_factory
 from django.contrib import messages
 from django.db import IntegrityError
 from django.contrib.auth.models import User
-
 
 
 # Homepage view, shows subjects
@@ -259,20 +258,9 @@ def leaderboard(request):
         
     return render(request, 'uploader/leaderboard.html', context)
     
-def rate(request, resource_id, rating):
-    if request.user.is_authenticated():
-        _rating = Rating()
-        _rating.user = request.user
-        _rating.resource = get_object_or_404(Resource, pk=resource_id)
-        _rating.rating = rating
-        
-        try:
-            _rating.save()
-        except IntegrityError as e:
-            # silently ignore duplicate votes
-            pass
-    
-    return HttpResponse('')
+def licences(request):
+    context = {'licences': Licence.objects.all()}
+    return render(request, 'uploader/licences.html', context)
     
 # ajax views
 
@@ -299,3 +287,18 @@ def get_unit_topics(request, unit_id):
     for unit_topic in unit_topics:
         unit_topics_dict[unit_topic.id] = str(unit_topic)
     return JsonResponse(unit_topics_dict)
+    
+def rate(request, resource_id, rating):
+    if request.user.is_authenticated():
+        _rating = Rating()
+        _rating.user = request.user
+        _rating.resource = get_object_or_404(Resource, pk=resource_id)
+        _rating.rating = rating
+        
+        try:
+            _rating.save()
+        except IntegrityError as e:
+            # silently ignore duplicate votes
+            pass
+    
+    return HttpResponse('')

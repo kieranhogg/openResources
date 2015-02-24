@@ -10,7 +10,6 @@ urlpatterns = patterns('',
     url(r'lookup/syllabus/(?P<subject_id>\d+)/$', views.get_syllabuses, name='get_syllabuses'),
     url(r'lookup/unit/(?P<syllabus_id>\d+)/$', views.get_units, name='get_units'),
     url(r'lookup/unit_topic/(?P<unit_id>\d+)/$', views.get_unit_topics, name='get_unit_topics'),
-
     url(r'subject/(?P<subject_id>\d+)/$', views.subject, name='subject'),
     url(r'subject/(?P<subject_id>\d+)/(?P<slug>[-\w]+)/$', views.subject, name='subject'),
     url(r'subject/(?P<subject_id>\d+)/exam_level/(?P<exam_level_id>\d+)/$', views.syllabuses, name='syllabuses'),
@@ -34,9 +33,13 @@ urlpatterns = patterns('',
     url(r'lookup/syllabus/(?P<subject_id>\d+)/$', views.get_syllabuses, name='get_syllabuses'),
     url(r'leaderboard/$', views.leaderboard, name='leaderboard'),
     url(r'rate/(?P<resource_id>\d+)/(?P<rating>\d+)/$', views.rate, name='rate'),
-    
+    url(r'licences/$', views.licences, name='licences'),
+
     # static pages
     url(r'^about',
     TemplateView.as_view(template_name='uploader/about.html'),
     name='about'),
+    url(r'^contact',
+    TemplateView.as_view(template_name='uploader/contact.html'),
+    name='contact'),
 ) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

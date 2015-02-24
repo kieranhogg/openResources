@@ -227,8 +227,12 @@ class File(models.Model):
         Licence, 
         null=True,
         # FIXME hard-coded
-        help_text=mark_safe('<a href="/licences/">Help with the ' + 
-            'licences</a>')
+        help_text=mark_safe(
+            '<br />When submitting your work, you need to choose how you ' +
+            'want people to use it. If submitting others\', you must respect ' +
+            'any existing licences. (<strong>Attribution-NonCommercial-' +
+            'ShareAlike</strong> is a safe bet for new resources) ' +
+            '<a href="/licences/">Still unsure?</a> ')
     )
     topics = models.ManyToManyField(Topic, null=True, blank=True)
     pub_date = models.DateTimeField(

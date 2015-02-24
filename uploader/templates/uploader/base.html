@@ -44,7 +44,7 @@
             <li><a href="{% url 'uploader:add_resource' %}">Submit Resource</a></li>
             <li><a href="{% url 'uploader:leaderboard' %}">Leaderboard</a></li>
             <li><a href="{% url 'uploader:about' %}">About</a></li>
-            <li><a>Contact</a></li>
+            <li><a href="{% url 'uploader:contact' %}">Contact</a></li>
             {% if user.is_superuser or user.is_staff %}
             <li id="admin_button"><a href="/admin/">Admin</a></li>
             {% endif %}

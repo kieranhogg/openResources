@@ -61,7 +61,7 @@ INSTALLED_APPS = (
     'bootstrap3',
     'allauth',
     'allauth.account',
-    'allauth.socialaccount',
+    #'allauth.socialaccount',
     'jquery',
     # ... include the providers you want to enable:
     #'allauth.socialaccount.providers.facebook',

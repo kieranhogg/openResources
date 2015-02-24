@@ -1,0 +1,6 @@
+INSTALL
+
+POST-INSTALL
+
+* Currently an issue with Django 1.7 and all-auth, patch:
+    https://github.com/pennersr/django-allauth/issues/749#issuecomment-75320145
