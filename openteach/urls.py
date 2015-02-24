@@ -7,5 +7,5 @@ urlpatterns = patterns('',
     
     url(r'^uploader/', include('uploader.urls', namespace="uploader")),
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^accounts/', include('allauth.urls', namespace="accounts")),
+    url(r'^accounts/', include('allauth.urls')),
 )
