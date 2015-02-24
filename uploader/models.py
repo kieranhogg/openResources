@@ -352,7 +352,7 @@ class RatingAdmin(admin.ModelAdmin):
 
   
 class UserProfile(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL)
     score = models.IntegerField(default=0)
     
     def __unicode__(self):
