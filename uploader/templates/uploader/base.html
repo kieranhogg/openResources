@@ -7,9 +7,6 @@
 <script src="{% static 'js/jquery.js' %}"></script>
 <title>{{ SITE_NAME }}</title>
 <link rel="stylesheet" type="text/css" href="{% static 'uploader/style.css' %}" />
-
-
-
 </head>
 <body>
 <div id="container">
@@ -46,7 +43,7 @@
         <ul>
             <li><a href="/uploader/">Home</a></li>
             <li><a href="{% url 'uploader:add_resource' %}">Submit Resource</a></li>
-            <li><a>Leaderboard</a></li>
+            <li><a href="{% url 'uploader:leaderboard' %}">Leaderboard</a></li>
             <li><a href="{% url 'uploader:about' %}">About</a></li>
             <li><a>Contact</a></li>
             {% if user.is_superuser or user.is_staff %}
@@ -69,6 +66,8 @@
                 {% endif %}
                 </div>
             {% endfor %}
+        {% else %}
+        No messages here
         {% endif %}
         
         {% if messages %}

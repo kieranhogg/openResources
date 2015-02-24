@@ -1,0 +1,19 @@
+{% extends 'uploader/base.html' %}
+{% block body_block %}
+<h2>Leaderboards</h2>
+<h3>Users</h3>
+<table>
+    <tr>
+        <th>Username</th>
+        <th>Score</th>
+    </tr>
+    {% for user in users %}
+    <tr> 
+        <td>{{ user }}</td>
+        <td>{{ user.score }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h3>Resources</h3>
+{% endblock %}

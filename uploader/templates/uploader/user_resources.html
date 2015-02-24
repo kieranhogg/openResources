@@ -1,0 +1,28 @@
+{% extends 'uploader/base.html' %}
+{% block body_block %}
+<h2>Your Resources</h2>
+<table>
+    <tr>
+        <th>Title</th>
+        <th>Rating</th>
+        <th>Subject</th>
+        <th>Syllabus</th>
+        <th>Unit</th>
+        <th>Unit Topic</th>
+        <th>Actions</th>
+    </tr>
+    {% for resource in resources %}
+    <tr> 
+        <td>{{ resource }}</td>
+        <td>{{ resource.rating }}</td></t>
+        <td>{{ resource.subject }}</td>
+        <td>{{ resource.syllabus }}</td>
+        <td>{{ resource.unit }}</td>
+        <td>{{ resource.unit_topic }}</td>
+        <td class="actions">
+            <a href="{% url 'uploader:resource' resource.id resource|slugify %}">View</a>
+            <a>Link to...</a></td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
