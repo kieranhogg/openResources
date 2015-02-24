@@ -10,6 +10,7 @@ from django.core.urlresolvers import reverse
 from django.forms.models import modelformset_factory
 from django.contrib import messages
 from django.db import IntegrityError
+from django.contrib.auth.models import User
 
 
 # Homepage view, shows subjects
@@ -232,9 +233,29 @@ def user_resources(request, user_id=None):
     return render(request, 'uploader/user_resources.html', {'resources': resources})
     
 def leaderboard(request):
-    users = UserProfile.objects.filter().order_by('-score')[:10]
-    #resources = Resources.objects.filter().order_by('-rating')[:10]
-    context = {'users': users}
+    context = {}
+    
+    # check if we have enough users yet...
+    user_count = User.objects.count()
+
+    if user_count >= 10:
+        users = User.objects.filter().order_by('-userprofile__score')[:10]
+        for user in users:
+            user.resource_count = Resource.objects.filter(uploader=user).count()
+            user.rating_count = Rating.objects.filter(user=user).count()
+        context = {'users': users}
+    
+    resource_count = Rating.objects.count()
+    # assumes ratings are mostly unique
+    if resource_count >= 10: 
+        
+        resources = Resource.objects.filter().order_by('-rating')[:10]
+        
+        for resource in resources:
+            resource.rating = get_resource_rating(resource.id)
+        
+        context['resources'] = resources
+        
     return render(request, 'uploader/leaderboard.html', context)
     
 def rate(request, resource_id, rating):

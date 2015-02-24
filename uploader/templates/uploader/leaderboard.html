@@ -2,18 +2,52 @@
 {% block body_block %}
 <h2>Leaderboards</h2>
 <h3>Users</h3>
-<table>
-    <tr>
-        <th>Username</th>
-        <th>Score</th>
-    </tr>
-    {% for user in users %}
-    <tr> 
-        <td>{{ user }}</td>
-        <td>{{ user.score }}</td>
-    </tr>
-    {% endfor %}
-</table>
+{% if users %}
+    <table>
+        <tr>
+            <th>Username</th>
+            <th>Score</th>
+            <th># of Resources</th>
+            <th># of Votes</th>
+            <th>Member since</th>
+        </tr>
+        {% for user in users %}
+        <tr> 
+            <td>{{ user }}</td>
+            <td>{{ user.userprofile.score }}</td>
+            <td>{{ user.resource_count }}</td>
+            <td>{{ user.rating_count }}</td>
+            <td>{{ user.date_joined.date }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <p>Coming soon.</p>
+{% endif %}
 
 <h3>Resources</h3>
+{% if resources %}
+    <table>
+        <tr>
+            <th>Title</th>
+            <th>Rating</th>
+            <th>Subject</th>
+            <th>Syllabus</th>
+            <th>Unit</th>
+            <th>Unit Topic</th>
+        </tr>
+        {% for resource in resources %}
+        <tr> 
+            <td>{{ resource }}</td>
+            <td>{{ resource.rating }}</td></t>
+            <td>{{ resource.subject }}</td>
+            <td>{{ resource.syllabus }}</td>
+            <td>{{ resource.unit }}</td>
+            <td>{{ resource.unit_topic }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <p>Coming soon.</p>
+{% endif %}
 {% endblock %}
