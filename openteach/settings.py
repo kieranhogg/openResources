@@ -21,8 +21,12 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     # allauth specific context processors
     "allauth.account.context_processors.account",
     "allauth.socialaccount.context_processors.socialaccount",
-    'openteach.context_processors.global_settings'
+    'openteach.context_processors.global_settings',
+    "django.core.context_processors.media",
+    "django.core.context_processors.static",
 )
+
+    
 
 AUTHENTICATION_BACKENDS = (
     # Needed to login by username in Django admin, regardless of `allauth`
