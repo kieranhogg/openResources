@@ -7,6 +7,7 @@ from django.db.models.signals import pre_delete
 from django.dispatch.dispatcher import receiver
 from django.utils.safestring import mark_safe
 from django.contrib.auth.models import AbstractUser
+from django.contrib import messages
 
 
 class Subject(models.Model):
@@ -277,7 +278,7 @@ class Resource(models.Model):
     #Don't really need but its for the forms, FIXME?
     subject = models.ForeignKey(Subject)
     syllabus = models.ForeignKey(Syllabus)
-    unit = models.ForeignKey(Unit,  null=True, blank=True)
+    unit = models.ForeignKey(Unit, null=True, blank=True)
     unit_topic = models.ForeignKey(
         UnitTopic, 
         null=True, 
@@ -303,6 +304,19 @@ class Resource(models.Model):
 class ResourceAdmin(admin.ModelAdmin):
     list_display = ('file', 'bookmark', 'uploader', 'subject', 'syllabus', 'unit', 
         'unit_topic', 'approved', 'pub_date') 
+    list_filter = ('approved',)
+    actions = ['approve']
+    
+    def approve(self, request, queryset):
+        rows_updated = queryset.update(approved=True)
+        if rows_updated == 1:
+            message_bit = "1 resource was"
+        else:
+            message_bit = "%s resources were" % rows_updated
+        # FIXME message_user doesn't work
+        self.message_user(request, "%s successfully approved." % message_bit)
+
+
        
 
 class Rating(models.Model):
