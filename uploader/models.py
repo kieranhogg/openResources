@@ -214,14 +214,14 @@ class File(models.Model):
         max_length=200, 
         null=True,
         help_text='Who is the original author? E.g. John Smith. If you are ' + 
-            'the author, write "me"'
+            'the author, write "me" if you are logged in, otherwise add your name'
     )
     author_link = models.CharField(
         max_length=200, 
         blank=True,
         null=True, 
         help_text='A URL or email to credit the original author. If it is ' +
-            'you, leave blank'
+            'you and you\'re logged in, leave blank'
     )
     licence = models.ForeignKey(
         Licence, 

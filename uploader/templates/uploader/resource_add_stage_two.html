@@ -1,6 +1,16 @@
 {% extends 'uploader/base.html' %}
 {% block body_block %}
 <script>
+$(function() {
+    $('select[name=syllabus]')
+                .empty().append($('<option>---------</option>'))
+    $('select[name=unit]')
+                .empty().append($('<option>---------</option>'))
+                
+    $('select[name=unit_topic]')
+                .empty().append($('<option>---------</option>'))
+                
+});
 // FIXME move this and functionise
 // get syllabuses for subject
 $(document).ready(function(){
