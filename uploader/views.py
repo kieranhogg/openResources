@@ -18,7 +18,7 @@ def index(request):
     subjects = Subject.objects.filter(active=1)
     
     # get messages TODO use constants
-    user_messages = Message.objects.filter(user_to=request.user)
+    user_messages = Message.objects.filter(user_to=request.user.id)
     announce_messages = Message.objects.filter(type=2)
     sticky_messages = Message.objects.filter(type=3)
 
