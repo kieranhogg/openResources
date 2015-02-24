@@ -1,13 +1,10 @@
 from django.db import models
 from django.conf import settings
-from django import forms
-from django.forms import ModelForm
 from django.contrib import admin
-from django.db.models.signals import pre_delete
+from django.db.models.signals import pre_delete, post_save
 from django.dispatch.dispatcher import receiver
 from django.utils.safestring import mark_safe
-from django.contrib.auth.models import AbstractUser
-from django.contrib import messages
+from django.contrib.auth.models import User
 
 
 class Subject(models.Model):
@@ -405,6 +402,7 @@ class MessageAdmin(admin.ModelAdmin):
     list_display = ('message', 'user_from', 'user_to', 'type', 'read', 
         'read_date', 'sticky_date', 'pub_date')
     
+######## signals TODO move to own file #########
 
 # cleans up files from AWS when resource is deleted from DB
 @receiver(pre_delete, sender=File)
@@ -412,7 +410,13 @@ def mymodel_delete(sender, instance, **kwargs):
     # Pass false so FileField doesn't save the model.
     instance.file.delete(False)
 
+# Creates user profile
+@receiver(post_save, sender=User)
+def user_post_save(sender, instance, **kwargs):
+    # only fire if it's a new user not if we're saving an edit
+    if kwargs['created']:
+        profile = UserProfile()
+        profile.user=instance
+        profile.save()
 
-    
-    
-
+#dispatcher.connect(user_post_save, signal=signals.post_save, sender=User)

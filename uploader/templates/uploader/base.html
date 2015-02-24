@@ -18,16 +18,13 @@
         <div id="login">
                 <div id='login_links'>
             {% if user.is_authenticated %}
-                <!-- FIXME -->
                 <span id='user_icon'>
                 <a href="{% url 'uploader:profile' %}">
                     <img src="{% gravatar_url user.email 24 %}" />
                 </span>
                     <span id='username'>{{ user.get_username }}</span>
                 </a>
-                {% with user.userprofile_set.all|first as userprofile %}
-                <span id="score">({{ userprofile.score }})</span>
-                {% endwith %}
+                <span id="score">({{ user.userprofile.score }})</span>
                 | <a href="/accounts/logout/">Logout</a>
                 </p>
             {% else %}
@@ -66,8 +63,6 @@
                 {% endif %}
                 </div>
             {% endfor %}
-        {% else %}
-        No messages here
         {% endif %}
         
         {% if messages %}
