@@ -1,6 +1,7 @@
 {% extends 'uploader/base.html' %}
 {% block body_block %}
 <script>
+    // if a user clicks the author button, hide the author fields
     $(document).ready(function(){
     $('input[name=i_am_the_author]').change(function(){
         if($("input[name=i_am_the_author]").is(':checked')) {
@@ -37,6 +38,7 @@ this in future, please register and log in first.</p>
     <div id="input_{{ field.html_name }}">
         {{ field.errors }}
         {{ field.label_tag }} {{ field }}
+        {{ field.help_text }}
     </div>
 {% endfor %}
 <br /><input type="submit" value="Next">
