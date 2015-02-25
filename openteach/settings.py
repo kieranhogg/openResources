@@ -81,8 +81,10 @@ LOGIN_REDIRECT_URL = '/uploader/'  # The page you want users to arrive at after 
 LOGIN_URL = '/accounts/login/'  # The page users are directed to if they are not logged in,
                                                                 # and are trying to access pages requiring authentication
 
-TASK_UPLOAD_FILE_TYPES = ['pdf', 'vnd.oasis.opendocument.text','vnd.ms-excel','msword','application',]
-TASK_UPLOAD_FILE_MAX_SIZE = "5242880"
+UPLOAD_FILE_TYPES = ['pdf', 'vnd.oasis.opendocument.text','vnd.ms-excel','msword','application/vnd.openxmlformats-officedocument.presentationml.presentation',]
+UPLOAD_FILE_MAX_SIZE = 52428800 # 50mb
+
+
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
