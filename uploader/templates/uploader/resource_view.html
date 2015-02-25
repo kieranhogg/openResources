@@ -25,7 +25,12 @@ function vote(resourceID, rating)
     {% endif %}
 </h2>
 <div id="resource_details">
-    <div id="syllabus">Suitable for: <strong>{{ resource.syllabus }}</strong></div>
+    <div id="syllabus">Suitable for: 
+    <strong>{{ resource.syllabus }}
+    {% if resource.unit %} > {{ resource.unit }}{% endif %}
+    {% if resource.unit_topic %} > {{ resource.unit_topic }}{% endif %}
+    </strong>
+    </div>
     <div id="rating">
         <a href="javascript:none" onclick="javascript:vote({{ resource.id}}, 5)">
             {% if rating_val > 4.9 %}
@@ -98,13 +103,17 @@ function vote(resourceID, rating)
 
 {% if resource.file %}
     <div id="author">Resource created by 
-    {% if resource.file.author == '' %}
-    <a href="{{ resource.file.author_link }}">{{ resource.file.uploader }}</a>
-    {% else %}
-    <a href="{{ resource.file.author_link }}">{{ resource.file.author }}</a>
-    {% endif %}
-    under 
-    <a href="{{ resource.licence.link }}">{{ resource.file.licence }} licence</a></div>
+        {% if resource.file.author == '' %}
+        <a href="{{ resource.file.author_link }}">
+            {{ resource.file.uploader }}
+        </a>
+        {% else %}
+        <a href="{{ resource.file.author_link }}">
+            {{ resource.file.author }}</a>{% endif %}, published under 
+        <a href="{{ resource.licence.link }}">
+            {{ resource.file.licence }} licence
+        </a>
+    </div>
 {% endif %}
 <div id="published">Uploaded {{ resource.pub_date }}</div>
 
