@@ -86,12 +86,14 @@ def unit_topic(request, unit_topic_id, slug = None):
 def resource(request, resource_id, slug=None):
     resource = get_object_or_404(Resource, pk=resource_id)
     
-    # fix user link
-    pattern = '\%user_link%:[\d]+'
-    if(re.match(pattern, resource.file.author_link)):
-        user_id = resource.file.author_link.split(":")[1]
-        # FIXME use var
-        resource.file.author_link = '/profile/' + user_id
+    if resource.file is not None:
+        # fix user link
+        pattern = '\%user_link%:[\d]+'
+        # should hopefully never need the 'or's here but better than dying
+        if re.match(pattern, resource.file.author_link or "") is not None:
+            user_id = resource.file.author_link.split(":")[1]
+            # FIXME use var
+            resource.file.author_link = '/profile/' + user_id
     
     context = {
         'resource': resource, 
@@ -181,10 +183,6 @@ def add_resource(request):
 
     
 def add_resource_stage_two(request):
-    # temp_form = ResourceStageTwoForm(request.POST)
-    # unit = request.POST.get('unit')
-    # temp_form.fields['unit'].choices = [(unit, unit)]
-    
     # get the link or file
     bookmark_id = request.session.get('_bookmark_id')
     file_id = request.session.get('_file_id')
