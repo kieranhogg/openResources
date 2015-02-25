@@ -98,7 +98,7 @@ def resource(request, resource_id, slug=None):
     context = {
         'resource': resource, 
         'rating': get_resource_rating(resource_id),
-        'rating_val': get_resource_rating(resource_id, 'value')
+        'rating_val': get_resource_rating(resource_id, 'values')
     }
     return render_to_response('uploader/resource_view.html', 
         context_instance=RequestContext(request, context))
