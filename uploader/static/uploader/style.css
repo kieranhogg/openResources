@@ -74,6 +74,7 @@ ul, li {
 }
 #content ul {
     margin: 10px;
+    margin-bottom: 3.0em;
 }
 
 /** main page layout */
