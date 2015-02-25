@@ -65,11 +65,11 @@ INSTALLED_APPS = (
     'jquery',
     # ... include the providers you want to enable:
     #'allauth.socialaccount.providers.facebook',
-    'allauth.socialaccount.providers.github',
-    'allauth.socialaccount.providers.google',
+    #'allauth.socialaccount.providers.github',
+    #'allauth.socialaccount.providers.google',
     #'allauth.socialaccount.providers.stackexchange',
-    'allauth.socialaccount.providers.twitter',
-    'allauth.socialaccount.providers.openid',
+    #'allauth.socialaccount.providers.twitter',
+    #'allauth.socialaccount.providers.openid',
 )
 # Allauth
 SITE_ID = 1

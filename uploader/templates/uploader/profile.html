@@ -2,11 +2,9 @@
 {% block body_block %}
 <h2>My Profile</h2>
 <ul>
-    <li><a href="{% url 'uploader:user_resources' %}">My resoures</a></li>
+    <li><a href="{% url 'uploader:user_resources' %}">My resources</a></li>
 	<li><a href="{% url 'account_email' %}">Change e-mail</a></li>
 	<li><a href="{% url 'account_set_password' %}">Change password</a></li>
-	<!-- FIXME
-	<li><a href="{ url 'socialaccount_connections' }">Login using another account</a>
-	-->
+	<!--<li><a href="{ url 'socialaccount_connections' }">Login using another account</a>-->
 </ul>
 {% endblock %}
