@@ -1,3 +1,4 @@
+import re
 from django.shortcuts import (render, get_object_or_404, get_list_or_404, 
     render_to_response, redirect)
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
@@ -84,6 +85,14 @@ def unit_topic(request, unit_topic_id, slug = None):
 # A single resource view
 def resource(request, resource_id, slug=None):
     resource = get_object_or_404(Resource, pk=resource_id)
+    
+    # fix user link
+    pattern = '\%user_link%:[\d]+'
+    if(re.match(pattern, resource.file.author_link)):
+        user_id = resource.file.author_link.split(":")[1]
+        # FIXME use var
+        resource.file.author_link = '/profile/' + user_id
+    
     context = {
         'resource': resource, 
         'rating': get_resource_rating(resource_id),
@@ -126,6 +135,11 @@ def add_file(request):
         file.filename = request.FILES['file'].name
         file.mimetype = request.FILES['file'].content_type
         file.uploader = request.user
+        
+        # check author fields
+        if request.POST['i_am_the_author'] == 'on':
+            file.author = str(request.user)
+            file.author_link = '%user_link%:' + str(request.user.id)
 
         _file = form.save()
 
@@ -167,6 +181,9 @@ def add_resource(request):
 
     
 def add_resource_stage_two(request):
+    # temp_form = ResourceStageTwoForm(request.POST)
+    # unit = request.POST.get('unit')
+    # temp_form.fields['unit'].choices = [(unit, unit)]
     
     # get the link or file
     bookmark_id = request.session.get('_bookmark_id')
@@ -185,15 +202,18 @@ def add_resource_stage_two(request):
             'uploader': request.user
         },
         label_suffix=''
-    )
+    )   
+    
     if request.method == 'POST' and form.is_valid():
         resource = form.save(commit = False)
+
         if request.user.is_authenticated():
             # if we're logged in auto-approve
             resource.approved = True
+            
             form.save()
             score_points(request.user, "Add Resource")
-        messages.success(request, 'Resource added, thank you!')
+            messages.success(request, 'Resource added, thank you!')
 
         return redirect("/uploader/")
     
