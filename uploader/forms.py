@@ -16,17 +16,19 @@ class BookmarkStageOneForm(forms.ModelForm):
     
  
 class FileStageOneForm(forms.ModelForm):
+    i_am_the_author = forms.BooleanField()
+    
     class Meta:
         model = File
         exclude = ('approved', 'uploader', 'mimetype', 'filesize', 'filename', 
             'date_pub', 'topics')
         widgets = {'description': forms.Textarea()}
+        fields = ('title', 'file', 'description', 'type', 'i_am_the_author', 
+            'author', 'author_link', 'licence')
 
         
 class ResourceStageTwoForm(forms.ModelForm):
-    syllabus = forms.ModelChoiceField(queryset=Syllabus.objects.none())
-    unit = forms.ModelChoiceField(queryset=Unit.objects.none())
-    unit_topic = forms.ModelChoiceField(queryset=UnitTopic.objects.none())
+
     
     class Meta:
         model = Resource

@@ -2,7 +2,7 @@
 {% block body_block %}
 {% load static %}
 {% get_static_prefix as STATIC_PREFIX %}
-        <h2>Welcome</h2>
+        <h2>{% block head_title %}Welcome{% endblock %}</h2>
         <p>
             Why another teaching resource site? We all know that teachers are 
             re-inventing the wheel with resources despite the fact there's lots 
@@ -26,8 +26,7 @@
         {% if subjects %}
         <ul>
         {% for subject in subjects %}
-            <a href="{% url 'uploader:subject' subject.id 
-            subject|slugify %}">
+            <a href="{% url 'uploader:subject' subject.id subject|slugify %}">
                 <li>
                     <img src="{{ STATIC_PREFIX }}uploader/img/subjects/{{ subject|slugify }}.jpg" 
                         width="300px" height="200px" />
