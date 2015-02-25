@@ -36,3 +36,12 @@ class ResourceStageTwoForm(forms.ModelForm):
             'file': forms.HiddenInput(),
             'uploader': forms.HiddenInput(),
         }
+        
+    def clean(self):
+        cleaned_data = super(ResourceStageTwoForm, self).clean()
+        unit = cleaned_data.get("unit")
+        unit_topic = cleaned_data.get("unit_topic")
+
+        if unit_topic and not unit:
+            raise forms.ValidationError("You can't set a unit topic without " + 
+                " a unit")
