@@ -280,6 +280,7 @@ class Resource(models.Model):
     uploader = models.ForeignKey(settings.AUTH_USER_MODEL)
     #Don't really need but its for the forms, FIXME?
     subject = models.ForeignKey(Subject)
+    # TODO do we really need a syllabus?
     syllabus = models.ForeignKey(Syllabus)
     unit = models.ForeignKey(Unit, null=True, blank=True)
     unit_topic = models.ForeignKey(

@@ -28,8 +28,6 @@ class FileStageOneForm(forms.ModelForm):
 
         
 class ResourceStageTwoForm(forms.ModelForm):
-
-    
     class Meta:
         model = Resource
         exclude = ('approved',)
