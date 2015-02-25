@@ -9,6 +9,19 @@
      {{ syllabus|truncatechars:25 }}
 </div>
 <h2>{{ syllabus }}</h2>
+<div id="resouce_list">
+    <h3>General Resources</h3>
+    <p>Under general resources you will find syllabus-specific resources
+    such as schemes of work.</p>
+    <ul>
+        <li>
+            <a href="{% url 'uploader:syllabus_resources' syllabus.id syllabus|slugify %}">
+                General {{ syllabus }} resources
+            </a>
+        </li>
+    </ul>
+    
+<h3>Units</h3>
 {% if units %}
 <p>I found the following units:</p>
     <ul>
@@ -22,4 +35,5 @@
         <a href="{% url 'uploader:new_resource_blank' %}">Add some?</a>
         
     {% endif %}
+</div>
 {% endblock %}

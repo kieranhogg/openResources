@@ -5,15 +5,18 @@
 <div id="crumbs">
     <a href="/uploader/">Home</a> > {{ subject.subject_name }}
 </div>
-<h2>{{ subject.subject_name }}</h2>
+<h2>{% block block_title %}{{ subject.subject_name }}{% endblock %}</h2>
 <!--<img src="{% static 'uploader/img/subjects/' %}{{ subject.subject_name|slugify }}_large.jpg" />-->
 <p>Choose which syllabus you are looking for:</p>
 <div id="resouce_list">
-    <h3>Any</h3>
+    <!--<h3>Any</h3>
     <ul>
-        <li>General {{ subject.subject_name }} resources (you are likely to 
-        find better resources in syllabuses)</li>
+        <li>
+            General {{ subject }} resources
+            </a> 
+            (you are likely to find better resources in syllabuses)</li>
     </ul>
+    -->
     {% regroup exam_levels by country as country_list %}
     {% for country in country_list %}
         <h3>{{ country.grouper }}</h3>

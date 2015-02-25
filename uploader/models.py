@@ -84,6 +84,7 @@ class Syllabus(models.Model):
         blank=True,
         null=True
     )
+    official_site = models.CharField(max_length=200, null=True, blank=True)
     pub_date = models.DateTimeField('Date published')
     
     def __unicode__(self):

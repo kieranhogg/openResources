@@ -1,0 +1,15 @@
+{% extends 'uploader/base.html' %}
+{% block body_block %}
+
+<h2>{% block head_title %}General {{ syllabus }} Resources{% endblock %}</h2>
+  <ul>
+    {% for resource in resources %}
+      <li>
+        <a href="{% url 'uploader:resource' resource.id resource|slugify %}">
+          {{ resource }}
+        </a>
+      </li> 
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

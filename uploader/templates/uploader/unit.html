@@ -13,14 +13,29 @@
 
 </div>
 <h2>{{ unit }}</h2>
-<!-- TODO write * -> <li> filter -->
-{% if unit_topics %}
-<ul>
-{% for unit_topic in unit_topics %}
-  <li><a href="{% url 'uploader:unit_topic' unit_topic.id unit_topic.title|slugify %}">{{ unit_topic.title }}</a></li> 
-{% endfor %}
-</ul>
-{% else %}
-No resources :(
-{% endif %}
+<div id="resouce_list">
+    <h3>General Topic Resources</h3>
+    <p>
+        Under general topic resources you will find more general resources that
+        are too broad for a single unit topic.
+    </p>
+    <ul>
+        <li>
+            <a href="{% url 'uploader:unit_resources' unit.id unit|slugify %}">
+                General {{ syllabus }} resources
+            </a>
+        </li>
+    </ul>
+    
+    <h3>Unit Topics</h3>
+    {% if unit_topics %}
+    <ul>
+    {% for unit_topic in unit_topics %}
+      <li><a href="{% url 'uploader:unit_topic' unit_topic.id unit_topic.title|slugify %}">{{ unit_topic.title }}</a></li> 
+    {% endfor %}
+    </ul>
+    {% else %}
+    No resources :(
+    {% endif %}
+</div>
 {% endblock %}

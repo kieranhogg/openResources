@@ -32,11 +32,33 @@ def index(request):
 # View one subject, shows exam levels, e.g. GCSE
 def subject(request, subject_id, slug=None):
     subject = get_object_or_404(Subject, pk=subject_id)
+    
     # Sort by country first to enable grouping
     exam_levels = ExamLevel.objects.order_by('country', 'level_number')
+    
     context = {'exam_levels': exam_levels, 'subject': subject}
     return render(request, 'uploader/subject_view.html', context)
     
+# TODO even though each view is slightly different, look at factorising
+def syllabus_resources(request, syllabus_id, slug=None):
+    syllabus = get_object_or_404(Syllabus, pk=syllabus_id)
+    resources = Resource.objects.filter(
+        syllabus__id=syllabus_id, 
+        unit__isnull=True,
+        unit_topic__isnull=True)
+
+    context = {'syllabus': syllabus, 'resources': resources}
+    return render(request, 'uploader/syllabus_resources.html', context)
+    
+def unit_resources(request, unit_id, slug=None):
+    unit = get_object_or_404(Unit, pk=unit_id)
+    resources = Resource.objects.filter(
+        unit__id=unit_id,
+        unit_topic__isnull=True)
+
+    context = {'unit': unit, 'resources': resources}
+    return render(request, 'uploader/unit_resources.html', context)    
+
 # View list of syllabuses for a subject and level, e.g. {AQA, OCR} GCSE Maths 
 # FIXME slug2, bit ugly
 def syllabuses(request, subject_id, slug, exam_level_id, slug2=None):
