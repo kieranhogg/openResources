@@ -205,7 +205,7 @@ class File(models.Model):
     )
     title = models.CharField(max_length=200)
     filename = models.CharField(max_length=200)
-    file = models.FileField()
+    file = models.FileField(upload_to='%Y/%m')
     mimetype = models.CharField(max_length=200)
     filesize = models.IntegerField()
     description = models.TextField('Description', null=True)
