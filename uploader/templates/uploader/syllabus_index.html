@@ -11,7 +11,11 @@
 {% if syllabus_list %}
     <ul>
     {% for syllabus in syllabus_list %}
-        <li><a href="{% url 'uploader:syllabus' syllabus.id %}">{{ syllabus }}</a></li> 
+        <li>
+            <a href="{% url 'uploader:syllabus' syllabus.id syllabus|slugify %}">
+                {{ syllabus }}
+            </a>
+        </li> 
     {% endfor %}
     </ul>
 {% else %}
