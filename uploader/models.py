@@ -249,7 +249,7 @@ class File(models.Model):
 
 
 class FileAdmin(admin.ModelAdmin):
-    list_display = ('filename', 'file', 'mimetype', 'filesize', 'pub_date') 
+    list_display = ('filename', 'title', 'file', 'mimetype', 'filesize', 'pub_date') 
 
 
 class Bookmark(models.Model):
@@ -296,8 +296,10 @@ class Resource(models.Model):
     def __unicode__(self):
         if self.file is not None:
             return str(self.file.title)
-        else:
+        elif self.bookmark is not None:
             return str(self.bookmark.title)
+        else:
+            return "File a bug: NoTitle(" + str(self.id) + ")"
        
     class Meta:
         ordering = ('-pub_date',)
