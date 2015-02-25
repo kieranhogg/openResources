@@ -76,7 +76,9 @@ ul, li {
     margin: 10px;
     margin-bottom: 3.0em;
 }
-
+#content li {
+    margin-bottom: 0.5em;
+}
 /** main page layout */
 #subjects {
     margin: 0 auto;
