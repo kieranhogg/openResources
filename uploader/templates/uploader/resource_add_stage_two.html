@@ -5,10 +5,10 @@ $(function() {
     $('select[name=syllabus]')
                 .empty().append($('<option>---------</option>'))
     $('select[name=unit]')
-                .empty().append($('<option>---------</option>'))
+                .empty().append($('<option></option>'))
                 
     $('select[name=unit_topic]')
-                .empty().append($('<option>---------</option>'))
+                .empty().append($('<option></option>'))
                 
 });
 // FIXME move this and functionise
@@ -32,7 +32,7 @@ $(document).ready(function(){
             syllabus_id = $(this).val();
             $.getJSON("/uploader/lookup/unit/" + syllabus_id, null, function(data) {
             $('select[name=unit]')
-                .empty().append($('<option>---------</option>'))
+                .empty().append($('<option></option>'))
             $.each(data, function(key, value) {   
              $('select[name=unit]')
                 .append($('<option>', { value : key })
@@ -48,7 +48,7 @@ $(document).ready(function(){
             unit_id = $(this).val();
             $.getJSON("/uploader/lookup/unit_topic/" + unit_id, null, function(data) {
             $('select[name=unit_topic]')
-                .empty().append($('<option>---------</option>'))
+                .empty().append($('<option><option>'))
             $.each(data, function(key, value) {   
              $('select[name=unit_topic]')
                 .append($('<option>', { value : key })
