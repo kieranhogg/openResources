@@ -211,7 +211,8 @@ class File(models.Model):
     type = models.IntegerField(max_length=2, default=1, choices=FILE_TYPES)
     uploader = models.ForeignKey(settings.AUTH_USER_MODEL)
     author = models.CharField(
-        max_length=200, 
+        max_length=200,
+        blank=True,
         null=True,
         help_text='Who is the original author? E.g. John Smith. If you are ' + 
             'the author, write "me" if you are logged in, otherwise add your name'
