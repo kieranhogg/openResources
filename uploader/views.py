@@ -293,8 +293,7 @@ def user_resources(request, user_id=None):
     
 def leaderboard(request):
     context = {}
-    return HttpResponseRedirect("/?s=1")
-    
+
     # check if we have enough users yet...
     user_count = User.objects.count()
 
