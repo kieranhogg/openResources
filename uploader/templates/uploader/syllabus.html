@@ -1,7 +1,7 @@
 {% extends 'uploader/base.html' %}
 {% block body_block %}
 <div id="crumbs">
-    <a href="/uploader/">Home</a> > 
+    <a href="{% url 'uploader:index' %}">Home</a> > 
     <a href="{% url 'uploader:subject' syllabus.subject.id syllabus.subject.subject_name|slugify %}">
         {{ syllabus.subject.subject_name|truncatechars:25 }}</a> >
     <a href="{% url 'uploader:syllabuses' syllabus.subject.id syllabus.subject.subject_name|slugify syllabus.exam_level.id syllabus.exam_level.level_name|slugify %}">

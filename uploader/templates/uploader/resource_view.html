@@ -6,7 +6,7 @@
 function vote(resourceID, rating)
 {
     var xmlHttp = null;
-    theUrl = '/uploader/rate/' + resourceID + '/' + rating + '/';
+    theUrl = '/rate/' + resourceID + '/' + rating + '/';
     xmlHttp = new XMLHttpRequest();
     xmlHttp.open( "GET", theUrl, false );
     xmlHttp.send( null );

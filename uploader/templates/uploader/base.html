@@ -42,7 +42,7 @@
     </div>
     <div id="menu">
         <ul>
-            <li><a href="/uploader/">Home</a></li>
+            <li><a href="{% url 'uploader:index' %}">Home</a></li>
             <li><a href="{% url 'uploader:add_resource' %}">Submit Resource</a></li>
             <li><a href="{% url 'uploader:leaderboard' %}">Leaderboard</a></li>
             <li><a href="{% url 'uploader:about' %}">About</a></li>
