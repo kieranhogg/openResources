@@ -236,6 +236,13 @@ left: 0;
     font-size: 0.8em;
     margin-bottom: 10px;
 }
+#top_banner {
+    width: 728px; 
+    position: absolute; 
+    margin-left: 400px; 
+    margin-top: -80px
+}
+
 
 /* download page */
 #resource_details {

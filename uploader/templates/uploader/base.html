@@ -1,5 +1,6 @@
 {% load gravatar %}
 {% load staticfiles %}
+{% load tags %}
 
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-GB" lang="en-GB" prefix="og: http://ogp.me/ns#">
@@ -15,6 +16,7 @@
             <img src="{% static 'uploader/logo_s.png' %}" />
             <h1>{{ SITE_NAME }}</h1>
         </div>
+        {% try_to_include "uploader/top_banner.html" %}
         <div id="login">
                 <div id='login_links'>
             {% if user.is_authenticated %}
