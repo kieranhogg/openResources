@@ -1,7 +1,7 @@
 import re
 from django.shortcuts import (render, get_object_or_404, get_list_or_404, 
     render_to_response, redirect)
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, Http404
 from django.template import RequestContext, loader
 from uploader.models import (Subject, ExamLevel, Syllabus, Resource, Unit, File, 
     Rating, UnitTopic, Message, UserProfile, Licence)
@@ -16,6 +16,9 @@ from django.contrib.auth.models import User
 
 # Homepage view, shows subjects
 def index(request):
+    if request.GET and request.GET['s'] == "1":
+        messages.success(request, 'Resource added, thank you!')
+
     subjects = Subject.objects.filter(active=1)
     
     # get messages TODO use constants
@@ -203,11 +206,28 @@ def add_bookmark(request):
 def add_resource(request):
     return render(request, "uploader/resource_add.html")
 
+def link_file(request, file_id, slug=None):
+    return add_resource_stage_two(request, file_id)
     
-def add_resource_stage_two(request):
+def link_bookmark(request, bookmark_id, slug=None):
+    return add_resource_stage_two(request, None, bookmark_id)
+
+def add_resource_stage_two(request, _file_id=None, _bookmark_id=None):
+    
     # get the link or file
-    bookmark_id = request.session.get('_bookmark_id')
-    file_id = request.session.get('_file_id')
+    bookmark_id = None
+    file_id = None
+
+    if _file_id is not None:
+        file_id = _file_id
+    elif request.session.get('_link') is not None:
+        file_id = request.session.get('_link')
+    elif _bookmark_id is not None:
+        bookmark_id = _bookmark_id
+    elif request.session.get('_bookmark_id') is not None:
+        bookmark_id = request.session.get('_bookmark_id')    
+    else:
+        return Http404
     
     request.session['_link'] = None
     request.session['_file_id'] = None
@@ -233,9 +253,8 @@ def add_resource_stage_two(request):
             
             form.save()
             score_points(request.user, "Add Resource")
-            messages.success(request, 'Resource added, thank you!')
 
-        return redirect("/uploader/")
+        return redirect("/?s=1")
     
     return render(request, "uploader/resource_add_stage_two.html", {'form': form})
     
@@ -274,6 +293,7 @@ def user_resources(request, user_id=None):
     
 def leaderboard(request):
     context = {}
+    return HttpResponseRedirect("/?s=1")
     
     # check if we have enough users yet...
     user_count = User.objects.count()
