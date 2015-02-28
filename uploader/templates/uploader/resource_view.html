@@ -102,7 +102,7 @@ function vote(resourceID, rating)
 </div>
 
 {% if resource.file %}
-    <div id="author">Resource created by 
+<div id="author">Resource created by 
         {% if resource.file.author == '' %}
         <a href="{{ resource.file.author_link }}">
             {{ resource.file.uploader }}
@@ -114,6 +114,8 @@ function vote(resourceID, rating)
             {{ resource.file.licence }} licence
         </a>
     </div>
+{% else %}
+<p><strong>{{ resource.bookmark.link }}</strong></p>
 {% endif %}
 <div id="published">Uploaded {{ resource.pub_date }}</div>
 
