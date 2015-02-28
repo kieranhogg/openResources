@@ -325,7 +325,7 @@ li[data-type="bookmark"] {
 
 /** extra stuff */
 hr {
-    border: 1px solid #cc0000;
+    border: 1px dashed #bdbdbd;
     margin-bottom: 10px;
     margin-top: 10px;
 

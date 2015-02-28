@@ -3,6 +3,21 @@
 {% load static %}
 {% get_static_prefix as STATIC_PREFIX %}
         <h2>{% block head_title %}Welcome{% endblock %}</h2>
+        <h3>How does it work?</h3>
+        <p>There are lots of educational resource sites, so what makes this one
+        different? The primary aim is for resources to be aimed at specific
+        syllabuses. The most important part is that resources are linked and 
+        rated <strong>per syllabus</strong>. This means that the resource you
+        upload on fractions might be well rated for a GCSE syllabus but not
+        an A-Level one. The programming resource you upload might be excellent
+        for one exam board and get great reviews but not great for another 
+        which will be reflected in the rating.</p>
+        <h3>Why?</h3>
+        <p>Two reasons: 1) resources tailored to specific syllabuses are of 
+        higher quality and 2) resources can be useful for multiple subjects
+        but the rating of the resource doesn't reflect the suitability for all
+        syllabuses.</p>
+        <!--
         <p>
             Why another teaching resource site? We all know that teachers are 
             re-inventing the wheel with resources despite the fact there's lots 
@@ -20,8 +35,9 @@
             Over time the site will become smarter, similiar topics will be 
             linked and resources will be shared between exam boards where 
             appropriate.
-        </p>
-        <h3>Subjects</h3>
+        </p>-->
+        <hr />
+        <h2>Subjects</h2>
         <div id="subjects">
         {% if subjects %}
         <ul>
