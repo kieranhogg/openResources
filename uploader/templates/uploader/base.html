@@ -2,10 +2,11 @@
 {% load staticfiles %}
 {% load tags %}
 
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-GB" lang="en-GB" prefix="og: http://ogp.me/ns#">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<script src="{% static 'js/jquery.js' %}"></script>
+<script src="{% static 'js/jquery.js' %}" type="text/javascript"></script>
 <title>{{ SITE_NAME }} | {% block head_title %}{% endblock %}</title>
 <link rel="stylesheet" type="text/css" href="{% static 'uploader/style.css' %}" />
 <link rel="shortcut icon" type="image/png" href="{{STATIC_URL}}/favicon.ico"/>
@@ -14,7 +15,7 @@
 <div id="container">
     <div id="header">
         <div id="logo">
-            <img src="{% static 'uploader/logo_s.png' %}" />
+            <img src="{% static 'uploader/logo_s.png' %}" alt="logo" />
             <h1>{{ SITE_NAME }}</h1>
         </div>
         {% try_to_include "uploader/top_banner.html" %}
