@@ -1,6 +1,6 @@
 {% extends 'uploader/base.html' %}
 {% block body_block %}
-<h2>Leaderboards</h2>
+<h2>{% block head_title %}Leaderboard{% endblock %}</h2>
 <h3>Users</h3>
 {% if users %}
     <table>

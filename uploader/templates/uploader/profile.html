@@ -1,6 +1,6 @@
 {% extends 'uploader/base.html' %}
 {% block body_block %}
-<h2>My Profile</h2>
+<h2>{% block head_title %}My Profile{% endblock %}</h2>
 <ul>
     <li><a href="{% url 'uploader:user_resources' %}">My resources</a></li>
 	<li><a href="{% url 'account_email' %}">Change e-mail</a></li>

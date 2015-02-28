@@ -5,7 +5,7 @@
 <div id="crumbs">
     <a href="{% url 'uploader:index' %}">Home</a> > {{ subject.subject_name }}
 </div>
-<h2>{% block block_title %}{{ subject.subject_name }}{% endblock %}</h2>
+<h2>{% block head_title %}{{ subject.subject_name }}{% endblock %}</h2>
 <!--<img src="{% static 'uploader/img/subjects/' %}{{ subject.subject_name|slugify }}_large.jpg" />-->
 <p>Choose which syllabus you are looking for:</p>
 <div id="resouce_list">

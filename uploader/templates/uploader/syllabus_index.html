@@ -6,7 +6,7 @@
         {{ subject.subject_name }}</a> >
      {{ level.level_name }}
 </div>
-<h2>{{ subject.subject_name }} Syllabuses</h2>
+<h2>{% block head_title %}{{ subject.subject_name }} Syllabuses{% endblock %}</h2>
 <p>I found the following syllabuses:</p>
 {% if syllabus_list %}
     <ul>

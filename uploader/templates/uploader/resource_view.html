@@ -19,9 +19,9 @@ function vote(resourceID, rating)
 <!-- FIXME all this sucky conditional stuff should be in the view -->
 <h2>
     {% if resource.file %}
-        {{ resource.file.title }}
+        {% block head_title %}{{ resource.file.title }}{% endblock %}
     {% else %}
-        {{ resource.bookmark.title }}
+        {% block head_title %}{{ resource.bookmark.title }}{% endblock %}
     {% endif %}
 </h2>
 <div id="resource_details">
