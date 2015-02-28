@@ -48,8 +48,12 @@
             <li><a href="{% url 'uploader:add_resource' %}">Submit Resource</a></li>
             <li><a href="{% url 'uploader:leaderboard' %}">Leaderboards</a></li>
             <li><a href="{% url 'uploader:about' %}">About</a></li>
-            <a href="https://twitter.com/eduresourc_es"><img src="/static/uploader/img/twitter.png" /></a>
-            <a href="mailto:contact@eduresourc.es"><img src="/static/uploader/img/email.png" /></a>
+            <a href="https://twitter.com/eduresourc_es">
+                <img src="/static/uploader/img/twitter.png" width="32" height="32" />
+            </a>
+            <a href="mailto:contact@eduresourc.es">
+                <img src="/static/uploader/img/email.png" width="32" height="32" />
+            </a>
 
             {% if user.is_superuser or user.is_staff %}
             <li id="admin_button"><a href="/admin/">Admin</a></li>
