@@ -5,7 +5,15 @@
 {% if resources %}
     <ul>
     {% for resource in resources %}
-        <li><a href="{% url 'uploader:resource' resource.id %}">{{ resource.title }}</a></li> 
+        {% if resource.file %}
+        <li data-type="file"><a href="{% url 'uploader:resource' resource.id %}">
+            {{ resource }}</a>
+        </li>
+        {% else %}
+        <li data-type="bookmark"><a href="{% url 'uploader:resource' resource.id %}">
+            {{ resource }}</a>
+        </li>
+        {% endif %}
     {% endfor %}
     </ul>
 {% else %}
