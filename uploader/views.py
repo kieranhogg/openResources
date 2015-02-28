@@ -261,7 +261,7 @@ def add_resource_stage_two(request, _file_id=None, _bookmark_id=None):
 def score_points(user, action):
     points = {
         "Add Resource": 25,
-        "Vote": 1
+        "Rate": 1
     }
     user_profile = UserProfile.objects.get(user = user.id)
     user_profile.score += points[action]
@@ -356,6 +356,7 @@ def rate(request, resource_id, rating):
         
         try:
             _rating.save()
+            score_points(request.user.id, "Rate")
         except IntegrityError as e:
             # silently ignore duplicate votes
             pass
