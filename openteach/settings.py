@@ -58,7 +58,6 @@ INSTALLED_APPS = (
     'storages',
     'openteach',
     'django_gravatar',
-    'bootstrap3',
     'allauth',
     'allauth.account',
     #'allauth.socialaccount',
