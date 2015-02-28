@@ -2,7 +2,7 @@
 {% block body_block %}
 <h2>About</h2>
 <p>
-    openTeach was created in February 2015. It was a bit of a reaction to 
+    eduResourc.es was created in February 2015. It was a bit of a reaction to 
     <a href="https://medium.com/@kieran.hogg/the-great-educational-lock-in-675f9cda3d38">
     this article</a></a> I wrote. It was mainly a rant about how teachers are 
     eternally locked into products or workflows where we keep re-making 
@@ -20,13 +20,13 @@
 </p>
 <h3>Technical</h3>
 <p>
-    openTeach is written in Python using the Django framework. The source code
-    is available at Github, bug reports and pull requests are welcome. 
+    eduResourc.es is written in Python using the Django framework. The source code
+    is available at <a href="https://github.com/xerosis/openResources">Github</a>, bug reports and pull requests are welcome. 
     I am good and neither Django or Web design, so any improvements in those
     areas are very welcome.
 </p>
 <p>
-    If you have a problem and don't know what Github is, contact me on twitter 
-    <a href="https://twitter.com/kieranhogg">@kieranhogg</a>.
+    If you have a problem and don't know what Github is, 
+    <a href="{% url 'uploader:contact' %}">get in touch</a>.
 </p>
 {% endblock %}
