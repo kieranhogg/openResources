@@ -1,6 +1,6 @@
 {% extends 'uploader/base.html' %}
 {% block body_block %}
-<h2>Resources for {{ syllabus }}</h2>
+<h2>{% block head_title %}Resources for {{ syllabus }}{% endblock %}</h2>
 
 {% if resources %}
     <ul>

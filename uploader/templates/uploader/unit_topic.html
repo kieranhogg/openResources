@@ -14,7 +14,7 @@
   
 
 </div>
-<h2>{{ unit_topic.title }}</h2>
+<h2>{% block head_title %}{{ unit_topic.title }}{% endblock %}</h2>
 <!-- TODO write * -> <li> filter -->
 <div id="description">
 {% if unit.description %}

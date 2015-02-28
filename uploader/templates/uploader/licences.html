@@ -1,6 +1,6 @@
 {% extends 'uploader/base.html' %}
 {% block body_block %}
-<h2>Licences</h2>
+<h2>{% block head_title %}Licences{% endblock %}</h2>
 {% for licence in licences %}
 <h3>{{ licence }}</h3>
 <p>{{ licence.description}}</p>

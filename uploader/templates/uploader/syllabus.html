@@ -8,7 +8,7 @@
      {{ syllabus.exam_level.level_name|truncatechars:25 }}</a> >
      {{ syllabus|truncatechars:25 }}
 </div>
-<h2>{{ syllabus }}</h2>
+<h2>{% block head_title %}{{ syllabus }}{% endblock %}</h2>
 <div id="resouce_list">
     <h3>General Resources</h3>
     <p>Under general resources you will find syllabus-specific resources

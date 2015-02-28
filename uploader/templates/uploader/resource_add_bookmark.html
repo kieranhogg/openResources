@@ -1,6 +1,6 @@
 {% extends 'uploader/base.html' %}
 {% block body_block %}
-<h2>Add Bookmark</h2>
+<h2>{% block head_title %}Add Bookmark{% endblock %}</h2>
 {% if form.non_field_errors %}
     <div class="error">
     {% for error in form.non_field_errors %}
