@@ -16,7 +16,3 @@ admin.site.register(Bookmark, BookmarkAdmin)
 admin.site.register(Rating, RatingAdmin)
 admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(Message, MessageAdmin)
-
-
-
-
