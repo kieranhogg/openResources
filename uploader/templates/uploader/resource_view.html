@@ -18,11 +18,13 @@ function vote(resourceID, rating)
 </script>
 <!-- FIXME all this sucky conditional stuff should be in the view -->
 <h2>
+    {% block head_title %}
     {% if resource.file %}
-        {% block head_title %}{{ resource.file.title }}{% endblock %}
+        {{ resource.file.title }}
     {% else %}
-        {% block head_title %}{{ resource.bookmark.title }}{% endblock %}
-    {% endif %}
+        {{ resource.bookmark.title }}
+        {% endif %}
+    {% endblock %}
 </h2>
 <div id="resource_details">
     <div id="syllabus">Suitable for: 
