@@ -1,16 +1,16 @@
 {% extends 'uploader/base.html' %}
 {% block body_block %}
 
-<h2>{% block head_title %}General {{ unit }} Resources{% endblock %}</h2>
+<h2>{% block head_title %}{{ unit }} Unit Resources{% endblock %}</h2>
 <div id='resouce_list'>
   <ul>
     {% for resource in resources %}
       {% if resource.file %}
-        <li data-type="file"><a href="{% url 'uploader:resource' resource.id %}">
+        <li data-type="file"><a href="{% url 'uploader:resource' resource.id resource|slugify%}">
             {{ resource }}</a>
         </li>
         {% else %}
-        <li data-type="bookmark"><a href="{% url 'uploader:resource' resource.id %}">
+        <li data-type="bookmark"><a href="{% url 'uploader:resource' resource.id resource|slugify %}">
             {{ resource }}</a>
         </li>
         {% endif %}
