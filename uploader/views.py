@@ -87,11 +87,14 @@ def syllabus(request, syllabus_id, slug=None):
 
 # A single unit view
 def unit(request, unit_id, slug=None):
-    #resources = Resource.objects.filter(unit__id = unit_id)
     unit = get_object_or_404(Unit, pk=unit_id)
     unit_topics = UnitTopic.objects.filter(unit__id = unit_id)
+    
+    if unit_topics.count() == 0:
+        resources = Resource.objects.filter(unit__id = unit_id)
+
     context = {
-        #'resources': resources, 
+        'resources': resources, 
         'unit': unit,
         'unit_topics': unit_topics,
     }
