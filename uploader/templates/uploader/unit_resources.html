@@ -2,6 +2,7 @@
 {% block body_block %}
 
 <h2>{% block head_title %}General {{ unit }} Resources{% endblock %}</h2>
+<div id='resouce_list'>
   <ul>
     {% for resource in resources %}
       {% if resource.file %}
