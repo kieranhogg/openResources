@@ -9,32 +9,50 @@
     <a href="{% url 'uploader:syllabus' unit.syllabus.id unit.syllabus|slugify %}"> 
      {{ unit.syllabus|truncatechars:45 }}</a> >
      {{ unit.title|truncatechars:45 }}
-  
-
 </div>
 <h2>{% block head_title %}{{ unit }}{% endblock %}</h2>
-<h3>General Topic Resources</h3>
-<p>
-    Under general topic resources you will find more general resources that
-    are too broad for a single unit topic.
-</p>
-<p>
-    <a href="{% url 'uploader:unit_resources' unit.id unit|slugify %}">
-        View general resources
-    </a>
-</p>
-<br />
-<div id="resouce_list">
-    
-    <h3>Unit Topics</h3>
-    {% if unit_topics %}
-    <ul>
-    {% for unit_topic in unit_topics %}
-      <li><a href="{% url 'uploader:unit_topic' unit_topic.id unit_topic.title|slugify %}">{{ unit_topic.title }}</a></li> 
+{% if resources %}
+<p>I found no unit topics linked to {{ unit }}, below are resources for this unit.</p>
+<div id='resouce_list'>
+  <ul>
+    {% for resource in resources %}
+      {% if resource.file %}
+        <li data-type="file"><a href="{% url 'uploader:resource' resource.id %}">
+            {{ resource }}</a>
+        </li>
+        {% else %}
+        <li data-type="bookmark"><a href="{% url 'uploader:resource' resource.id %}">
+            {{ resource }}</a>
+        </li>
+        {% endif %}
     {% endfor %}
-    </ul>
-    {% else %}
-    No resources :(
-    {% endif %}
+  </ul>
 </div>
+{% elif unit_topics %}
+    <h3>Unit Resources</h3>
+    <p>
+        Under topic resources you will find more general resources that
+        are too broad for a single unit topic.
+    </p>
+    <p>
+        <a href="{% url 'uploader:unit_resources' unit.id unit|slugify %}">
+            View unit resources
+        </a>
+    </p>
+    <br />
+    <div id="resouce_list">
+        <h3>Unit Topics</h3>
+        {% if unit_topics %}
+        <ul>
+        {% for unit_topic in unit_topics %}
+          <li><a href="{% url 'uploader:unit_topic' unit_topic.id unit_topic.title|slugify %}">{{ unit_topic.title }}</a></li> 
+        {% endfor %}
+        </ul>
+        {% else %}
+        No resources :(
+        {% endif %}
+    </div>
+{% else %}
+<p>No unit resources or unit topics :(</p>
+{% endif %}
 {% endblock %}
