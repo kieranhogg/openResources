@@ -9,21 +9,37 @@
      {{ syllabus|truncatechars:25 }}
 </div>
 <h2>{% block head_title %}{{ syllabus }}{% endblock %}</h2>
-<div id="resouce_list">
-    <h3>General Resources</h3>
-    <p>Under general resources you will find syllabus-specific resources
-    such as schemes of work.</p>
-    <ul>
-        <li>
-            <a href="{% url 'uploader:syllabus_resources' syllabus.id syllabus|slugify %}">
-                General {{ syllabus }} resources
-            </a>
-        </li>
-    </ul>
+<div id="syllabus_validity">
+    <strong>
+    {% if syllabus.teach_from %}
+    <p><strong>First teaching</strong>: {{ syllabus.teach_from|date:"F Y" }}</p>
+    {% endif %}
     
+    {% if syllabus.teach_until %}
+    <p><strong>Last exam</strong>: {{ syllabus.teach_until|date:"F Y" }}</p>
+    {% endif %}
+    </strong>
+</div>
+{% if syllabus.description %}
+<div id="description">{{ syllabus.description }}</div>
+{% endif %}
+
+{% if syllabus.official_site %}
+<p><a href="{{ syllabus.description }}">Official site</a></p>
+{% endif %}
+<h3>General Resources</h3>
+<p>Under general resources you will find syllabus-specific resources
+such as schemes of work.</p>
+<p>
+    <a href="{% url 'uploader:syllabus_resources' syllabus.id syllabus|slugify %}">
+        View general resources
+    </a>
+</p>
+<br />
 <h3>Units</h3>
 {% if units %}
-<p>I found the following units:</p>
+<p>View unit-specific resources:</p>
+<div id="resource_list">
     <ul>
     {% for unit in units %}
               <li><a href="{% url 'uploader:unit' unit.id unit.title|slugify %}">{{ unit.title }}</a></li> 
@@ -31,9 +47,7 @@
     </ul>
     {% else %}
         No resources :(
-        
         <a href="{% url 'uploader:add_resource' %}">Add some?</a>
-        
     {% endif %}
 </div>
 {% endblock %}

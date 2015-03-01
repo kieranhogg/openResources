@@ -13,19 +13,18 @@
 
 </div>
 <h2>{% block head_title %}{{ unit }}{% endblock %}</h2>
+<h3>General Topic Resources</h3>
+<p>
+    Under general topic resources you will find more general resources that
+    are too broad for a single unit topic.
+</p>
+<p>
+    <a href="{% url 'uploader:unit_resources' unit.id unit|slugify %}">
+        View general resources
+    </a>
+</p>
+<br />
 <div id="resouce_list">
-    <h3>General Topic Resources</h3>
-    <p>
-        Under general topic resources you will find more general resources that
-        are too broad for a single unit topic.
-    </p>
-    <ul>
-        <li>
-            <a href="{% url 'uploader:unit_resources' unit.id unit|slugify %}">
-                General {{ syllabus }} resources
-            </a>
-        </li>
-    </ul>
     
     <h3>Unit Topics</h3>
     {% if unit_topics %}
