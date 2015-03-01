@@ -3,14 +3,14 @@
 <div id="crumbs">
     <a href="{% url 'uploader:index' %}">Home</a> > 
     <a href="{% url 'uploader:subject' unit_topic.unit.syllabus.subject.id unit_topic.unit.syllabus.subject.subject_name|slugify %}">
-        {{ unit_topic.unit.syllabus.subject.subject_name|truncatechars:25 }}</a> >
+        {{ unit_topic.unit.syllabus.subject.subject_name|truncatechars:45 }}</a> >
     <a href="{% url 'uploader:syllabuses' unit_topic.unit.syllabus.subject.id unit_topic.unit.syllabus.subject.subject_name|slugify unit_topic.unit.syllabus.exam_level.id unit_topic.unit.syllabus.exam_level.level_name|slugify %}">
-     {{ unit_topic.unit.syllabus.exam_level.level_name|truncatechars:25 }}</a> >
+     {{ unit_topic.unit.syllabus.exam_level.level_name|truncatechars:45 }}</a> >
     <a href="{% url 'uploader:syllabus' unit_topic.unit.syllabus.id unit_topic.unit.syllabus|slugify %}"> 
-     {{ unit_topic.unit.syllabus|truncatechars:25 }}</a> >
+     {{ unit_topic.unit.syllabus|truncatechars:45 }}</a> >
     <a href="{% url 'uploader:unit' unit_topic.unit.id unit_topic.unit.title|slugify %}">
-     {{ unit_topic.unit.title|truncatechars:25 }}</a> >
-     {{ unit_topic.title|truncatechars:25 }}
+     {{ unit_topic.unit.title|truncatechars:45 }}</a> >
+     {{ unit_topic.title|truncatechars:45 }}
   
 
 </div>

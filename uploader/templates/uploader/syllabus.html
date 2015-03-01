@@ -3,10 +3,10 @@
 <div id="crumbs">
     <a href="{% url 'uploader:index' %}">Home</a> > 
     <a href="{% url 'uploader:subject' syllabus.subject.id syllabus.subject.subject_name|slugify %}">
-        {{ syllabus.subject.subject_name|truncatechars:25 }}</a> >
+        {{ syllabus.subject.subject_name|truncatechars:45 }}</a> >
     <a href="{% url 'uploader:syllabuses' syllabus.subject.id syllabus.subject.subject_name|slugify syllabus.exam_level.id syllabus.exam_level.level_name|slugify %}">
-     {{ syllabus.exam_level.level_name|truncatechars:25 }}</a> >
-     {{ syllabus|truncatechars:25 }}
+     {{ syllabus.exam_level.level_name|truncatechars:45 }}</a> >
+     {{ syllabus|truncatechars:45 }}
 </div>
 <h2>{% block head_title %}{{ syllabus }}{% endblock %}</h2>
 <div id="syllabus_validity">
