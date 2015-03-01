@@ -17,11 +17,11 @@
   <ul>
     {% for resource in resources %}
       {% if resource.file %}
-        <li data-type="file"><a href="{% url 'uploader:resource' resource.id %}">
+        <li data-type="file"><a href="{% url 'uploader:resource' resource.id resource|slugify %}">
             {{ resource }}</a>
         </li>
         {% else %}
-        <li data-type="bookmark"><a href="{% url 'uploader:resource' resource.id %}">
+        <li data-type="bookmark"><a href="{% url 'uploader:resource' resource.id resource|slugify %}">
             {{ resource }}</a>
         </li>
         {% endif %}
