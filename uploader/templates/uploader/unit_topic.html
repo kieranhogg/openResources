@@ -17,11 +17,8 @@
 <h2>{% block head_title %}{{ unit_topic.title }}{% endblock %}</h2>
 <!-- TODO write * -> <li> filter -->
 <div id="description">
-{% if unit.description %}
-    {{ unit.description|safe }}
-{% else %}
-<!-- TODO add link -->
-    No description :( <a>Add one</a>?
+{% if unit_topic.description %}
+    {{ unit_topic.description|safe|linebreaks }}
 {% endif %}
 </div>
 {% if resources %}
