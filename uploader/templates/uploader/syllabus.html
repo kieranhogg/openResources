@@ -27,12 +27,12 @@
 {% if syllabus.official_site %}
 <p><a href="{{ syllabus.official_site }}">Official site</a></p>
 {% endif %}
-<h3>General Resources</h3>
-<p>Under general resources you will find syllabus-specific resources
+<h3>Syllabus Resources</h3>
+<p>Under syllabus resources you will find syllabus-specific resources
 such as schemes of work.</p>
 <p>
     <a href="{% url 'uploader:syllabus_resources' syllabus.id syllabus|slugify %}">
-        View general resources
+        View syllabus resources
     </a>
 </p>
 <br />
