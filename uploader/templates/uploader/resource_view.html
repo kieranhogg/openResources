@@ -34,35 +34,35 @@ function vote(resourceID, rating)
     </strong>
     </div>
     <div id="rating">
-        <a href="javascript:none" onclick="javascript:vote({{ resource.id}}, 5)">
+        <a href="javascript:void(0)" onclick="javascript:vote({{ resource.id}}, 5)">
             {% if rating_val > 4.9 %}
                 <span>★</span>
             {% else %}
                 <span>☆</span>
             {% endif %}
         </a>
-        <a href="javascript:none" onclick="javascript:vote({{ resource.id}}, 4)">
+        <a href="javascript:void(0)" onclick="javascript:vote({{ resource.id}}, 4)">
             {% if rating_val >= 4 %}
                 <span>★</span>
             {% else %}
                 <span>☆</span>
             {% endif %}
         </a>
-        <a href="javascript:none" onclick="javascript:vote({{ resource.id}}, 3)">
+        <a href="javascript:void(0)" onclick="javascript:vote({{ resource.id}}, 3)">
             {% if rating_val >= 3 %}
                 <span>★</span>
             {% else %}
                 <span>☆</span>
             {% endif %}
         </a>
-        <a href="javascript:none" onclick="javascript:vote({{ resource.id}}, 2)">
+        <a href="javascript:void(0)" onclick="javascript:vote({{ resource.id}}, 2)">
             {% if rating_val >= 2 %}
                 <span>★</span>
             {% else %}
                 <span>☆</span>
             {% endif %}
         </a>
-        <a href="javascript:none" onclick="javascript:vote({{ resource.id}}, 1)">
+        <a href="javascript:void(0)" onclick="javascript:vote({{ resource.id}}, 1)">
             {% if rating_val >= 1 %}
                 <span>★</span>
             {% else %}
