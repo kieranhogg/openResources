@@ -149,6 +149,8 @@ class UnitTopic(models.Model):
     title = models.CharField(max_length=200)
     unit = models.ForeignKey(Unit)
     topic = models.ManyToManyField(Topic, blank=True, null=True)
+    section = models.CharField(max_length=100, blank=True, null=True,
+            help_text='Use this to group topics by section')
     description = models.TextField(
         blank=True,
         null=True,
