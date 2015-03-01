@@ -92,28 +92,14 @@ class Syllabus(models.Model):
     pub_date = models.DateTimeField('Date published')
 
     def __unicode__(self):
-        # if we have situations like IB IB, shorten to IB
-        # if we have a subject name set (e.g. Computing not Computer Science),
-        # show that, otherwise default to the subject
-        if str(self.exam_level) == str(self.exam_board):
-            if not self.subject_name:
-                return str(self.exam_board) + ' ' + str(self.subject)
-            else:
-                return str(self.exam_board) + ' ' + str(self.subject_name)
+        if self.teach_from is not None:
+            return str(self.exam_board) + " " + (str(self.subject_name) or 
+                str(self.subject)) + " (" + str(
+                    self.teach_from.strftime("%Y")) + ")"
         else:
-            if not self.subject_name:
-                return (
-                    str(self.exam_board) + ' ' +
-                    str(self.subject) + ' ' +
-                    str(self.exam_level)
-                )
-            else:
-                return (
-                    str(self.exam_board) + ' ' +
-                    str(self.subject_name) + ' ' +
-                    str(self.exam_level)
-                )
-
+            return str(self.exam_board) + " " + (str(self.subject_name) or 
+                str(self.subject))
+        
     class Meta:
         ordering = ('subject', 'exam_board', 'exam_level')
         verbose_name_plural = "Syllabuses"
