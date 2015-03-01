@@ -32,7 +32,6 @@ urlpatterns = patterns('',
 
     url(r'unit/(?P<unit_id>\d+)/$', views.unit, name='unit'),
     url(r'unit/(?P<unit_id>\d+)/(?P<slug>[-\w]+)/$', views.unit, name='unit'),
-    url(r'syllabus/(?P<syllabus_id>\d+)/(?P<slug>[-\w]+)/unit/(?P<unit_id>\d+)/(?P<slug2>[-\w]+)/$', views.unit, name='unit'),
     url(r'unit/(?P<unit_id>\d+)/(?P<slug>[-\w]+)/resources/$', views.unit_resources, name='unit_resources'),
     url(r'unit_topic/(?P<unit_topic_id>\d+)/$', views.unit_topic, name='unit_topic'),
     url(r'unit_topic/(?P<unit_topic_id>\d+)/(?P<slug>[-\w]+)/$', views.unit_topic, name='unit_topic'),
