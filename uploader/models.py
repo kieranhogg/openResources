@@ -85,7 +85,10 @@ class Syllabus(models.Model):
         blank=True,
         null=True
     )
-    official_site = models.CharField(max_length=200, null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+    official_site = models.URLField(max_length=200, null=True, blank=True)
+    teach_from = models.DateField(null=True, blank=True, help_text='Date of first teaching')
+    teach_until = models.DateField(null=True, blank=True, help_text='Date of last teaching')
     pub_date = models.DateTimeField('Date published')
 
     def __unicode__(self):
@@ -181,7 +184,7 @@ class UnitTopicAdmin(admin.ModelAdmin):
 class Licence(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField(null=True)
-    link = models.CharField('URL', max_length=200)
+    link = models.URLField('URL', max_length=200)
 
     def __unicode__(self):
         return str(self.name)
@@ -220,11 +223,11 @@ class File(models.Model):
                   'the author, write "me" if you are logged in, otherwise ' +
                   'add your name'
     )
-    author_link = models.CharField(
+    author_link = models.URLField(
         max_length=200,
         blank=True,
         null=True,
-        help_text='A URL or email to credit the original author. If it is ' +
+        help_text='A URL to credit the original author. If it is ' +
                   'you and you\'re logged in, leave blank'
     )
     licence = models.ForeignKey(
@@ -259,7 +262,7 @@ class FileAdmin(admin.ModelAdmin):
 
 class Bookmark(models.Model):
     title = models.CharField(max_length=200)
-    link = models.CharField(max_length=400)
+    link = models.URLField(max_length=400)
     description = models.TextField('Description', null=True)
     uploader = models.ForeignKey(settings.AUTH_USER_MODEL)
     pub_date = models.DateTimeField(
