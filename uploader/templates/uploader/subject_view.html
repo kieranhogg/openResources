@@ -7,7 +7,7 @@
 </div>
 <h2>{% block head_title %}{{ subject.subject_name }}{% endblock %}</h2>
 <!--<img src="{% static 'uploader/img/subjects/' %}{{ subject.subject_name|slugify }}_large.jpg" />-->
-<p>Choose which syllabus you are looking for:</p>
+<p>Choose which level of syllabus you are looking for:</p>
 <div id="resouce_list">
     <!--<h3>Any</h3>
     <ul>
@@ -26,7 +26,6 @@
               <li><a href="{% url 'uploader:syllabuses' subject.id subject.subject_name|slugify item.id item.level_name|slugify %}">{{ item.level_name }}</a></li> 
             {% endfor %}
         </ul>
-        </li>
     {% endfor %}
     {% endblock %}
 </div>

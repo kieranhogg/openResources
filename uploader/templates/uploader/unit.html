@@ -42,14 +42,28 @@
     <br />
     <div id="resouce_list">
         <h3>Unit Topics</h3>
-        {% if unit_topics %}
-        <ul>
-        {% for unit_topic in unit_topics %}
-          <li><a href="{% url 'uploader:unit_topic' unit_topic.id unit_topic.title|slugify %}">{{ unit_topic.title }}</a></li> 
-        {% endfor %}
-        </ul>
+        <!-- As we input data, we can assume that it if the first item has a group, they all do -->
+        {% if unit_topics.0.section %}
+            {% regroup unit_topics by section as section_list %}
+            {% for section in section_list %}
+                <h3>{{ section.grouper }}</h3>
+                <ul>
+                    {% for item in section.list %}
+                      <!--<li>{{ item.name }}: {{ item.population }}</li>-->
+                      <li><a href="{% url 'uploader:unit_topic' item.id item|slugify %}">{{ item }}</a></li> 
+                    {% endfor %}
+                </ul>
+            {% endfor %}
         {% else %}
-        No resources :(
+            {% if unit_topics %}
+            <ul>
+            {% for unit_topic in unit_topics %}
+              <li><a href="{% url 'uploader:unit_topic' unit_topic.id unit_topic.title|slugify %}">{{ unit_topic.title }}</a></li> 
+            {% endfor %}
+            </ul>
+            {% else %}
+            No resources :(
+            {% endif %}
         {% endif %}
     </div>
 {% else %}
