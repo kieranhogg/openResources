@@ -46,7 +46,7 @@
         {% if unit_topics.0.section %}
             {% regroup unit_topics by section as section_list %}
             {% for section in section_list %}
-                <h3>{{ section.grouper }}</h3>
+                <h4>{{ section.grouper }}</h4>
                 <ul>
                     {% for item in section.list %}
                       <!--<li>{{ item.name }}: {{ item.population }}</li>-->
