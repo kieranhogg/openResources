@@ -26,7 +26,7 @@
 <p>I found the following units:</p>
     <ul>
     {% for unit in units %}
-              <li><a href="{% url 'uploader:unit' unit.id unit.title|slugify %}">{{ unit.title }}</a></li> 
+              <li><a href="{% url 'uploader:unit' syllabus.id syllabus|slugify unit.id unit.title|slugify %}">{{ unit.title }}</a></li> 
     {% endfor %}
     </ul>
     {% else %}
