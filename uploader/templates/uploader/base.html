@@ -37,13 +37,13 @@
 }
 </script> 
 <title>{{ SITE_NAME }} | {% block head_title %}{% endblock %}</title>
-<link rel="shortcut icon" type="image/png" href="{{STATIC_URL}}/favicon.ico" width="64" height="64" />
+<link rel="shortcut icon" type="image/png" href="{{STATIC_URL}}/favicon.ico" />
 </head>
 <body>
 <div id="container">
     <div id="header">
         <div id="logo">
-            <img src="{% static 'uploader/logo_s.png' %}" alt="logo" />
+            <img src="{% static 'uploader/logo_s.png' %}" alt="logo" width="64" height="64" />
             <h1>{{ SITE_NAME }}</h1>
         </div>
         {% try_to_include "uploader/top_banner.html" %}
