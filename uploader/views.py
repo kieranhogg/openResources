@@ -169,7 +169,7 @@ def add_file(request):
         file.uploader = request.user
         
         # check author fields
-        if request.POST['i_am_the_author'] == 'on':
+        if 'i_am_the_author' in request.POST and request.POST['i_am_the_author'] == 'on':
             file.author = str(request.user)
             file.author_link = '%user_link%:' + str(request.user.id)
 
@@ -219,23 +219,25 @@ def link_bookmark(request, bookmark_id, slug=None):
 
 def add_resource_stage_two(request, _file_id=None, _bookmark_id=None):
     
-    # get the link or file
     bookmark_id = None
     file_id = None
 
-    if _file_id is not None:
-        file_id = _file_id
-    elif request.session.get('_link') is not None:
-        file_id = request.session.get('_link')
-    elif _bookmark_id is not None:
-        bookmark_id = _bookmark_id
-    elif request.session.get('_bookmark_id') is not None:
-        bookmark_id = request.session.get('_bookmark_id')    
-    else:
-        return Http404
+    if request.method == 'GET':
+        # get the link or file
+            
+        if _file_id is not None:
+            file_id = _file_id
+        elif request.session.get('_file_id') is not None:
+            file_id = request.session.get('_file_id')
+        elif _bookmark_id is not None:
+            bookmark_id = _bookmark_id
+        elif request.session.get('_bookmark_id') is not None:
+            bookmark_id = request.session.get('_bookmark_id')    
+        else:
+            raise Http404
     
-    request.session['_link'] = None
-    request.session['_file_id'] = None
+        request.session['_bookmark_id'] = None
+        request.session['_file_id'] = None
     
     # create and save
     form = ResourceStageTwoForm(
