@@ -172,7 +172,7 @@ class UnitTopicAdmin(admin.ModelAdmin):
 class Licence(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField(null=True)
-    link = models.URLField('URL', max_length=200)
+    link = models.URLField('URL', max_length=200, null=True)
 
     def __unicode__(self):
         return str(self.name)
