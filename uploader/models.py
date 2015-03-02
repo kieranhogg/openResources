@@ -94,11 +94,11 @@ class Syllabus(models.Model):
     def __unicode__(self):
         if self.teach_from is not None:
             return str(self.exam_board) + " " + (str(self.subject_name) or 
-                str(self.subject)) + " (" + str(
+                str(self.subject)) + " " + str(self.exam_level) + " (" + str(
                     self.teach_from.strftime("%Y")) + ")"
         else:
             return str(self.exam_board) + " " + (str(self.subject_name) or 
-                str(self.subject))
+                str(self.subject)) + str(self.exam_level)
         
     class Meta:
         ordering = ('subject', 'exam_board', 'exam_level')

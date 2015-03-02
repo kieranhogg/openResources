@@ -17,7 +17,7 @@ class BookmarkStageOneForm(forms.ModelForm):
 
 
 class FileStageOneForm(forms.ModelForm):
-    i_am_the_author = forms.BooleanField()
+    i_am_the_author = forms.BooleanField(required=False)
 
     class Meta:
         model = File
@@ -29,7 +29,8 @@ class FileStageOneForm(forms.ModelForm):
 
     def clean(self):
         valid = super(FileStageOneForm, self).is_valid()
-        data = self.cleaned_data['file']
+        #data = self.cleaned_data
+        data = super(FileStageOneForm, self).clean()
         try:
             if data.content_type in settings.UPLOAD_FILE_TYPES:
                 if data.size > settings.UPLOAD_FILE_MAX_SIZE:
