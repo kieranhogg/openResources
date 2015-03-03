@@ -175,7 +175,7 @@ class UnitTopic(models.Model):
 
 class UnitTopicAdmin(admin.ModelAdmin):
     list_display = ('title', 'unit', 'description', 'pub_date')
-    list_filter = ('unit', 'topic')
+    list_filter = ('unit__subject', 'unit')
     prepopulated_fields = {"slug": ("title",)}
     
     
