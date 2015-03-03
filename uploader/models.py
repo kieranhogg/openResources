@@ -103,10 +103,10 @@ class Syllabus(models.Model):
                     self.teach_from.strftime("%Y")) + ")"
         else:
             return str(self.exam_board) + " " + (str(self.subject_name) or 
-                str(self.subject)) + str(self.exam_level)
+                str(self.subject)) + " " + str(self.exam_level)
         
     class Meta:
-        ordering = ('subject', 'exam_board', 'exam_level')
+        ordering = ('exam_board', 'exam_level', 'subject')
         verbose_name_plural = "Syllabuses"
 
 

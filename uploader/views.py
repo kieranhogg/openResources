@@ -231,7 +231,6 @@ def link_bookmark(request, slug):
     return add_resource_stage_two(request, None, bookmark.id)
 
 def add_resource_stage_two(request, _file_id=None, _bookmark_id=None):
-    
     bookmark_id = None
     file_id = None
     slug = None
@@ -300,7 +299,6 @@ def score_points(user, action):
     user_profile.score += points[action]
     user_profile.save()
     
-    
 # TODO
 def profile(request, username=None):
     # /profile/ and logged in
@@ -314,7 +312,8 @@ def profile(request, username=None):
     else:
         True
     return render(request, 'uploader/profile.html', {})
-        
+
+@login_required
 def user_resources(request, user_id=None):
     resources = Resource.objects.filter(uploader=request.user)
     
