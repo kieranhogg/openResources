@@ -9,7 +9,7 @@
             {{ resource }}</a>
         </li>
         {% else %}
-        <li data-type="bookmark"><a href="{% url 'uploader:resource' resources.slug %}">
+        <li data-type="bookmark"><a href="{% url 'uploader:resource' resource.slug %}">
             {{ resource }}</a>
         </li>
         {% endif %}

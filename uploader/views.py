@@ -46,7 +46,6 @@ def subject(request, slug):
     context = {'exam_levels': exam_levels, 'subject': subject}
     return render(request, 'uploader/subject_view.html', context)
     
-# TODO even though each view is slightly different, look at factorising
 def syllabus_resources(request, slug):
     syllabus = get_object_or_404(Syllabus, slug=slug)
     resources = Resource.objects.filter(
