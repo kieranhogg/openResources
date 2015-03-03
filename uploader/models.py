@@ -5,7 +5,6 @@ from django.db.models.signals import pre_delete, post_save
 from django.dispatch.dispatcher import receiver
 from django.utils.safestring import mark_safe
 from django.contrib.auth.models import User
-from autoslug import AutoSlugField
 
 
 class Subject(models.Model):
