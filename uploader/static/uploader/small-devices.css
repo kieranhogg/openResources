@@ -1,0 +1,32 @@
+#menu_submit {
+    display: none;
+}
+
+#login {
+    display: none;
+}
+
+#content {
+    margin-top: 40px;
+    width: 95%;
+}
+
+#menu_submit:after {
+  content:'Add'; 
+  visibility: visible;
+}
+
+#subjects li {
+    width: 80px;
+}
+
+#subjects li img{
+    /*visibility: hidden;*/
+    width: 65px;
+    height: 50px;
+
+}
+
+#top_banner {
+    display:none;
+}
