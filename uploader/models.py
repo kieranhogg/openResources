@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 class Subject(models.Model):
     subject_name = models.CharField(max_length=200)
     active = models.BooleanField(default=True)
-    slug = models.SlugField()
+    slug = models.SlugField(unique=True)
     pub_date = models.DateTimeField('Date published')
 
     def __unicode__(self):
@@ -63,7 +63,7 @@ class ExamLevel(models.Model):
         choices=YEAR_IN_SCHOOL_CHOICES,
         default=NONE
     )
-    slug = models.SlugField(max_length=100)
+    slug = models.SlugField(max_length=100, unique=True)
     pub_date = models.DateTimeField('Date published')
 
     def __unicode__(self):
@@ -93,7 +93,7 @@ class Syllabus(models.Model):
     official_site = models.URLField(max_length=200, null=True, blank=True)
     teach_from = models.DateField(null=True, blank=True, help_text='Date of first teaching')
     teach_until = models.DateField(null=True, blank=True, help_text='Date of last teaching')
-    slug = models.SlugField()
+    slug = models.SlugField(unique=True)
     pub_date = models.DateTimeField('Date published')
 
     def __unicode__(self):
@@ -123,7 +123,7 @@ class Unit(models.Model):
         null=True,
         help_text='A brief overview of the content'
     )
-    slug = models.SlugField()
+    slug = models.SlugField(unique=True)
     pub_date = models.DateTimeField('Date published')
 
     def __unicode__(self):
@@ -163,7 +163,7 @@ class UnitTopic(models.Model):
         null=True,
         help_text='E.g. the expected topics taught'
     )
-    slug = models.SlugField()
+    slug = models.SlugField(unique=True)
     pub_date = models.DateTimeField('Date published')
 
     def __unicode__(self):
@@ -182,7 +182,7 @@ class UnitTopicAdmin(admin.ModelAdmin):
 class Note(models.Model):
     unit_topic = models.OneToOneField(UnitTopic)
     content = models.TextField()
-    slug = models.SlugField() # don't use this yet but may in future
+    slug = models.SlugField(unique=True) # don't use this yet but may in future
 
 
 class NoteAdmin(admin.ModelAdmin):
@@ -255,7 +255,7 @@ class File(models.Model):
             '<a href="/licences/">Still unsure?</a> ')
     )
     topics = models.ManyToManyField(Topic, null=True, blank=True)
-    slug = models.SlugField()
+    slug = models.SlugField(unique=True)
     pub_date = models.DateTimeField(
         'Date published',
         auto_now_add=True,
@@ -280,7 +280,7 @@ class Bookmark(models.Model):
     link = models.URLField(max_length=400)
     description = models.TextField('Description', null=True)
     uploader = models.ForeignKey(settings.AUTH_USER_MODEL)
-    slug = models.SlugField()
+    slug = models.SlugField(unique=True)
     pub_date = models.DateTimeField(
         'Date published',
         auto_now_add=True,
@@ -314,7 +314,7 @@ class Resource(models.Model):
         blank=True,
     )
     approved = models.BooleanField(default=False)
-    slug = models.SlugField()
+    slug = models.SlugField(unique=True)
     pub_date = models.DateTimeField(
         'Date published',
         auto_now_add=True,
@@ -436,6 +436,13 @@ class Message(models.Model):
 class MessageAdmin(admin.ModelAdmin):
     list_display = ('message', 'user_from', 'user_to', 'type', 'read', 
         'read_date', 'sticky_date', 'pub_date')
+        
+
+class Image(models.Model):
+    image = models.ImageField(upload_to='images/%Y/%m')
+    uploader = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True)
+    licence = models.ForeignKey(Licence)
+    pub_date = models.DateTimeField(auto_now_add=True)
     
 ######## signals TODO move to own file #########
 

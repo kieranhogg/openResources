@@ -44,6 +44,9 @@ urlpatterns = patterns('',
     
     url(r'licences/$', views.licences, name='licences'),
     
+    url(r'upload_image/$', views.upload_image, name='upload_image'),
+    url(r'image/(?P<image_id>\d+)/$', views.view_image, name='view_image'),
+    
     # static pages
     url(r'^about',
     TemplateView.as_view(template_name='uploader/about.html'),

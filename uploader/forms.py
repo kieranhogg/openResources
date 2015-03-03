@@ -5,7 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.text import slugify
 from django.shortcuts import get_object_or_404
 from uploader.models import (Resource, Bookmark, File, Subject, Syllabus, Unit,
-                             UnitTopic, Note)
+                             UnitTopic, Note, Image)
                         
 
 class BookmarkStageOneForm(forms.ModelForm):
@@ -91,3 +91,10 @@ class NotesForm(forms.ModelForm):
  	  #      self.slug = slugify(unit.title + ' ' + unit_topic.title)
  	  #      self.cleaned_data['slug'] = self.slug
     #  	    super(NotesForm, self).save(*args, **kwargs)
+
+class ImageForm(forms.ModelForm):
+    class Meta:
+        model = Image
+        widgets = {
+            'uploader': forms.HiddenInput(),
+        }

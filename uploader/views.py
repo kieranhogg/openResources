@@ -5,9 +5,9 @@ from django.shortcuts import (render, get_object_or_404, get_list_or_404,
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, Http404
 from django.template import RequestContext, loader
 from uploader.models import (Subject, ExamLevel, Syllabus, Resource, Unit, File, 
-    Rating, UnitTopic, Message, UserProfile, Licence, Note, Bookmark)
+    Rating, UnitTopic, Message, UserProfile, Licence, Note, Bookmark, Image)
 from uploader.forms import (BookmarkStageOneForm, FileStageOneForm, 
-    ResourceStageTwoForm, NotesForm)
+    ResourceStageTwoForm, NotesForm, ImageForm)
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 from django.db import IntegrityError
@@ -123,7 +123,7 @@ def resource(request, slug):
     resource = get_object_or_404(Resource, slug=slug)
     
     if resource.file is not None:
-        # fix user link
+        # FIXME remove?
         pattern = '\%user_link%:[\d]+'
         # should hopefully never need the 'or's here but better than dying
         if re.match(pattern, resource.file.author_link or "") is not None:
@@ -391,13 +391,11 @@ def view_notes(request, slug):
 
     headers = {'Content-Type': 'text/plain'}
     #data = notes.content.encode('utf-8')
-    
+    data = None
     if type(notes.content) == bytes:  # sometimes body is str sometimes bytes...
         data = notes.content
-    elif type(notes.content) == str:
-        data = notes.content.encode('utf-8')
     else:
-        print("somthing is wrong")
+        data = notes.content.encode('utf-8')
     
     r = requests.post('https://api.github.com/markdown/raw', headers=headers, data=data)
     notes.content = r.text.encode('utf-8')
@@ -405,6 +403,24 @@ def view_notes(request, slug):
     context =  {'notes': notes, 'unit_topic': unit_topic}
     return render(request, 'uploader/notes.html', context)
 
+def upload_image(request):
+    form = ImageForm(
+        request.POST or None, 
+        request.FILES or None,
+        label_suffix='',
+        initial={'uploader': request.user} #FIXME initial
+    )
+    
+    if request.method == 'POST' and form.is_valid():
+        image = form.save()
+        #FIXME
+        return redirect('/image/' + str(image.id))
+
+    return render(request, 'uploader/upload_image.html', {'form': form})
+        
+def view_image(request, image_id):
+    image = get_object_or_404(Image, pk=image_id)
+    return render(request, 'uploader/image.html', {'url': image.image.url})
     
 # ajax views
 
