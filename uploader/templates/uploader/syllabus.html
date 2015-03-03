@@ -2,9 +2,9 @@
 {% block body_block %}
 <div id="crumbs">
     <a href="{% url 'uploader:index' %}">Home</a> > 
-    <a href="{% url 'uploader:subject' syllabus.subject.id syllabus.subject.subject_name|slugify %}">
+    <a href="{% url 'uploader:subject' syllabus.subject.slug %}">
         {{ syllabus.subject.subject_name|truncatechars:45 }}</a> >
-    <a href="{% url 'uploader:syllabuses' syllabus.subject.id syllabus.subject.subject_name|slugify syllabus.exam_level.id syllabus.exam_level.level_name|slugify %}">
+    <a href="{% url 'uploader:syllabuses' syllabus.subject.slug syllabus.exam_level.slug %}">
      {{ syllabus.exam_level.level_name|truncatechars:45 }}</a> >
      {{ syllabus|truncatechars:45 }}
 </div>
@@ -31,7 +31,7 @@
 <p>Under syllabus resources you will find syllabus-specific resources
 such as schemes of work.</p>
 <p>
-    <a href="{% url 'uploader:syllabus_resources' syllabus.id syllabus|slugify %}">
+    <a href="{% url 'uploader:syllabus_resources' syllabus.slug %}">
         View syllabus resources
     </a>
 </p>
@@ -42,7 +42,7 @@ such as schemes of work.</p>
 <div id="resource_list">
     <ul>
     {% for unit in units %}
-              <li><a href="{% url 'uploader:unit' unit.id unit.title|slugify %}">{{ unit.title }}</a></li> 
+              <li><a href="{% url 'uploader:unit' unit.slug %}">{{ unit.title }}</a></li> 
     {% endfor %}
     </ul>
     {% else %}

@@ -23,7 +23,7 @@
         <ul>
             {% for item in country.list %}
               <!--<li>{{ item.name }}: {{ item.population }}</li>-->
-              <li><a href="{% url 'uploader:syllabuses' subject.id subject.subject_name|slugify item.id item.level_name|slugify %}">{{ item.level_name }}</a></li> 
+              <li><a href="{% url 'uploader:syllabuses' subject.slug item.slug %}">{{ item.level_name }}</a></li> 
             {% endfor %}
         </ul>
     {% endfor %}

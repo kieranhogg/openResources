@@ -20,11 +20,11 @@
         <td>{{ resource.unit }}</td>
         <td>{{ resource.unit_topic }}</td>
         <td class="actions">
-            <a href="{% url 'uploader:resource' resource.id resource|slugify %}">View</a>
+            <a href="{% url 'uploader:resource' resource.slug %}">View</a>
             {% if resource.file %}
-            <a href="{% url 'uploader:link_file' resource.file.id resource|slugify %}">Link to...</a>
+            <a href="{% url 'uploader:link_file' resource.file.slug %}">Link to...</a>
             {% elif resource.bookmark %}
-            <a href="{% url 'uploader:link_bookmark' resource.bookmark.id resource|slugify %}">Link to...</a>
+            <a href="{% url 'uploader:link_bookmark' resource.bookmark.slug %}">Link to...</a>
             {% endif %}
         </td>
     </tr>

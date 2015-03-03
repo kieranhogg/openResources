@@ -1,17 +1,20 @@
 import re
+import requests
 from django.shortcuts import (render, get_object_or_404, get_list_or_404, 
     render_to_response, redirect)
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, Http404
 from django.template import RequestContext, loader
 from uploader.models import (Subject, ExamLevel, Syllabus, Resource, Unit, File, 
-    Rating, UnitTopic, Message, UserProfile, Licence)
+    Rating, UnitTopic, Message, UserProfile, Licence, Note, Bookmark)
 from uploader.forms import (BookmarkStageOneForm, FileStageOneForm, 
-    ResourceStageTwoForm)
+    ResourceStageTwoForm, NotesForm)
 from django.core.urlresolvers import reverse
-from django.forms.models import modelformset_factory
 from django.contrib import messages
 from django.db import IntegrityError
 from django.contrib.auth.models import User
+from django.views.generic.edit import UpdateView
+from django.utils.text import slugify
+from django.core.urlresolvers import reverse
 
 
 # Homepage view, shows subjects
@@ -33,8 +36,8 @@ def index(request):
     return render(request, 'uploader/index.html', context)
 
 # View one subject, shows exam levels, e.g. GCSE
-def subject(request, subject_id, slug=None):
-    subject = get_object_or_404(Subject, pk=subject_id)
+def subject(request, slug):
+    subject = get_object_or_404(Subject, slug=slug)
     
     # Sort by country first to enable grouping
     exam_levels = ExamLevel.objects.order_by('country', 'level_number')
@@ -43,34 +46,35 @@ def subject(request, subject_id, slug=None):
     return render(request, 'uploader/subject_view.html', context)
     
 # TODO even though each view is slightly different, look at factorising
-def syllabus_resources(request, syllabus_id, slug=None):
-    syllabus = get_object_or_404(Syllabus, pk=syllabus_id)
+def syllabus_resources(request, slug):
+    syllabus = get_object_or_404(Syllabus, slug=slug)
     resources = Resource.objects.filter(
-        syllabus__id=syllabus_id, 
+        syllabus__id=syllabus.id, 
         unit__isnull=True,
         unit_topic__isnull=True)
 
     context = {'syllabus': syllabus, 'resources': resources}
     return render(request, 'uploader/syllabus_resources.html', context)
     
-def unit_resources(request, unit_id, slug=None):
-    unit = get_object_or_404(Unit, pk=unit_id)
+def unit_resources(request, slug):
+    unit = get_object_or_404(Unit, slug=slug)
     resources = Resource.objects.filter(
-        unit__id=unit_id,
+        unit__id=unit.id,
         unit_topic__isnull=True)
 
     context = {'unit': unit, 'resources': resources}
     return render(request, 'uploader/unit_resources.html', context)    
 
 # View list of syllabuses for a subject and level, e.g. {AQA, OCR} GCSE Maths 
-# FIXME slug2, bit ugly
-def syllabuses(request, subject_id, slug, exam_level_id, slug2=None):
+def syllabuses(request, subject_slug, exam_slug):
+    subject = get_object_or_404(Subject, slug=subject_slug)
+    level = get_object_or_404(ExamLevel, slug=exam_slug)
+    
     syllabus_list = Syllabus.objects.filter(
-        subject = subject_id, 
-        exam_level = exam_level_id
+        subject=subject, 
+        exam_level=level,
     )
-    subject = get_object_or_404(Subject, pk=subject_id)
-    level = get_object_or_404(ExamLevel, pk=exam_level_id)
+
     context = {
         'syllabus_list': syllabus_list, 
         'subject': subject,
@@ -79,21 +83,21 @@ def syllabuses(request, subject_id, slug, exam_level_id, slug2=None):
     return render(request, 'uploader/syllabus_index.html', context)
     
 # Show one syllabuses page, has units on
-def syllabus(request, syllabus_id, slug=None):
-    syllabus = get_object_or_404(Syllabus, pk=syllabus_id)
-    units = Unit.objects.filter(syllabus__id=syllabus_id)
+def syllabus(request, slug):
+    syllabus = get_object_or_404(Syllabus, slug=slug)
+    units = Unit.objects.filter(syllabus__id=syllabus.id)
     context = {'syllabus': syllabus, 'units': units}
     return render(request, 'uploader/syllabus.html', context)
 
 # A single unit view
-def unit(request, unit_id, slug=None):
-    unit = get_object_or_404(Unit, pk=unit_id)
-    unit_topics = UnitTopic.objects.filter(unit__id = unit_id).order_by(
+def unit(request, slug):
+    unit = get_object_or_404(Unit, slug=slug)
+    unit_topics = UnitTopic.objects.filter(unit__id = unit.id).order_by(
             'section', 'pub_date')
     resources = None
 
     if unit_topics.count() == 0:
-        resources = Resource.objects.filter(unit__id = unit_id)
+        resources = Resource.objects.filter(unit__id = unit.id)
 
     context = {
         'resources': resources, 
@@ -102,19 +106,21 @@ def unit(request, unit_id, slug=None):
     }
     return render(request, 'uploader/unit.html', context)
     
-def unit_topic(request, unit_topic_id, slug = None):
-    _unit_topic_id = unit_topic_id
-    resources = Resource.objects.filter(unit_topic_id = _unit_topic_id)
-    unit_topic = get_object_or_404(UnitTopic, pk=unit_topic_id)
+def unit_topic(request, slug):
+    unit_topic = get_object_or_404(UnitTopic, slug=slug)
+    notes = Note.objects.filter(unit_topic = unit_topic)
+
+    resources = Resource.objects.filter(unit_topic_id = unit_topic.id)
     context = {
         'resources': resources, 
         'unit_topic': unit_topic,
+        'notes': notes
     }
     return render(request, 'uploader/unit_topic.html', context)
     
 # A single resource view
-def resource(request, resource_id, slug=None):
-    resource = get_object_or_404(Resource, pk=resource_id)
+def resource(request, slug):
+    resource = get_object_or_404(Resource, slug=slug)
     
     if resource.file is not None:
         # fix user link
@@ -127,8 +133,8 @@ def resource(request, resource_id, slug=None):
     
     context = {
         'resource': resource, 
-        'rating': get_resource_rating(resource_id),
-        'rating_val': get_resource_rating(resource_id, 'values')
+        'rating': get_resource_rating(resource.id),
+        'rating_val': get_resource_rating(resource.id, 'values')
     }
     return render_to_response('uploader/resource_view.html', 
         context_instance=RequestContext(request, context))
@@ -167,11 +173,13 @@ def add_file(request):
         file.filename = request.FILES['file'].name
         file.mimetype = request.FILES['file'].content_type
         file.uploader = request.user
+        file.slug = slugify(file.title)
         
         # check author fields
         if 'i_am_the_author' in request.POST and request.POST['i_am_the_author'] == 'on':
             file.author = str(request.user)
-            file.author_link = '%user_link%:' + str(request.user.id)
+            # FIXME
+            file.author_link = "/profile/" + request.user.username
 
         _file = form.save()
 
@@ -193,7 +201,9 @@ def add_bookmark(request):
     # If we've received a submitted form
     if request.method == 'POST':
         if form.is_valid():
-            bookmark = form.save(commit=True)
+            bookmark = form.save(commit=False)
+            bookmark.slug = slugify(bookmark.title)
+            form.save()
             request.session['_bookmark_id'] = bookmark.id
             return HttpResponseRedirect('stage_two')
         else:
@@ -211,16 +221,19 @@ def add_bookmark(request):
 def add_resource(request):
     return render(request, "uploader/resource_add.html")
 
-def link_file(request, file_id, slug=None):
-    return add_resource_stage_two(request, file_id)
+def link_file(request, slug):
+    file = get_object_or_404(File, slug=slug)
+    return add_resource_stage_two(request, file.id)
     
-def link_bookmark(request, bookmark_id, slug=None):
-    return add_resource_stage_two(request, None, bookmark_id)
+def link_bookmark(request, slug):
+    bookmark = get_object_or_404(Bookmark, slug=slug)
+    return add_resource_stage_two(request, None, bookmark.id)
 
 def add_resource_stage_two(request, _file_id=None, _bookmark_id=None):
     
     bookmark_id = None
     file_id = None
+    slug = None
 
     if request.method == 'GET':
         # get the link or file
@@ -235,7 +248,7 @@ def add_resource_stage_two(request, _file_id=None, _bookmark_id=None):
             bookmark_id = request.session.get('_bookmark_id')    
         else:
             raise Http404
-    
+        
         request.session['_bookmark_id'] = None
         request.session['_file_id'] = None
     
@@ -253,11 +266,23 @@ def add_resource_stage_two(request, _file_id=None, _bookmark_id=None):
     
     if request.method == 'POST' and form.is_valid():
         resource = form.save(commit = False)
-
+        
+        #work out slug
+        if resource.file is not None:
+            resource.slug = resource.file.slug
+        else:
+            resource.slug = resource.bookmark.slug
+            
+        # check if we already have one with that name, append number if so
+        num_results = Resource.objects.filter(
+            slug__startswith=resource.slug).count()
+        if num_results > 0:
+            append = num_results + 1
+            resource.slug += '-' + str(append)
+        
         if request.user.is_authenticated():
             # if we're logged in auto-approve
             resource.approved = True
-            
             form.save()
             score_points(request.user, "Add Resource")
 
@@ -276,13 +301,13 @@ def score_points(user, action):
     
     
 # TODO
-def profile(request, user_id=None):
+def profile(request, username=None):
     # /profile/ and logged in
-    if user_id == None and request.user.is_authenticated():
+    if username == None and request.user.is_authenticated():
         user_id = request.user.id
         #
     # /profile/ and not logged in
-    elif user_id == None and not request.user.is_authenticated():
+    elif username == None and not request.user.is_authenticated():
         return HttpResponse("Not logged in")
     # /profile/1
     else:
@@ -327,8 +352,54 @@ def leaderboard(request):
 def licences(request):
     context = {'licences': Licence.objects.all()}
     return render(request, 'uploader/licences.html', context)
+ 
+def notes(request, slug):
+    unit_topic = get_object_or_404(UnitTopic, slug=slug)
+    notes = Note.objects.filter(unit_topic=unit_topic)
+
+    if notes.count() > 0:
+        note = notes[0]
+    else:
+        note = None
+    
+    form = NotesForm(request.POST or None, instance=note or None, label_suffix='')
+
+    if request.method == 'POST':
+        note = form.save(commit=False)
+        note.unit_topic = unit_topic
+
+        # sort slug
+        unit = unit_topic.unit
+        potential_slug = unit_topic.slug
+        note_exists = bool(Note.objects.filter(pk=note.id).count())
+        check_slug = Note.objects.filter(slug=slug).count()
+        
+        if not note_exists and check_slug > 0:
+            note.slug = unit_topic.unit.slug + '-' + unit_topic.slug
+        elif not note_exists:
+            note.slug = potential_slug
+
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('uploader:view_notes', args=[unit_topic.slug]))
+    else:
+        return render(request, "uploader/notes_add.html", {'form': form, 'unit_topic': unit_topic })
+        
+def view_notes(request, slug):
+    unit_topic = get_object_or_404(UnitTopic, slug=slug)
+    notes = get_object_or_404(Note, unit_topic=unit_topic)
+
+    headers = {'Content-Type': 'text/plain'}
+    data = notes.content
+    r = requests.post('https://api.github.com/markdown/raw', headers=headers, data=data)
+    notes.content = r.text.encode('utf-8')
+
+    context =  {'notes': notes, 'unit_topic': unit_topic}
+    return render(request, 'uploader/notes.html', context)
+
     
 # ajax views
+
 
 def get_syllabuses(request, subject_id):
     subject = Subject.objects.get(pk=subject_id)

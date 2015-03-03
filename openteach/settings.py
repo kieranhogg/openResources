@@ -69,6 +69,7 @@ INSTALLED_APPS = (
     #'allauth.socialaccount.providers.stackexchange',
     #'allauth.socialaccount.providers.twitter',
     #'allauth.socialaccount.providers.openid',
+    
 )
 # Allauth
 SITE_ID = 1

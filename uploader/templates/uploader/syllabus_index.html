@@ -2,7 +2,7 @@
 {% block body_block %}
 <div id="crumbs">
     <a href="{% url 'uploader:index' %}">Home</a> > 
-    <a href="{% url 'uploader:subject' subject.id subject.subject_name|slugify %}">
+    <a href="{% url 'uploader:subject' subject.slug %}">
         {{ subject.subject_name }}</a> >
      {{ level.level_name }}
 </div>
@@ -12,7 +12,7 @@
     <ul>
     {% for syllabus in syllabus_list %}
         <li>
-            <a href="{% url 'uploader:syllabus' syllabus.id syllabus|slugify %}">
+            <a href="{% url 'uploader:syllabus' syllabus.slug %}">
                 {{ syllabus }}
             </a>
         </li> 

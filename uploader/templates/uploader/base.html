@@ -6,8 +6,6 @@
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<link rel="stylesheet" type="text/css" href="{% static 'uploader/style.css' %}" />
-<script src="{% static 'js/jquery.js' %}" type="text/javascript"></script>
 <script type="text/javascript"> 
   $(function() {
     moveScroller();
@@ -36,6 +34,9 @@
     move();
 }
 </script> 
+<link rel="stylesheet" type="text/css" href="{% static 'uploader/style.css' %}" />
+<link rel="stylesheet" type="text/css" media="only screen and (max-width: 480px), only screen and (max-device-width: 480px)" href="{% static 'uploader/small-devices.css' %}" />
+<script src="{% static 'js/jquery.js' %}" type="text/javascript"></script>
 <title>{{ SITE_NAME }} | {% block head_title %}{% endblock %}</title>
 <link rel="shortcut icon" type="image/png" href="{{STATIC_URL}}/favicon.ico" />
 </head>
@@ -73,10 +74,10 @@
     <div id="menu-anchor"></div>
     <div id="menu">
         <ul>
-            <li><a href="{% url 'uploader:index' %}">Home</a></li>
-            <li><a href="{% url 'uploader:add_resource' %}">Submit Resource</a></li>
-            <li><a href="{% url 'uploader:leaderboard' %}">Leaderboards</a></li>
-            <li><a href="{% url 'uploader:about' %}">About</a></li>
+            <li id="menu_home"><a href="{% url 'uploader:index' %}">Home</a></li>
+            <li id="menu_submit"><a href="{% url 'uploader:add_resource' %}">Submit Resource</a></li>
+            <li id="menu_leaderboards"><a href="{% url 'uploader:leaderboard' %}">Leaderboards</a></li>
+            <li id="menu_about"><a href="{% url 'uploader:about' %}">About</a></li>
             <a href="https://twitter.com/eduresourc_es">
                 <img src="/static/uploader/img/twitter.png" width="32" height="32" />
             </a>

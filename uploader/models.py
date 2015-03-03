@@ -5,11 +5,13 @@ from django.db.models.signals import pre_delete, post_save
 from django.dispatch.dispatcher import receiver
 from django.utils.safestring import mark_safe
 from django.contrib.auth.models import User
+from autoslug import AutoSlugField
 
 
 class Subject(models.Model):
     subject_name = models.CharField(max_length=200)
     active = models.BooleanField(default=True)
+    slug = models.SlugField()
     pub_date = models.DateTimeField('Date published')
 
     def __unicode__(self):
@@ -21,6 +23,7 @@ class Subject(models.Model):
 
 class SubjectAdmin(admin.ModelAdmin):
     list_display = ('subject_name', 'active', 'pub_date')
+    prepopulated_fields = {'slug': ('subject_name',)}
 
 
 class ExamBoard(models.Model):
@@ -61,6 +64,7 @@ class ExamLevel(models.Model):
         choices=YEAR_IN_SCHOOL_CHOICES,
         default=NONE
     )
+    slug = models.SlugField(max_length=100)
     pub_date = models.DateTimeField('Date published')
 
     def __unicode__(self):
@@ -72,6 +76,7 @@ class ExamLevel(models.Model):
 
 class ExamLevelAdmin(admin.ModelAdmin):
     list_display = ('level_name', 'country', 'level_number', 'pub_date')
+    prepopulated_fields = {"slug": ("level_name",)}
 
 
 class Syllabus(models.Model):
@@ -89,6 +94,7 @@ class Syllabus(models.Model):
     official_site = models.URLField(max_length=200, null=True, blank=True)
     teach_from = models.DateField(null=True, blank=True, help_text='Date of first teaching')
     teach_until = models.DateField(null=True, blank=True, help_text='Date of last teaching')
+    slug = models.SlugField()
     pub_date = models.DateTimeField('Date published')
 
     def __unicode__(self):
@@ -118,6 +124,7 @@ class Unit(models.Model):
         null=True,
         help_text='A brief overview of the content'
     )
+    slug = models.SlugField()
     pub_date = models.DateTimeField('Date published')
 
     def __unicode__(self):
@@ -129,6 +136,7 @@ class Unit(models.Model):
 
 class UnitAdmin(admin.ModelAdmin):
     list_display = ('title', 'syllabus', 'description', 'pub_date')
+    prepopulated_fields = {"slug": ("title",)}
 
 
 class Topic(models.Model):
@@ -156,6 +164,7 @@ class UnitTopic(models.Model):
         null=True,
         help_text='E.g. the expected topics taught'
     )
+    slug = models.SlugField()
     pub_date = models.DateTimeField('Date published')
 
     def __unicode__(self):
@@ -167,6 +176,18 @@ class UnitTopic(models.Model):
 
 class UnitTopicAdmin(admin.ModelAdmin):
     list_display = ('title', 'unit', 'description', 'pub_date')
+    prepopulated_fields = {"slug": ("title",)}
+    
+    
+class Note(models.Model):
+    unit_topic = models.OneToOneField(UnitTopic)
+    content = models.TextField()
+    slug = models.SlugField() # don't use this yet but may in future
+
+
+class NoteAdmin(admin.ModelAdmin):
+    list_display = ('unit_topic', 'content')
+    prepopulated_fields = {"slug": ("unit_topic",)}
 
 
 class Licence(models.Model):
@@ -189,11 +210,15 @@ class File(models.Model):
     PRESENTATION = 1
     LESSON_PLAN = 2
     SOW = 3
+    INFO = 4
+    OTHER = 5
 
     FILE_TYPES = (
         (PRESENTATION, 'A lesson presentation'),
         (LESSON_PLAN, 'A lesson plan'),
         (SOW, 'A scheme of work'),
+        (INFO, 'An informational document'),
+        (OTHER, 'Other')
     )
     title = models.CharField(max_length=200)
     filename = models.CharField(max_length=200)
@@ -230,6 +255,7 @@ class File(models.Model):
             '<a href="/licences/">Still unsure?</a> ')
     )
     topics = models.ManyToManyField(Topic, null=True, blank=True)
+    slug = models.SlugField()
     pub_date = models.DateTimeField(
         'Date published',
         auto_now_add=True,
@@ -246,6 +272,7 @@ class File(models.Model):
 class FileAdmin(admin.ModelAdmin):
     list_display = ('filename', 'title', 'file', 'mimetype', 'filesize',
                     'pub_date')
+    prepopulated_fields = {"slug": ("title",)}
 
 
 class Bookmark(models.Model):
@@ -253,6 +280,7 @@ class Bookmark(models.Model):
     link = models.URLField(max_length=400)
     description = models.TextField('Description', null=True)
     uploader = models.ForeignKey(settings.AUTH_USER_MODEL)
+    slug = models.SlugField()
     pub_date = models.DateTimeField(
         'Date published',
         auto_now_add=True,
@@ -268,6 +296,7 @@ class Bookmark(models.Model):
 
 class BookmarkAdmin(admin.ModelAdmin):
     list_display = ('title', 'link', 'uploader', 'pub_date')
+    prepopulated_fields = {"slug": ("title",)}
 
 
 class Resource(models.Model):
@@ -285,6 +314,7 @@ class Resource(models.Model):
         blank=True,
     )
     approved = models.BooleanField(default=False)
+    slug = models.SlugField()
     pub_date = models.DateTimeField(
         'Date published',
         auto_now_add=True,

@@ -2,11 +2,11 @@
 {% block body_block %}
 <div id="crumbs">
     <a href="{% url 'uploader:index' %}">Home</a> > 
-    <a href="{% url 'uploader:subject' unit.syllabus.subject.id unit.syllabus.subject.subject_name|slugify %}">
+    <a href="{% url 'uploader:subject' unit.syllabus.subject.slug %}">
         {{ unit.syllabus.subject.subject_name|truncatechars:45 }}</a> >
-    <a href="{% url 'uploader:syllabuses' unit.syllabus.subject.id unit.syllabus.subject.subject_name|slugify unit.syllabus.exam_level.id unit.syllabus.exam_level.level_name|slugify %}">
+    <a href="{% url 'uploader:syllabuses' unit.syllabus.subject.slug unit.syllabus.exam_level.slug %}">
      {{ unit.syllabus.exam_level.level_name|truncatechars:45 }}</a> >
-    <a href="{% url 'uploader:syllabus' unit.syllabus.id unit.syllabus|slugify %}"> 
+    <a href="{% url 'uploader:syllabus' unit.syllabus.slug %}"> 
      {{ unit.syllabus|truncatechars:45 }}</a> >
      {{ unit.title|truncatechars:45 }}
 </div>
@@ -17,11 +17,11 @@
   <ul>
     {% for resource in resources %}
       {% if resource.file %}
-        <li data-type="file"><a href="{% url 'uploader:resource' resource.id resource|slugify %}">
+        <li data-type="file"><a href="{% url 'uploader:resource' resource.slug %}">
             {{ resource }}</a>
         </li>
         {% else %}
-        <li data-type="bookmark"><a href="{% url 'uploader:resource' resource.id resource|slugify %}">
+        <li data-type="bookmark"><a href="{% url 'uploader:resource' resource.slug %}">
             {{ resource }}</a>
         </li>
         {% endif %}
@@ -35,7 +35,7 @@
         are too broad for a single unit topic.
     </p>
     <p>
-        <a href="{% url 'uploader:unit_resources' unit.id unit|slugify %}">
+        <a href="{% url 'uploader:unit_resources' unit.slug %}">
             View unit resources
         </a>
     </p>
@@ -50,7 +50,7 @@
                 <ul>
                     {% for item in section.list %}
                       <!--<li>{{ item.name }}: {{ item.population }}</li>-->
-                      <li><a href="{% url 'uploader:unit_topic' item.id item|slugify %}">{{ item }}</a></li> 
+                      <li><a href="{% url 'uploader:unit_topic' item.slug %}">{{ item }}</a></li> 
                     {% endfor %}
                 </ul>
             {% endfor %}
@@ -58,7 +58,7 @@
             {% if unit_topics %}
             <ul>
             {% for unit_topic in unit_topics %}
-              <li><a href="{% url 'uploader:unit_topic' unit_topic.id unit_topic.title|slugify %}">{{ unit_topic.title }}</a></li> 
+              <li><a href="{% url 'uploader:unit_topic' unit_topic.slug %}">{{ unit_topic.title }}</a></li> 
             {% endfor %}
             </ul>
             {% else %}
