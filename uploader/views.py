@@ -390,7 +390,15 @@ def view_notes(request, slug):
     notes = get_object_or_404(Note, unit_topic=unit_topic)
 
     headers = {'Content-Type': 'text/plain'}
-    data = notes.content
+    #data = notes.content.encode('utf-8')
+    
+    if type(notes.content) == bytes:  # sometimes body is str sometimes bytes...
+        data = notes.content
+    elif type(notes.content) == str:
+        data = notes.content.encode('utf-8')
+    else:
+        print("somthing is wrong")
+    
     r = requests.post('https://api.github.com/markdown/raw', headers=headers, data=data)
     notes.content = r.text.encode('utf-8')
 
