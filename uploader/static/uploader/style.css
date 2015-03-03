@@ -230,7 +230,9 @@ left: 0;
     margin-left: 400px; 
     margin-top: -80px
 }
-
+#notes img {
+    margin: 0 auto;
+}
 
 /* download page */
 #resource_details {
