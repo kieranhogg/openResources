@@ -1,0 +1,6 @@
+{% extends 'uploader/base.html' %}
+{% block head_title %}{{ unit_topic }} Notes{% endblock %}
+{% block body_block %}
+{{ notes.content|safe }}
+<p><a href="{% url 'uploader:notes' unit_topic.slug %}">Edit</a></p>
+{% endblock %}
