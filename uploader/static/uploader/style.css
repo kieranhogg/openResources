@@ -232,6 +232,7 @@ left: 0;
 }
 #notes img {
     margin: 0 auto;
+    display:block;
 }
 
 /* download page */
