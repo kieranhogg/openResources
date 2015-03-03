@@ -15,6 +15,7 @@ from django.contrib.auth.models import User
 from django.views.generic.edit import UpdateView
 from django.utils.text import slugify
 from django.core.urlresolvers import reverse
+from django.contrib.auth.decorators import login_required
 
 
 # Homepage view, shows subjects
@@ -353,6 +354,7 @@ def licences(request):
     context = {'licences': Licence.objects.all()}
     return render(request, 'uploader/licences.html', context)
  
+@login_required
 def notes(request, slug):
     unit_topic = get_object_or_404(UnitTopic, slug=slug)
     notes = Note.objects.filter(unit_topic=unit_topic)
@@ -403,6 +405,7 @@ def view_notes(request, slug):
     context =  {'notes': notes, 'unit_topic': unit_topic}
     return render(request, 'uploader/notes.html', context)
 
+@login_required
 def upload_image(request):
     form = ImageForm(
         request.POST or None, 
@@ -417,7 +420,8 @@ def upload_image(request):
         return redirect('/image/' + str(image.id))
 
     return render(request, 'uploader/upload_image.html', {'form': form})
-        
+
+@login_required    
 def view_image(request, image_id):
     image = get_object_or_404(Image, pk=image_id)
     return render(request, 'uploader/image.html', {'url': image.image.url})
@@ -448,7 +452,8 @@ def get_unit_topics(request, unit_id):
     for unit_topic in unit_topics:
         unit_topics_dict[unit_topic.id] = str(unit_topic)
     return JsonResponse(unit_topics_dict)
-    
+
+# just silently ignore non-logged in ratings
 def rate(request, resource_id, rating):
     if request.user.is_authenticated():
         _rating = Rating()
