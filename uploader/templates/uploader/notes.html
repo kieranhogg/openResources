@@ -33,6 +33,6 @@
     </div>
     <a id="notes_edit" href="{% url 'uploader:notes' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">Edit</a>
 {% else %}
-<p>Nothing here yet, <a id="notes_edit" href="{% url 'uploader:notes' unit_topic.slug %}">add some</a>?</p>
+<p>Nothing here yet, <a id="notes_edit" href="{% url 'uploader:notes' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">add some</a>?</p>
 {% endif %}
 {% endblock %}
