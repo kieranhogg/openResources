@@ -7,15 +7,15 @@
         {{ unit_topic.unit.syllabus.subject.subject_name|truncatechars:45 }}</a> >
     <a href="{% url 'uploader:syllabuses' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug %}">
      {{ unit_topic.unit.syllabus.exam_level.level_name|truncatechars:45 }}</a> >
-    <a href="{% url 'uploader:syllabus' unit_topic.unit.syllabus.slug %}"> 
+    <a href="{% url 'uploader:syllabus' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug %}"> 
      {{ unit_topic.unit.syllabus|truncatechars:45 }}</a> >
-    <a href="{% url 'uploader:unit' unit_topic.unit.slug %}">
+    <a href="{% url 'uploader:unit' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug %}">
      {{ unit_topic.unit.title|truncatechars:45 }}</a> >
      {{ unit_topic.title|truncatechars:45 }}
 </div>
 <div id="tabs">
 <ul id="navigation">
-    <li><a id="tab1" href="{% url 'uploader:unit_topic' unit_topic.slug %}">
+    <li><a id="tab1" href="{% url 'uploader:unit_topic' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
         <img class="menu_icon" src="/static/uploader/img/download.png" height="18" width="18"/>
         <span class="menu_text">Resources</span>
         </a>
@@ -31,7 +31,7 @@
 {% if notes %}
     {{ notes.content|safe }}
     </div>
-    <a id="notes_edit" href="{% url 'uploader:notes' unit_topic.slug %}">Edit</a>
+    <a id="notes_edit" href="{% url 'uploader:notes' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">Edit</a>
 {% else %}
 <p>Nothing here yet, <a id="notes_edit" href="{% url 'uploader:notes' unit_topic.slug %}">add some</a>?</p>
 {% endif %}

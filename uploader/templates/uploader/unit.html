@@ -6,7 +6,7 @@
         {{ unit.syllabus.subject.subject_name|truncatechars:45 }}</a> >
     <a href="{% url 'uploader:syllabuses' unit.syllabus.subject.slug unit.syllabus.exam_level.slug %}">
      {{ unit.syllabus.exam_level.level_name|truncatechars:45 }}</a> >
-    <a href="{% url 'uploader:syllabus' unit.syllabus.slug %}"> 
+    <a href="{% url 'uploader:syllabus' unit.syllabus.subject.slug unit.syllabus.slug unit.syllabus.exam_level.slug %}"> 
      {{ unit.syllabus|truncatechars:45 }}</a> >
      {{ unit.title|truncatechars:45 }}
 </div>
@@ -35,7 +35,7 @@
         are too broad for a single unit topic.
     </p>
     <p>
-        <a href="{% url 'uploader:unit_resources' unit.slug %}">
+        <a href="{% url 'uploader:unit_resources' unit.syllabus.subject.slug unit.syllabus.slug unit.syllabus.exam_level.slug unit.slug %}">
             View unit resources
         </a>
     </p>
@@ -50,7 +50,7 @@
                 <ul>
                     {% for item in section.list %}
                       <!--<li>{{ item.name }}: {{ item.population }}</li>-->
-                      <li><a href="{% url 'uploader:unit_topic' item.slug %}">{{ item }}</a></li> 
+                      <li><a href="{% url 'uploader:unit_topic' unit.syllabus.subject.slug unit.syllabus.exam_level.slug unit.syllabus.slug unit.slug item.slug %}">{{ item }}</a></li> 
                     {% endfor %}
                 </ul>
             {% endfor %}
@@ -58,7 +58,8 @@
             {% if unit_topics %}
             <ul>
             {% for unit_topic in unit_topics %}
-              <li><a href="{% url 'uploader:unit_topic' unit_topic.slug %}">{{ unit_topic.title }}</a></li> 
+              <li><a href="{% url 'uploader:unit_topic' unit.syllabus.subject.slug unit.syllabus.exam_level.slug unit.syllabus.slug unit.slug unit_topic.slug %}">{{ unit_topic.title }}</a></li> 
+
             {% endfor %}
             </ul>
             {% else %}

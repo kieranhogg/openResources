@@ -12,7 +12,7 @@
     <ul>
     {% for syllabus in syllabus_list %}
         <li>
-            <a href="{% url 'uploader:syllabus' syllabus.slug %}">
+            <a href="{% url 'uploader:syllabus' syllabus.subject.slug level.slug syllabus.slug %}">
                 {{ syllabus }}
             </a>
         </li> 

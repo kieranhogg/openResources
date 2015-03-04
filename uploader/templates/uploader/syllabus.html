@@ -31,7 +31,7 @@
 <p>Under syllabus resources you will find syllabus-specific resources
 such as schemes of work.</p>
 <p>
-    <a href="{% url 'uploader:syllabus_resources' syllabus.slug %}">
+    <a href="{% url 'uploader:syllabus_resources' syllabus.subject.slug syllabus.exam_level.slug syllabus.slug %}">
         View syllabus resources
     </a>
 </p>
@@ -42,7 +42,7 @@ such as schemes of work.</p>
 <div id="resource_list">
     <ul>
     {% for unit in units %}
-              <li><a href="{% url 'uploader:unit' unit.slug %}">{{ unit.title }}</a></li> 
+              <li><a href="{% url 'uploader:unit' syllabus.subject.slug syllabus.exam_level.slug syllabus.slug unit.slug %}">{{ unit.title }}</a></li> 
     {% endfor %}
     </ul>
     {% else %}

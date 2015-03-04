@@ -46,7 +46,7 @@ def subject(request, slug):
     context = {'exam_levels': exam_levels, 'subject': subject}
     return render(request, 'uploader/subject_view.html', context)
     
-def syllabus_resources(request, slug):
+def syllabus_resources(request, subject_slug, exam_slug, slug):
     syllabus = get_object_or_404(Syllabus, slug=slug)
     resources = Resource.objects.filter(
         syllabus__id=syllabus.id, 
@@ -56,8 +56,8 @@ def syllabus_resources(request, slug):
     context = {'syllabus': syllabus, 'resources': resources}
     return render(request, 'uploader/syllabus_resources.html', context)
     
-def unit_resources(request, slug):
-    unit = get_object_or_404(Unit, slug=slug)
+def unit_resources(request, subject_slug, exam_slug, syllabus_slug, unit_slug):
+    unit = get_object_or_404(Unit, slug=unit_slug)
     resources = Resource.objects.filter(
         unit__id=unit.id,
         unit_topic__isnull=True)
@@ -83,14 +83,14 @@ def syllabuses(request, subject_slug, exam_slug):
     return render(request, 'uploader/syllabus_index.html', context)
     
 # Show one syllabuses page, has units on
-def syllabus(request, slug):
+def syllabus(request, subject_slug, exam_slug, slug):
     syllabus = get_object_or_404(Syllabus, slug=slug)
     units = Unit.objects.filter(syllabus__id=syllabus.id)
     context = {'syllabus': syllabus, 'units': units}
     return render(request, 'uploader/syllabus.html', context)
 
 # A single unit view
-def unit(request, slug):
+def unit(request, subject_slug, exam_slug, syllabus_slug, slug):
     unit = get_object_or_404(Unit, slug=slug)
     unit_topics = UnitTopic.objects.filter(unit__id = unit.id).order_by(
             'section', 'pub_date')
@@ -106,7 +106,7 @@ def unit(request, slug):
     }
     return render(request, 'uploader/unit.html', context)
     
-def unit_topic(request, slug):
+def unit_topic(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
     unit_topic = get_object_or_404(UnitTopic, slug=slug)
     notes = Note.objects.filter(unit_topic = unit_topic)
 
@@ -353,7 +353,7 @@ def licences(request):
     return render(request, 'uploader/licences.html', context)
  
 @login_required
-def notes(request, slug):
+def notes(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
     unit_topic = get_object_or_404(UnitTopic, slug=slug)
     notes = Note.objects.filter(unit_topic=unit_topic)
 
@@ -381,11 +381,13 @@ def notes(request, slug):
 
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect(reverse('uploader:view_notes', args=[unit_topic.slug]))
+            return HttpResponseRedirect(reverse('uploader:view_notes', 
+            args=[subject_slug, exam_slug, syllabus_slug, unit_slug, 
+                  unit_topic.slug]))
     else:
         return render(request, "uploader/notes_add.html", {'form': form, 'unit_topic': unit_topic })
         
-def view_notes(request, slug):
+def view_notes(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
     unit_topic = get_object_or_404(UnitTopic, slug=slug)
     notes_list = Note.objects.filter(unit_topic=unit_topic)
     notes = None
