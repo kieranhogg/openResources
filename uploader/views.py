@@ -387,18 +387,19 @@ def notes(request, slug):
         
 def view_notes(request, slug):
     unit_topic = get_object_or_404(UnitTopic, slug=slug)
-    notes = get_object_or_404(Note, unit_topic=unit_topic)
-
-    headers = {'Content-Type': 'text/plain'}
-    #data = notes.content.encode('utf-8')
-    data = None
-    if type(notes.content) == bytes:  # sometimes body is str sometimes bytes...
-        data = notes.content
-    else:
-        data = notes.content.encode('utf-8')
+    notes = Note.objects.filter(Note, unit_topic=unit_topic)
     
-    r = requests.post('https://api.github.com/markdown/raw', headers=headers, data=data)
-    notes.content = r.text.encode('utf-8')
+    if notes.count() > 0:
+        headers = {'Content-Type': 'text/plain'}
+        #data = notes.content.encode('utf-8')
+        data = None
+        if type(notes.content) == bytes:  # sometimes body is str sometimes bytes...
+            data = notes.content
+        else:
+            data = notes.content.encode('utf-8')
+        
+        r = requests.post('https://api.github.com/markdown/raw', headers=headers, data=data)
+        notes.content = r.text.encode('utf-8')
 
     context =  {'notes': notes, 'unit_topic': unit_topic}
     return render(request, 'uploader/notes.html', context)

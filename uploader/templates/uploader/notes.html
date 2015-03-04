@@ -28,7 +28,10 @@
 </ul>
 </div>
 <div id="notes">
-{{ notes.content|safe }}
-</div>
-<a id="notes_edit" href="{% url 'uploader:notes' unit_topic.slug %}">Edit</a>
+{% if notes %}
+    {{ notes.content|safe }}
+    </div>
+    <a id="notes_edit" href="{% url 'uploader:notes' unit_topic.slug %}">Edit</a>
+{% else %}
+<p>Nothing here yet, <a id="notes_edit" href="{% url 'uploader:notes' unit_topic.slug %}">add some</a>?</p>
 {% endblock %}
