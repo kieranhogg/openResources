@@ -16,17 +16,17 @@
 <div id="tabs">
 <ul id="navigation">
     <li><a id="tab1" href="{% url 'uploader:unit_topic' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
-        <img class="menu_icon" src="/static/uploader/img/download.png" height="18" width="18"/>
+        <img class="menu_icon" src="/static/uploader/img/18x18/download.png" height="18" width="18"/>
         <span class="menu_text">Resources</span>
         </a>
     </li>
     <li><a id="tab2" class="selected" href="javascript:void(0);">
-        <img class="menu_icon" src="/static/uploader/img/book.png" height="18" width="18"/>
+        <img class="menu_icon" src="/static/uploader/img/18x18/book.png" height="18" width="18"/>
         <span class="menu_text">Notes</span>
         </a>
     </li>
     <li class="edit"><a href="{% url 'uploader:notes' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
-        <img class="menu_icon" src="/static/uploader/img/edit.png" height="18" width="18"/>
+        <img class="menu_icon" src="/static/uploader/img/18x18/edit.png" height="18" width="18"/>
         <span class="menu_text">Edit</span>
         </a>
     </li>
