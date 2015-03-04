@@ -158,7 +158,6 @@ span.menu_text {
 #navigation {
     list-style:none;
     position:relative; 
-    /*z-index:2;*/
     top:1px;
     display:table;    
     border-left:1px solid black;
@@ -298,7 +297,9 @@ span.menu_text {
     margin: 0 auto;
     display:block;
 }
-
+#link_or_oembed p {
+    text-align: center;
+}
 /* download page */
 #resource_details {
     overflow: hidden;

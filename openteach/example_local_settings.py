@@ -10,6 +10,9 @@ MEDIA_URL = ""
 
 GITHUB_CLIENT_ID = ""
 GITHUB_CLIENT_SECRET = ""
+
+MICAWBER_EMBEDLY_KEY = ""
+
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 

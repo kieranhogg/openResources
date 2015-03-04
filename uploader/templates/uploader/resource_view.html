@@ -1,5 +1,6 @@
 {% extends 'uploader/base.html' %}
 {% load url from future %}
+{% load micawber_tags %}
 {% load static %}
 {% block body_block %}
 <script>
@@ -117,7 +118,9 @@ function vote(resourceID, rating)
         </a>
     </div>
 {% else %}
-<p><strong>{{ resource.bookmark.link }}</strong></p>
+<div id="link_or_oembed">
+<p><strong>{{ resource.bookmark.link | oembed }}</strong></p>
+</div>
 {% endif %}
 <div id="published">Uploaded {{ resource.pub_date }}</div>
 

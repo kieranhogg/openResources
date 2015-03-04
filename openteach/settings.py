@@ -69,8 +69,10 @@ INSTALLED_APPS = (
     #'allauth.socialaccount.providers.stackexchange',
     #'allauth.socialaccount.providers.twitter',
     #'allauth.socialaccount.providers.openid',
+    'micawber.contrib.mcdjango',
     
 )
+MICAWBER_PROVIDERS = 'micawber.contrib.mcdjango.providers.bootstrap_embedly'
 # Allauth
 SITE_ID = 1
 
