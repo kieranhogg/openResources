@@ -11,6 +11,10 @@
      {{ unit.title|truncatechars:45 }}
 </div>
 <h2>{% block head_title %}{{ unit }}{% endblock %}</h2>
+{% if unit.description %}
+<div id="description">
+    {{ unit.description }}
+</div>
 {% if resources %}
 <p>I found no unit topics linked to {{ unit }}, below are resources for this unit.</p>
 <div id='resouce_list'>
