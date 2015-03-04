@@ -34,4 +34,5 @@
     <a id="notes_edit" href="{% url 'uploader:notes' unit_topic.slug %}">Edit</a>
 {% else %}
 <p>Nothing here yet, <a id="notes_edit" href="{% url 'uploader:notes' unit_topic.slug %}">add some</a>?</p>
+{% endif %}
 {% endblock %}
