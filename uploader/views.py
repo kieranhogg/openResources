@@ -387,7 +387,7 @@ def notes(request, slug):
         
 def view_notes(request, slug):
     unit_topic = get_object_or_404(UnitTopic, slug=slug)
-    notes = Note.objects.filter(Note, unit_topic=unit_topic)
+    notes = Note.objects.filter(unit_topic=unit_topic)
     
     if notes.count() > 0:
         headers = {'Content-Type': 'text/plain'}
