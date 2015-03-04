@@ -11,24 +11,26 @@
     <a href="{% url 'uploader:unit' unit_topic.unit.slug %}">
      {{ unit_topic.unit.title|truncatechars:45 }}</a> >
      {{ unit_topic.title|truncatechars:45 }}
-  
-
+</div>
+<div id="tabs">
+<ul id="navigation">
+    <li><a id="tab1" class="selected" href="javascript:void(0);">
+        <img class="menu_icon" src="/static/uploader/img/download.png" height="18" width="18"/>
+        <span class="menu_text">Resources</span>
+        </a>
+    </li>
+    <li><a id="tab2" href="{% url 'uploader:view_notes' unit_topic.slug %}">
+        <img class="menu_icon" src="/static/uploader/img/book.png" height="18" width="18"/>
+        <span class="menu_text">Notes</span>
+        </a>
+    </li>
+</ul>
 </div>
 <h2>{% block head_title %}{{ unit_topic.title }}{% endblock %}</h2>
 <!-- TODO write * -> <li> filter -->
 {% if unit_topic.description and unit_topic.description != "" %}
-<div id="description">
-    {{ unit_topic.description|safe|linebreaks }}
-</div>
-{% endif %}
-{% if notes %}
-<h3>Notes</h3>
-<p>This unit topic has a set of notes attached, click below to view.</p>
-<p><a href="{% url 'uploader:view_notes' unit_topic.slug %}">{{ unit_topic.title }} notes</a></p>
-{% else %}
-<h3>Notes</h3>
-<p>This unit topic doesn't have any notes, click below to add some.</p>
-<p><a href="{% url 'uploader:notes' unit_topic.slug %}">Add notes</a></p>
+<h3>Description</h3>
+<p>{{ unit_topic.description|safe|linebreaks }}</p>
 {% endif %}
 {% if resources %}
 <h3>Resources</h3>
