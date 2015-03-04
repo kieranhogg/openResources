@@ -6,7 +6,7 @@
         {{ unit.syllabus.subject.subject_name|truncatechars:45 }}</a> >
     <a href="{% url 'uploader:syllabuses' unit.syllabus.subject.slug unit.syllabus.exam_level.slug %}">
      {{ unit.syllabus.exam_level.level_name|truncatechars:45 }}</a> >
-    <a href="{% url 'uploader:syllabus' unit.syllabus.subject.slug unit.syllabus.slug unit.syllabus.exam_level.slug %}"> 
+    <a href="{% url 'uploader:syllabus' unit.syllabus.subject.slug unit.syllabus.exam_level.slug unit.syllabus.slug%}"> 
      {{ unit.syllabus|truncatechars:45 }}</a> >
      {{ unit.title|truncatechars:45 }}
 </div>
