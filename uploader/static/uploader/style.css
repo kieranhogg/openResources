@@ -217,7 +217,7 @@ span.menu_text {
     font-weight: bold;
 }
 
-.highlighting {
+.highlight {
     overflow: auto;
     word-wrap: normal;
     border: 1px solid #ccc;
