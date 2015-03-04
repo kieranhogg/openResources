@@ -16,6 +16,7 @@ from django.views.generic.edit import UpdateView
 from django.utils.text import slugify
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
 
 
 # Homepage view, shows subjects
@@ -401,7 +402,15 @@ def view_notes(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug)
         else:
             data = notes.content.encode('utf-8')
         
-        r = requests.post('https://api.github.com/markdown/raw', headers=headers, data=data)
+        url = None
+        if len(settings.GITHUB_CLIENT_SECRET) == 40 and len(settings.GITHUB_CLIENT_ID) == 20:
+            url = ('https://api.github.com/markdown/raw?clientid=' + 
+                   settings.GITHUB_CLIENT_ID + "&client_secret=" + 
+                   settings.GITHUB_CLIENT_SECRET)
+        else:
+            url = 'https://api.github.com/markdown/raw'
+
+        r = requests.post(url, headers=headers, data=data)
         notes.content = r.text.encode('utf-8')
 
     context =  {'notes': notes, 'unit_topic': unit_topic}
