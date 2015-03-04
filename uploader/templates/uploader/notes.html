@@ -25,16 +25,19 @@
         <span class="menu_text">Notes</span>
         </a>
     </li>
+    <li class="edit"><a href="{% url 'uploader:notes' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
+        <img class="menu_icon" src="/static/uploader/img/edit.png" height="18" width="18"/>
+        <span class="menu_text">Edit</span>
+        </a>
+    </li>
 </ul>
 </div>
 <div id="notes">
 {% if notes %}
     {{ notes.content|safe }}
     </div>
-<img src="/static/uploader/img/edit.png" height="18" width="18" />
-    <a id="notes_edit" href="{% url 'uploader:notes' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
-        <span class="menu_text">Edit</span></a>
 {% else %}
-<p>Nothing here yet, <a id="notes_edit" href="{% url 'uploader:notes' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">add some</a>?</p>
+<h2>No Notes</h2>
+<p>Nothing to see here, move along. Unless you want to add something, then click edit.</p>
 {% endif %}
 {% endblock %}

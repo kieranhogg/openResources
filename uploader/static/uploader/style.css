@@ -162,6 +162,7 @@ span.menu_text {
     top:1px;
     display:table;    
     border-left:1px solid black;
+    width: 100%;
 }
 #navigation li {
     float:left;
@@ -182,6 +183,17 @@ span.menu_text {
 #navigation li a.selected {
     border-bottom: 1px solid white;
     background:#fff;
+}
+
+#navigation li a.tab_right {
+    border-bottom: 1px solid white;
+    background:#fff;
+}
+
+#navigation .edit {
+    float: right;
+    margin-right: 30px;
+    border-left: 1px black solid;
 }
 /** Layout **/
 
