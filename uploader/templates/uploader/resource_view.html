@@ -112,10 +112,13 @@ function vote(resourceID, rating)
         </a>
         {% else %}
         <a href="{{ resource.file.author_link }}">
-            {{ resource.file.author }}</a>{% endif %}, published under 
+            {{ resource.file.author }}</a>{% endif %}
+        {% if "None" in resource.file.licence %} 
+        - published under 
         <a href="{{ resource.licence.link }}">
             {{ resource.file.licence }} licence
         </a>
+        {% endif %}
     </div>
 {% else %}
 <div id="link_or_oembed">

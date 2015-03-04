@@ -30,3 +30,4 @@ def try_to_include(parser, token):
             "%r tag requires a single argument" % token.contents.split()[0])
 
     return IncludeNode(template_name[1:-1])
+

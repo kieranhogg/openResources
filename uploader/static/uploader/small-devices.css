@@ -30,3 +30,30 @@
 #top_banner {
     display:none;
 }
+
+#menu .menu_text {
+    visibility: hidden;
+    display:none;
+}
+#menu {
+    background: #f5f5f5;
+}
+#menu li {
+    width: 80px;
+    min-height: 80px;
+}
+#menu img {
+    margin-left: 13px;
+    margin-top: 10px;
+    height: 36px;
+    width: 36px;
+}
+#h1 {
+    font-size: 3em%;
+}
+#content {
+    font-size: 150%;
+}
+#crumbs {
+    visibility: hidden;
+}
