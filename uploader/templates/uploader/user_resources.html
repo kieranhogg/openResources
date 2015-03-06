@@ -57,12 +57,12 @@ their own tab above.</p>
         <td><img src="{% static 'uploader/img/18x18/bookmark.png' %}" alt="bookmark" title="bookmark" /></td>
         {% endif %}
         <td><a href="{% url 'uploader:view_resource' resource.slug %}">{{ resource }}</a></td>
-        <td>{{ resource.rating }}</td></t>
+        <td style='text-align: center'>{{ resource.rating }}</td></t>
         <td>{{ resource.subject }}</td>
         <td>{{ resource.syllabus }}</td>
         <td>{{ resource.unit }}</td>
         <td>{{ resource.unit_topic }}</td>
-        <td>
+        <td style='text-align: center'>
             {% if resource.file %}
             <a href="{% url 'uploader:link_file' resource.file.slug %}">
                 <button class="btn">
@@ -100,6 +100,7 @@ their own tab above.</p>
     <tr>
         <th>Title</th>
         <th>Filename</th>
+        <th># of Resources using</th>
         <th>Filesize</th>
         <th>Uploaded</th>
         <th>Actions</th>
@@ -108,9 +109,10 @@ their own tab above.</p>
     <tr> 
         <td>{{ file.title }}</td></t>
         <td>{{ file.filename }}</td>
-        <td>{{ file.filesize|filesizeformat }}</td>
-        <td>{{ file.pub_date }}</td>
-        <td>
+        <td style='text-align: center'>{{ file.link_count }}</td>
+        <td style='text-align: center'>{{ file.filesize|filesizeformat }}</td>
+        <td style='text-align: center'>{{ file.pub_date }}</td>
+        <td style='text-align: center'>
             <a href="{% url 'uploader:link_file' file.slug %}">
                 <button class="btn">
                 <!--<img src="{% static 'uploader/img/18x18/add.png' %}" />-->
@@ -139,6 +141,7 @@ their own tab above.</p>
     <tr>
         <th>Title</th>
         <th>URL</th>
+        <th># of Resources using</th>
         <th>Uploaded</th>
         <th>Actions</th>
     </tr>
@@ -146,24 +149,31 @@ their own tab above.</p>
     <tr> 
         <td>{{ bookmark.title }}</td></t>
         <td><a href="{{ bookmark.link }}">{{ bookmark.link|truncatechars:60 }}</a></td>
-        <td>{{ bookmark.pub_date }}</td>
-        <td>
+        <td style='text-align: center'>{{ bookmark.link_count }}</td>
+        <td style='text-align: center'>{{ bookmark.pub_date }}</td>
+        <td style='text-align: center'>
             <a href="{% url 'uploader:link_bookmark' bookmark.slug %}">
+                <button class="btn">
                 <!--<img src="{% static 'uploader/img/18x18/add.png' %}" />-->
-                Link to...
+                Link
+                </button>
             </a>
             <a href="{% url 'uploader:bookmark' bookmark.slug %}">
+                <button class="btn">
                 <!--<img src="{% static 'uploader/img/18x18/edit.png' %}" />-->
                 Edit
+                </button>
             </a>
             <a href="{% url 'uploader:delete_bookmark' bookmark.slug %}" onclick="javascript:return confirm('DELETE this bookmark?')">
                 <!--<img src="{% static 'uploader/img/18x18/delete.png' %}" />-->
+                <button class="btn_danger">
                 Delete
+                </button>
             </a>
         </td>
     </tr>
     <tr>
-        <td colspan='4'>
+        <td colspan='5'>
             <strong>Descrption: </strong>
             {{ bookmark.description|truncatechars:250 }}
         </td>

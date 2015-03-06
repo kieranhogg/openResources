@@ -359,11 +359,15 @@ def user_files(request, user_id=None):
     if not user_id:
         user_id = request.user
     files = File.objects.filter(uploader=user_id)
+    for file in files:
+        file.link_count = Resource.objects.filter(file=file).count()
     return render(request, 'uploader/user_resources.html', {'files': files})
     
 @login_required
 def user_bookmarks(request, user_id=None):
     bookmarks = Bookmark.objects.filter(uploader=request.user)
+    for bookmark in bookmarks:
+        bookmark.link_count = Resource.objects.filter(bookmark=bookmark).count()
     return render(request, 'uploader/user_resources.html', {'bookmarks': bookmarks})
     
 def leaderboard(request):
