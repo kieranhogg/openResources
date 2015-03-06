@@ -2,12 +2,13 @@ import re
 import requests
 from django.shortcuts import (render, get_object_or_404, get_list_or_404, 
     render_to_response, redirect)
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, Http404
+from django.http import (HttpResponse, HttpResponseRedirect, JsonResponse, 
+    Http404, HttpResponseForbidden)
 from django.template import RequestContext, loader
 from uploader.models import (Subject, ExamLevel, Syllabus, Resource, Unit, File, 
     Rating, UnitTopic, Message, UserProfile, Licence, Note, Bookmark, Image)
-from uploader.forms import (BookmarkStageOneForm, FileStageOneForm, 
-    ResourceStageTwoForm, NotesForm, ImageForm)
+from uploader.forms import (BookmarkForm, FileForm, 
+    LinkResourceForm, NotesForm, ImageForm)
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 from django.db import IntegrityError
@@ -120,17 +121,8 @@ def unit_topic(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug)
     return render(request, 'uploader/unit_topic.html', context)
     
 # A single resource view
-def resource(request, slug):
+def view_resource(request, slug):
     resource = get_object_or_404(Resource, slug=slug)
-    
-    if resource.file is not None:
-        # FIXME remove?
-        pattern = '\%user_link%:[\d]+'
-        # should hopefully never need the 'or's here but better than dying
-        if re.match(pattern, resource.file.author_link or "") is not None:
-            user_id = resource.file.author_link.split(":")[1]
-            # FIXME use var
-            resource.file.author_link = '/profile/' + user_id
     
     context = {
         'resource': resource, 
@@ -139,16 +131,43 @@ def resource(request, slug):
     }
     return render_to_response('uploader/resource_view.html', 
         context_instance=RequestContext(request, context))
+        
+@login_required
+def delete_resource(request, slug):
+    resource = get_object_or_404(Resource, slug=slug)
+    if request.user == resource.uploader:
+        resource.delete()
+        messages.success(request, 'Resource unlinked')
+        return HttpResponseRedirect(reverse('uploader:user_resources'))
+    else:
+        return HttpResponseForbidden("Permission denied")
+
+@login_required
+def delete_file(request, slug):
+    file = get_object_or_404(File, slug=slug)
+    if request.user == file.uploader:
+        file.delete()
+        messages.success(request, 'File deleted')
+        return HttpResponseRedirect(reverse('uploader:user_files'))
+    else:
+        return HttpResponseForbidden("Permission denied")
+        
+@login_required
+def delete_bookmark(request, slug):
+    bookmark = get_object_or_404(Bookmark, slug=slug)
+    if request.user == bookmark.uploader:
+        bookmark.delete()
+        messages.success(request, 'Bookmark deleted')
+        return HttpResponseRedirect(reverse('uploader:user_bookmarks'))
+    else:
+        return HttpResponseForbidden("Permission denied")
 
 # Calculate a resource's rating
 def get_resource_rating(resource_id, use='display'):
     ratings = Rating.objects.filter(resource__id = resource_id)
     # TODO hide < a certain number too?
     if len(ratings) == 0:
-        if use == 'values':
-            return 0
-        else:
-            return "No rating yet"
+        return 3.0
     else:
         total = 0
         count = 0
@@ -157,138 +176,148 @@ def get_resource_rating(resource_id, use='display'):
             count = count + 1
         return float(total) / float(count)
 
-def add_file(request):
-    form = FileStageOneForm(
-        request.POST or None, 
-        request.FILES or None,
-        label_suffix='',
-        initial={'uploader': request.user}
-    )
-    
-    # If we've received a submitted form
-    if request.method == 'POST' and form.is_valid():
-        file = form.save(commit=False)
-        
-        # set excluded fields
-        file.filesize = request.FILES['file'].size
-        file.filename = request.FILES['file'].name
-        file.mimetype = request.FILES['file'].content_type
-        file.uploader = request.user
-        file.slug = slugify(file.title)
-        
-        # check author fields
-        if 'i_am_the_author' in request.POST and request.POST['i_am_the_author'] == 'on':
-            file.author = str(request.user)
-            # FIXME
-            file.author_link = "/profile/" + request.user.username
+def file(request, slug=None):
+    if slug:
+        file = get_object_or_404(File, slug=slug)
 
-        _file = form.save()
-
-        # save the file_id in session to pass to the next stage
-        # TODO is there a cleaner way than this?
-        # we run the risk of orphaned files without resources
-        request.session['_file_id'] = _file.id
-        return HttpResponseRedirect('stage_two')
+        if file.uploader != request.user and not request.user.is_superuser:
+            return HttpResponseForbidden("No stairway, denied!")
     else:
-        return render(request, "uploader/resource_add_file.html", {'form': form})
+        file = File(uploader=request.user)
 
-def add_bookmark(request):
-    form = BookmarkStageOneForm(
-        request.POST or None, 
-        label_suffix='',
-        initial={'uploader': request.user}
-    )
-    
-    # If we've received a submitted form
-    if request.method == 'POST':
+    if request.POST:
+        form = FileForm(request.POST, request.FILES or None, instance=file)
         if form.is_valid():
-            bookmark = form.save(commit=False)
-            bookmark.slug = slugify(bookmark.title)
-            form.save()
-            request.session['_bookmark_id'] = bookmark.id
-            return HttpResponseRedirect('stage_two')
-        else:
-            return render(
-                request, 
-                "uploader/resource_add_bookmark.html", 
-                {'form': form}
-            )
+            if not slug:
+                # new record
+                file = form.save(commit=False)
+                
+                # set excluded fields
+                file.filesize = request.FILES['file'].size
+                file.filename = request.FILES['file'].name
+                file.mimetype = request.FILES['file'].content_type
+                file.uploader = request.user
+                
+                potential_slug = slugify(file.title)
+                num_slugs = File.objects.filter(slug__startswith=potential_slug).count()
         
-    # no form submitted, show form
+                if num_slugs > 0:
+                    file.slug = potential_slug + '-' + str(num_slugs + 1)
+                else:
+                    file.slug = potential_slug
+    
+                form.save()
+                return HttpResponseRedirect(
+                    reverse('uploader:link_file', args=[file.slug]))
+            else:
+                form.save()
+                return HttpResponseRedirect(reverse('uploader:user_files'))
+            
+            return HttpResponseRedirect(redirect_url)
     else:
-        return render(request, "uploader/resource_add_bookmark.html", {'form': form})
+        form = FileForm(instance=file)
+
+    return render_to_response('uploader/add_file.html', {
+        'form': form,
+    }, context_instance=RequestContext(request))
 
 
-def add_resource(request):
-    return render(request, "uploader/resource_add.html")
+def bookmark(request, slug=None):
+    bookmark = None
+    
+    if slug:
+        bookmark = get_object_or_404(Bookmark, slug=slug)
+        if bookmark.uploader != request.user and not request.user.is_superuser:
+            return HttpResponseForbidden("No stairway, denied!")
+    else:
+        bookmark = Bookmark(uploader=request.user)
+
+    if request.POST:
+        form = BookmarkForm(request.POST, instance=bookmark)
+        if form.is_valid():
+            if not slug:
+                # insert
+                bookmark = form.save(commit=False)
+                
+                potential_slug = slugify(bookmark.title)
+                num_slugs = Bookmark.objects.filter(slug__startswith=potential_slug).count()
+        
+                if num_slugs > 0:
+                    bookmark.slug = potential_slug + '-' + str(num_slugs + 1)
+                else:
+                    bookmark.slug = potential_slug
+                
+                form.save()
+                return HttpResponseRedirect(
+                    reverse('uploader:link_bookmark', args=[bookmark.slug]))
+            else:
+                form.save()
+                return HttpResponseRedirect(reverse('uploader:user_bookmarks'))
+
+    else:
+        form = BookmarkForm(instance=bookmark)
+
+    return render_to_response('uploader/add_bookmark.html', {
+        'form': form,
+    }, context_instance=RequestContext(request))
+
 
 def link_file(request, slug):
     file = get_object_or_404(File, slug=slug)
-    return add_resource_stage_two(request, file.id)
+    return link_resource(request, 'file', slug)
     
 def link_bookmark(request, slug):
     bookmark = get_object_or_404(Bookmark, slug=slug)
-    return add_resource_stage_two(request, None, bookmark.id)
+    return link_resource(request, 'bookmark', slug)
 
-def add_resource_stage_two(request, _file_id=None, _bookmark_id=None):
-    bookmark_id = None
-    file_id = None
-    slug = None
+def link_resource(request, type, slug):
+    bookmark = None
+    file = None
 
-    if request.method == 'GET':
-        # get the link or file
+    if type == 'bookmark':
+        bookmark = get_object_or_404(Bookmark, slug=slug)
+    elif type == 'file':
+        file = get_object_or_404(File, slug=slug)
+
+    resource = Resource(uploader=request.user, file=file or None, 
+                        bookmark=bookmark or None, approved=False)
+    
+    if request.method == 'POST':
+        form = LinkResourceForm(request.POST, instance=resource)
+        if form.is_valid():
+            resource = form.save(commit = False)
+            #work out slug
+            if resource.file is not None:
+                resource.slug = resource.file.slug
+            else:
+                resource.slug = resource.bookmark.slug
+                
+            # check if we already have one with that name, append number if so
+            starts_with = resource.slug + '-'
+            starting_matches = Resource.objects.filter(
+                slug__startswith=starts_with).count()
+            exact = Resource.objects.filter(
+                slug=resource.slug).count()
             
-        if _file_id is not None:
-            file_id = _file_id
-        elif request.session.get('_file_id') is not None:
-            file_id = request.session.get('_file_id')
-        elif _bookmark_id is not None:
-            bookmark_id = _bookmark_id
-        elif request.session.get('_bookmark_id') is not None:
-            bookmark_id = request.session.get('_bookmark_id')    
-        else:
-            raise Http404
-        
-        request.session['_bookmark_id'] = None
-        request.session['_file_id'] = None
-    
-    # create and save
-    form = ResourceStageTwoForm(
-        request.POST or None, 
-        request.FILES or None,
-        initial={
-            'bookmark': bookmark_id, 
-            'file': file_id, 
-            'uploader': request.user
-        },
-        label_suffix=''
-    )   
-    
-    if request.method == 'POST' and form.is_valid():
-        resource = form.save(commit = False)
-        
-        #work out slug
-        if resource.file is not None:
-            resource.slug = resource.file.slug
-        else:
-            resource.slug = resource.bookmark.slug
+            num_results = exact + starting_matches
             
-        # check if we already have one with that name, append number if so
-        num_results = Resource.objects.filter(
-            slug__startswith=resource.slug).count()
-        if num_results > 0:
-            append = num_results + 1
-            resource.slug += '-' + str(append)
-        
-        if request.user.is_authenticated():
-            # if we're logged in auto-approve
-            resource.approved = True
-            form.save()
-            score_points(request.user, "Add Resource")
-
-        return redirect("/?s=1")
+            if num_results > 0:
+                append = num_results + 1
+                resource.slug += '-' + str(append)
+            
+            if request.user.is_authenticated():
+                # if we're logged in auto-approve
+                resource.approved = True
+                form.save()
+                score_points(request.user, "Add Resource")
     
-    return render(request, "uploader/resource_add_stage_two.html", {'form': form})
+            return redirect("/?s=1")
+    else:
+        form = LinkResourceForm(instance=resource)
+
+    return render_to_response('uploader/link_resource.html', {
+        'form': form,
+    }, context_instance=RequestContext(request))
     
 def score_points(user, action):
     points = {
@@ -315,13 +344,27 @@ def profile(request, username=None):
 
 @login_required
 def user_resources(request, user_id=None):
-    resources = Resource.objects.filter(uploader=request.user)
+    if not user_id:
+        user_id = request.user
+    resources = Resource.objects.filter(uploader=user_id)
     
     # TODO this could get slow if the user has a lot of resources, maybe store
     # on the resource table after each rating?
     for resource in resources:
         resource.rating = get_resource_rating(resource.id)
     return render(request, 'uploader/user_resources.html', {'resources': resources})
+    
+@login_required
+def user_files(request, user_id=None):
+    if not user_id:
+        user_id = request.user
+    files = File.objects.filter(uploader=user_id)
+    return render(request, 'uploader/user_resources.html', {'files': files})
+    
+@login_required
+def user_bookmarks(request, user_id=None):
+    bookmarks = Bookmark.objects.filter(uploader=request.user)
+    return render(request, 'uploader/user_resources.html', {'bookmarks': bookmarks})
     
 def leaderboard(request):
     context = {}
@@ -372,12 +415,11 @@ def notes(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
         # sort slug
         unit = unit_topic.unit
         potential_slug = unit_topic.slug
-        note_exists = bool(Note.objects.filter(pk=note.id).count())
-        check_slug = Note.objects.filter(slug=slug).count()
-        
-        if not note_exists and check_slug > 0:
-            note.slug = unit_topic.unit.slug + '-' + unit_topic.slug
-        elif not note_exists:
+        num_slugs = Note.objects.filter(slug__startswith=potential_slug).count()
+
+        if num_slugs > 0:
+            note.slug = unit_topic.unit.slug + '-' + str(num_slugs + 1)
+        else:
             note.slug = potential_slug
 
         if form.is_valid():
@@ -386,7 +428,7 @@ def notes(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
             args=[subject_slug, exam_slug, syllabus_slug, unit_slug, 
                   unit_topic.slug]))
     else:
-        return render(request, "uploader/notes_add.html", {'form': form, 'unit_topic': unit_topic })
+        return render(request, "uploader/add_notes.html", {'form': form, 'unit_topic': unit_topic })
         
 def view_notes(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
     unit_topic = get_object_or_404(UnitTopic, slug=slug)
@@ -428,7 +470,8 @@ def upload_image(request):
     if request.method == 'POST' and form.is_valid():
         image = form.save()
         #FIXME
-        return redirect('/image/' + str(image.id))
+        return HttpResponseRedirect(
+            reverse('uploader:view_image', args=[image.id]))
 
     return render(request, 'uploader/upload_image.html', {'form': form})
 

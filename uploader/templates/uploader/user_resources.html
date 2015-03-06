@@ -1,33 +1,175 @@
 {% extends 'uploader/base.html' %}
 {% block body_block %}
+{% load static %}
 <h2>{% block head_title %}Your Resources{% endblock %}</h2>
+<div id="tabs">
+<ul id="navigation">
+    <li><a 
+    {% if resources %}} class="selected" href="javascript:void(0);">
+    {% else %} href="{% url 'uploader:user_resources' %}">
+    {% endif %}
+        <img class="menu_icon" src="{% static 'uploader/img/18x18/download.png' %}" height="18" width="18"/>
+        <span class="menu_text">Resources</span>
+        </a>
+    </li>
+    <li><a 
+    {% if files %}} class="selected" href="javascript:void(0);">
+    {% else %} href="{% url 'uploader:user_files' %}">
+    {% endif %}
+        <img class="menu_icon" src="/static/uploader/img/18x18/folder.png" height="18" width="18"/>
+        <span class="menu_text">Files</span>
+        </a>
+    </li>
+    <li><a 
+    {% if bookmarks %}} class="selected" href="javascript:void(0);">
+    {% else %} href="{% url 'uploader:user_bookmarks' %}">
+    {% endif %}
+        <img class="menu_icon" src="/static/uploader/img/18x18/bookmark.png" height="18" width="18"/>
+        <span class="menu_text">Bookmarks</span>
+        </a>
+    </li>
+</ul>
+</div>
+
+{% if resources %}
+
+<p>A resource is a copy of a file or bookmark added to a syllabus, unit or unit
+topic. Below is the list of of resources you have added.</p>
+<p>If you are looking to edit or delete a file or bookmark, you can do so on 
+their own tab above.</p>
+<hr />
 <table>
     <tr>
-        <th>Title</th>
+        <th></th>
+        <th width="15%">Title</th>
         <th>Rating</th>
         <th>Subject</th>
         <th>Syllabus</th>
         <th>Unit</th>
         <th>Unit Topic</th>
-        <th>Actions</th>
+        <th width="13%">Actions</th>
     </tr>
     {% for resource in resources %}
     <tr> 
-        <td>{{ resource }}</td>
+        {% if resource.file %}
+        <td><img src="{% static 'uploader/img/18x18/folder.png' %}" alt="file" title="file" /></td>
+        {% else %}
+        <td><img src="{% static 'uploader/img/18x18/bookmark.png' %}" alt="bookmark" title="bookmark" /></td>
+        {% endif %}
+        <td><a href="{% url 'uploader:view_resource' resource.slug %}">{{ resource }}</a></td>
         <td>{{ resource.rating }}</td></t>
         <td>{{ resource.subject }}</td>
         <td>{{ resource.syllabus }}</td>
         <td>{{ resource.unit }}</td>
         <td>{{ resource.unit_topic }}</td>
-        <td class="actions">
-            <a href="{% url 'uploader:resource' resource.slug %}">View</a>
+        <td>
             {% if resource.file %}
-            <a href="{% url 'uploader:link_file' resource.file.slug %}">Link to...</a>
+            <a href="{% url 'uploader:link_file' resource.file.slug %}">
+                <button class="btn">
+                <!--<img src="{% static 'uploader/img/18x18/add.png' %}" alt="link" title="link"/>-->
+                Add Link
+                </button>
+            </a>
+            <a href="{% url 'uploader:delete_resource' resource.slug %}" onclick="javascript:return confirm('UNLINK this resource? To delete the file, delete it from the files tab')">
+                <button class="btn_danger">
+                    <!--<img src="{% static 'uploader/img/    18x18/unlink.png' %}" alt="unlink" title="unlink" />-->
+                    Unlink
+                </button>
+            </a>
             {% elif resource.bookmark %}
-            <a href="{% url 'uploader:link_bookmark' resource.bookmark.slug %}">Link to...</a>
+            <a href="{% url 'uploader:link_bookmark' resource.bookmark.slug %}">
+                <button class="btn">
+                <!--<img src="{% static 'uploader/img/18x18/add.png' %}" alt="link" title="link"/>-->
+                Add Link
+                </button>
+            </a>
+            <a href="{% url 'uploader:delete_resource' resource.slug %}" onclick="javascript:return confirm('UNLINK this resource? To delete the bookmark, delete it from the files tab')">
+                <button class="btn_danger">
+                <!--<img src="{% static 'uploader/img/18x18/unlink.png' %}" alt="unlink" title="unlink"/>-->
+                Unlink
+                </button>
+            </a>
             {% endif %}
         </td>
     </tr>
     {% endfor %}
 </table>
+
+{% elif files %}
+<table width='100%'>
+    <tr>
+        <th>Title</th>
+        <th>Filename</th>
+        <th>Filesize</th>
+        <th>Uploaded</th>
+        <th>Actions</th>
+    </tr>
+    {% for file in files %}
+    <tr> 
+        <td>{{ file.title }}</td></t>
+        <td>{{ file.filename }}</td>
+        <td>{{ file.filesize|filesizeformat }}</td>
+        <td>{{ file.pub_date }}</td>
+        <td>
+            <a href="{% url 'uploader:link_file' file.slug %}">
+                <button class="btn">
+                <!--<img src="{% static 'uploader/img/18x18/add.png' %}" />-->
+                Link to...
+                </button>
+            </a>
+            <a href="{% url 'uploader:file' file.slug %}">
+                <button class="btn">
+                <!--<img src="{% static 'uploader/img/18x18/edit.png' %}" />-->
+                Edit
+                </button>
+            </a>
+            <a href="{% url 'uploader:delete_file' file.slug %}" onclick="javascript:return confirm('DELETE this file?')">
+                <button class="btn_danger">
+                <!--<img src="{% static 'uploader/img/18x18/delete.png' %}" />-->
+                Delete
+                </button>
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% elif bookmarks %}
+<table width='100%'>
+    <tr>
+        <th>Title</th>
+        <th>URL</th>
+        <th>Uploaded</th>
+        <th>Actions</th>
+    </tr>
+    {% for bookmark in bookmarks %}
+    <tr> 
+        <td>{{ bookmark.title }}</td></t>
+        <td><a href="{{ bookmark.link }}">{{ bookmark.link|truncatechars:60 }}</a></td>
+        <td>{{ bookmark.pub_date }}</td>
+        <td>
+            <a href="{% url 'uploader:link_bookmark' bookmark.slug %}">
+                <!--<img src="{% static 'uploader/img/18x18/add.png' %}" />-->
+                Link to...
+            </a>
+            <a href="{% url 'uploader:bookmark' bookmark.slug %}">
+                <!--<img src="{% static 'uploader/img/18x18/edit.png' %}" />-->
+                Edit
+            </a>
+            <a href="{% url 'uploader:delete_bookmark' bookmark.slug %}" onclick="javascript:return confirm('DELETE this bookmark?')">
+                <!--<img src="{% static 'uploader/img/18x18/delete.png' %}" />-->
+                Delete
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td colspan='4'>
+            <strong>Descrption: </strong>
+            {{ bookmark.description|truncatechars:250 }}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endif %}
 {% endblock %}

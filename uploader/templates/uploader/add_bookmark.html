@@ -1,8 +1,15 @@
 {% extends 'uploader/base.html' %}
 {% block body_block %}
-<h2>{% block head_title %}Add Bookmark{% endblock %}</h2>
+<h2>{% block head_title %}
+{% if form.instance.id %}
+    Edit 
+{% else %}
+   Add 
+{% endif %}
+Bookmark{% endblock %}</h2>
 <p>Bookmarks will automatically embed content where possible from the 
-link bookmarked, e.g. Youtube videos, Github gists etc.</p>
+link bookmarked, e.g. Youtube videos, Wikipedia articles etc., full list:
+<a href="http://embed.ly/providers">here</a>.</p>
 {% if form.non_field_errors %}
     <div class="error">
     {% for error in form.non_field_errors %}
@@ -22,6 +29,12 @@ this in future, please register and log in first.</p>
     {% csrf_token %}
     {{ form.as_p }}
     
-<br /><input type="submit" value="Next">
+<br />
+{% if form.instance.id %}
+    <input type="submit" value="Update">
+{% else %}
+    <input type="submit" value="Next">
+{% endif %}
+
 </form>
 {% endblock %}

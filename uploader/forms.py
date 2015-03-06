@@ -8,7 +8,7 @@ from uploader.models import (Resource, Bookmark, File, Subject, Syllabus, Unit,
                              UnitTopic, Note, Image)
                         
 
-class BookmarkStageOneForm(forms.ModelForm):
+class BookmarkForm(forms.ModelForm):
     class Meta:
         model = Bookmark
         exclude = ('approved','slug')
@@ -18,16 +18,13 @@ class BookmarkStageOneForm(forms.ModelForm):
         }
 
 
-class FileStageOneForm(forms.ModelForm):
-    i_am_the_author = forms.BooleanField(required=False)
-
+class FileForm(forms.ModelForm):
     class Meta:
         model = File
         exclude = ('approved', 'uploader', 'mimetype', 'filesize', 'filename',
                    'date_pub', 'topics', 'slug')
         widgets = {'description': forms.Textarea()}
-        fields = ('title', 'file', 'description', 'type', 'i_am_the_author',
-                  'author', 'author_link', 'licence')
+
 
     def clean(self):
         valid = super(FileStageOneForm, self).is_valid()
@@ -45,20 +42,14 @@ class FileStageOneForm(forms.ModelForm):
                         'File type (%s) not supported.') % data.content_type)
         except AttributeError:
             pass
-
-
-class ResourceStageTwoForm(forms.ModelForm):
+    
+class LinkResourceForm(forms.ModelForm):
     class Meta:
         model = Resource
-        exclude = ('approved', 'slug')
-        widgets = {
-            'bookmark': forms.HiddenInput(),
-            'file': forms.HiddenInput(),
-            'uploader': forms.HiddenInput(),
-        }
+        exclude = ('approved', 'slug', 'bookmark', 'file', 'uploader')
 
     def clean(self):
-        cleaned_data = super(ResourceStageTwoForm, self).clean()
+        cleaned_data = super(LinkResourceForm, self).clean()
         unit = cleaned_data.get("unit")
         unit_topic = cleaned_data.get("unit_topic")
 

@@ -208,13 +208,15 @@ class LicenceAdmin(admin.ModelAdmin):
 
 class File(models.Model):
     PRESENTATION = 1
-    LESSON_PLAN = 2
-    SOW = 3
-    INFO = 4
-    OTHER = 5
+    TASK = 2
+    LESSON_PLAN = 3
+    SOW = 4
+    INFO = 5
+    OTHER = 6
 
     FILE_TYPES = (
         (PRESENTATION, 'A lesson presentation'),
+        (TASK, 'A lesson task'),
         (LESSON_PLAN, 'A lesson plan'),
         (SOW, 'A scheme of work'),
         (INFO, 'An informational document'),
@@ -228,20 +230,20 @@ class File(models.Model):
     description = models.TextField('Description', null=True)
     type = models.IntegerField(max_length=2, default=1, choices=FILE_TYPES)
     uploader = models.ForeignKey(settings.AUTH_USER_MODEL)
+    uploader_is_author = models.BooleanField('Uploader is author?', default=True,
+        help_text='Check if you are the author of the file')
     author = models.CharField(
         max_length=200,
         blank=True,
         null=True,
-        help_text='Who is the original author? E.g. John Smith. If you are ' +
-                  'the author, write "me" if you are logged in, otherwise ' +
-                  'add your name'
+        help_text='If you are not the author, please give credit where ' + 
+            'possible, some licences require it' 
     )
     author_link = models.URLField(
         max_length=200,
         blank=True,
         null=True,
-        help_text='A URL to credit the original author. If it is ' +
-                  'you and you\'re logged in, leave blank'
+        help_text='An optional URL to link to credit an author'
     )
     licence = models.ForeignKey(
         Licence,
@@ -334,7 +336,7 @@ class Resource(models.Model):
 
 
 class ResourceAdmin(admin.ModelAdmin):
-    list_display = ('file', 'bookmark', 'uploader', 'subject', 'syllabus',
+    list_display = ('file', 'slug', 'bookmark', 'uploader', 'subject', 'syllabus',
                     'unit', 'unit_topic', 'approved', 'pub_date')
     list_filter = ('approved',)
     actions = ['approve']

@@ -34,7 +34,7 @@
     $(window).scroll(move);
     move();
 }
-</script> 
+</script>
 <link rel="stylesheet" type="text/css" href="{% static 'uploader/style.css' %}" />
 <link rel="stylesheet" type="text/css" media="only screen and (max-width: 480px), only screen and (max-device-width: 480px)" href="{% static 'uploader/small-devices.css' %}" />
 <title>{{ SITE_NAME }} | {% block head_title %}{% endblock %}</title>
@@ -76,38 +76,44 @@
         <ul>
             <li id="menu_home">
                 <a href="{% url 'uploader:index' %}">
-                <img class="menu_icon" src="/static/uploader/img/18x18/home.png" height="18" width="18"/>
+                <img class="menu_icon" src="{% static 'uploader/img/18x18/home.png' %}" height="18" width="18"/>
                 <span class="menu_text">Home</span>
                 </a>
             </li>
             <li id="menu_submit"><a href="{% url 'uploader:add_resource' %}">
-                <img class="menu_icon" src="/static/uploader/img/18x18/upload.png" height="18" width="18"/>
+                <img class="menu_icon" src="{% static 'uploader/img/18x18/upload.png' %}" height="18" width="18"/>
                 <span class="menu_text">Add Resource</span>
                 </a>
             </li>
+            <li id="menu_my_resources"><a href="{% url 'uploader:user_resources' %}">
+                <img class="menu_icon" src="{% static 'uploader/img/18x18/heart.png' %}" height="18" width="18"/>
+                <span class="menu_text">My Resources</span>
+                </a>
+            </li>
             <li id="menu_leaderboards"><a href="{% url 'uploader:leaderboard' %}">
-                <img class="menu_icon" src="/static/uploader/img/18x18/leaderboard.png" height="18" width="18"/>
+                <img class="menu_icon" src="{% static 'uploader/img/18x18/leaderboard.png' %}" height="18" width="18"/>
                 <span class="menu_text">Leaderboards</span>
                 </a>
             </li>
             <li id="menu_about"><a href="{% url 'uploader:about' %}">
-                <img class="menu_icon" src="/static/uploader/img/18x18/website.png" height="18" width="18"/>
+                <img class="menu_icon" src="{% static 'uploader/img/18x18/website.png' %}" height="18" width="18"/>
                 <span class="menu_text">About</span>
                 </a>
             </li>
             <!--<li id="menu_twitter">-->
             <!--    <a href="https://twitter.com/eduresourc_es">-->
-            <!--        <img src="/static/uploader/img/18x18/twitter.png" width="18" height="18" />-->
+            <!--        <img class="menu_icon" src="{% static 'uploader/img/18x18/twitter.png' %}" width="22" height="22" />-->
+            <!--        <span class="menu_text">Twitter</span>-->
             <!--    </a>-->
             <!--</li>-->
             <!--<li id="menu_email">-->
             <!--<a href="mailto:contact@eduresourc.es">-->
-            <!--    <img src="/static/uploader/img/18x18/email.png" width="18" height="18" />-->
+            <!--    <img class="menu_icon" src="{% static 'uploader/img/18x18/email.png' %}" width="18" height="18" />-->
             <!--</a>-->
             <!--</li>-->
             {% if user.is_superuser or user.is_staff %}
             <li id="admin_button"><a href="/admin/">
-                 <img class="menu_icon" src="/static/uploader/img/18x18/no-entry.png" height="18" width="18"/>
+                 <img class="menu_icon" src="{% static 'uploader/img/18x18/no-entry.png' %}" height="18" width="18"/>
                 <span class="menu_text">Admin</span>
                 </a>
             </li>

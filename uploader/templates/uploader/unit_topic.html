@@ -37,9 +37,9 @@
 <ul>
 {% for resource in resources %}
     {% if resource.bookmark %}
-        <li data-type="bookmark"><a href="{% url 'uploader:resource' resource|slugify %}">{{ resource }}</a></li>
+        <li data-type="bookmark"><a href="{% url 'uploader:view_resource' resource|slugify %}">{{ resource }}</a></li>
     {% else %}
-        <li data-type="file"><a href="{% url 'uploader:resource' resource|slugify %}">{{ resource }}</a></li>
+        <li data-type="file"><a href="{% url 'uploader:view_resource' resource|slugify %}">{{ resource }}</a></li>
     {% endif %}
 {% endfor %}
 </ul>
