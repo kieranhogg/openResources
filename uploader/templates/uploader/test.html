@@ -68,7 +68,7 @@
     <p>No questions</p>
     {% endif %}
 {% else %}
-    {% if questions_count > 0 %}
+    {% if question_count > 0 %}
     <form action method="post">
         {% csrf_token %}
         {% for question in questions %}
