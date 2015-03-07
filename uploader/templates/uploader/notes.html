@@ -41,7 +41,14 @@
         </a>
     </li>
     {% else %}
-        <li><a href="{% url 'uploader:test' unit_topic.slug %}">
+    <li><a href="{% url 'uploader:test' unit_topic.slug %}">
+        <img class="menu_icon" src="/static/uploader/img/18x18/leaderboard.png" height="18" width="18"/>
+        <span class="menu_text">
+            Questions
+        </span>
+        </a>
+    </li>
+    <li><a href="{% url 'uploader:test' unit_topic.slug %}">
         <img class="menu_icon" src="/static/uploader/img/18x18/leaderboard.png" height="18" width="18"/>
         <span class="menu_text">
             Questions
@@ -54,7 +61,12 @@
 <div id="notes">
 {% if notes %}
     {{ notes.content|safe }}
-    </div>
+</div>
+<p>Except where otherwise noted, content is licensed under 
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+        CC Attribution-NonCommercial-ShareAlike 4.0 International licence.
+    </a>
+</p>
 {% else %}
 <h2>No Notes</h2>
 <p>Nothing to see here, move along. Unless you want to add something, then click edit.</p>
