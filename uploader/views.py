@@ -424,18 +424,19 @@ def notes(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
     form = NotesForm(request.POST or None, instance=note or None, label_suffix='')
 
     if request.method == 'POST':
-        note = form.save(commit=False)
-        note.unit_topic = unit_topic
-
-        # sort slug
-        unit = unit_topic.unit
-        potential_slug = unit_topic.slug
-        num_slugs = Note.objects.filter(slug__startswith=potential_slug).count()
-
-        if num_slugs > 0:
-            note.slug = unit_topic.unit.slug + '-' + str(num_slugs + 1)
-        else:
-            note.slug = potential_slug
+        if not note:
+            note = form.save(commit=False)
+            note.unit_topic = unit_topic
+    
+            # sort slug
+            unit = unit_topic.unit
+            potential_slug = unit_topic.slug
+            num_slugs = Note.objects.filter(slug__startswith=potential_slug).count()
+    
+            if num_slugs > 0:
+                note.slug = unit_topic.unit.slug + '-' + str(num_slugs + 1)
+            else:
+                note.slug = potential_slug
 
         if form.is_valid():
             form.save()
