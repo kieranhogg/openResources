@@ -33,7 +33,8 @@ h1 {
 }
 
 h3, h4, h5, h6 {
-    text-decoration: underline;
+    /*text-decoration: underline;*/
+    text-transform: uppercase;
     font-weight: normal;
     margin-top: 0.7em;
     margin-bottom: 0.5em;
@@ -55,14 +56,14 @@ h3 {
 }
 h4 {
     /*color: #993;*/
-    font-size: 150%;
+    font-size: 140%;
         
 }
 h5 {
-    font-size: 140%;
+    font-size: 130%;
 }
 h6 {
-    font-size: 130%;
+    font-size: 120%;
 }
 /* don't change, used for menus, TODO */
 ul, li {
