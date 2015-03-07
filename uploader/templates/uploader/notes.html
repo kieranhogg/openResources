@@ -48,10 +48,10 @@
         </span>
         </a>
     </li>
-    <li><a href="{% url 'uploader:test' unit_topic.slug %}">
-        <img class="menu_icon" src="/static/uploader/img/18x18/leaderboard.png" height="18" width="18"/>
+    <li class='edit'><a href="{% url 'uploader:notes' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
+        <img class="menu_icon" src="/static/uploader/img/18x18/edit.png" height="18" width="18"/>
         <span class="menu_text">
-            Questions
+            Edit
         </span>
         </a>
     </li>
