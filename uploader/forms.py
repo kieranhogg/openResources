@@ -5,7 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.text import slugify
 from django.shortcuts import get_object_or_404
 from uploader.models import (Resource, Bookmark, File, Subject, Syllabus, Unit,
-                             UnitTopic, Note, Image)
+    UnitTopic, Note, Image, MultipleChoiceQuestion)
                         
 
 class BookmarkForm(forms.ModelForm):
@@ -89,3 +89,14 @@ class ImageForm(forms.ModelForm):
         widgets = {
             'uploader': forms.HiddenInput(),
         }
+        
+class MultipleChoiceQuestionForm(forms.ModelForm):
+    answer_one = forms.CharField()
+    answer_two = forms.CharField()
+    answer_three = forms.CharField()
+    answer_four = forms.CharField()
+    add_another = forms.BooleanField(label='Add another question?')
+    
+    class Meta:
+        model = MultipleChoiceQuestion
+        exclude = ('unit_topic', 'number_of_options', 'uploader')

@@ -30,6 +30,7 @@ urlpatterns = patterns('',
     url(r'^profile/resources', views.user_resources, name='user_resources'),
     url(r'^profile/files', views.user_files, name='user_files'),
     url(r'^profile/bookmarks', views.user_bookmarks, name='user_bookmarks'),
+    url(r'^profile/questions', views.user_questions, name='user_questions'),
     url(r'^profile/(?P<username>[\w\d-]+)/$', views.profile, name='profile'),
     
     url(r'^leaderboard', views.leaderboard, name='leaderboard'),
@@ -41,6 +42,10 @@ urlpatterns = patterns('',
     url(r'^upload_image', views.upload_image, name='upload_image'),
     url(r'^image/(?P<image_id>\d+)/$', views.view_image, name='view_image'),
     
+    url(r'^test/(?P<slug>[\w\d-]+)/feedback', views.test_feedback, name='test_feedback'),
+    url(r'^test/(?P<slug>[\w\d-]+)', views.test, name='test'),
+    url(r'^add-question/(?P<slug>[\w\d-]+)', views.question, name='question'),
+    
     url(r'^(?P<subject_slug>[\w\d-]+)/(?P<exam_slug>[\w\d-]+)/(?P<slug>[\w\d-]+)/$', views.syllabus, name='syllabus'),
     url(r'^(?P<subject_slug>[\w\d-]+)/(?P<exam_slug>[\w\d-]+)/(?P<slug>[\w\d-]+)/resources/$', views.syllabus_resources, name='syllabus_resources'),
     url(r'^(?P<subject_slug>[\w\d-]+)/(?P<exam_slug>[\w\d-]+)/$', views.syllabuses, name='syllabuses'),
@@ -50,7 +55,7 @@ urlpatterns = patterns('',
     url(r'^(?P<subject_slug>[\w\d-]+)/(?P<exam_slug>[\w\d-]+)/(?P<syllabus_slug>[\w\d-]+)/(?P<unit_slug>[\w\d-]+)/(?P<slug>[\w\d-]+)/notes/$', views.view_notes, name='view_notes'),
     url(r'^(?P<subject_slug>[\w\d-]+)/(?P<exam_slug>[\w\d-]+)/(?P<syllabus_slug>[\w\d-]+)/(?P<unit_slug>[\w\d-]+)/(?P<slug>[\w\d-]+)/notes/edit/$', views.notes, name='notes'),
     url(r'^(?P<slug>[\w\d-]+)/$', views.subject, name='subject'),
-    
+
     # static pages
     url(r'^about',
     TemplateView.as_view(template_name='uploader/about.html'),

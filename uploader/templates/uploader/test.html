@@ -1,0 +1,93 @@
+{% extends 'uploader/base.html' %}
+{% block head_title %}{{ unit_topic }} Notes{% endblock %}
+{% block body_block %}
+<div id="crumbs">
+    <a href="{% url 'uploader:index' %}">Home</a> > 
+    <a href="{% url 'uploader:subject' unit_topic.unit.syllabus.subject.slug %}">
+        {{ unit_topic.unit.syllabus.subject.subject_name|truncatechars:45 }}</a> >
+    <a href="{% url 'uploader:syllabuses' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug %}">
+     {{ unit_topic.unit.syllabus.exam_level.level_name|truncatechars:45 }}</a> >
+    <a href="{% url 'uploader:syllabus' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug %}"> 
+     {{ unit_topic.unit.syllabus|truncatechars:45 }}</a> >
+    <a href="{% url 'uploader:unit' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug %}">
+     {{ unit_topic.unit.title|truncatechars:45 }}</a> >
+     {{ unit_topic.title|truncatechars:45 }}
+</div>
+<div id="tabs">
+<ul id="navigation">
+    <li><a href="{% url 'uploader:unit_topic' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
+        <img class="menu_icon" src="/static/uploader/img/18x18/download.png" height="18" width="18"/>
+        <span class="menu_text">Resources</span>
+        </a>
+    </li>
+    <li><a href="{% url 'uploader:view_notes' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
+        <img class="menu_icon" src="/static/uploader/img/18x18/book.png" height="18" width="18"/>
+        <span class="menu_text">Notes</span>
+        </a>
+    </li>
+    {% if request.user.get_profile.type == 'Teacher' %}
+    <li><a class="selected" href="javascript:(0)">
+        <img class="menu_icon" src="/static/uploader/img/18x18/leaderboard.png" height="18" width="18"/>
+        <span class="menu_text">Test</span>
+        </a>
+    </li>
+    {% else %}
+        <li><a class="selected" href="javascript:(0)">
+        <img class="menu_icon" src="/static/uploader/img/18x18/leaderboard.png" height="18" width="18"/>
+        <span class="menu_text">Questions</span>
+        </a>
+    </li>
+    {% endif %}
+    <li><a href="{% url 'uploader:test_feedback' unit_topic.slug %}">
+        <img class="menu_icon" src="/static/uploader/img/18x18/eye.png" height="18" width="18"/>
+        <span class="menu_text">Feedback</span>
+        </a>
+    </li>
+</ul>
+</div>
+{% if request.user.userprofile.type == 2 %}
+    <h2>Questions</h2>
+    <p>As a teacher, you can will see the full list of questions, students will see a random set of 10 questions.</p>
+    <p>
+        <a href="{% url 'uploader:question' unit_topic.slug %}">
+            <button class='btn'>Add Question</button>
+        </a>    
+    </p>
+    {% if questions %}
+        {% for question in questions %}
+            <p><strong>{{ question.text }}</strong>
+            <ul>
+                {% for answer in question.answers %}
+                    <li>{{ answer.text }}</li>
+                {% endfor %}
+            </ul>
+            </p>
+        {% endfor %}
+    {% else %}
+    <p>No questions. Add some?</p>
+    {% endif %}
+{% else %}
+    {% if questions_count > 0 %}
+    <form action method="post">
+        {% csrf_token %}
+        {% for question in questions %}
+            <p class='question'>{{ question.text }}</p>
+            <p>
+                {% for answer in question.answers %}
+                    <input type="radio" name="question{{question.id}}" value="{{ answer.number }}">
+                    <label class='answer' for="{{ question.id|add:"-"|add:answer.number }}">{{ answer.text }}</label>
+                {% endfor %}
+            </p>
+        {% endfor %}
+        <input type="submit" value="Check answers" />
+    </form>
+    {% else %}
+    <div align='center'>
+    <p>No questions to complete.</p>
+    {% if complete_count > 0%}
+    <p><strong>{{ complete_count }}</strong> already taken, choose feedback to see your feedback.</p>
+    </div>
+    {% endif %}
+    {% endif %}
+{% endif %}
+{% endblock %}

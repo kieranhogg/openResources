@@ -6,9 +6,11 @@ from django.http import (HttpResponse, HttpResponseRedirect, JsonResponse,
     Http404, HttpResponseForbidden)
 from django.template import RequestContext, loader
 from uploader.models import (Subject, ExamLevel, Syllabus, Resource, Unit, File, 
-    Rating, UnitTopic, Message, UserProfile, Licence, Note, Bookmark, Image)
+    Rating, UnitTopic, Message, UserProfile, Licence, Note, Bookmark, Image,
+    Question, MultipleChoiceQuestion, Answer, MultipleChoiceAnswer,
+    MultipleChoiceUserAnswer)
 from uploader.forms import (BookmarkForm, FileForm, 
-    LinkResourceForm, NotesForm, ImageForm)
+    LinkResourceForm, NotesForm, ImageForm, MultipleChoiceQuestionForm)
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 from django.db import IntegrityError
@@ -18,6 +20,10 @@ from django.utils.text import slugify
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
+import logging
+logging.basicConfig()
+
+logger = logging.getLogger(__name__)
 
 
 # Homepage view, shows subjects
@@ -370,6 +376,11 @@ def user_bookmarks(request, user_id=None):
         bookmark.link_count = Resource.objects.filter(bookmark=bookmark).count()
     return render(request, 'uploader/user_resources.html', {'bookmarks': bookmarks})
     
+@login_required
+def user_questions(request, user_id=None):
+    questions = MultipleChoiceQuestion.objects.filter(uploader=request.user)
+    return render(request, 'uploader/user_resources.html', {'questions': questions})
+    
 def leaderboard(request):
     context = {}
 
@@ -483,6 +494,117 @@ def upload_image(request):
 def view_image(request, image_id):
     image = get_object_or_404(Image, pk=image_id)
     return render(request, 'uploader/image.html', {'url': image.image.url})
+    
+def test(request, slug):
+    unit_topic = get_object_or_404(UnitTopic, slug=slug)
+    complete_count = 0
+    question_count = 0
+    
+    if request.POST:
+        score = 0
+        
+        for question_key in [key for key in request.POST.keys() if key.startswith('question')]:
+            question_num = question_key.replace('question', '')
+            question = get_object_or_404(MultipleChoiceQuestion, pk=question_num)
+            answer_num = request.POST.get(question_key)
+            answer = get_object_or_404(MultipleChoiceAnswer, 
+                                      question=question, number=answer_num)
+
+            answer = MultipleChoiceUserAnswer(
+                question=question, 
+                answer_chosen=answer,
+                user=request.user)
+            answer.save()
+
+        return HttpResponseRedirect(
+            reverse('uploader:test_feedback', args=[slug]))
+    else:
+        if request.user.userprofile.type == 1: # student
+        # try to find maximum ten questions that the user hasn't taken
+            completed_qs = MultipleChoiceUserAnswer.objects.filter(user=request.user, question__unit_topic=unit_topic).values('question_id')
+            complete_count = completed_qs.count()
+            questions = MultipleChoiceQuestion.objects.exclude(id__in=completed_qs)[:10]
+            question_count = MultipleChoiceQuestion.objects.filter(unit_topic=unit_topic).count()
+            
+            # FIXME think there's a function to do this
+            for question in questions:
+                answer_list = []
+                answers = MultipleChoiceAnswer.objects.filter(question=question)
+                for answer in answers:
+                    answer_list.append(answer)
+                
+                question.answers = answer_list
+        else:
+            questions = MultipleChoiceQuestion.objects.filter(unit_topic=unit_topic)
+            # FIXME think there's a function to do this
+            for question in questions:
+                answer_list = []
+                answers = MultipleChoiceAnswer.objects.filter(question=question)
+                for answer in answers:
+                    answer_list.append(answer)
+                
+                question.answers = answer_list
+
+    return render(request, 'uploader/test.html', 
+    {'questions': questions, 'unit_topic': unit_topic, 
+     'complete_count': complete_count, 'question_count': question_count})
+    
+def test_feedback(request, slug):
+    unit_topic = get_object_or_404(UnitTopic, slug=slug)
+    questions = MultipleChoiceQuestion.objects.filter(unit_topic=unit_topic)
+    for question in questions:
+        user_answer = MultipleChoiceUserAnswer.objects.filter(question=question)[0]
+        if user_answer:
+            question.answer = MultipleChoiceAnswer.objects.filter(question=question)[0]
+            question.user_answer = user_answer
+        
+    return render(request, 'uploader/feedback.html', 
+    {'questions': questions, 'unit_topic': unit_topic})
+    
+    
+def question(request, slug):
+    unit_topic = get_object_or_404(UnitTopic, slug=slug)
+    form = MultipleChoiceQuestionForm(request.POST or None)
+    
+    if request.POST:
+        question = MultipleChoiceQuestion(number_of_options=4, 
+                                          answer=request.POST['answer'],
+                                          text=request.POST['text'],
+                                          uploader=request.user,
+                                          unit_topic=unit_topic)
+        question.save()
+
+        answer_one = MultipleChoiceAnswer(question=question, 
+                                          text=request.POST['answer_one'], 
+                                          number=1)
+                                          
+        answer_two = MultipleChoiceAnswer(question=question, 
+                                          text=request.POST['answer_two'], 
+                                          number=2)
+                                          
+        answer_three = MultipleChoiceAnswer(question=question, 
+                                            text=request.POST['answer_three'], 
+                                            number=3)
+                                            
+        answer_four = MultipleChoiceAnswer(question=question, 
+                                           text=request.POST['answer_four'], 
+                                           number=4)
+                                           
+        
+        answer_one.save()
+        answer_two.save()
+        answer_three.save()
+        answer_four.save()
+        
+        if request.POST.get('add_another', False) == 'on':
+            url = reverse('uploader:question', args=[slug])
+        else:
+            url = reverse('uploader:user_questions')
+        
+        return HttpResponseRedirect(url)
+    
+    return render(request, 'uploader/add_question.html', 
+    {'form': form, 'unit_topic': unit_topic})
     
 # ajax views
 

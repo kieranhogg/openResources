@@ -42,6 +42,7 @@ AUTHENTICATION_BACKENDS = (
 ALLOWED_HOSTS = []
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
+AUTH_PROFILE_MODULE = 'accounts.UserProfile'
 
 # Application definition
 

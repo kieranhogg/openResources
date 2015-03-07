@@ -28,6 +28,22 @@
         <span class="menu_text">Bookmarks</span>
         </a>
     </li>
+    <li><a 
+    {% if questions %}} class="selected" href="javascript:void(0);">
+    {% else %} href="{% url 'uploader:user_questions' %}">
+    {% endif %}
+        <img class="menu_icon" src="/static/uploader/img/18x18/leaderboard.png" height="18" width="18"/>
+        <span class="menu_text">Questions</span>
+        </a>
+    </li>
+    <li><a 
+    {% if bookmarks %}} class="selected" href="javascript:void(0);">
+    {% else %} href="javascript:alert('Coming soon');">
+    {% endif %}
+        <img class="menu_icon" src="/static/uploader/img/18x18/bookmark.png" height="18" width="18"/>
+        <span class="menu_text">Lessons</span>
+        </a>
+    </li>
 </ul>
 </div>
 
@@ -111,7 +127,7 @@ their own tab above.</p>
         <td>{{ file.filename }}</td>
         <td style='text-align: center'>{{ file.link_count }}</td>
         <td style='text-align: center'>{{ file.filesize|filesizeformat }}</td>
-        <td style='text-align: center'>{{ file.pub_date }}</td>
+        <td style='text-align: center'>{{ file.pub_date|date:"d M Y" }}</td>
         <td style='text-align: center'>
             <a href="{% url 'uploader:link_file' file.slug %}">
                 <button class="btn">
@@ -150,7 +166,7 @@ their own tab above.</p>
         <td>{{ bookmark.title }}</td></t>
         <td><a href="{{ bookmark.link }}">{{ bookmark.link|truncatechars:60 }}</a></td>
         <td style='text-align: center'>{{ bookmark.link_count }}</td>
-        <td style='text-align: center'>{{ bookmark.pub_date }}</td>
+        <td style='text-align: center'>{{ bookmark.pub_date|date:"d M Y" }}</td>
         <td style='text-align: center'>
             <a href="{% url 'uploader:link_bookmark' bookmark.slug %}">
                 <button class="btn">
@@ -180,6 +196,43 @@ their own tab above.</p>
     </tr>
     {% endfor %}
 </table>
-
+{% elif questions %}
+<table width='100%'>
+    <tr>
+        <th>Question</th>
+        <th>Unit Topic</th>
+        <th>Rating</th>
+        <th>Uploaded</th>
+        <!--<th width="15%">Actions</th>-->
+    </tr>
+    {% for question in questions %}
+    <tr> 
+        <td>{{ question.text|truncatechars:100 }}</td></t>
+        <td>{{ question.unit_topic }}</td>
+        <td></td>
+        <td style='text-align: center'>{{ question.pub_date|date:"d M Y" }}</td>
+        <!--<td style='text-align: center'>-->
+        <!--    <a href="">-->
+        <!--        <button class="btn">-->
+                <!--<img src="{% static 'uploader/img/18x18/add.png' %}" />-->
+        <!--        Link-->
+        <!--        </button>-->
+        <!--    </a>-->
+        <!--    <a href="">-->
+        <!--        <button class="btn">-->
+                <!--<img src="{% static 'uploader/img/18x18/edit.png' %}" />-->
+        <!--        Edit-->
+        <!--        </button>-->
+        <!--    </a>-->
+        <!--    <a href="" onclick="javascript:return confirm('DELETE this bookmark?')">-->
+                <!--<img src="{% static 'uploader/img/18x18/delete.png' %}" />-->
+        <!--        <button class="btn_danger">-->
+        <!--        Delete-->
+        <!--        </button>-->
+        <!--    </a>-->
+        <!--</td>-->
+    </tr>
+    {% endfor %}
+</table>
 {% endif %}
 {% endblock %}

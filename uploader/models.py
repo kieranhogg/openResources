@@ -280,7 +280,7 @@ class FileAdmin(admin.ModelAdmin):
 class Bookmark(models.Model):
     title = models.CharField(max_length=200)
     link = models.URLField(max_length=400)
-    description = models.TextField('Description', null=True)
+    description = models.TextField(null=True)
     uploader = models.ForeignKey(settings.AUTH_USER_MODEL)
     slug = models.SlugField(unique=True)
     pub_date = models.DateTimeField(
@@ -386,7 +386,16 @@ class RatingAdmin(admin.ModelAdmin):
 
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL)
+    STUDENT = 1
+    TEACHER = 2
+
+    USER_TYPES = (
+        (STUDENT, 'Student'),
+        (TEACHER, 'Teacher'),
+    )
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, default=STUDENT)
+    subject = models.ForeignKey(Subject)
+    type = models.IntegerField(max_length=1, choices=USER_TYPES, default=1)
     score = models.IntegerField(default=0)
 
     def __unicode__(self):
@@ -445,6 +454,52 @@ class Image(models.Model):
     uploader = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True)
     licence = models.ForeignKey(Licence)
     pub_date = models.DateTimeField(auto_now_add=True)
+ 
+   
+class Question(models.Model):
+    unit_topic = models.ForeignKey(UnitTopic)
+    text = models.TextField()
+    uploader = models.ForeignKey(settings.AUTH_USER_MODEL)
+    pub_date = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        abstract = True
+
+
+class MultipleChoiceQuestion(Question):
+    number_of_options = models.IntegerField()
+    answer = models.IntegerField(choices=((1, "1"), (2, "2"), (3, "3"), (4, "4")))
+
+    def __unicode__(self):
+       return str(self.text)
+
+
+class Answer(models.Model):
+
+    class Meta:
+        abstract = True
+
+
+class MultipleChoiceAnswer(Answer):
+    question = models.ForeignKey(MultipleChoiceQuestion)
+    text = models.CharField(max_length=300)
+    number = models.IntegerField()
+    
+    def __unicode__(self):
+        return self.text
+        
+
+class MultipleChoiceUserAnswer(models.Model):
+    question = models.ForeignKey(MultipleChoiceQuestion)
+    answer_chosen = models.ForeignKey(MultipleChoiceAnswer)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    answered = models.DateTimeField(auto_now_add=True)
+
+    def is_correct(self):
+        return int(self.question.answer) == int(self.answer_chosen.number)
+    
+    class Meta:   
+        unique_together = (("user", "question"),)
     
 ######## signals TODO move to own file #########
 

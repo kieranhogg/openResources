@@ -1,0 +1,33 @@
+{% extends 'uploader/base.html' %}
+{% block body_block %}
+<h2>{% block head_title %}
+{% if form.instance.id %}
+    Edit 
+{% else %}
+   Add 
+{% endif %}
+Question{% endblock %}</h2>
+
+{% if form.non_field_errors %}
+    <div class="error">
+    {% for error in form.non_field_errors %}
+        {{error}}
+    {% endfor %}
+    </div>
+{% endif %}
+{% if not form.instance.id %}
+<p>You are adding a new question to: <strong>{{ unit_topic }}</strong></p>
+{% endif %}
+<form action method="post" novalidate>
+    {% csrf_token %}
+    {{ form.as_p }}
+    
+<br />
+{% if form.instance.id %}
+    <input type="submit" value="Update">
+{% else %}
+    <input type="submit" value="Add">
+{% endif %}
+
+</form>
+{% endblock %}
