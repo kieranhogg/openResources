@@ -532,7 +532,7 @@ def test(request, slug):
             # FIXME think there's a function to do this
             for question in questions:
                 answer_list = []
-                answers = MultipleChoiceAnswer.objects.filter(question=question).sort('number')
+                answers = MultipleChoiceAnswer.objects.filter(question=question).order_by('number')
                 for answer in answers:
                     answer_list.append(answer)
                 
@@ -542,7 +542,7 @@ def test(request, slug):
             # FIXME think there's a function to do this
             for question in questions:
                 answer_list = []
-                answers = MultipleChoiceAnswer.objects.filter(question=question)
+                answers = MultipleChoiceAnswer.objects.filter(question=question).order_by('number')
                 for answer in answers:
                     answer_list.append(answer)
                 
