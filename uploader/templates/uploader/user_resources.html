@@ -201,36 +201,41 @@ their own tab above.</p>
     <tr>
         <th>Question</th>
         <th>Unit Topic</th>
-        <th>Rating</th>
+        <!--<th>Rating</th>-->
         <th>Uploaded</th>
-        <!--<th width="15%">Actions</th>-->
+        <th width="5%">Actions</th>
     </tr>
     {% for question in questions %}
     <tr> 
         <td>{{ question.text|truncatechars:100 }}</td></t>
         <td>{{ question.unit_topic }}</td>
-        <td></td>
+        <!--<td></td>-->
         <td style='text-align: center'>{{ question.pub_date|date:"d M Y" }}</td>
-        <!--<td style='text-align: center'>-->
-        <!--    <a href="">-->
-        <!--        <button class="btn">-->
-                <!--<img src="{% static 'uploader/img/18x18/add.png' %}" />-->
-        <!--        Link-->
-        <!--        </button>-->
-        <!--    </a>-->
-        <!--    <a href="">-->
-        <!--        <button class="btn">-->
-                <!--<img src="{% static 'uploader/img/18x18/edit.png' %}" />-->
-        <!--        Edit-->
-        <!--        </button>-->
-        <!--    </a>-->
-        <!--    <a href="" onclick="javascript:return confirm('DELETE this bookmark?')">-->
-                <!--<img src="{% static 'uploader/img/18x18/delete.png' %}" />-->
-        <!--        <button class="btn_danger">-->
-        <!--        Delete-->
-        <!--        </button>-->
-        <!--    </a>-->
-        <!--</td>-->
+        <td style='text-align: center'>
+            <!--<a href="">-->
+            <!--    <button class="btn">-->
+            <!--    <img src="{% static 'uploader/img/18x18/add.png' %}" />-->
+            <!--    Link-->
+            <!--    </button>-->
+            <!--</a>-->
+            <!--<a href="">-->
+            <!--    <button class="btn">-->
+            <!--    <img src="{% static 'uploader/img/18x18/edit.png' %}" />-->
+            <!--    Edit-->
+            <!--    </button>-->
+            <!--</a>-->
+            <!--<a href="" onclick="javascript:return confirm('DELETE this bookmark?')">-->
+            <!--    <img src="{% static 'uploader/img/18x18/delete.png' %}" />-->
+            <!--    <button class="btn_danger">-->
+            <!--    Delete-->
+            <!--    </button>-->
+            <!--</a>-->
+            <a href="{% url 'uploader:test' question.unit_topic.slug %}">
+                <button class="btn">
+                View
+                </button>
+            </a>
+        </td>
     </tr>
     {% endfor %}
 </table>

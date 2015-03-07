@@ -24,11 +24,30 @@
         <span class="menu_text">Notes</span>
         </a>
     </li>
+    {% if request.user.userprofile.type == 1 %}
     <li><a href="{% url 'uploader:test' unit_topic.slug %}">
         <img class="menu_icon" src="/static/uploader/img/18x18/leaderboard.png" height="18" width="18"/>
-        <span class="menu_text">Test</span>
+        <span class="menu_text">
+            Test
+        </span>
         </a>
     </li>
+        <li><a href="{% url 'uploader:test_feedback' unit_topic.slug %}">
+        <img class="menu_icon" src="/static/uploader/img/18x18/eye.png" height="18" width="18"/>
+        <span class="menu_text">
+            Feedback
+        </span>
+        </a>
+    </li>
+    {% else %}
+        <li><a href="{% url 'uploader:test' unit_topic.slug %}">
+        <img class="menu_icon" src="/static/uploader/img/18x18/leaderboard.png" height="18" width="18"/>
+        <span class="menu_text">
+            Questions
+        </span>
+        </a>
+    </li>
+    {% endif %}
 </ul>
 </div>
 <h2>{% block head_title %}{{ unit_topic.title }}{% endblock %}</h2>
