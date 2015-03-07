@@ -556,8 +556,8 @@ def test_feedback(request, slug):
     unit_topic = get_object_or_404(UnitTopic, slug=slug)
     questions = MultipleChoiceQuestion.objects.filter(unit_topic=unit_topic)
     for question in questions:
-        user_answer = MultipleChoiceUserAnswer.objects.filter(question=question)[0]
-        if user_answer:
+        user_answer = MultipleChoiceUserAnswer.objects.filter(question=question)
+        if user_answer.count() == 1:
             question.answer = MultipleChoiceAnswer.objects.filter(question=question)[0]
             question.user_answer = user_answer
         
