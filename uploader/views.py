@@ -523,7 +523,9 @@ def test(request, slug):
         # try to find maximum ten questions that the user hasn't taken
             completed_qs = MultipleChoiceUserAnswer.objects.filter(user=request.user, question__unit_topic=unit_topic).values('question_id')
             complete_count = completed_qs.count()
-            questions = MultipleChoiceQuestion.objects.exclude(id__in=completed_qs)[:10]
+            
+            # FIXME random sorting could be more efficient
+            questions = MultipleChoiceQuestion.objects.exclude(id__in=completed_qs).order_by('?')[:10]
             question_count = MultipleChoiceQuestion.objects.filter(unit_topic=unit_topic).count()
             
             # FIXME think there's a function to do this
