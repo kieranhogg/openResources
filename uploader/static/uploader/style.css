@@ -12,8 +12,18 @@ body {
 }
 p {
     padding-bottom: 0.5em;
-    font: normal 1em Arial,sans-serif;
+    /*font: normal 1em Arial,sans-serif;*/
     line-height: 170%;
+}
+#notes p, #notes li {
+    font-family: "freight-text-pro",Georgia,Cambria,"Times New Roman",Times,serif;
+    letter-spacing: .01rem;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 1.1em;
+}
+#notes p {
+    line-height: 1.5;
 }
 a {
     color:#cc0000;
