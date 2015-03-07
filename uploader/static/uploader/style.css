@@ -44,9 +44,12 @@ h1 {
 
 h3, h4, h5, h6 {
     /*text-decoration: underline;*/
+    font-family: helvetica,arial,freesans,clean,sans-serif;
+    color: #999;
     font-weight: normal;
     margin-top: 0.7em;
     margin-bottom: 0.5em;
+    font-weight: 300
 }
 
 h2 {
