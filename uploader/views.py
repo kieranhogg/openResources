@@ -568,35 +568,46 @@ def question(request, slug):
     unit_topic = get_object_or_404(UnitTopic, slug=slug)
     form = MultipleChoiceQuestionForm(request.POST or None)
     
-    if request.POST:
-        question = MultipleChoiceQuestion(number_of_options=4, 
-                                          answer=request.POST['answer'],
-                                          text=request.POST['text'],
-                                          uploader=request.user,
-                                          unit_topic=unit_topic)
+    if request.POST and form.is_valid():
+        number_of_options = request.POST['number_of_options']
+        question = MultipleChoiceQuestion(
+            number_of_options=number_of_options, 
+            answer=request.POST['answer'],
+            text=request.POST['text'],
+            uploader=request.user,
+            unit_topic=unit_topic
+            )
         question.save()
-
-        answer_one = MultipleChoiceAnswer(question=question, 
-                                          text=request.POST['answer_one'], 
-                                          number=1)
+        
+        for number in range(1, int(number_of_options) + 1):
+            text = request.POST['answer' + str(number)]
+            answer = MultipleChoiceAnswer(question=question,
+                                          text=text,
+                                          number=number)
+            answer.save()
+            
+            
+        # answer_one = MultipleChoiceAnswer(question=question, 
+        #                                   text=request.POST['answer_one'], 
+        #                                   number=1)
                                           
-        answer_two = MultipleChoiceAnswer(question=question, 
-                                          text=request.POST['answer_two'], 
-                                          number=2)
+        # answer_two = MultipleChoiceAnswer(question=question, 
+        #                                   text=request.POST['answer_two'], 
+        #                                   number=2)
                                           
-        answer_three = MultipleChoiceAnswer(question=question, 
-                                            text=request.POST['answer_three'], 
-                                            number=3)
+        # answer_three = MultipleChoiceAnswer(question=question, 
+        #                                     text=request.POST['answer_three'], 
+        #                                     number=3)
                                             
-        answer_four = MultipleChoiceAnswer(question=question, 
-                                           text=request.POST['answer_four'], 
-                                           number=4)
+        # answer_four = MultipleChoiceAnswer(question=question, 
+        #                                   text=request.POST['answer_four'], 
+        #                                   number=4)
                                            
         
-        answer_one.save()
-        answer_two.save()
-        answer_three.save()
-        answer_four.save()
+        # answer_one.save()
+        # answer_two.save()
+        # answer_three.save()
+        # answer_four.save()
         
         if request.POST.get('add_another', False) == 'on':
             url = reverse('uploader:question', args=[slug])

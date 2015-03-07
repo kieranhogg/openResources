@@ -467,7 +467,7 @@ class Question(models.Model):
 
 
 class MultipleChoiceQuestion(Question):
-    number_of_options = models.IntegerField()
+    number_of_options = models.IntegerField(choices=((2, "2"), (3, "3"), (4, "4")))
     answer = models.IntegerField(choices=((1, "1"), (2, "2"), (3, "3"), (4, "4")))
 
     def __unicode__(self):

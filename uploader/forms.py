@@ -91,12 +91,13 @@ class ImageForm(forms.ModelForm):
         }
         
 class MultipleChoiceQuestionForm(forms.ModelForm):
-    answer_one = forms.CharField()
-    answer_two = forms.CharField()
-    answer_three = forms.CharField()
-    answer_four = forms.CharField()
-    add_another = forms.BooleanField(label='Add another question?')
+    answer1 = forms.CharField(label='First answer')
+    answer2 = forms.CharField(label='Second answer')
+    answer3 = forms.CharField(label='Third answer', required=False)
+    answer4 = forms.CharField(label='Fourth answer', required=False)
+    add_another = forms.BooleanField(label='Add another question?', 
+                                     required=False)
     
     class Meta:
         model = MultipleChoiceQuestion
-        exclude = ('unit_topic', 'number_of_options', 'uploader')
+        exclude = ('unit_topic', 'uploader')
