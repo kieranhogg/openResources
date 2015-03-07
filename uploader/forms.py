@@ -27,9 +27,9 @@ class FileForm(forms.ModelForm):
 
 
     def clean(self):
-        valid = super(FileStageOneForm, self).is_valid()
+        valid = super(FileForm, self).is_valid()
         #data = self.cleaned_data
-        data = super(FileStageOneForm, self).clean()
+        data = super(FileForm, self).clean()
         try:
             if data.content_type in settings.UPLOAD_FILE_TYPES:
                 if data.size > settings.UPLOAD_FILE_MAX_SIZE:
