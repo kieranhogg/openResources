@@ -526,7 +526,7 @@ def test(request, slug):
             complete_count = completed_qs.count()
             
             # FIXME random sorting could be more efficient
-            questions = MultipleChoiceQuestion.objects.exclude(id__in=completed_qs).order_by('?')[:10]
+            questions = MultipleChoiceQuestion.objects.exclude(id__in=completed_qs, unit_topic=unit_topic).order_by('?')[:10]
             question_count = MultipleChoiceQuestion.objects.filter(unit_topic=unit_topic).count()
             
             # FIXME think there's a function to do this
