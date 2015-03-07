@@ -531,7 +531,7 @@ def test(request, slug):
             # FIXME think there's a function to do this
             for question in questions:
                 answer_list = []
-                answers = MultipleChoiceAnswer.objects.filter(question=question)
+                answers = MultipleChoiceAnswer.objects.filter(question=question).sort('number')
                 for answer in answers:
                     answer_list.append(answer)
                 
@@ -585,29 +585,6 @@ def question(request, slug):
                                           text=text,
                                           number=number)
             answer.save()
-            
-            
-        # answer_one = MultipleChoiceAnswer(question=question, 
-        #                                   text=request.POST['answer_one'], 
-        #                                   number=1)
-                                          
-        # answer_two = MultipleChoiceAnswer(question=question, 
-        #                                   text=request.POST['answer_two'], 
-        #                                   number=2)
-                                          
-        # answer_three = MultipleChoiceAnswer(question=question, 
-        #                                     text=request.POST['answer_three'], 
-        #                                     number=3)
-                                            
-        # answer_four = MultipleChoiceAnswer(question=question, 
-        #                                   text=request.POST['answer_four'], 
-        #                                   number=4)
-                                           
-        
-        # answer_one.save()
-        # answer_two.save()
-        # answer_three.save()
-        # answer_four.save()
         
         if request.POST.get('add_another', False) == 'on':
             url = reverse('uploader:question', args=[slug])
