@@ -395,8 +395,9 @@ class UserProfile(models.Model):
     )
     user = models.OneToOneField(settings.AUTH_USER_MODEL, default=STUDENT)
     subject = models.ForeignKey(Subject)
-    type = models.IntegerField(max_length=1, choices=USER_TYPES, default=1)
+    type = models.IntegerField(max_length=1, choices=USER_TYPES, default=2)
     score = models.IntegerField(default=0)
+    profile_setup = models.BooleanField(default=False)
 
     def __unicode__(self):
         return str(self.user)
