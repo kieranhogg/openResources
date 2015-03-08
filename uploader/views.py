@@ -338,14 +338,18 @@ def score_points(user, action):
 def profile(request, username=None):
     # /profile/ and logged in
     if username == None and request.user.is_authenticated():
-        user_id = request.user.id
+        user = request.user
         #
     # /profile/ and not logged in
     elif username == None and not request.user.is_authenticated():
         return HttpResponse("Not logged in")
     # /profile/1
+    elif username:
+        user = get_object_or_404(UserProfile, user__username=username)
     else:
-        True
+        pass
+    
+    
     return render(request, 'uploader/profile.html', {})
 
 @login_required
@@ -520,7 +524,8 @@ def test(request, slug):
         return HttpResponseRedirect(
             reverse('uploader:test_feedback', args=[slug]))
     else:
-        if request.user.userprofile.type == 1: # student
+        # student
+        if request.user.is_authenticated and request.user.userprofile.type == 1: 
         # try to find maximum ten questions that the user hasn't taken
             completed_qs = MultipleChoiceUserAnswer.objects.filter(user=request.user, question__unit_topic=unit_topic).values('question_id')
             complete_count = completed_qs.count()
