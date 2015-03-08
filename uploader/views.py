@@ -525,7 +525,7 @@ def test(request, slug):
             reverse('uploader:test_feedback', args=[slug]))
     else:
         # student
-        if request.user.is_authenticated:
+        if request.user.is_authenticated():
             if request.user.userprofile.type == 1: 
                 # try to find maximum ten questions that the user hasn't taken
                 completed_qs = MultipleChoiceUserAnswer.objects.filter(user=request.user, question__unit_topic=unit_topic).values('question_id')
