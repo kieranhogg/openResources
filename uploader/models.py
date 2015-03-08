@@ -394,7 +394,7 @@ class UserProfile(models.Model):
         (TEACHER, 'Teacher'),
     )
     user = models.OneToOneField(settings.AUTH_USER_MODEL, default=STUDENT)
-    subject = models.ForeignKey(Subject)
+    subject = models.ForeignKey(Subject, null=True, blank=True)
     type = models.IntegerField(max_length=1, choices=USER_TYPES, default=2)
     score = models.IntegerField(default=0)
     profile_setup = models.BooleanField(default=False)
