@@ -717,24 +717,23 @@ def test(request, slug):
             reverse('uploader:test_feedback', args=[slug]))
     else:
         # student
-        if request.user.is_authenticated():
-            if request.user.userprofile.type == 1: 
-                # try to find maximum ten questions that the user hasn't taken
-                completed_qs = MultipleChoiceUserAnswer.objects.filter(user=request.user, question__unit_topic=unit_topic).values('question_id')
-                complete_count = completed_qs.count()
+        if request.user.is_authenticated() and request.user.userprofile.type == 1: 
+            # try to find maximum ten questions that the user hasn't taken
+            completed_qs = MultipleChoiceUserAnswer.objects.filter(user=request.user, question__unit_topic=unit_topic).values('question_id')
+            complete_count = completed_qs.count()
+            
+            # FIXME random sorting could be more efficient
+            questions = MultipleChoiceQuestion.objects.filter(unit_topic=unit_topic).exclude(id__in=completed_qs).order_by('?')[:10]
+            question_count = MultipleChoiceQuestion.objects.filter(unit_topic=unit_topic).count()
+            
+            # FIXME think there's a function to do this
+            for question in questions:
+                answer_list = []
+                answers = MultipleChoiceAnswer.objects.filter(question=question).order_by('number')
+                for answer in answers:
+                    answer_list.append(answer)
                 
-                # FIXME random sorting could be more efficient
-                questions = MultipleChoiceQuestion.objects.filter(unit_topic=unit_topic).exclude(id__in=completed_qs).order_by('?')[:10]
-                question_count = MultipleChoiceQuestion.objects.filter(unit_topic=unit_topic).count()
-                
-                # FIXME think there's a function to do this
-                for question in questions:
-                    answer_list = []
-                    answers = MultipleChoiceAnswer.objects.filter(question=question).order_by('number')
-                    for answer in answers:
-                        answer_list.append(answer)
-                    
-                    question.answers = answer_list
+                question.answers = answer_list
         else:
             questions = MultipleChoiceQuestion.objects.filter(unit_topic=unit_topic)
             # FIXME think there's a function to do this
