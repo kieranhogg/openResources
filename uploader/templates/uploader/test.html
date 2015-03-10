@@ -1,6 +1,7 @@
 {% extends 'uploader/base.html' %}
 {% block head_title %}{{ unit_topic }} Notes{% endblock %}
 {% block body_block %}
+{% load static %}
 <div id="crumbs">
     <a href="{% url 'uploader:index' %}">Home</a> > 
     <a href="{% url 'uploader:subject' unit_topic.unit.syllabus.subject.slug %}">
@@ -48,10 +49,20 @@
 </div>
 {% if request.user.userprofile.type == 2 %}
     <h2>Questions</h2>
+        <div id="add-to-lesson">
+    <a href="{% url 'uploader:add_item_to_lesson' unit_topic.slug 'test' %}">
+        <button class='btn'>
+        <img src="{% static 'uploader/img/18x18/inbox.png' %}" />
+        Add to lesson
+        </button>
+    </a>
+    </div>
     <p>As a teacher, you can will see the full list of questions, students will see a random set of 10 questions.</p>
     <p>
         <a href="{% url 'uploader:question' unit_topic.slug %}">
-            <button class='btn'>Add Question</button>
+            <button class='btn'>
+                <img src="{% static 'uploader/img/18x18/add.png' %}" />
+                Add Question</button>
         </a>    
     </p>
     {% if questions %}

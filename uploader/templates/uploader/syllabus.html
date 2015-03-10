@@ -10,7 +10,6 @@
 </div>
 <h2>{% block head_title %}{{ syllabus }}{% endblock %}</h2>
 <div id="syllabus_validity">
-    <strong>
     {% if syllabus.teach_from %}
     <p><strong>First teaching</strong>: {{ syllabus.teach_from|date:"F Y" }}</p>
     {% endif %}
@@ -18,7 +17,6 @@
     {% if syllabus.teach_until %}
     <p><strong>Last exam</strong>: {{ syllabus.teach_until|date:"F Y" }}</p>
     {% endif %}
-    </strong>
 </div>
 {% if syllabus.description %}
 <div id="description">{{ syllabus.description }}</div>

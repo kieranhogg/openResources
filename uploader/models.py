@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 class Subject(models.Model):
     subject_name = models.CharField(max_length=200)
     active = models.BooleanField(default=True)
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, max_length=100)
     pub_date = models.DateTimeField('Date published')
 
     def __unicode__(self):
@@ -93,7 +93,7 @@ class Syllabus(models.Model):
     official_site = models.URLField(max_length=200, null=True, blank=True)
     teach_from = models.DateField(null=True, blank=True, help_text='Date of first teaching')
     teach_until = models.DateField(null=True, blank=True, help_text='Date of last teaching')
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, max_length=100)
     pub_date = models.DateTimeField('Date published')
 
     def __unicode__(self):
@@ -123,7 +123,7 @@ class Unit(models.Model):
         null=True,
         help_text='A brief overview of the content'
     )
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, max_length=100)
     pub_date = models.DateTimeField('Date published')
 
     def __unicode__(self):
@@ -163,7 +163,7 @@ class UnitTopic(models.Model):
         null=True,
         help_text='E.g. the expected topics taught'
     )
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, max_length=100)
     pub_date = models.DateTimeField('Date published')
 
     def __unicode__(self):
@@ -182,7 +182,7 @@ class UnitTopicAdmin(admin.ModelAdmin):
 class Note(models.Model):
     unit_topic = models.OneToOneField(UnitTopic)
     content = models.TextField()
-    slug = models.SlugField(unique=True) # don't use this yet but may in future
+    slug = models.SlugField(unique=True, max_length=100) # don't use this yet but may in future
 
 
 class NoteAdmin(admin.ModelAdmin):
@@ -257,7 +257,7 @@ class File(models.Model):
             '<a href="/licences/">Still unsure?</a> ')
     )
     topics = models.ManyToManyField(Topic, null=True, blank=True)
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, max_length=100)
     pub_date = models.DateTimeField(
         'Date published',
         auto_now_add=True,
@@ -282,7 +282,7 @@ class Bookmark(models.Model):
     link = models.URLField(max_length=400)
     description = models.TextField(null=True)
     uploader = models.ForeignKey(settings.AUTH_USER_MODEL)
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, max_length=100)
     pub_date = models.DateTimeField(
         'Date published',
         auto_now_add=True,
@@ -316,7 +316,7 @@ class Resource(models.Model):
         blank=True,
     )
     approved = models.BooleanField(default=False)
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, max_length=100)
     pub_date = models.DateTimeField(
         'Date published',
         auto_now_add=True,
@@ -501,6 +501,27 @@ class MultipleChoiceUserAnswer(models.Model):
     
     class Meta:   
         unique_together = (("user", "question"),)
+        
+class Lesson(models.Model):
+    title = models.CharField(max_length=200)
+    slug = models.SlugField(unique=True, max_length=100)
+    uploader = models.ForeignKey(settings.AUTH_USER_MODEL)
+    objectives = models.TextField(blank=True, null=True)
+    url = models.URLField()
+    pub_date = models.DateTimeField(auto_now_add=True)
+    
+    def __unicode__(self):
+        return self.title    
+    
+class LessonItem(models.Model):
+    lesson = models.ForeignKey(Lesson)
+    type = models.CharField(max_length=50)
+    slug = models.SlugField(max_length=100)
+    order = models.IntegerField()
+    instructions = models.TextField(blank=True, null=True)
+    
+    def __unicode__(self):
+        return self.type + " " + self.slug   
     
 ######## signals TODO move to own file #########
 

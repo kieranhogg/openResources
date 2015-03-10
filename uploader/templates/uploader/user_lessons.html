@@ -1,0 +1,117 @@
+{% extends 'uploader/base.html' %}
+{% block body_block %}
+{% load static %}
+<h2>{% block head_title %}Your Resources{% endblock %}</h2>
+{% include 'uploader/user_resources_tabs.html' %}
+<p>If you add items to a lesson, they will show up on this page and you can create
+new lessons.</p>
+
+{% if resources or notes or questions %}
+<p>Below are the list of items you have added so far to your lesson.
+If you are happy with the list, you can create it. If you want to add some more,
+you can leave, add some more items and come back.</p>
+<p>To change the order they will appear, just swap the numbers around.</p>
+
+    <h3>Create new lesson</h3>
+    <form action method="post">
+        {% csrf_token %}
+    <p><label for="title">Lesson title</label><input name="title" /></p>
+    <p><label for="objectives">Learning Objectives/outcomes</label>
+        <textarea name="objectives"></textarea></p>
+{% endif %}
+{% if resources %}
+    <h3>Lesson items</h3>
+    {% for resource in resources %}
+        {% if not forloop.first %}<hr />{% endif %}
+        <div class="lesson-resource">
+        <h4>Resource: {{ resource }}</h3>
+        <input type="hidden" name="slug{{ resource.count }}" value="{{ resource.slug }}" />
+        <input type="hidden" name="type{{ resource.count }}" value="resources" />
+        <div class='order'>
+        <p><label for="order{{ resource.count }}">Order</label><input name="order{{ resource.count }}" style="width: 20px" value="{{ resource.count }}" /></p>
+        </div>
+        <div class="instructions">
+        <p><label for="instructions{{resource.count}}">Instructions</label>
+        <textarea name="instructions{{resource.count}}"></textarea></p>
+        </div>
+        </div>
+    {% endfor %}
+{% endif %}
+        
+{% if notes %}
+    {% for note in notes %}
+        {% if not forloop.first %}<hr />{% endif %}
+        <h4>Notes: {{ note.unit_topic }}</h4>
+        <input type="hidden" name="slug{{ note.count }}" value="{{ note.slug }}" />
+        <input type="hidden" name="type{{ note.count }}" value="notes" />
+        <div class='order'>
+            <p><label for="order{{ note.count }}">Order</label>
+            <input name="order{{ note.count }}" style="width: 20px" value="{{ note.count }}" />
+        </div>
+        <div class="instructions">
+            <p><label for="instructions{{note.count}}">Instructions</label>
+                <textarea name="instructions{{note.count}}"></textarea>
+            </p>
+        </div>
+        </p>
+    {% endfor %}
+{% endif %}
+
+{% if tests %}
+    {% for test in tests %}
+        {% if not forloop.first %}<hr />{% endif %}
+        <h4>Test: {{ test }}</h4>
+        <input type="hidden" name="slug{{ test.count }}" value="{{ test.slug }}" />
+        <input type="hidden" name="type{{ test.count }}" value="test" />
+        <div class='order'>
+            <p><label for="order{{ test.count }}">Order</label>
+            <input name="order{{ test.count }}" style="width: 20px" value="{{ test.count }}" />
+        </div>
+        <div class="instructions">
+            <p><label for="instructions{{test.count}}">Instructions</label>
+                <textarea name="instructions{{test.count}}"></textarea>
+            </p>
+        </div>
+        </p>
+    {% endfor %}
+{% endif %}
+
+{% if resources or notes or questions %}
+    <p><label>Clear current lesson?</label>
+    <input type="checkbox" name="clear"></p>
+    <input type="submit" />
+    </form>
+{% endif %}
+
+{% if lessons %}
+<h3>Existing lessons</h3>
+<p>Clicking <strong>present</strong> will show you a large screen version of 
+the lesson you can display on your board.</p>
+<table style="margin: 0 auto;">
+    <th>Lesson</th>
+    <th>Short link</th>
+    <th>Date</th>
+    <th>Actions</th>
+    
+{% for lesson in lessons %}
+<tr>
+    <td>{{ lesson.title }}</td>
+    <td>{{ lesson.url|urlize }}</td>
+    <td>{{ lesson.pub_date|date:"d M y" }}</td>
+    <td>
+        <a href="{% url 'uploader:lesson_show' lesson.slug %}">
+            <button class='btn'>Present</button>
+        </a>
+        <a href="{% url 'uploader:lesson' lesson.slug %}">
+            <button class='btn'>View</button>
+        </a>
+        <!--<button class='btn'>Edit</button>-->
+        <!--<button class='btn_danger'>Delete</button>-->
+    </td>
+</tr>
+{% endfor %}
+</table>
+{% endif %}
+
+
+{% endblock %}

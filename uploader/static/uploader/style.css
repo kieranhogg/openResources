@@ -790,6 +790,7 @@ input[type=submit] {
 .btn img {
     height: 18px;  
     width: 18px;
+    margin-bottom: -3px;
 }
 
 .btn_danger {
@@ -813,6 +814,20 @@ input[type=submit] {
   background-image: -o-linear-gradient(top, #bdbdbd, #999999);
   background-image: linear-gradient(to bottom, #bdbdbd, #999999);
   text-decoration: none;
+}
+#add-to-lesson {
+    float: right;
+}
+
+.instructions {
+    width: 70%;
+}
+
+.order {
+    float: right;
+    width: 20%;
+    position: absolute;
+    margin-left: 60%;
 }
 
 input[type=submit]:hover,

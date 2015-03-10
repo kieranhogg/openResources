@@ -6,5 +6,6 @@
 	<li><a href="{% url 'account_email' %}">Change e-mail</a></li>
 	<li><a href="{% url 'account_set_password' %}">Change password</a></li>
 	<!--<li><a href="{ url 'socialaccount_connections' }">Login using another account</a>-->
+	{{ form|as_p }}
 </ul>
 {% endblock %}

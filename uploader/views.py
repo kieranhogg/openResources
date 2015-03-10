@@ -8,7 +8,7 @@ from django.template import RequestContext, loader
 from uploader.models import (Subject, ExamLevel, Syllabus, Resource, Unit, File, 
     Rating, UnitTopic, Message, UserProfile, Licence, Note, Bookmark, Image,
     Question, MultipleChoiceQuestion, Answer, MultipleChoiceAnswer,
-    MultipleChoiceUserAnswer)
+    MultipleChoiceUserAnswer, Lesson, LessonItem)
 from uploader.forms import (BookmarkForm, FileForm, 
     LinkResourceForm, NotesForm, ImageForm, MultipleChoiceQuestionForm)
 from django.core.urlresolvers import reverse
@@ -20,7 +20,7 @@ from django.utils.text import slugify
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
-import logging
+import logging, json
 logging.basicConfig()
 
 logger = logging.getLogger(__name__)
@@ -385,6 +385,148 @@ def user_questions(request, user_id=None):
     questions = MultipleChoiceQuestion.objects.filter(uploader=request.user)
     return render(request, 'uploader/user_resources.html', {'questions': questions})
     
+@login_required
+def user_lessons(request, user_id=None):
+    
+    if request.POST:
+        if request.POST.get('clear', None) == 'on':
+            request.session['resources'] = None
+            request.session['notes'] = None
+            request.session['tests'] = None
+        else:
+            num_items = 0
+            rs = request.session
+            for types in ('resources', 'notes', 'tests'):
+                if types in rs and rs[types]:
+                    num_items += len(rs[types])
+            
+            if num_items > 0:
+                l = Lesson(title=request.POST['title'],
+                            slug=slugify(request.POST['title']),
+                            objectives=request.POST['objectives'],
+                            uploader=request.user,
+                        )
+                url = request.build_absolute_uri(reverse('uploader:lesson', args=[slugify(request.POST['title'])]))
+                post_url = 'https://www.googleapis.com/urlshortener/v1/url'
+                payload = {'longUrl': url, 'key': "AIzaSyBS7z0dORE4qDwHND1"}
+                headers = {'content-type': 'application/json'}
+                r = requests.post(post_url, data=json.dumps(payload), headers=headers)
+                data = r.json()
+                l.url = data['id']
+                l.save()
+    
+                rp = request.POST
+                for i in range(1, num_items + 1):
+                    _i = str(i)
+                    li = LessonItem(
+                        lesson=l,
+                        type=rp.get('type' + _i, None),
+                        slug=rp.get('slug' + _i, None),
+                        order=rp.get('order' + _i, None),
+                        instructions=rp.get('instructions' + _i, None),
+                    )
+                    
+                    li.save()
+                
+            request.session['resources'] = None
+            request.session['notes'] = None
+            request.session['tests'] = None
+        
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+    else:
+        
+        # check if we've got any stuff added to lesson
+        resources = request.session.get('resources', None)
+        resource_list = []
+        if resources:
+            count = 1
+            for resource in resources:
+                _resource = get_object_or_404(Resource, slug=resource)
+                if _resource is not None:
+                    _resource.count = count
+                    resource_list.append(_resource)
+                    count += 1
+    
+        notes = request.session.get('notes', None)
+        notes_list = []
+        if notes:
+            for note in notes:
+                unit_topic = get_object_or_404(UnitTopic, slug=note)
+                _note = get_object_or_404(Note, unit_topic=unit_topic)
+                if _note is not None:
+                    _note.count = count
+                    notes_list.append(_note)
+                    count += 1
+    
+        tests = request.session.get('tests', None)
+        tests_list = []
+        if tests:
+            for test in tests:
+                _test = get_object_or_404(UnitTopic, slug=test)
+                if _test is not None:
+                    _test.count = count
+                    tests_list.append(_test)
+                    count += 1
+        
+        lessons = Lesson.objects.filter(uploader=request.user)
+        
+    return render(request, 'uploader/user_lessons.html', 
+        {'resources': resource_list, 'notes': notes_list, 
+         'tests': tests_list, 'lessons': lessons})
+         
+def lesson(request, slug):
+    l = get_object_or_404(Lesson, slug=slug)
+    lis = LessonItem.objects.filter(lesson=l)
+    for li in lis:
+        if li.type == 'resources':
+            r = get_object_or_404(Resource, slug=li.slug)
+            li.title = r.file.title or r.bookmark.title
+        elif li.type == 'notes' or li.type == 'test':
+            li.title = get_object_or_404(UnitTopic, slug=li.slug).title
+
+    return render(request, 'uploader/lesson.html', 
+        {'lesson': l, 'lesson_items': lis})
+        
+def lesson_show(request, slug):
+    l = get_object_or_404(Lesson, slug=slug)
+
+    return render(request, 'uploader/lesson_show.html', 
+        {'lesson': l})
+
+def add_item_to_lesson(request, slug, type='resource'):
+    if type == 'resource':
+        resource = get_object_or_404(Resource, slug=slug)
+        if resource:
+            if 'resources' not in request.session or request.session['resources'] is None:
+                request.session['resources'] = (slug,)
+            elif slug not in request.session['resources']:
+                request.session['resources'].append(slug)
+            request.session.modified = True
+    elif type == 'notes':
+        
+        unit_topic = get_object_or_404(UnitTopic, slug=slug)
+        notes = get_object_or_404(Note, unit_topic=unit_topic)
+        if notes:
+            logger.error("saving: " + slug)
+            logger.error("saving: " + str(notes.slug))
+            logger.error("saving: " + str(unit_topic))
+            if 'notes' not in request.session or request.session['notes'] is None:
+                request.session['notes'] = (slug,)
+            elif slug not in request.session['notes']:
+                request.session['notes'].append(slug)
+            request.session.modified = True
+
+    elif type == 'test':
+        unit_topic = get_object_or_404(UnitTopic, slug=slug)
+        
+        if request.session.get('tests', None) is None:
+            request.session['tests'] = (slug,)
+        elif slug not in request.session['tests']:
+            request.session['tests'].append(slug)
+        request.session.modified = True
+
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+    
 def leaderboard(request):
     context = {}
 
@@ -414,7 +556,10 @@ def leaderboard(request):
 def licences(request):
     context = {'licences': Licence.objects.all()}
     return render(request, 'uploader/licences.html', context)
- 
+
+def notes_d(request, slug):
+    return notes(request, None, None, None, None, slug)
+
 @login_required
 def notes(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
     unit_topic = get_object_or_404(UnitTopic, slug=slug)
@@ -449,6 +594,9 @@ def notes(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
                   unit_topic.slug]))
     else:
         return render(request, "uploader/add_notes.html", {'form': form, 'unit_topic': unit_topic })
+
+def view_notes_d(request, slug):
+    return view_notes(request, None, None, None, None, slug)
         
 def view_notes(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
     unit_topic = get_object_or_404(UnitTopic, slug=slug)
@@ -504,6 +652,7 @@ def test(request, slug):
     unit_topic = get_object_or_404(UnitTopic, slug=slug)
     complete_count = 0
     question_count = 0
+    questions = None
     
     if request.POST:
         score = 0

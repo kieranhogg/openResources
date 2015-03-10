@@ -13,6 +13,7 @@ urlpatterns = patterns('',
     
     url(r'^resource/(?P<slug>[\w\d-]+)/$', views.view_resource, name='view_resource'),
     url(r'^resource/(?P<slug>[\w\d-]+)/delete$', views.delete_resource, name='delete_resource'),
+    url(r'^resource/(?P<slug>[\w\d-]+)/add-(?P<type>[\w]+)', views.add_item_to_lesson, name='add_item_to_lesson'),
     #url(r'^resource/(?P<slug>[\w\d-]+)/edit$', views.resource, name='resource'),
     
     url(r'^bookmark/add/$', views.bookmark, name='bookmark'),
@@ -31,7 +32,14 @@ urlpatterns = patterns('',
     url(r'^profile/files', views.user_files, name='user_files'),
     url(r'^profile/bookmarks', views.user_bookmarks, name='user_bookmarks'),
     url(r'^profile/questions', views.user_questions, name='user_questions'),
+    url(r'^profile/lessons', views.user_lessons, name='user_lessons'),
     url(r'^profile/(?P<username>[\w\d-]+)/$', views.profile, name='profile'),
+    
+    url(r'lesson/(?P<slug>[\w\d-]+)/$', views.lesson, name='lesson'),
+    url(r'lesson/(?P<slug>[\w\d-]+)/show/$', views.lesson_show, name='lesson_show'),
+    
+    url(r'^notes/(?P<slug>[\w\d-]+)/$', views.view_notes_d, name='view_notes_d'),
+    url(r'^notes/(?P<slug>[\w\d-]+)/edit/$', views.notes_d, name='notes_d'),
     
     url(r'^leaderboard', views.leaderboard, name='leaderboard'),
     

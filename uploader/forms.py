@@ -5,7 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.text import slugify
 from django.shortcuts import get_object_or_404
 from uploader.models import (Resource, Bookmark, File, Subject, Syllabus, Unit,
-    UnitTopic, Note, Image, MultipleChoiceQuestion)
+    UnitTopic, Note, Image, MultipleChoiceQuestion, UserProfile)
                         
 
 class BookmarkForm(forms.ModelForm):
@@ -101,3 +101,21 @@ class MultipleChoiceQuestionForm(forms.ModelForm):
     class Meta:
         model = MultipleChoiceQuestion
         exclude = ('unit_topic', 'uploader')
+        
+# class SignupForm(forms.ModelForm):
+#     # user = forms.CharField(max_length=40, label='Username')
+#     # password = forms.CharField(max_length=40, label='Password')
+#     # type = forms.CharField()
+    
+#     def __init__(self, *args, **kwargs):
+#         super(SignupForm, self).__init__(*args, **kwargs)
+        
+#     def signup(self, request, user):
+#         wsData = UserProfile()
+#         wsData.user = user
+#         wsData.wsUser = self.cleaned_data['user']
+#         wsData.wsPwd = self.cleaned_data['password']
+#         wsData.save()
+#     class Meta:
+#         model = UserProfile
+#         # fields = ('user', 'password',)

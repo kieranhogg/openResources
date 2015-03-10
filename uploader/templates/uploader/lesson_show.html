@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<link rel="stylesheet" type="text/css" href="{% static 'uploader/style.css' %}" />
+<title>{{ SITE_NAME }} | {% block head_title %}{% endblock %}</title>
+<link rel="shortcut icon" type="image/png" href="{{STATIC_URL}}/favicon.ico" />
+<script type="text/javascript">
+  function goFullscreen(id) {
+    // Get the element that we want to take into fullscreen mode
+    var element = document.getElementById(id);
+    
+    // These function will not exist in the browsers that don't support fullscreen mode yet, 
+    // so we'll have to check to see if they're available before calling them.
+    
+    if (element.mozRequestFullScreen) {
+      // This is how to go into fullscren mode in Firefox
+      // Note the "moz" prefix, which is short for Mozilla.
+      element.mozRequestFullScreen();
+    } else if (element.webkitRequestFullScreen) {
+      // This is how to go into fullscreen mode in Chrome and Safari
+      // Both of those browsers are based on the Webkit project, hence the same prefix.
+      element.webkitRequestFullScreen();
+   }
+   // Hooray, now we're in fullscreen mode!
+  }
+</script>
+</head>
+<body>
+    <div id="content" style="width: 100%; height: 100%">
+<h2 style="font-size: 500%; margin: 5px">{{ lesson.title }}</h2>
+<h3 style="font-size: 400%; margin: 5px">{% now "d/m/y" %}</h3>
+<h3 style="font-size: 300%; margin: 5px">Lesson Objectives</h3>
+<div style="font-size: 300%">
+{{ lesson.objectives|safe }}
+</div>
+<p style="font-size: 300%">Today's resources and tasks are at:</p>
+<p style="font-size: 500%; text-align:center;">{{ lesson.url }}</p>
+</div>
+<p style="text-align:center">
+    <button class='btn' onclick="goFullscreen('content'); return false">Fullscreen</button>
+</p>
+</div>
+</body>
+</html>

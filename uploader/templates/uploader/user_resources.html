@@ -2,50 +2,7 @@
 {% block body_block %}
 {% load static %}
 <h2>{% block head_title %}Your Resources{% endblock %}</h2>
-<div id="tabs">
-<ul id="navigation">
-    <li><a 
-    {% if resources %}} class="selected" href="javascript:void(0);">
-    {% else %} href="{% url 'uploader:user_resources' %}">
-    {% endif %}
-        <img class="menu_icon" src="{% static 'uploader/img/18x18/download.png' %}" height="18" width="18"/>
-        <span class="menu_text">Resources</span>
-        </a>
-    </li>
-    <li><a 
-    {% if files %}} class="selected" href="javascript:void(0);">
-    {% else %} href="{% url 'uploader:user_files' %}">
-    {% endif %}
-        <img class="menu_icon" src="/static/uploader/img/18x18/folder.png" height="18" width="18"/>
-        <span class="menu_text">Files</span>
-        </a>
-    </li>
-    <li><a 
-    {% if bookmarks %}} class="selected" href="javascript:void(0);">
-    {% else %} href="{% url 'uploader:user_bookmarks' %}">
-    {% endif %}
-        <img class="menu_icon" src="/static/uploader/img/18x18/bookmark.png" height="18" width="18"/>
-        <span class="menu_text">Bookmarks</span>
-        </a>
-    </li>
-    <li><a 
-    {% if questions %}} class="selected" href="javascript:void(0);">
-    {% else %} href="{% url 'uploader:user_questions' %}">
-    {% endif %}
-        <img class="menu_icon" src="/static/uploader/img/18x18/leaderboard.png" height="18" width="18"/>
-        <span class="menu_text">Questions</span>
-        </a>
-    </li>
-    <li><a 
-    {% if bookmarks %}} class="selected" href="javascript:void(0);">
-    {% else %} href="javascript:alert('Coming soon');">
-    {% endif %}
-        <img class="menu_icon" src="/static/uploader/img/18x18/bookmark.png" height="18" width="18"/>
-        <span class="menu_text">Lessons</span>
-        </a>
-    </li>
-</ul>
-</div>
+{% include 'uploader/user_resources_tabs.html' %}
 
 {% if resources %}
 
