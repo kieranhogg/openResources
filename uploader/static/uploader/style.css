@@ -659,8 +659,7 @@ form .submit input[type=submit]:hover {
    margin-left: 2px;
    font-style: italic;
 }
-button:focus {outline:0 !important;}
-input:focus, textarea:focus {outline:0 !important;}
+input:focus, textarea:focus, button:focus, select:focus {outline:0 !important;}
 
 label, button {
   transition: all 0.3s ease-in-out;
