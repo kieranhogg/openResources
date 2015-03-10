@@ -3,16 +3,19 @@
 {% load static %}
 <h2>{% block head_title %}Your Resources{% endblock %}</h2>
 {% include 'uploader/user_resources_tabs.html' %}
-<p>If you add items to a lesson, they will show up on this page and you can create
-new lessons.</p>
+<p>If you add items (resources, notes or questions) to a lesson, they will show up on this page and you can create
+new lessons with those items.</p>
 
-{% if resources or notes or questions %}
+{% if resources or notes or questions or tasks %}
 <p>Below are the list of items you have added so far to your lesson.
 If you are happy with the list, you can create it. If you want to add some more,
 you can leave, add some more items and come back.</p>
 <p>To change the order they will appear, just swap the numbers around.</p>
 
     <h3>Create new lesson</h3>
+    {% for error in form_errors %}
+    <div id="error">{{ error }}</div>
+    {% endfor %}
     <form action method="post">
         {% csrf_token %}
     <p><label for="title">Lesson title</label><input name="title" /></p>
@@ -76,10 +79,34 @@ you can leave, add some more items and come back.</p>
     {% endfor %}
 {% endif %}
 
-{% if resources or notes or questions %}
+{% if tasks %}
+    {% for task in tasks %}
+        {% if not forloop.first %}<hr />{% endif %}
+        <h4>Task</h4>
+        <input type="hidden" name="type{{ task }}" value="task" />
+        <div class='order'>
+            <p><label for="order{{ task }}">Order</label>
+            <input name="order{{ task }}" style="width: 20px" value="{{ task }}" />
+        </div>
+        <div class="instructions">
+            <p><label for="instructions{{ task }}">Instructions</label>
+                <textarea name="instructions{{ task }}"></textarea>
+            </p>
+        </div>
+        </p>
+    {% endfor %}
+{% endif %}
+
+{% if resources or notes or questions or tasks %}
+<p>
+    <a href="{% url 'uploader:add_item_to_lesson' time 'task' %}">
+        <img src="{% static 'uploader/img/18x18/add.png' %}" />
+        Add blank task
+    </a>
+</p>
     <p><label>Clear current lesson?</label>
     <input type="checkbox" name="clear"></p>
-    <input type="submit" />
+    <input type="submit" name="submit" />
     </form>
 {% endif %}
 
@@ -99,11 +126,11 @@ the lesson you can display on your board.</p>
     <td>{{ lesson.url|urlize }}</td>
     <td>{{ lesson.pub_date|date:"d M y" }}</td>
     <td>
-        <a href="{% url 'uploader:lesson_show' lesson.slug %}">
-            <button class='btn'>Present</button>
-        </a>
         <a href="{% url 'uploader:lesson' lesson.slug %}">
             <button class='btn'>View</button>
+        </a>
+        <a href="{% url 'uploader:lesson_show' lesson.slug %}">
+            <button class='btn'>Present</button>
         </a>
         <!--<button class='btn'>Edit</button>-->
         <!--<button class='btn_danger'>Delete</button>-->

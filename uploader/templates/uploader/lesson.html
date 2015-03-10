@@ -6,28 +6,32 @@
 {{ lesson.objectives|safe }}
 
 {% for item in lesson_items %}
+    <hr />
     <h3>Task {{ forloop.counter }}</h3>
     {% if item.type == 'resources' %}
+    <p>
     <a href="{% url 'uploader:view_resource' item.slug %}">
         Open {{ item.title }} resource
     </a>
-    
+    </p>
     {% elif item.type == 'notes' %}
-    <a href="{% url 'uploader:view_notes_d' item.slug %}">
+    <p><a href="{% url 'uploader:view_notes_d' item.slug %}">
         Open {{ item.title }} notes
     </a>
-    
+    </p>
     {% elif item.type == 'test' %}
-    <a href="{% url 'uploader:test' item.slug %}">
+    <p><a href="{% url 'uploader:test' item.slug %}">
         Take {{ item.title }} test
     </a>
+    </p>
     {% endif %}
     
-    {% if item.instructions %}
+    {% if item.instructions and item.type != "task" %}
     <h4>Instructions</h4>
-    {{ item.instructions }}
+    <p>{{ item.instructions }}</p>
+    {% elif item.instructions %}
+    <p>{{ item.instructions }}</p>
     {% endif %}
-    
 {% endfor %}
 
 {% endblock %}

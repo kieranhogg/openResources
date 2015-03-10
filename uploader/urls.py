@@ -13,7 +13,7 @@ urlpatterns = patterns('',
     
     url(r'^resource/(?P<slug>[\w\d-]+)/$', views.view_resource, name='view_resource'),
     url(r'^resource/(?P<slug>[\w\d-]+)/delete$', views.delete_resource, name='delete_resource'),
-    url(r'^resource/(?P<slug>[\w\d-]+)/add-(?P<type>[\w]+)', views.add_item_to_lesson, name='add_item_to_lesson'),
+    url(r'^lesson/(?P<slug>[\w\d-]+)/add-(?P<type>[\w]+)', views.add_item_to_lesson, name='add_item_to_lesson'),
     #url(r'^resource/(?P<slug>[\w\d-]+)/edit$', views.resource, name='resource'),
     
     url(r'^bookmark/add/$', views.bookmark, name='bookmark'),

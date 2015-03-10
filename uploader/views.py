@@ -20,7 +20,7 @@ from django.utils.text import slugify
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
-import logging, json
+import logging, json, time
 logging.basicConfig()
 
 logger = logging.getLogger(__name__)
@@ -385,22 +385,39 @@ def user_questions(request, user_id=None):
     questions = MultipleChoiceQuestion.objects.filter(uploader=request.user)
     return render(request, 'uploader/user_resources.html', {'questions': questions})
     
+# check that the lesson items aren't missing any values
+def check_lesson_items(request, num_items):
+    rp = request.POST
+    for i in range(1, num_items + 1):
+        _i = str(i)
+        if not rp.get('order' + _i, None):
+            return False    
+    return True
+        
+
 @login_required
 def user_lessons(request, user_id=None):
+    form_errors = []
     
-    if request.POST:
+    if request.POST.get('submit', None):
         if request.POST.get('clear', None) == 'on':
             request.session['resources'] = None
             request.session['notes'] = None
             request.session['tests'] = None
+            request.session['tasks'] = None
+        elif request.POST['title']:
+            form_errors.append('Please enter a lesson title')
         else:
             num_items = 0
             rs = request.session
-            for types in ('resources', 'notes', 'tests'):
+            for types in ('resources', 'notes', 'tests', 'tasks'):
                 if types in rs and rs[types]:
                     num_items += len(rs[types])
             
-            if num_items > 0:
+            # this check we've not missed an order number out
+            items_okay = check_lesson_items(request, num_items)
+            
+            if num_items > 0 and items_okay:
                 l = Lesson(title=request.POST['title'],
                             slug=slugify(request.POST['title']),
                             objectives=request.POST['objectives'],
@@ -416,6 +433,7 @@ def user_lessons(request, user_id=None):
                 l.save()
     
                 rp = request.POST
+                check_lesson_items(request, num_items)
                 for i in range(1, num_items + 1):
                     _i = str(i)
                     li = LessonItem(
@@ -428,61 +446,77 @@ def user_lessons(request, user_id=None):
                     
                     li.save()
                 
-            request.session['resources'] = None
-            request.session['notes'] = None
-            request.session['tests'] = None
-        
-        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
-    else:
-        
-        # check if we've got any stuff added to lesson
-        resources = request.session.get('resources', None)
-        resource_list = []
-        if resources:
-            count = 1
-            for resource in resources:
-                _resource = get_object_or_404(Resource, slug=resource)
-                if _resource is not None:
-                    _resource.count = count
-                    resource_list.append(_resource)
-                    count += 1
+                request.session['resources'] = None
+                request.session['notes'] = None
+                request.session['tests'] = None
+                request.session['tasks'] = None
+                return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+            elif not items_okay:
+                form_errors.append('Please add an order to all items')
     
-        notes = request.session.get('notes', None)
-        notes_list = []
-        if notes:
-            for note in notes:
-                unit_topic = get_object_or_404(UnitTopic, slug=note)
-                _note = get_object_or_404(Note, unit_topic=unit_topic)
-                if _note is not None:
-                    _note.count = count
-                    notes_list.append(_note)
-                    count += 1
+    # check if we've got any stuff added to lesson
+    resources = request.session.get('resources', None)
+    resource_list = []
+    if resources:
+        count = 1
+        for resource in resources:
+            _resource = get_object_or_404(Resource, slug=resource)
+            if _resource is not None:
+                _resource.count = count
+                resource_list.append(_resource)
+                count += 1
+
+    notes = request.session.get('notes', None)
+    notes_list = []
+    if notes:
+        for note in notes:
+            unit_topic = get_object_or_404(UnitTopic, slug=note)
+            _note = get_object_or_404(Note, unit_topic=unit_topic)
+            if _note is not None:
+                _note.count = count
+                notes_list.append(_note)
+                count += 1
+
+    tests = request.session.get('tests', None)
+    tests_list = []
+    if tests:
+        for test in tests:
+            _test = get_object_or_404(UnitTopic, slug=test)
+            if _test is not None:
+                _test.count = count
+                tests_list.append(_test)
+                count += 1
+                
+    tasks = request.session.get('tasks', None)
+    tasks_list = []
+    if tasks:
+        for task in tasks:
+            task = count
+            tasks_list.append(task)
+            count += 1
     
-        tests = request.session.get('tests', None)
-        tests_list = []
-        if tests:
-            for test in tests:
-                _test = get_object_or_404(UnitTopic, slug=test)
-                if _test is not None:
-                    _test.count = count
-                    tests_list.append(_test)
-                    count += 1
-        
-        lessons = Lesson.objects.filter(uploader=request.user)
-        
+    lessons = Lesson.objects.filter(uploader=request.user)
+    now = int(time.time())
+    
     return render(request, 'uploader/user_lessons.html', 
         {'resources': resource_list, 'notes': notes_list, 
-         'tests': tests_list, 'lessons': lessons})
-         
+         'tests': tests_list, 'lessons': lessons, 'tasks': tasks_list, 
+         'time': now, 'form_errors': form_errors})
+
 def lesson(request, slug):
     l = get_object_or_404(Lesson, slug=slug)
     lis = LessonItem.objects.filter(lesson=l)
     for li in lis:
         if li.type == 'resources':
             r = get_object_or_404(Resource, slug=li.slug)
-            li.title = r.file.title or r.bookmark.title
+            if r.file:
+                li.title = r.file.title
+            else:
+                li.title = r.bookmark.title
         elif li.type == 'notes' or li.type == 'test':
             li.title = get_object_or_404(UnitTopic, slug=li.slug).title
+        elif li.type == 'task':
+            pass
 
     return render(request, 'uploader/lesson.html', 
         {'lesson': l, 'lesson_items': lis})
@@ -493,7 +527,8 @@ def lesson_show(request, slug):
     return render(request, 'uploader/lesson_show.html', 
         {'lesson': l})
 
-def add_item_to_lesson(request, slug, type='resource'):
+def add_item_to_lesson(request, slug, type):
+    
     if type == 'resource':
         resource = get_object_or_404(Resource, slug=slug)
         if resource:
@@ -502,8 +537,9 @@ def add_item_to_lesson(request, slug, type='resource'):
             elif slug not in request.session['resources']:
                 request.session['resources'].append(slug)
             request.session.modified = True
+            messages.error(request,"Horsey Bollox!")
+    
     elif type == 'notes':
-        
         unit_topic = get_object_or_404(UnitTopic, slug=slug)
         notes = get_object_or_404(Note, unit_topic=unit_topic)
         if notes:
@@ -518,13 +554,20 @@ def add_item_to_lesson(request, slug, type='resource'):
 
     elif type == 'test':
         unit_topic = get_object_or_404(UnitTopic, slug=slug)
-        
         if request.session.get('tests', None) is None:
             request.session['tests'] = (slug,)
         elif slug not in request.session['tests']:
             request.session['tests'].append(slug)
         request.session.modified = True
-
+        
+    elif type == 'task':
+        
+        if request.session.get('tasks', None) is None:
+            request.session['tasks'] = (slug,)
+        elif slug not in request.session['tasks']:
+            request.session['tasks'].append(slug)
+        request.session.modified = True 
+    
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
     
 def leaderboard(request):

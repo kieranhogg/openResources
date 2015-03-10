@@ -516,12 +516,12 @@ class Lesson(models.Model):
 class LessonItem(models.Model):
     lesson = models.ForeignKey(Lesson)
     type = models.CharField(max_length=50)
-    slug = models.SlugField(max_length=100)
+    slug = models.SlugField(max_length=100, blank=True, null=True)
     order = models.IntegerField()
     instructions = models.TextField(blank=True, null=True)
     
-    def __unicode__(self):
-        return self.type + " " + self.slug   
+    # def __unicode__(self):
+    #     return self.type + " " + self.slug   
     
 ######## signals TODO move to own file #########
 
