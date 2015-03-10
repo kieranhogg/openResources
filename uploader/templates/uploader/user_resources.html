@@ -32,9 +32,27 @@ their own tab above.</p>
         <td><a href="{% url 'uploader:view_resource' resource.slug %}">{{ resource }}</a></td>
         <td style='text-align: center'>{{ resource.rating }}</td></t>
         <td>{{ resource.subject }}</td>
-        <td>{{ resource.syllabus }}</td>
-        <td>{{ resource.unit }}</td>
-        <td>{{ resource.unit_topic }}</td>
+        <td>
+            <a href="{% url 'uploader:syllabus' resource.syllabus.subject.slug resource.syllabus.exam_level.slug resource.syllabus.slug %}">
+            {{ resource.syllabus }}
+            </a>
+        </td>
+        <td>
+            {% if resource.unit %}
+            <a href="{% url 'uploader:unit' resource.syllabus.subject.slug resource.syllabus.exam_level.slug resource.syllabus.slug resource.unit.slug %}">
+            {{ resource.unit }}
+            </a>
+            {% else %} {{ resource.unit }}
+            {% endif %}
+        </td>
+        <td>
+            {% if resource.unit_topic %}
+            <a href="{% url 'uploader:unit_topic' resource.syllabus.subject.slug resource.syllabus.exam_level.slug resource.syllabus.slug resource.unit.slug resource.unit_topic.slug %}">
+            {{ resource.unit_topic }}
+            </a>
+            {% else %} {{ resource.unit_topic }}
+            {% endif %}
+        </td>
         <td style='text-align: center'>
             {% if resource.file %}
             <a href="{% url 'uploader:link_file' resource.file.slug %}">
