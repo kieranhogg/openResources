@@ -189,7 +189,10 @@ def file(request, slug=None):
         if file.uploader != request.user and not request.user.is_superuser:
             return HttpResponseForbidden("No stairway, denied!")
     else:
-        file = File(uploader=request.user)
+        if request.user.is_authenticated():
+            file = File(uploader=request.user)
+        else:
+            file = File()
 
     if request.POST:
         form = FileForm(request.POST, request.FILES or None, instance=file)
@@ -202,7 +205,8 @@ def file(request, slug=None):
                 file.filesize = request.FILES['file'].size
                 file.filename = request.FILES['file'].name
                 file.mimetype = request.FILES['file'].content_type
-                file.uploader = request.user
+                if request.user.is_authenticated():
+                    file.uploader = request.user
                 
                 potential_slug = slugify(file.title)
                 num_slugs = File.objects.filter(slug__startswith=potential_slug).count()
@@ -218,8 +222,6 @@ def file(request, slug=None):
             else:
                 form.save()
                 return HttpResponseRedirect(reverse('uploader:user_files'))
-            
-            return HttpResponseRedirect(redirect_url)
     else:
         form = FileForm(instance=file)
 
@@ -236,10 +238,14 @@ def bookmark(request, slug=None):
         if bookmark.uploader != request.user and not request.user.is_superuser:
             return HttpResponseForbidden("No stairway, denied!")
     else:
-        bookmark = Bookmark(uploader=request.user)
+        if request.user.is_authenticated():
+            bookmark = Bookmark(uploader=request.user)
+        else:
+            bookmark = Bookmark()
 
     if request.POST:
         form = BookmarkForm(request.POST, instance=bookmark)
+        
         if form.is_valid():
             if not slug:
                 # insert
@@ -285,9 +291,13 @@ def link_resource(request, type, slug):
     elif type == 'file':
         file = get_object_or_404(File, slug=slug)
 
-    resource = Resource(uploader=request.user, file=file or None, 
-                        bookmark=bookmark or None, approved=False)
-    
+    if request.user.is_authenticated():
+        resource = Resource(uploader=request.user, file=file or None, 
+                            bookmark=bookmark or None, approved=False)
+    else:
+        resource = Resource(file=file or None, 
+                            bookmark=bookmark or None, approved=False)
+                            
     if request.method == 'POST':
         form = LinkResourceForm(request.POST, instance=resource)
         if form.is_valid():
@@ -314,8 +324,8 @@ def link_resource(request, type, slug):
             if request.user.is_authenticated():
                 # if we're logged in auto-approve
                 resource.approved = True
-                form.save()
                 score_points(request.user, "Add Resource")
+            form.save()
     
             return redirect("/?s=1")
     else:
@@ -505,6 +515,7 @@ def user_lessons(request, user_id=None):
 
 def lesson(request, slug):
     l = get_object_or_404(Lesson, slug=slug)
+    l.objectives = render_markdown(l.objectives)
     lis = LessonItem.objects.filter(lesson=l)
     for li in lis:
         if li.type == 'resources':
@@ -647,27 +658,30 @@ def view_notes(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug)
     notes = None
     if notes_list.count() > 0:
         notes = notes_list[0]
-        headers = {'Content-Type': 'text/plain'}
-        #data = notes.content.encode('utf-8')
-        data = None
-        if type(notes.content) == bytes:  # sometimes body is str sometimes bytes...
-            data = notes.content
-        else:
-            data = notes.content.encode('utf-8')
-        
-        url = None
-        if len(settings.GITHUB_CLIENT_SECRET) == 40 and len(settings.GITHUB_CLIENT_ID) == 20:
-            url = ('https://api.github.com/markdown/raw?clientid=' + 
-                   settings.GITHUB_CLIENT_ID + "&client_secret=" + 
-                   settings.GITHUB_CLIENT_SECRET)
-        else:
-            url = 'https://api.github.com/markdown/raw'
-
-        r = requests.post(url, headers=headers, data=data)
-        notes.content = r.text.encode('utf-8')
-
+        rendered_text = render_markdown(notes.content)
+        notes.content = rendered_text
     context =  {'notes': notes, 'unit_topic': unit_topic}
     return render(request, 'uploader/notes.html', context)
+    
+def render_markdown(text):
+    headers = {'Content-Type': 'text/plain'}
+    #data = notes.content.encode('utf-8')
+    data = None
+    if type(text) == bytes:  # sometimes body is str sometimes bytes...
+        data = text
+    else:
+        data = text.encode('utf-8')
+    
+    url = None
+    if len(settings.GITHUB_CLIENT_SECRET) == 40 and len(settings.GITHUB_CLIENT_ID) == 20:
+        url = ('https://api.github.com/markdown/raw?clientid=' + 
+               settings.GITHUB_CLIENT_ID + "&client_secret=" + 
+               settings.GITHUB_CLIENT_SECRET)
+    else:
+        url = 'https://api.github.com/markdown/raw'
+
+    r = requests.post(url, headers=headers, data=data)
+    return r.text.encode('utf-8')
 
 @login_required
 def upload_image(request):

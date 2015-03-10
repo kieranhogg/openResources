@@ -229,7 +229,7 @@ class File(models.Model):
     filesize = models.IntegerField()
     description = models.TextField('Description', null=True)
     type = models.IntegerField(max_length=2, default=1, choices=FILE_TYPES)
-    uploader = models.ForeignKey(settings.AUTH_USER_MODEL)
+    uploader = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
     uploader_is_author = models.BooleanField('Uploader is author?', default=True,
         help_text='Check if you are the author of the file')
     author = models.CharField(
@@ -281,7 +281,7 @@ class Bookmark(models.Model):
     title = models.CharField(max_length=200)
     link = models.URLField(max_length=400)
     description = models.TextField(null=True)
-    uploader = models.ForeignKey(settings.AUTH_USER_MODEL)
+    uploader = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
     slug = models.SlugField(unique=True, max_length=100)
     pub_date = models.DateTimeField(
         'Date published',
@@ -304,7 +304,7 @@ class BookmarkAdmin(admin.ModelAdmin):
 class Resource(models.Model):
     file = models.ForeignKey(File, blank=True, null=True)
     bookmark = models.ForeignKey(Bookmark, blank=True, null=True)
-    uploader = models.ForeignKey(settings.AUTH_USER_MODEL)
+    uploader = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
     # Don't really need but its for the forms, FIXME?
     subject = models.ForeignKey(Subject)
     # TODO do we really need a syllabus?

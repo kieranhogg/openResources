@@ -11,10 +11,9 @@ from uploader.models import (Resource, Bookmark, File, Subject, Syllabus, Unit,
 class BookmarkForm(forms.ModelForm):
     class Meta:
         model = Bookmark
-        exclude = ('approved','slug')
+        exclude = ('approved','slug', 'uploader')
         widgets = {
             'description': forms.Textarea(),
-            'uploader': forms.HiddenInput(),
         }
 
 

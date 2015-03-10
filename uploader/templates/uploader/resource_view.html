@@ -135,11 +135,19 @@ Published under
 <div id="published">Uploaded {{ resource.pub_date }}</div>
 
 <div class="action">
+    
     {% if resource.file %}
-    <a href='{{ MEDIA_URL }}{{ resource.file.file }}'>Download</a>
+    <a href='{{ MEDIA_URL }}{{ resource.file.file }}'>
+        <button class='btn'>
+        Download
+        </button>    
+    </a>
+        
     {% else %}
         <div id="link">
-            <a href='{{ resource.bookmark.link }}'>Open link</a>
+            <a href='{{ resource.bookmark.link }}'>
+                <button class='btn'>Open link</button>
+            </a>
         </div>
     {% endif %}
 </div>
