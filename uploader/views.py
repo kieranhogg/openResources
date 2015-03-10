@@ -542,6 +542,7 @@ def lesson(request, slug):
         
 def lesson_show(request, slug):
     l = get_object_or_404(Lesson, slug=slug)
+    l.objectives = render_markdown(l.objectives)
 
     return render(request, 'uploader/lesson_show.html', 
         {'lesson': l})
