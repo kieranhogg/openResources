@@ -428,8 +428,16 @@ def user_lessons(request, user_id=None):
             items_okay = check_lesson_items(request, num_items)
             
             if num_items > 0 and items_okay:
+                slug = slugify(request.POST['title'])
+                num_slugs = Lesson.objects.filter(slug__startswith=slug).count()
+        
+                if num_slugs > 0:
+                    new_slug = slug + '-' + str(num_slugs + 1)
+                else:
+                    new_slug = slug
+                
                 l = Lesson(title=request.POST['title'],
-                            slug=slugify(request.POST['title']),
+                            slug=new_slug,
                             objectives=request.POST['objectives'],
                             uploader=request.user,
                         )
