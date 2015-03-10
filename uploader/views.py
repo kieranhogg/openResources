@@ -415,7 +415,7 @@ def user_lessons(request, user_id=None):
             request.session['notes'] = None
             request.session['tests'] = None
             request.session['tasks'] = None
-        elif request.POST['title']:
+        elif not request.POST['title']:
             form_errors.append('Please enter a lesson title')
         else:
             num_items = 0
@@ -579,7 +579,6 @@ def add_item_to_lesson(request, slug, type):
         request.session.modified = True 
     
     messages.success(request,"Added to lesson")
-
     
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
     
