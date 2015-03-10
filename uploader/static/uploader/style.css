@@ -241,7 +241,7 @@ span.menu_text {
 #login img {
     display: inline-block;
     float: left;
-    margin-right: 3px;*/
+    margin-right: 3px;
     border-bottom-left-radius: 3px 3px;
     border-bottom-right-radius: 3px 3px;
     border-top-left-radius: 3px 3px;
@@ -250,6 +250,7 @@ span.menu_text {
 /* in case of long usernames, don't wrap */
 #login_links {
     display: inline-block;
+    line-height: 23px;
 }
 
 #score {
