@@ -548,7 +548,6 @@ def add_item_to_lesson(request, slug, type):
             elif slug not in request.session['resources']:
                 request.session['resources'].append(slug)
             request.session.modified = True
-            messages.success(request,"Added to lesson")
     
     elif type == 'notes':
         unit_topic = get_object_or_404(UnitTopic, slug=slug)
@@ -578,6 +577,9 @@ def add_item_to_lesson(request, slug, type):
         elif slug not in request.session['tasks']:
             request.session['tasks'].append(slug)
         request.session.modified = True 
+    
+    messages.success(request,"Added to lesson")
+
     
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
     
