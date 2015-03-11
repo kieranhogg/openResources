@@ -664,6 +664,11 @@ input:focus, textarea:focus, button:focus, select:focus {outline:0 !important;}
 label, button {
   transition: all 0.3s ease-in-out;
 }
+
+.small_form {
+    width: 50%;
+    margin: 0 auto;
+}
 /*label {*/
 /*    font-weight: bold;*/
 /*}*/
@@ -728,11 +733,17 @@ button, input[type=submit] {
   /*width: 200px;*/
   color: white;
   /*margin-left: 25px;*/
+  
   box-shadow: 0 3px 6px 0 rgba(0,0,0,0.2);
   &:hover { 
     transform: translateY(-3px);
     box-shadow: 0 6px 6px 0 rgba(0,0,0,0.2);
   }
+}
+
+input[type=submit] {
+    display:block;
+    margin: 0 auto;
 }
 /** Notices and Errors **/
 

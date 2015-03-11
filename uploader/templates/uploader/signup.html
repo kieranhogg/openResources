@@ -1,0 +1,13 @@
+{% extends "uploader/base.html" %}
+
+{% block body_block %}
+<h2>{% block head_title %}Signup{% endblock %}</h2>
+<div style="margin-top:50px">
+    <p style="text-align:center;"> 
+    <a style="font-size: 400%; padding: 7px" 
+    href="{% url 'uploader:teacher_signup' %}">teacher</a>
+    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+    <a style="font-size: 400%; padding: 7px" 
+    href="{% url 'uploader:student_signup' %}">student</a></p>
+</div>
+{% endblock %}

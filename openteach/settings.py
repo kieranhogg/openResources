@@ -44,7 +44,7 @@ ALLOWED_HOSTS = []
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 AUTH_PROFILE_MODULE = 'accounts.UserProfile'
-
+ACCOUNT_SIGNUP_FORM_CLASS = 'uploader.forms.TeacherUserForm'
 # Application definition
 
 INSTALLED_APPS = (

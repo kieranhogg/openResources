@@ -41,6 +41,10 @@ urlpatterns = patterns('',
     url(r'^notes/(?P<slug>[\w\d-]+)/$', views.view_notes_d, name='view_notes_d'),
     url(r'^notes/(?P<slug>[\w\d-]+)/edit/$', views.notes_d, name='notes_d'),
     
+    url(r'^students/signup/$', views.student_signup, name='student_signup'),
+    url(r'^teachers/signup/$', views.teacher_signup, name='teacher_signup'),
+
+    
     url(r'^leaderboard', views.leaderboard, name='leaderboard'),
     
     url(r'^rate/(?P<resource_id>\d+)/(?P<rating>\d+)/$', views.rate, name='rate'),
@@ -74,4 +78,7 @@ urlpatterns = patterns('',
     url(r'^add-resource', 
     TemplateView.as_view(template_name='uploader/add_resource.html'),
     name='add_resource'),
+    url(r'^signup',
+    TemplateView.as_view(template_name='uploader/signup.html'),
+    name='signup'),
 ) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

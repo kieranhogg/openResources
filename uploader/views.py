@@ -10,7 +10,8 @@ from uploader.models import (Subject, ExamLevel, Syllabus, Resource, Unit, File,
     Question, MultipleChoiceQuestion, Answer, MultipleChoiceAnswer,
     MultipleChoiceUserAnswer, Lesson, LessonItem)
 from uploader.forms import (BookmarkForm, FileForm, 
-    LinkResourceForm, NotesForm, ImageForm, MultipleChoiceQuestionForm)
+    LinkResourceForm, NotesForm, ImageForm, MultipleChoiceQuestionForm,
+    StudentUserForm, TeacherUserForm)
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 from django.db import IntegrityError
@@ -754,7 +755,7 @@ def test(request, slug):
     else:
         # student
         if (request.user.is_authenticated() and 
-                request.user.userprofile.type == 1): 
+                request.user.userprofile.user_type == 1): 
             # try to find maximum ten questions that the user hasn't taken
             completed_qs = MultipleChoiceUserAnswer.objects.filter(
                 user=request.user, 
@@ -840,6 +841,30 @@ def question(request, slug):
     
     return render(request, 'uploader/add_question.html', 
     {'form': form, 'unit_topic': unit_topic})
+    
+
+def student_signup(request):
+    if request.user.is_authenticated():
+        return HttpResponseRedirect('/')
+        
+    form = StudentUserForm(request.POST or None)
+    if request.POST and form.is_valid():
+        form.save()
+        return HttpResponseRedirect('/')
+
+    return render(request, 'uploader/student_signup.html', {'form': form})
+
+
+def teacher_signup(request):
+    if request.user.is_authenticated():
+        return HttpResponseRedirect('/')
+        
+    form = TeacherUserForm(request.POST or None)
+    if request.POST and form.is_valid():
+        form.save()
+        return HttpResponseRedirect('/')
+
+    return render(request, 'uploader/teacher_signup.html', {'form': form})
 
   
 """ 

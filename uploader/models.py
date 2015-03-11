@@ -1,3 +1,4 @@
+import logging
 from django.db import models
 from django.conf import settings
 from django.contrib import admin
@@ -5,6 +6,9 @@ from django.db.models.signals import pre_delete, post_save
 from django.dispatch.dispatcher import receiver
 from django.utils.safestring import mark_safe
 from django.contrib.auth.models import User
+
+logging.basicConfig()
+logger = logging.getLogger(__name__)
 
 
 class Subject(models.Model):
@@ -394,8 +398,8 @@ class UserProfile(models.Model):
         (TEACHER, 'Teacher'),
     )
     user = models.OneToOneField(settings.AUTH_USER_MODEL, default=STUDENT)
-    subject = models.ForeignKey(Subject, null=True, blank=True)
-    type = models.IntegerField(max_length=1, choices=USER_TYPES, default=2)
+    subjects = models.ManyToManyField(Subject, null=True, blank=True)
+    user_type = models.IntegerField(max_length=1, choices=USER_TYPES, default=2)
     score = models.IntegerField(default=0)
     profile_setup = models.BooleanField(default=False)
 
@@ -532,12 +536,15 @@ def mymodel_delete(sender, instance, **kwargs):
     instance.file.delete(False)
 
 # Creates user profile
-@receiver(post_save, sender=User)
-def user_post_save(sender, instance, **kwargs):
-    # only fire if it's a new user not if we're saving an edit
-    if kwargs['created']:
-        profile = UserProfile()
-        profile.user=instance
-        profile.save()
+# @receiver(post_save, sender=User)
+# def user_post_save(sender, instance, **kwargs):
+#     # only fire if it's a new user not if we're saving an edit
+#     logging.error(sender)
+#     logging.error(instance['_user_type'])
+#     logging.error(**kwargs or None)
+#     if kwargs['created']:
+#         profile = UserProfile()
+#         profile.user=instance
+#         profile.save()
 
 #dispatcher.connect(user_post_save, signal=signals.post_save, sender=User)

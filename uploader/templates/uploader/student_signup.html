@@ -1,0 +1,14 @@
+{% extends "uploader/base.html" %}
+
+{% load url from future %}
+
+{% block body_block %}
+<h2>{% block head_title %}Student Signup{% endblock %}</h2>
+<div class="small_form">
+    <form action method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Sign up" />
+    </form>
+</div>
+{% endblock %}

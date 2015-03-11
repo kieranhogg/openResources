@@ -5,7 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.text import slugify
 from django.shortcuts import get_object_or_404
 from uploader.models import (Resource, Bookmark, File, Subject, Syllabus, Unit,
-    UnitTopic, Note, Image, MultipleChoiceQuestion, UserProfile)
+    UnitTopic, Note, Image, MultipleChoiceQuestion, UserProfile, User)
                         
 
 class BookmarkForm(forms.ModelForm):
@@ -100,6 +100,92 @@ class MultipleChoiceQuestionForm(forms.ModelForm):
     class Meta:
         model = MultipleChoiceQuestion
         exclude = ('unit_topic', 'uploader')
+        
+class StudentUserForm(forms.Form):
+    group_code = forms.CharField(max_length=6,
+        help_text="Your teacher will give you a class code to sign up")
+    username = forms.CharField(max_length=30)
+    first_name = forms.CharField()
+    last_name = forms.CharField()
+    password = forms.CharField(max_length=30,widget=forms.PasswordInput())
+    password_again = forms.CharField(max_length=30,widget=forms.PasswordInput())
+    email = forms.EmailField(required=False)
+    
+    def clean_username(self): # check if username dos not exist before
+        try:
+            User.objects.get(username=self.cleaned_data['username'])
+        except User.DoesNotExist:
+            return self.cleaned_data['username']
+    
+        raise forms.ValidationError("this user exist already")
+    
+    
+    def clean(self): # check if password 1 and password2 match each other
+        if 'password1' in self.cleaned_data and 'password2' in self.cleaned_data:
+            if self.cleaned_data['password'] != self.cleaned_data['password_again']:
+                raise forms.ValidationError("passwords do not match")
+    
+        return self.cleaned_data
+    
+    
+    def save(self): # create new user
+        new_user=User.objects.create_user(
+            username=self.cleaned_data['username'],
+            first_name=self.cleaned_data['first_name'],
+            last_name=self.cleaned_data['last_name'],
+            password=self.cleaned_data['password'],
+            email=self.cleaned_data['email'])
+    
+        up = UserProfile(user_type=1, user=new_user)
+        up.save()
+        return new_user
+        
+class TeacherUserForm(forms.Form):
+    title = forms.ChoiceField(choices=(('Mr', 'Mr'),
+        ('Mrs', 'Mrs'), 
+        ('Miss', 'Miss'),
+        ('Ms', 'Ms'), 
+        ('Dr', 'Dr')))
+    username = forms.CharField(max_length=30)
+    first_name = forms.CharField()
+    last_name = forms.CharField()
+    password=forms.CharField(label=_('Password'), max_length=30, 
+        widget=forms.PasswordInput())
+    password_again = forms.CharField(label=_('Password (again)'), max_length=30,
+        widget = forms.PasswordInput())
+    email=forms.EmailField(required=False, 
+        help_text="Please use your school email to be verified, you can add " + 
+            "a personal one later")
+    
+    def clean_username(self):
+        try:
+            User.objects.get(username=self.cleaned_data['username'])
+        except User.DoesNotExist :
+            return self.cleaned_data['username']
+    
+        raise forms.ValidationError("Username taken")
+    
+    
+    def clean(self):
+        if ('password' in self.cleaned_data and 'password_again' 
+                in self.cleaned_data):
+            if self.cleaned_data['password'] != self.cleaned_data['password_again']:
+                raise forms.ValidationError("passwords dont match each other")
+    
+        return self.cleaned_data
+    
+    
+    def save(self): # create new user
+        new_user=User.objects.create_user(
+            username=self.cleaned_data['username'],
+            first_name=self.cleaned_data['first_name'],
+            last_name=self.cleaned_data['last_name'],
+            password=self.cleaned_data['password'],
+            email=self.cleaned_data['email'])
+                                            
+        up = UserProfile(user_type=2, user=new_user)
+        up.save()
+        return new_user
         
 # class SignupForm(forms.ModelForm):
 #     # user = forms.CharField(max_length=40, label='Username')
