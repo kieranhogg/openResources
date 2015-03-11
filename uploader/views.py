@@ -24,8 +24,9 @@ logging.basicConfig()
 logger = logging.getLogger(__name__)
 
 
-# Homepage view, shows subjects
 def index(request):
+    """Homepage view, shows subjects
+    """
     if request.GET and request.GET['s'] == "1":
         messages.success(request, 'Resource added, thank you!')
 
@@ -42,8 +43,10 @@ def index(request):
     }
     return render(request, 'uploader/index.html', context)
 
-# View one subject, shows exam levels, e.g. GCSE
+
 def subject(request, slug):
+    """View one subject, shows exam levels, e.g. GCSE
+    """
     subject = get_object_or_404(Subject, slug=slug)
     
     # Sort by country first to enable grouping
@@ -51,7 +54,8 @@ def subject(request, slug):
     
     context = {'exam_levels': exam_levels, 'subject': subject}
     return render(request, 'uploader/subject_view.html', context)
-    
+ 
+   
 def syllabus_resources(request, subject_slug, exam_slug, slug):
     syllabus = get_object_or_404(Syllabus, slug=slug)
     resources = Resource.objects.filter(
@@ -61,6 +65,7 @@ def syllabus_resources(request, subject_slug, exam_slug, slug):
 
     context = {'syllabus': syllabus, 'resources': resources}
     return render(request, 'uploader/syllabus_resources.html', context)
+
     
 def unit_resources(request, subject_slug, exam_slug, syllabus_slug, unit_slug):
     unit = get_object_or_404(Unit, slug=unit_slug)
@@ -71,8 +76,11 @@ def unit_resources(request, subject_slug, exam_slug, syllabus_slug, unit_slug):
     context = {'unit': unit, 'resources': resources}
     return render(request, 'uploader/unit_resources.html', context)    
 
-# View list of syllabuses for a subject and level, e.g. {AQA, OCR} GCSE Maths 
+
 def syllabuses(request, subject_slug, exam_slug):
+    """View list of syllabuses for a subject and level, 
+    e.g. {AQA, OCR} GCSE Maths
+    """
     subject = get_object_or_404(Subject, slug=subject_slug)
     level = get_object_or_404(ExamLevel, slug=exam_slug)
     
@@ -87,16 +95,20 @@ def syllabuses(request, subject_slug, exam_slug):
         'level': level
     }
     return render(request, 'uploader/syllabus_index.html', context)
-    
-# Show one syllabuses page, has units on
+ 
+   
 def syllabus(request, subject_slug, exam_slug, slug):
+    """Show one syllabuses page, has units on
+    """
     syllabus = get_object_or_404(Syllabus, slug=slug)
     units = Unit.objects.filter(syllabus__id=syllabus.id)
     context = {'syllabus': syllabus, 'units': units}
     return render(request, 'uploader/syllabus.html', context)
 
-# A single unit view
+
 def unit(request, subject_slug, exam_slug, syllabus_slug, slug):
+    """A single unit view
+    """
     unit = get_object_or_404(Unit, slug=slug)
     unit_topics = UnitTopic.objects.filter(unit__id = unit.id).order_by(
             'section', 'pub_date')
@@ -111,8 +123,10 @@ def unit(request, subject_slug, exam_slug, syllabus_slug, slug):
         'unit_topics': unit_topics,
     }
     return render(request, 'uploader/unit.html', context)
+
     
-def unit_topic(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
+def unit_topic(request, subject_slug, exam_slug, syllabus_slug, unit_slug, 
+               slug):
     unit_topic = get_object_or_404(UnitTopic, slug=slug)
     notes = Note.objects.filter(unit_topic = unit_topic)
 
@@ -123,9 +137,11 @@ def unit_topic(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug)
         'notes': notes
     }
     return render(request, 'uploader/unit_topic.html', context)
+
     
-# A single resource view
 def view_resource(request, slug):
+    """A single resource view
+    """
     resource = get_object_or_404(Resource, slug=slug)
     
     context = {
@@ -135,6 +151,7 @@ def view_resource(request, slug):
     }
     return render_to_response('uploader/resource_view.html', 
         context_instance=RequestContext(request, context))
+
         
 @login_required
 def delete_resource(request, slug):
@@ -146,6 +163,7 @@ def delete_resource(request, slug):
     else:
         return HttpResponseForbidden("Permission denied")
 
+
 @login_required
 def delete_file(request, slug):
     file = get_object_or_404(File, slug=slug)
@@ -155,6 +173,7 @@ def delete_file(request, slug):
         return HttpResponseRedirect(reverse('uploader:user_files'))
     else:
         return HttpResponseForbidden("Permission denied")
+
         
 @login_required
 def delete_bookmark(request, slug):
@@ -166,8 +185,10 @@ def delete_bookmark(request, slug):
     else:
         return HttpResponseForbidden("Permission denied")
 
-# Calculate a resource's rating
+
 def get_resource_rating(resource_id, use='display'):
+    """Calculate a resource's rating
+    """
     ratings = Rating.objects.filter(resource__id = resource_id)
     # TODO hide < a certain number too?
     if len(ratings) == 0:
@@ -179,6 +200,7 @@ def get_resource_rating(resource_id, use='display'):
             total = total + rating.rating
             count = count + 1
         return float(total) / float(count)
+
 
 def file(request, slug=None):
     if slug:
@@ -261,10 +283,12 @@ def bookmark(request, slug=None):
 def link_file(request, slug):
     file = get_object_or_404(File, slug=slug)
     return link_resource(request, 'file', slug)
+
     
 def link_bookmark(request, slug):
     bookmark = get_object_or_404(Bookmark, slug=slug)
     return link_resource(request, 'bookmark', slug)
+
 
 def link_resource(request, type, slug):
     bookmark = None
@@ -318,6 +342,7 @@ def link_resource(request, type, slug):
     return render_to_response('uploader/link_resource.html', {
         'form': form,
     }, context_instance=RequestContext(request))
+
     
 def score_points(user, action):
     points = {
@@ -327,7 +352,8 @@ def score_points(user, action):
     user_profile = UserProfile.objects.get(user = user.id)
     user_profile.score += points[action]
     user_profile.save()
-    
+ 
+   
 # TODO
 def profile(request, username=None):
     # /profile/ and logged in
@@ -346,6 +372,7 @@ def profile(request, username=None):
     
     return render(request, 'uploader/profile.html', {})
 
+
 @login_required
 def user_resources(request, user_id=None):
     if not user_id:
@@ -356,7 +383,9 @@ def user_resources(request, user_id=None):
     # on the resource table after each rating?
     for resource in resources:
         resource.rating = get_resource_rating(resource.id)
-    return render(request, 'uploader/user_resources.html', {'resources': resources})
+    return render(request, 'uploader/user_resources.html', 
+                  {'resources': resources})
+
     
 @login_required
 def user_files(request, user_id=None):
@@ -366,21 +395,27 @@ def user_files(request, user_id=None):
     for file in files:
         file.link_count = Resource.objects.filter(file=file).count()
     return render(request, 'uploader/user_resources.html', {'files': files})
+
     
 @login_required
 def user_bookmarks(request, user_id=None):
     bookmarks = Bookmark.objects.filter(uploader=request.user)
     for bookmark in bookmarks:
         bookmark.link_count = Resource.objects.filter(bookmark=bookmark).count()
-    return render(request, 'uploader/user_resources.html', {'bookmarks': bookmarks})
+    return render(request, 'uploader/user_resources.html', 
+                  {'bookmarks': bookmarks})
+
     
 @login_required
 def user_questions(request, user_id=None):
     questions = MultipleChoiceQuestion.objects.filter(uploader=request.user)
-    return render(request, 'uploader/user_resources.html', {'questions': questions})
+    return render(request, 'uploader/user_resources.html', 
+                  {'questions': questions})
+
     
-# check that the lesson items aren't missing any values
 def check_lesson_items(request, num_items):
+    """check that the lesson items aren't missing any values
+    """
     rp = request.POST
     for i in range(1, num_items + 1):
         _i = str(i)
@@ -420,7 +455,8 @@ def user_lessons(request, user_id=None):
                             objectives=request.POST['objectives'],
                             uploader=request.user,
                            )
-                url = request.build_absolute_uri(reverse('uploader:lesson', args=[slug]))
+                url = request.build_absolute_uri(reverse('uploader:lesson', 
+                                                         args=[slug]))
                 l.url = shorten_url(url)
                 l.save()
     
@@ -442,7 +478,8 @@ def user_lessons(request, user_id=None):
                 request.session['notes'] = None
                 request.session['tests'] = None
                 request.session['tasks'] = None
-                return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+                return HttpResponseRedirect(request.META.get('HTTP_REFERER', 
+                                                             '/'))
             elif not items_okay:
                 form_errors.append('Please add an order to all items')
     
@@ -495,6 +532,7 @@ def user_lessons(request, user_id=None):
          'tests': tests_list, 'lessons': lessons, 'tasks': tasks_list, 
          'time': now, 'form_errors': form_errors})
 
+
 def lesson(request, slug):
     l = get_object_or_404(Lesson, slug=slug)
     l.objectives = render_markdown(l.objectives)
@@ -514,6 +552,7 @@ def lesson(request, slug):
 
     return render(request, 'uploader/lesson.html', 
         {'lesson': l, 'lesson_items': lis})
+
         
 def lesson_show(request, slug):
     l = get_object_or_404(Lesson, slug=slug)
@@ -522,12 +561,14 @@ def lesson_show(request, slug):
     return render(request, 'uploader/lesson_show.html', 
         {'lesson': l})
 
+
 def add_item_to_lesson(request, slug, type):
     
     if type == 'resource':
         resource = get_object_or_404(Resource, slug=slug)
         if resource:
-            if 'resources' not in request.session or request.session['resources'] is None:
+            if ('resources' not in request.session or 
+                        request.session['resources'] is None):
                 request.session['resources'] = (slug,)
             elif slug not in request.session['resources']:
                 request.session['resources'].append(slug)
@@ -540,7 +581,8 @@ def add_item_to_lesson(request, slug, type):
             logger.error("saving: " + slug)
             logger.error("saving: " + str(notes.slug))
             logger.error("saving: " + str(unit_topic))
-            if 'notes' not in request.session or request.session['notes'] is None:
+            if ('notes' not in request.session or 
+                    request.session['notes'] is None):
                 request.session['notes'] = (slug,)
             elif slug not in request.session['notes']:
                 request.session['notes'].append(slug)
@@ -565,6 +607,7 @@ def add_item_to_lesson(request, slug, type):
     messages.success(request,"Added to lesson")
     
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
     
 def leaderboard(request):
     context = {}
@@ -591,13 +634,16 @@ def leaderboard(request):
         context['resources'] = resources
         
     return render(request, 'uploader/leaderboard.html', context)
+
     
 def licences(request):
     context = {'licences': Licence.objects.all()}
     return render(request, 'uploader/licences.html', context)
 
+
 def notes_d(request, slug):
     return notes(request, None, None, None, None, slug)
+
 
 @login_required
 def notes(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
@@ -609,7 +655,8 @@ def notes(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
     else:
         note = None
     
-    form = NotesForm(request.POST or None, instance=note or None, label_suffix='')
+    form = NotesForm(request.POST or None, instance=note or None, 
+                     label_suffix='')
 
     if request.method == 'POST':
         if not note:
@@ -619,8 +666,9 @@ def notes(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
             # sort slug
             unit = unit_topic.unit
             potential_slug = unit_topic.slug
-            num_slugs = Note.objects.filter(slug__startswith=potential_slug).count()
-    
+            slugs = Note.objects.filter(slug__startswith=potential_slug)
+            num_slugs = slugs.count()
+            
             if num_slugs > 0:
                 note.slug = unit_topic.unit.slug + '-' + str(num_slugs + 1)
             else:
@@ -632,12 +680,16 @@ def notes(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
             args=[subject_slug, exam_slug, syllabus_slug, unit_slug, 
                   unit_topic.slug]))
     else:
-        return render(request, "uploader/add_notes.html", {'form': form, 'unit_topic': unit_topic })
+        return render(request, "uploader/add_notes.html", 
+                      {'form': form, 'unit_topic': unit_topic })
+
 
 def view_notes_d(request, slug):
     return view_notes(request, None, None, None, None, slug)
+
         
-def view_notes(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
+def view_notes(request, subject_slug, exam_slug, syllabus_slug, unit_slug, 
+               slug):
     unit_topic = get_object_or_404(UnitTopic, slug=slug)
     notes_list = Note.objects.filter(unit_topic=unit_topic)
     notes = None
@@ -647,6 +699,7 @@ def view_notes(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug)
         notes.content = rendered_text
     context =  {'notes': notes, 'unit_topic': unit_topic}
     return render(request, 'uploader/notes.html', context)
+
     
 @login_required
 def upload_image(request):
@@ -665,10 +718,12 @@ def upload_image(request):
 
     return render(request, 'uploader/upload_image.html', {'form': form})
 
+
 @login_required    
 def view_image(request, image_id):
     image = get_object_or_404(Image, pk=image_id)
     return render(request, 'uploader/image.html', {'url': image.image.url})
+
     
 def test(request, slug):
     unit_topic = get_object_or_404(UnitTopic, slug=slug)
@@ -679,12 +734,14 @@ def test(request, slug):
     if request.POST:
         score = 0
         
-        for question_key in [key for key in request.POST.keys() if key.startswith('question')]:
+        for question_key in [key for key in request.POST.keys() if \
+                key.startswith('question')]:
             question_num = question_key.replace('question', '')
-            question = get_object_or_404(MultipleChoiceQuestion, pk=question_num)
+            question = get_object_or_404(MultipleChoiceQuestion, 
+                                         pk=question_num)
             answer_num = request.POST.get(question_key)
             answer = get_object_or_404(MultipleChoiceAnswer, 
-                                      question=question, number=answer_num)
+                                       question=question, number=answer_num)
 
             answer = MultipleChoiceUserAnswer(
                 question=question, 
@@ -696,29 +753,37 @@ def test(request, slug):
             reverse('uploader:test_feedback', args=[slug]))
     else:
         # student
-        if request.user.is_authenticated() and request.user.userprofile.type == 1: 
+        if (request.user.is_authenticated() and 
+                request.user.userprofile.type == 1): 
             # try to find maximum ten questions that the user hasn't taken
-            completed_qs = MultipleChoiceUserAnswer.objects.filter(user=request.user, question__unit_topic=unit_topic).values('question_id')
+            completed_qs = MultipleChoiceUserAnswer.objects.filter(
+                user=request.user, 
+                question__unit_topic=unit_topic).values('question_id')
             complete_count = completed_qs.count()
             
             # FIXME random sorting could be more efficient
-            questions = MultipleChoiceQuestion.objects.filter(unit_topic=unit_topic).exclude(id__in=completed_qs).order_by('?')[:10]
-            question_count = MultipleChoiceQuestion.objects.filter(unit_topic=unit_topic).count()
+            fq = MultipleChoiceQuestion.objects.filter(unit_topic=unit_topic)
+            questions = fq.exclude(id__in=completed_qs).order_by('?')[:10]
+            question_count = MultipleChoiceQuestion.objects.filter(
+                unit_topic=unit_topic).count()
             
             # FIXME think there's a function to do this
             for question in questions:
                 answer_list = []
-                answers = MultipleChoiceAnswer.objects.filter(question=question).order_by('number')
+                answers = MultipleChoiceAnswer.objects.filter(
+                        question=question).order_by('number')
                 for answer in answers:
                     answer_list.append(answer)
                 
                 question.answers = answer_list
         else:
-            questions = MultipleChoiceQuestion.objects.filter(unit_topic=unit_topic)
+            questions = MultipleChoiceQuestion.objects.filter(
+                unit_topic=unit_topic)
             # FIXME think there's a function to do this
             for question in questions:
                 answer_list = []
-                answers = MultipleChoiceAnswer.objects.filter(question=question).order_by('number')
+                answers = MultipleChoiceAnswer.objects.filter(
+                    question=question).order_by('number')
                 for answer in answers:
                     answer_list.append(answer)
                 
@@ -727,6 +792,7 @@ def test(request, slug):
     return render(request, 'uploader/test.html', 
     {'questions': questions, 'unit_topic': unit_topic, 
      'complete_count': complete_count, 'question_count': question_count})
+ 
     
 def test_feedback(request, slug):
     unit_topic = get_object_or_404(UnitTopic, slug=slug)
@@ -774,10 +840,11 @@ def question(request, slug):
     
     return render(request, 'uploader/add_question.html', 
     {'form': form, 'unit_topic': unit_topic})
-    
-# ajax views
 
-
+  
+""" 
+ajax views
+"""
 def get_syllabuses(request, subject_id):
     subject = Subject.objects.get(pk=subject_id)
     syllabuses = Syllabus.objects.filter(subject=subject)
@@ -785,6 +852,7 @@ def get_syllabuses(request, subject_id):
     for syllabus in syllabuses:
         syllabuses_dict[syllabus.id] = str(syllabus)
     return JsonResponse(syllabuses_dict)
+
     
 def get_units(request, syllabus_id):
     syllabus = Syllabus.objects.get(pk=syllabus_id)
@@ -793,6 +861,7 @@ def get_units(request, syllabus_id):
     for unit in units:
         units_dict[unit.id] = str(unit)
     return JsonResponse(units_dict)
+
     
 def get_unit_topics(request, unit_id):
     unit = Unit.objects.get(pk=unit_id)
@@ -802,8 +871,10 @@ def get_unit_topics(request, unit_id):
         unit_topics_dict[unit_topic.id] = str(unit_topic)
     return JsonResponse(unit_topics_dict)
 
-# just silently ignore non-logged in ratings
+
 def rate(request, resource_id, rating):
+    """just silently ignore non-logged in ratings
+    """
     if request.user.is_authenticated():
         _rating = Rating()
         _rating.user = request.user
