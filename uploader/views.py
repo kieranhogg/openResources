@@ -16,10 +16,10 @@ from django.contrib import messages
 from django.db import IntegrityError
 from django.contrib.auth.models import User
 from django.views.generic.edit import UpdateView
-from django.utils.text import slugify
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
+from uploader.utils import safe_slugify
 import logging, json, time
 logging.basicConfig()
 
@@ -208,14 +208,8 @@ def file(request, slug=None):
                 if request.user.is_authenticated():
                     file.uploader = request.user
                 
-                potential_slug = slugify(file.title)
-                num_slugs = File.objects.filter(slug__startswith=potential_slug).count()
-        
-                if num_slugs > 0:
-                    file.slug = potential_slug + '-' + str(num_slugs + 1)
-                else:
-                    file.slug = potential_slug
-    
+                file.slug = safe_slugify(file.title, File)
+
                 form.save()
                 return HttpResponseRedirect(
                     reverse('uploader:link_file', args=[file.slug]))
@@ -250,15 +244,7 @@ def bookmark(request, slug=None):
             if not slug:
                 # insert
                 bookmark = form.save(commit=False)
-                
-                potential_slug = slugify(bookmark.title)
-                num_slugs = Bookmark.objects.filter(slug__startswith=potential_slug).count()
-        
-                if num_slugs > 0:
-                    bookmark.slug = potential_slug + '-' + str(num_slugs + 1)
-                else:
-                    bookmark.slug = potential_slug
-                
+                bookmark.slug = safe_slugify(bookmark.title, Bookmark)
                 form.save()
                 return HttpResponseRedirect(
                     reverse('uploader:link_bookmark', args=[bookmark.slug]))
@@ -428,20 +414,15 @@ def user_lessons(request, user_id=None):
             items_okay = check_lesson_items(request, num_items)
             
             if num_items > 0 and items_okay:
-                slug = slugify(request.POST['title'])
-                num_slugs = Lesson.objects.filter(slug__startswith=slug).count()
-        
-                if num_slugs > 0:
-                    new_slug = slug + '-' + str(num_slugs + 1)
-                else:
-                    new_slug = slug
+
+                slug = safe_slugify(request.POST['title'], Lesson)
                 
                 l = Lesson(title=request.POST['title'],
-                            slug=new_slug,
+                            slug=slug,
                             objectives=request.POST['objectives'],
                             uploader=request.user,
                         )
-                url = request.build_absolute_uri(reverse('uploader:lesson', args=[slugify(request.POST['title'])]))
+                url = request.build_absolute_uri(reverse('uploader:lesson', args=[slug]))
                 post_url = 'https://www.googleapis.com/urlshortener/v1/url'
                 payload = {'longUrl': url, 'key': "AIzaSyBS7z0dORE4qDwHND1"}
                 headers = {'content-type': 'application/json'}
@@ -525,6 +506,7 @@ def lesson(request, slug):
     l = get_object_or_404(Lesson, slug=slug)
     l.objectives = render_markdown(l.objectives)
     lis = LessonItem.objects.filter(lesson=l).order_by('order')
+    
     for li in lis:
         if li.type == 'resources':
             r = get_object_or_404(Resource, slug=li.slug)
