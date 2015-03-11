@@ -524,7 +524,7 @@ def user_lessons(request, user_id=None):
 def lesson(request, slug):
     l = get_object_or_404(Lesson, slug=slug)
     l.objectives = render_markdown(l.objectives)
-    lis = LessonItem.objects.filter(lesson=l)
+    lis = LessonItem.objects.filter(lesson=l).order_by('order')
     for li in lis:
         if li.type == 'resources':
             r = get_object_or_404(Resource, slug=li.slug)
