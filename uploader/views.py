@@ -1,4 +1,4 @@
-import re
+import re, requests, logging, json, time
 import requests
 from django.shortcuts import (render, get_object_or_404, get_list_or_404, 
     render_to_response, redirect)
@@ -18,11 +18,9 @@ from django.contrib.auth.models import User
 from django.views.generic.edit import UpdateView
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
-from django.conf import settings
-from uploader.utils import safe_slugify
-import logging, json, time
-logging.basicConfig()
+from uploader.utils import safe_slugify, render_markdown, shorten_url
 
+logging.basicConfig()
 logger = logging.getLogger(__name__)
 
 
@@ -421,14 +419,9 @@ def user_lessons(request, user_id=None):
                             slug=slug,
                             objectives=request.POST['objectives'],
                             uploader=request.user,
-                        )
+                           )
                 url = request.build_absolute_uri(reverse('uploader:lesson', args=[slug]))
-                post_url = 'https://www.googleapis.com/urlshortener/v1/url'
-                payload = {'longUrl': url, 'key': "AIzaSyBS7z0dORE4qDwHND1"}
-                headers = {'content-type': 'application/json'}
-                r = requests.post(post_url, data=json.dumps(payload), headers=headers)
-                data = r.json()
-                l.url = data['id']
+                l.url = shorten_url(url)
                 l.save()
     
                 rp = request.POST
@@ -655,26 +648,6 @@ def view_notes(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug)
     context =  {'notes': notes, 'unit_topic': unit_topic}
     return render(request, 'uploader/notes.html', context)
     
-def render_markdown(text):
-    headers = {'Content-Type': 'text/plain'}
-    #data = notes.content.encode('utf-8')
-    data = None
-    if type(text) == bytes:  # sometimes body is str sometimes bytes...
-        data = text
-    else:
-        data = text.encode('utf-8')
-    
-    url = None
-    if len(settings.GITHUB_CLIENT_SECRET) == 40 and len(settings.GITHUB_CLIENT_ID) == 20:
-        url = ('https://api.github.com/markdown/raw?clientid=' + 
-               settings.GITHUB_CLIENT_ID + "&client_secret=" + 
-               settings.GITHUB_CLIENT_SECRET)
-    else:
-        url = 'https://api.github.com/markdown/raw'
-
-    r = requests.post(url, headers=headers, data=data)
-    return r.text.encode('utf-8')
-
 @login_required
 def upload_image(request):
     form = ImageForm(
