@@ -391,6 +391,8 @@ class RatingAdmin(admin.ModelAdmin):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL)
+    forename = models.CharField(max_length=100)
+    surname = models.CharField(max_length=100)
     subjects = models.ManyToManyField(Subject, null=True, blank=True)
     score = models.IntegerField(default=0)
     profile_setup = models.BooleanField(default=False)

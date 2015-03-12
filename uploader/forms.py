@@ -183,7 +183,9 @@ class TeacherForm(forms.Form):
             email=self.cleaned_data['email'])
                                             
         up = TeacherProfile(user=new_user, 
-                                title=self.cleaned_data['title'])
+                            title=self.cleaned_data['title'],
+                            forename=self.cleaned_data['first_name'],
+                            surname=self.cleaned_data['last_name'])
         up.save()
         return new_user
         
