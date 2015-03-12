@@ -4,8 +4,7 @@ from django.template.defaultfilters import filesizeformat
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import slugify
 from django.shortcuts import get_object_or_404
-from uploader.models import (Resource, Bookmark, File, Subject, Syllabus, Unit,
-    UnitTopic, Note, Image, MultipleChoiceQuestion, UserProfile, User)
+from uploader.models import *
                         
 
 class BookmarkForm(forms.ModelForm):
@@ -101,7 +100,7 @@ class MultipleChoiceQuestionForm(forms.ModelForm):
         model = MultipleChoiceQuestion
         exclude = ('unit_topic', 'uploader')
         
-class StudentUserForm(forms.Form):
+class StudentForm(forms.Form):
     group_code = forms.CharField(max_length=6,
         help_text="Your teacher will give you a class code to sign up")
     username = forms.CharField(max_length=30)
@@ -136,11 +135,11 @@ class StudentUserForm(forms.Form):
             password=self.cleaned_data['password'],
             email=self.cleaned_data['email'])
     
-        up = UserProfile(user_type=1, user=new_user)
+        up = StudentProfile(user=new_user)
         up.save()
         return new_user
         
-class TeacherUserForm(forms.Form):
+class TeacherForm(forms.Form):
     title = forms.ChoiceField(choices=(('Mr', 'Mr'),
         ('Mrs', 'Mrs'), 
         ('Miss', 'Miss'),
@@ -183,7 +182,8 @@ class TeacherUserForm(forms.Form):
             password=self.cleaned_data['password'],
             email=self.cleaned_data['email'])
                                             
-        up = UserProfile(user_type=2, user=new_user)
+        up = TeacherProfile(user=new_user, 
+                                title=self.cleaned_data['title'])
         up.save()
         return new_user
         

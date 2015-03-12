@@ -1,8 +1,7 @@
 {% extends 'uploader/base.html' %}
 {% block body_block %}
 {% load static %}
-<h2>{% block head_title %}Your Resources{% endblock %}</h2>
-{% include 'uploader/user_resources_tabs.html' %}
+<h2>{% block head_title %}My Resources{% endblock %}</h2>
 
 {% if resources %}
 <h3>Resource</h3>
@@ -12,7 +11,7 @@ topic. Below is the list of of resources you have added.</p>
 <p>Linking makes another copy of a resource and adds it to another syllabus, unit
 or unit topic. Unlinking removes the copy but will keep the original file or bookmark.</p>
 <p>If you are looking to edit or delete a file or bookmark, you can do so on 
-their own tab above.</p>
+their own page.</p>
 <hr />
 <table>
     <tr>
@@ -89,133 +88,5 @@ their own tab above.</p>
     {% endfor %}
 </table>
 
-{% elif files %}
-<table width='100%'>
-    <tr>
-        <th>Title</th>
-        <th>Filename</th>
-        <th># of Resources using</th>
-        <th>Filesize</th>
-        <th>Uploaded</th>
-        <th width="16%">Actions</th>
-    </tr>
-    {% for file in files %}
-    <tr> 
-        <td>{{ file.title }}</td></t>
-        <td>{{ file.filename }}</td>
-        <td style='text-align: center'>{{ file.link_count }}</td>
-        <td style='text-align: center'>{{ file.filesize|filesizeformat }}</td>
-        <td style='text-align: center'>{{ file.pub_date|date:"d M Y" }}</td>
-        <td style='text-align: center'>
-            <a href="{% url 'uploader:link_file' file.slug %}">
-                <button class="btn">
-                <!--<img src="{% static 'uploader/img/18x18/add.png' %}" />-->
-                Link
-                </button>
-            </a>
-            <a href="{% url 'uploader:file' file.slug %}">
-                <button class="btn">
-                <!--<img src="{% static 'uploader/img/18x18/edit.png' %}" />-->
-                Edit
-                </button>
-            </a>
-            <a href="{% url 'uploader:delete_file' file.slug %}" onclick="javascript:return confirm('DELETE this file?')">
-                <button class="btn_danger">
-                <!--<img src="{% static 'uploader/img/18x18/delete.png' %}" />-->
-                Delete
-                </button>
-            </a>
-        </td>
-    </tr>
-    {% endfor %}
-</table>
-
-{% elif bookmarks %}
-<table width='100%'>
-    <tr>
-        <th>Title</th>
-        <th>URL</th>
-        <th># of Resources using</th>
-        <th>Uploaded</th>
-        <th width="16%">Actions</th>
-    </tr>
-    {% for bookmark in bookmarks %}
-    <tr> 
-        <td>{{ bookmark.title }}</td></t>
-        <td><a href="{{ bookmark.link }}">{{ bookmark.link|truncatechars:60 }}</a></td>
-        <td style='text-align: center'>{{ bookmark.link_count }}</td>
-        <td style='text-align: center'>{{ bookmark.pub_date|date:"d M Y" }}</td>
-        <td style='text-align: center'>
-            <a href="{% url 'uploader:link_bookmark' bookmark.slug %}">
-                <button class="btn">
-                <!--<img src="{% static 'uploader/img/18x18/add.png' %}" />-->
-                Link
-                </button>
-            </a>
-            <a href="{% url 'uploader:bookmark' bookmark.slug %}">
-                <button class="btn">
-                <!--<img src="{% static 'uploader/img/18x18/edit.png' %}" />-->
-                Edit
-                </button>
-            </a>
-            <a href="{% url 'uploader:delete_bookmark' bookmark.slug %}" onclick="javascript:return confirm('DELETE this bookmark?')">
-                <!--<img src="{% static 'uploader/img/18x18/delete.png' %}" />-->
-                <button class="btn_danger">
-                Delete
-                </button>
-            </a>
-        </td>
-    </tr>
-    <tr>
-        <td colspan='5'>
-            <strong>Description: </strong>
-            {{ bookmark.description|truncatechars:250 }}
-        </td>
-    </tr>
-    {% endfor %}
-</table>
-{% elif questions %}
-<table width='100%'>
-    <tr>
-        <th>Question</th>
-        <th>Unit Topic</th>
-        <!--<th>Rating</th>-->
-        <th>Uploaded</th>
-        <th width="5%">Actions</th>
-    </tr>
-    {% for question in questions %}
-    <tr> 
-        <td>{{ question.text|truncatechars:100 }}</td></t>
-        <td>{{ question.unit_topic }}</td>
-        <!--<td></td>-->
-        <td style='text-align: center'>{{ question.pub_date|date:"d M Y" }}</td>
-        <td style='text-align: center'>
-            <!--<a href="">-->
-            <!--    <button class="btn">-->
-            <!--    <img src="{% static 'uploader/img/18x18/add.png' %}" />-->
-            <!--    Link-->
-            <!--    </button>-->
-            <!--</a>-->
-            <!--<a href="">-->
-            <!--    <button class="btn">-->
-            <!--    <img src="{% static 'uploader/img/18x18/edit.png' %}" />-->
-            <!--    Edit-->
-            <!--    </button>-->
-            <!--</a>-->
-            <!--<a href="" onclick="javascript:return confirm('DELETE this bookmark?')">-->
-            <!--    <img src="{% static 'uploader/img/18x18/delete.png' %}" />-->
-            <!--    <button class="btn_danger">-->
-            <!--    Delete-->
-            <!--    </button>-->
-            <!--</a>-->
-            <a href="{% url 'uploader:test' question.unit_topic.slug %}">
-                <button class="btn">
-                View
-                </button>
-            </a>
-        </td>
-    </tr>
-    {% endfor %}
-</table>
 {% endif %}
 {% endblock %}

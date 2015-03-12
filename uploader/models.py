@@ -390,27 +390,30 @@ class RatingAdmin(admin.ModelAdmin):
 
 
 class UserProfile(models.Model):
-    STUDENT = 1
-    TEACHER = 2
-
-    USER_TYPES = (
-        (STUDENT, 'Student'),
-        (TEACHER, 'Teacher'),
-    )
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, default=STUDENT)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL)
     subjects = models.ManyToManyField(Subject, null=True, blank=True)
-    user_type = models.IntegerField(max_length=1, choices=USER_TYPES, default=2)
     score = models.IntegerField(default=0)
     profile_setup = models.BooleanField(default=False)
 
     def __unicode__(self):
-        return str(self.user)
+        return unicode(self.user)
 
     class Meta:
         ordering = ('user',)
+        abstract = True
+        
+class TeacherProfile(UserProfile):
+    title = models.CharField(max_length='7')
+    
+class StudentProfile(UserProfile):
+    pass
 
 
-class UserProfileAdmin(admin.ModelAdmin):
+class TeacherProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'score')
+
+
+class StudentProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'score')
 
 

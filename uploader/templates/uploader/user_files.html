@@ -1,0 +1,48 @@
+{% extends 'uploader/base.html' %}
+{% block body_block %}
+{% load static %}
+<h2>{% block head_title %}My Files{% endblock %}</h2>
+
+{% if files %}
+<table width='100%'>
+    <tr>
+        <th>Title</th>
+        <th>Filename</th>
+        <th># of Resources using</th>
+        <th>Filesize</th>
+        <th>Uploaded</th>
+        <th width="16%">Actions</th>
+    </tr>
+    {% for file in files %}
+    <tr> 
+        <td>{{ file.title }}</td></t>
+        <td>{{ file.filename }}</td>
+        <td style='text-align: center'>{{ file.link_count }}</td>
+        <td style='text-align: center'>{{ file.filesize|filesizeformat }}</td>
+        <td style='text-align: center'>{{ file.pub_date|date:"d M Y" }}</td>
+        <td style='text-align: center'>
+            <a href="{% url 'uploader:link_file' file.slug %}">
+                <button class="btn">
+                <!--<img src="{% static 'uploader/img/18x18/add.png' %}" />-->
+                Link
+                </button>
+            </a>
+            <a href="{% url 'uploader:file' file.slug %}">
+                <button class="btn">
+                <!--<img src="{% static 'uploader/img/18x18/edit.png' %}" />-->
+                Edit
+                </button>
+            </a>
+            <a href="{% url 'uploader:delete_file' file.slug %}" onclick="javascript:return confirm('DELETE this file?')">
+                <button class="btn_danger">
+                <!--<img src="{% static 'uploader/img/18x18/delete.png' %}" />-->
+                Delete
+                </button>
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endif %}
+{% endblock %}

@@ -1,7 +1,5 @@
 {% extends 'uploader/base.html' %}
-{% block head_title %}{{ unit_topic }} Notes{% endblock %}
 {% block body_block %}
-{% load static %}
 <div id="crumbs">
     <a href="{% url 'uploader:index' %}">Home</a> > 
     <a href="{% url 'uploader:subject' unit_topic.unit.syllabus.subject.slug %}">
@@ -15,26 +13,26 @@
      {{ unit_topic.title|truncatechars:45 }}
 </div>
 {% include 'uploader/unit_topic_tabs.html' %}
-<div id="add-to-lesson">
-<a href="{% url 'uploader:add_item_to_lesson' unit_topic.slug 'notes' %}">
-    <button class='btn'>
-    <img src="{% static 'uploader/img/18x18/inbox.png' %}" />
-    Add to lesson
-    </button>
-</a>
+<h2>{% block head_title %}{{ unit_topic.title }}{% endblock %}</h2>
+<!-- TODO write * -> <li> filter -->
+{% if unit_topic.description and unit_topic.description != "" %}
+<h3>Description</h3>
+<div id="description">
+<p>{{ unit_topic.description|safe|linebreaks }}</p>
 </div>
-<div id="notes">
-{% if notes %}
-    {{ notes.content|safe }}
-</div>
-
-<p style="text-align: center; font-size: 80%">Except where otherwise noted, content is licensed under 
-    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
-        CC Attribution-NonCommercial-ShareAlike 4.0 International licence.
-    </a>
-</p>
+{% endif %}
+{% if resources %}
+<h3>Resources</h3>
+<ul>
+{% for resource in resources %}
+    {% if resource.bookmark %}
+        <li data-type="bookmark"><a href="{% url 'uploader:view_resource' resource|slugify %}">{{ resource }}</a></li>
+    {% else %}
+        <li data-type="file"><a href="{% url 'uploader:view_resource' resource|slugify %}">{{ resource }}</a></li>
+    {% endif %}
+{% endfor %}
+</ul>
 {% else %}
-<h2>No Notes</h2>
-<p>Nothing to see here, move along. Unless you want to add something, then click edit.</p>
+No resources :( <a href="{% url 'uploader:add_resource' %}">Add some?</a>
 {% endif %}
 {% endblock %}

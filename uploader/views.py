@@ -5,13 +5,8 @@ from django.shortcuts import (render, get_object_or_404, get_list_or_404,
 from django.http import (HttpResponse, HttpResponseRedirect, JsonResponse, 
     Http404, HttpResponseForbidden)
 from django.template import RequestContext, loader
-from uploader.models import (Subject, ExamLevel, Syllabus, Resource, Unit, File, 
-    Rating, UnitTopic, Message, UserProfile, Licence, Note, Bookmark, Image,
-    Question, MultipleChoiceQuestion, Answer, MultipleChoiceAnswer,
-    MultipleChoiceUserAnswer, Lesson, LessonItem)
-from uploader.forms import (BookmarkForm, FileForm, 
-    LinkResourceForm, NotesForm, ImageForm, MultipleChoiceQuestionForm,
-    StudentUserForm, TeacherUserForm)
+from uploader.models import *
+from uploader.forms import *
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 from django.db import IntegrityError
@@ -19,6 +14,7 @@ from django.contrib.auth.models import User
 from django.views.generic.edit import UpdateView
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ObjectDoesNotExist
 from uploader.utils import safe_slugify, render_markdown, shorten_url
 
 logging.basicConfig()
@@ -67,6 +63,18 @@ def syllabus_resources(request, subject_slug, exam_slug, slug):
     context = {'syllabus': syllabus, 'resources': resources}
     return render(request, 'uploader/syllabus_resources.html', context)
 
+
+def unit_topic(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
+    unit_topic = get_object_or_404(UnitTopic, slug=slug)
+    resources = Resource.objects.filter(unit_topic=unit_topic).count()
+    notes = Note.objects.filter(unit_topic=unit_topic).count()
+    question = MultipleChoiceQuestion.objects.filter(unit_topic=unit_topic)
+    questions = question.count()
+
+    context = {'unit_topic': unit_topic, 'resources': resources, 
+               'questions': questions, 'notes': notes}
+    return render(request, 'uploader/unit_topic.html', context)  
+ 
     
 def unit_resources(request, subject_slug, exam_slug, syllabus_slug, unit_slug):
     unit = get_object_or_404(Unit, slug=unit_slug)
@@ -126,18 +134,18 @@ def unit(request, subject_slug, exam_slug, syllabus_slug, slug):
     return render(request, 'uploader/unit.html', context)
 
     
-def unit_topic(request, subject_slug, exam_slug, syllabus_slug, unit_slug, 
-               slug):
-    unit_topic = get_object_or_404(UnitTopic, slug=slug)
-    notes = Note.objects.filter(unit_topic = unit_topic)
+# def unit_topic(request, subject_slug, exam_slug, syllabus_slug, unit_slug, 
+#               slug):
+#     unit_topic = get_object_or_404(UnitTopic, slug=slug)
+#     notes = Note.objects.filter(unit_topic = unit_topic)
 
-    resources = Resource.objects.filter(unit_topic_id = unit_topic.id)
-    context = {
-        'resources': resources, 
-        'unit_topic': unit_topic,
-        'notes': notes
-    }
-    return render(request, 'uploader/unit_topic.html', context)
+#     resources = Resource.objects.filter(unit_topic_id = unit_topic.id)
+#     context = {
+#         'resources': resources, 
+#         'unit_topic': unit_topic,
+#         'notes': notes
+#     }
+#     return render(request, 'uploader/unit_topic.html', context)
 
     
 def view_resource(request, slug):
@@ -350,9 +358,15 @@ def score_points(user, action):
         "Add Resource": 25,
         "Rate": 1
     }
-    user_profile = UserProfile.objects.get(user = user.id)
-    user_profile.score += points[action]
-    user_profile.save()
+    user_profile = None
+    if user.teacherprofile:
+        user_profile = TeacherProfile.objects.get(user = user.id)
+    elif user.studentprofile:
+        user_profile = StudentProfile.objects.get(user = user.id)
+    
+    if user_profile:    
+        user_profile.score += points[action]
+        user_profile.save()
  
    
 # TODO
@@ -395,7 +409,7 @@ def user_files(request, user_id=None):
     files = File.objects.filter(uploader=user_id)
     for file in files:
         file.link_count = Resource.objects.filter(file=file).count()
-    return render(request, 'uploader/user_resources.html', {'files': files})
+    return render(request, 'uploader/user_files.html', {'files': files})
 
     
 @login_required
@@ -403,14 +417,14 @@ def user_bookmarks(request, user_id=None):
     bookmarks = Bookmark.objects.filter(uploader=request.user)
     for bookmark in bookmarks:
         bookmark.link_count = Resource.objects.filter(bookmark=bookmark).count()
-    return render(request, 'uploader/user_resources.html', 
+    return render(request, 'uploader/user_bookmarks.html', 
                   {'bookmarks': bookmarks})
 
     
 @login_required
 def user_questions(request, user_id=None):
     questions = MultipleChoiceQuestion.objects.filter(uploader=request.user)
-    return render(request, 'uploader/user_resources.html', 
+    return render(request, 'uploader/user_questions.html', 
                   {'questions': questions})
 
     
@@ -617,7 +631,7 @@ def leaderboard(request):
     user_count = User.objects.count()
 
     if user_count >= 10:
-        users = User.objects.filter().order_by('-userprofile__score')[:10]
+        users = User.objects.filter().order_by('-teacherprofile__score')[:10]
         for user in users:
             user.resource_count = Resource.objects.filter(uploader=user).count()
             user.rating_count = Rating.objects.filter(user=user).count()
@@ -754,30 +768,31 @@ def test(request, slug):
             reverse('uploader:test_feedback', args=[slug]))
     else:
         # student
-        if (request.user.is_authenticated() and 
-                request.user.userprofile.user_type == 1): 
-            # try to find maximum ten questions that the user hasn't taken
-            completed_qs = MultipleChoiceUserAnswer.objects.filter(
-                user=request.user, 
-                question__unit_topic=unit_topic).values('question_id')
-            complete_count = completed_qs.count()
-            
-            # FIXME random sorting could be more efficient
-            fq = MultipleChoiceQuestion.objects.filter(unit_topic=unit_topic)
-            questions = fq.exclude(id__in=completed_qs).order_by('?')[:10]
-            question_count = MultipleChoiceQuestion.objects.filter(
-                unit_topic=unit_topic).count()
-            
-            # FIXME think there's a function to do this
-            for question in questions:
-                answer_list = []
-                answers = MultipleChoiceAnswer.objects.filter(
-                        question=question).order_by('number')
-                for answer in answers:
-                    answer_list.append(answer)
+        try:
+            if request.user.studentprofile:
+                # try to find maximum ten questions that the user hasn't taken
+                completed_qs = MultipleChoiceUserAnswer.objects.filter(
+                    user=request.user, 
+                    question__unit_topic=unit_topic).values('question_id')
+                complete_count = completed_qs.count()
                 
-                question.answers = answer_list
-        else:
+                # FIXME random sorting could be more efficient
+                fq = MultipleChoiceQuestion.objects.filter(
+                    unit_topic=unit_topic)
+                questions = fq.exclude(id__in=completed_qs).order_by('?')[:10]
+                question_count = MultipleChoiceQuestion.objects.filter(
+                    unit_topic=unit_topic).count()
+                
+                # FIXME think there's a function to do this
+                for question in questions:
+                    answer_list = []
+                    answers = MultipleChoiceAnswer.objects.filter(
+                            question=question).order_by('number')
+                    for answer in answers:
+                        answer_list.append(answer)
+                    
+                    question.answers = answer_list
+        except ObjectDoesNotExist:
             questions = MultipleChoiceQuestion.objects.filter(
                 unit_topic=unit_topic)
             # FIXME think there's a function to do this
@@ -847,7 +862,7 @@ def student_signup(request):
     if request.user.is_authenticated():
         return HttpResponseRedirect('/')
         
-    form = StudentUserForm(request.POST or None)
+    form = StudentForm(request.POST or None)
     if request.POST and form.is_valid():
         form.save()
         return HttpResponseRedirect('/')
@@ -859,7 +874,7 @@ def teacher_signup(request):
     if request.user.is_authenticated():
         return HttpResponseRedirect('/')
         
-    form = TeacherUserForm(request.POST or None)
+    form = TeacherForm(request.POST or None)
     if request.POST and form.is_valid():
         form.save()
         return HttpResponseRedirect('/')

@@ -1,0 +1,51 @@
+{% extends 'uploader/base.html' %}
+{% block body_block %}
+{% load static %}
+<h2>{% block head_title %}My Bookmarks{% endblock %}</h2>
+
+{% if bookmarks %}
+<table width='100%'>
+    <tr>
+        <th>Title</th>
+        <th>URL</th>
+        <th># of Resources using</th>
+        <th>Uploaded</th>
+        <th width="16%">Actions</th>
+    </tr>
+    {% for bookmark in bookmarks %}
+    <tr> 
+        <td>{{ bookmark.title }}</td></t>
+        <td><a href="{{ bookmark.link }}">{{ bookmark.link|truncatechars:60 }}</a></td>
+        <td style='text-align: center'>{{ bookmark.link_count }}</td>
+        <td style='text-align: center'>{{ bookmark.pub_date|date:"d M Y" }}</td>
+        <td style='text-align: center'>
+            <a href="{% url 'uploader:link_bookmark' bookmark.slug %}">
+                <button class="btn">
+                <!--<img src="{% static 'uploader/img/18x18/add.png' %}" />-->
+                Link
+                </button>
+            </a>
+            <a href="{% url 'uploader:bookmark' bookmark.slug %}">
+                <button class="btn">
+                <!--<img src="{% static 'uploader/img/18x18/edit.png' %}" />-->
+                Edit
+                </button>
+            </a>
+            <a href="{% url 'uploader:delete_bookmark' bookmark.slug %}" onclick="javascript:return confirm('DELETE this bookmark?')">
+                <!--<img src="{% static 'uploader/img/18x18/delete.png' %}" />-->
+                <button class="btn_danger">
+                Delete
+                </button>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td colspan='5'>
+            <strong>Description: </strong>
+            {{ bookmark.description|truncatechars:250 }}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
+{% endblock %}
