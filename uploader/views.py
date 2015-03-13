@@ -918,7 +918,8 @@ def test_feedback(request, slug):
     questions = MultipleChoiceQuestion.objects.filter(unit_topic=unit_topic)
     question_list = []
     for question in questions:
-        user_answer = MultipleChoiceUserAnswer.objects.filter(question=question)
+        user_answer = MultipleChoiceUserAnswer.objects.filter(
+            question=question, user=request.user)
         if user_answer.count() == 1:
             question.answer = MultipleChoiceAnswer.objects.filter(question=question)[0]
             question.user_answer = user_answer
