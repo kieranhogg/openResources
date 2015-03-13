@@ -2,7 +2,8 @@
 {% block body_block %}
 {% load static %}
 {% get_static_prefix as STATIC_PREFIX %}
-<h2>Favourites</h2>
+<h2>My Favourites</h2>
+{% if user.is_authenticated %}
     <h3>Subjects</h3>
     {% if subjects %}
     <p>To change your subjects, you can do so in your 
@@ -80,4 +81,8 @@
         <p>Click the favourite icon on any
         syllabus page to add them to this page.</p>
     {% endif %}
+{% else %}
+<p>You must be logged in to see your favourites, log in or sign up using the links
+at the top right of the page.</p>
+{% endif %}
 {% endblock %}

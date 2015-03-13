@@ -54,7 +54,7 @@ def subjects(request):
 
 def favourites(request):
     context = {}
-    if request.user:
+    if request.user.is_authenticated():
         subjects = (request.user.teacherprofile.subjects.all() or 
                     request.user.teacherprofile.subjects.all())
                     
