@@ -1,5 +1,6 @@
 {% extends 'uploader/base.html' %}
 {% block body_block %}
+{% load static %}
 <div id="crumbs">
     <a href="{% url 'uploader:index' %}">Home</a> > 
     <a href="{% url 'uploader:subject' unit.syllabus.subject.slug %}">
@@ -11,6 +12,11 @@
      {{ unit.title|truncatechars:45 }}
 </div>
 <h2>{% block head_title %}{{ unit }}{% endblock %}</h2>
+<p><a class='btn' href="{% url 'uploader:add_favourite' 'unit' unit.slug %}">
+        <img src="{% static 'uploader/img/18x18/heart.png' %}" />
+        Add to favourites
+    </a>
+</p>
 {% if unit.description %}
 <div id="description">
     {{ unit.description }}

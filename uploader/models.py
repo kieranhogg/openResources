@@ -286,6 +286,7 @@ class Bookmark(models.Model):
     link = models.URLField(max_length=400)
     description = models.TextField(null=True)
     uploader = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
+    screenshot = models.ImageField(upload_to='screenshots/%Y/%m', null=True)
     slug = models.SlugField(unique=True, max_length=100)
     pub_date = models.DateTimeField(
         'Date published',
@@ -337,6 +338,9 @@ class Resource(models.Model):
 
     class Meta:
         ordering = ('-pub_date',)
+        
+    def get_title(self):
+        return self.file.title if self.file else self.bookmark.title
 
 
 class ResourceAdmin(admin.ModelAdmin):
@@ -517,6 +521,7 @@ class Lesson(models.Model):
     uploader = models.ForeignKey(settings.AUTH_USER_MODEL)
     objectives = models.TextField(blank=True, null=True)
     url = models.URLField()
+    public = models.BooleanField(default=True, blank=True)
     pub_date = models.DateTimeField(auto_now_add=True)
     
     def __unicode__(self):
@@ -529,8 +534,34 @@ class LessonItem(models.Model):
     order = models.IntegerField()
     instructions = models.TextField(blank=True, null=True)
     
-    # def __unicode__(self):
-    #     return self.type + " " + self.slug   
+class Favourite(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    pub_date = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        abstract = True
+    
+
+class SyllabusFavourite(Favourite):
+    syllabus = models.ForeignKey(Syllabus)
+    
+    class Meta:
+        unique_together = ["user", "syllabus"]
+    
+    
+class UnitFavourite(Favourite):
+    unit = models.ForeignKey(Unit)
+    
+    class Meta:
+        unique_together = ["user", "unit"]
+    
+
+class UnitTopicFavourite(Favourite):
+    unit_topic = models.ForeignKey(UnitTopic)
+    
+    class Meta:
+        unique_together = ["user", "unit_topic"]
+
     
 ######## signals TODO move to own file #########
 

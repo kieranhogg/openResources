@@ -1,16 +1,19 @@
+import urllib2, urllib, os
 from django import forms
 from django.conf import settings
 from django.template.defaultfilters import filesizeformat
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import slugify
 from django.shortcuts import get_object_or_404
+from django.core.files import File as DjangoFile
+from django.core.files.temp import NamedTemporaryFile
 from uploader.models import *
-                        
+
 
 class BookmarkForm(forms.ModelForm):
     class Meta:
         model = Bookmark
-        exclude = ('approved','slug', 'uploader')
+        exclude = ('approved','slug', 'uploader', 'screenshot')
         widgets = {
             'description': forms.Textarea(),
         }
@@ -135,7 +138,9 @@ class StudentForm(forms.Form):
             password=self.cleaned_data['password'],
             email=self.cleaned_data['email'])
     
-        up = StudentProfile(user=new_user)
+        up = StudentProfile(user=new_user,
+                            forename=self.cleaned_data['first_name'],
+                            surname=self.cleaned_data['last_name'])
         up.save()
         return new_user
         
@@ -189,20 +194,22 @@ class TeacherForm(forms.Form):
         up.save()
         return new_user
         
-# class SignupForm(forms.ModelForm):
-#     # user = forms.CharField(max_length=40, label='Username')
-#     # password = forms.CharField(max_length=40, label='Password')
-#     # type = forms.CharField()
-    
-#     def __init__(self, *args, **kwargs):
-#         super(SignupForm, self).__init__(*args, **kwargs)
+class TeacherProfileForm(forms.ModelForm):
+    class Meta:
+        model = TeacherProfile
+        exclude = ('user', 'score', 'profile_setup')
+        # widgets = {
+        #     'title': forms.ChoiceField()
+        #             }
+
+
+class LessonForm(forms.ModelForm):
+    class Meta:
+        model = Lesson
+        exclude = ('slug', 'uploader', 'url')
+ 
         
-#     def signup(self, request, user):
-#         wsData = UserProfile()
-#         wsData.user = user
-#         wsData.wsUser = self.cleaned_data['user']
-#         wsData.wsPwd = self.cleaned_data['password']
-#         wsData.save()
-#     class Meta:
-#         model = UserProfile
-#         # fields = ('user', 'password',)
+class LessonItemForm(forms.ModelForm):
+    class Meta:
+        model = LessonItem
+        exclude = ('lesson', 'slug', 'type')

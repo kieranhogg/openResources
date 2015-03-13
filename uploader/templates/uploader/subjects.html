@@ -1,0 +1,22 @@
+{% extends 'uploader/base.html' %}
+{% block body_block %}
+{% load static %}
+{% get_static_prefix as STATIC_PREFIX %}
+<h2>Subjects</h2>
+        {% if subjects %}
+        <div id="subjects">
+        <ul>
+        {% for subject in subjects %}
+            <a href="{% url 'uploader:subject' subject.slug %}">
+                <li>
+                <img src="{{ STATIC_PREFIX }}uploader/img/subjects/{{ subject.slug }}.jpg" width="300px" height="200px" alt="{{ subject }}"/>
+                    {{ subject.subject_name }}
+                </li>
+            </a>
+        {% endfor %}
+        </ul>
+        </div>
+    {% else %}
+        <p>Oops, no subjects. This is embarrasing.</p>
+    {% endif %}
+{% endblock %}

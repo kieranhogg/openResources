@@ -1,6 +1,17 @@
-import requests, json
+import requests, json, shutil, os
+from tempfile import NamedTemporaryFile
 from django.utils.text import slugify
 from django.conf import settings
+from django.core.files.base import File as DjangoFile
+
+
+def screenshot(site):
+    url = ('http://api.screenshotmachine.com/?key=68df53&size=M&url=' + site)
+    response = requests.get(url, stream=True)
+    with NamedTemporaryFile() as out_file:
+        shutil.copyfileobj(response.raw, File(out_file))
+    del response
+    return out_file
 
 
 def safe_slugify(text, model):
@@ -43,3 +54,19 @@ def shorten_url(url):
     r = requests.post(post_url, data=json.dumps(payload), headers=headers)
     data = r.json()
     return data['id']
+    
+    
+def get_resource_rating(resource_id, use='display'):
+    """Calculate a resource's rating
+    """
+    ratings = Rating.objects.filter(resource__id = resource_id)
+    # TODO hide < a certain number too?
+    if len(ratings) == 0:
+        return 3.0
+    else:
+        total = 0
+        count = 0
+        for rating in ratings:
+            total = total + rating.rating
+            count = count + 1
+        return float(total) / float(count)

@@ -22,13 +22,10 @@ link bookmarked, e.g. Youtube videos, Wikipedia articles etc., full list:
 <p>If you are not logged in, your resource will wait to be approved. To skip 
 this in future, please register and log in first.</p>
 {% endif %}
-{% if form.non_field_errors %}
-{% endif %}
 
 <form action method="post" novalidate>
     {% csrf_token %}
     {{ form.as_p }}
-    
 <br />
 {% if form.instance.id %}
     <input type="submit" value="Update">

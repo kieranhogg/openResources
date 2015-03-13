@@ -1,13 +1,6 @@
 {% extends 'uploader/base.html' %}
 {% block body_block %}
 <h2>{% block head_title %}Add Resource{% endblock %}</h2>
-{% if form.non_field_errors %}
-    <div class="error">
-    {% for error in form.non_field_errors %}
-        {{error}}
-    {% endfor %}
-    </div>
-{% endif %}
 <p>You are an awesome person.</p>
 <p>Would you like to add a 
     <a style="font-size: 200%; padding: 7px" 

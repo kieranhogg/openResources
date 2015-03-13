@@ -2,9 +2,6 @@
 {% block body_block %}
 {% load static %}
 <h2>{% block head_title %}My Lessons{% endblock %}</h2>
-<p>If you add items (resources, notes or questions) to a lesson, they will show up on this page and you can create
-new lessons with those items.</p>
-
 {% if resources or notes or questions or tasks %}
 <p>Below are the list of items you have added so far to your lesson.
 If you are happy with the list, you can create it. If you want to add some more,
@@ -21,6 +18,9 @@ you can leave, add some more items and come back.</p>
     <p><label for="objectives">Learning Objectives/outcomes</label>
         <textarea name="objectives"></textarea></p>
         <p class="help_text">For bullet points, use *. Other markdown supported.</p>
+{% else %}
+<p>If you add items (resources, notes or questions) to a lesson, they will show up on this page and you can create
+new lessons with those items.</p>
 {% endif %}
 {% if resources %}
     <h3>Lesson items</h3>
@@ -93,20 +93,28 @@ you can leave, add some more items and come back.</p>
                 <textarea name="instructions{{ task }}"></textarea>
             </p>
         </div>
-        </p>
     {% endfor %}
 {% endif %}
 
 {% if resources or notes or questions or tasks %}
 <p>
-    <a href="{% url 'uploader:add_item_to_lesson' time 'task' %}">
+    <a class='btn' href="{% url 'uploader:add_item_to_lesson' time 'task' %}">
         <img src="{% static 'uploader/img/18x18/add.png' %}" />
         Add blank task
     </a>
 </p>
-    <p><label>Clear current lesson?</label>
-    <input type="checkbox" name="clear"></p>
+<p>
+    <label for="public">Lesson is visible to others?</label>
+    <input type="checkbox" name="public" checked="checked" />
+    Recommended unless there are school-specific instructions in the lesson
+</p>
+<p><label>Clear current lesson items?</label>
+    <input type="checkbox" name="clear">
+    Removes all tasks above
+</p>
+<p>
     <input type="submit" name="submit" />
+</p>
     </form>
 {% endif %}
 
@@ -116,6 +124,7 @@ you can leave, add some more items and come back.</p>
 the lesson you can display on your board.</p>
 <table style="margin: 0 auto;">
     <th>Lesson</th>
+    <th>Visibility</th>
     <th>Short link</th>
     <th>Date</th>
     <th>Actions</th>
@@ -123,16 +132,28 @@ the lesson you can display on your board.</p>
 {% for lesson in lessons %}
 <tr>
     <td>{{ lesson.title }}</td>
+    <td>
+        {% if lesson.public %}Public{% else %}Private{% endif %}
+    </td>
     <td>{{ lesson.url|urlize }}</td>
     <td>{{ lesson.pub_date|date:"d M y" }}</td>
     <td>
         <a href="{% url 'uploader:lesson' lesson.slug %}">
-            <button class='btn'>View</button>
+            <button class='btn'>
+                <img src="{% static 'uploader/img/18x18/eye.png' %}" />
+                View</button>
         </a>
         <a href="{% url 'uploader:lesson_show' lesson.slug %}">
-            <button class='btn'>Present</button>
+            <button class='btn'>
+                <img src="{% static 'uploader/img/18x18/website.png' %}" />
+                Present</button>
         </a>
-        <!--<button class='btn'>Edit</button>-->
+        <a href="{% url 'uploader:edit_lesson' lesson.slug %}">
+            <button class='btn'>
+                <img src="{% static 'uploader/img/18x18/edit.png' %}" />
+                Edit
+            </button>
+        </a>        
         <!--<button class='btn_danger'>Delete</button>-->
     </td>
 </tr>

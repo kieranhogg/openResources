@@ -1,0 +1,28 @@
+{% extends 'uploader/base.html' %}
+{% block body_block %}
+{% load static %}
+<h2>{% block head_title %}Edit Lesson{% endblock %}</h2>
+{% if form.non_field_errors %}
+  <div class="non-field-errors">
+    {% for err in form.non_field_errors %}
+      <p class="form-error">{{ err }}</p>
+    {% endfor %}
+  </div>
+{% endif %}
+<form action method='post'>
+    {% csrf_token %}
+{{ form.as_p }}
+<input type="submit" value="Save" />
+</form>
+{% if items %}
+    <h3>Lesson Items</h3>
+    {% for item in items %}
+    <p><a class='btn' href="{% url 'uploader:edit_lesson_item' item.id %}">
+    <img src="{% static 'uploader/img/18x18/edit.png' %}" /> Edit</a>
+        
+        <strong>Task {{item.order}}</strong>: {{ item.display }}
+    </p>
+    {% endfor %}
+    </ul>
+{% endif %}
+{% endblock %}

@@ -15,7 +15,8 @@ from django.views.generic.edit import UpdateView
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
-from uploader.utils import safe_slugify, render_markdown, shorten_url
+
+from uploader.utils import *
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
@@ -26,7 +27,7 @@ def index(request):
     """
     if request.GET and request.GET['s'] == "1":
         messages.success(request, 'Resource added, thank you!')
-
+    
     subjects = Subject.objects.filter(active=1)
     
     # get messages TODO use constants
@@ -36,10 +37,66 @@ def index(request):
 
     context = {
         'subjects': subjects,
-        'user_messages': user_messages | announce_messages | sticky_messages
+        'user_messages': user_messages | announce_messages | sticky_messages,
+        'homepage': True
     }
     return render(request, 'uploader/index.html', context)
 
+
+def subjects(request):
+    subjects = Subject.objects.filter(active=1)
+    
+    context = {
+        'subjects': subjects,
+    }
+    return render(request, 'uploader/subjects.html', context)
+
+
+def favourites(request):
+    subjects = (request.user.teacherprofile.subjects.all() or 
+                request.user.teacherprofile.subjects.all())
+                
+    syllabuses = SyllabusFavourite.objects.filter(user=request.user)
+    units = UnitFavourite.objects.filter(user=request.user)
+    unit_topics = UnitTopicFavourite.objects.filter(user=request.user)
+    
+    
+    context = {'subjects': subjects, 'syllabuses': syllabuses, 'units': units,
+               'unit_topics': unit_topics}
+                
+    return render(request, 'uploader/favourites.html', context)
+
+
+def add_favourite(request, slug, thing):
+    """ Adds items to favourites
+    """
+    if thing == 'syllabus':
+        s = get_object_or_404(Syllabus, slug=slug)
+        try:
+            sf = SyllabusFavourite(user=request.user, syllabus=s)
+            sf.save()
+        except IntegrityError:
+            messages.error(request, "Already in favourites")
+
+    elif thing == 'unit':
+        u = get_object_or_404(Unit, slug=slug)
+        try:
+            uf = UnitFavourite(user=request.user, unit=u)
+            uf.save()
+        except IntegrityError:
+            messages.error(request, "Already in favourites")
+            
+    elif thing == 'unit_topic':
+        ut = get_object_or_404(UnitTopic, slug=slug)
+        try:
+            utf = UnitTopicFavourite(user=request.user, unit_topic=ut)
+            utf.save()
+        except IntegrityError:
+            messages.error(request, "Already in favourites")
+
+    messages.success(request, "Added to favourites")
+    
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 def subject(request, slug):
     """View one subject, shows exam levels, e.g. GCSE
@@ -193,22 +250,6 @@ def delete_bookmark(request, slug):
         return HttpResponseRedirect(reverse('uploader:user_bookmarks'))
     else:
         return HttpResponseForbidden("Permission denied")
-
-
-def get_resource_rating(resource_id, use='display'):
-    """Calculate a resource's rating
-    """
-    ratings = Rating.objects.filter(resource__id = resource_id)
-    # TODO hide < a certain number too?
-    if len(ratings) == 0:
-        return 3.0
-    else:
-        total = 0
-        count = 0
-        for rating in ratings:
-            total = total + rating.rating
-            count = count + 1
-        return float(total) / float(count)
 
 
 def file(request, slug=None):
@@ -369,23 +410,19 @@ def score_points(user, action):
         user_profile.save()
  
    
-# TODO
+@login_required
 def profile(request, username=None):
-    # /profile/ and logged in
-    if username == None and request.user.is_authenticated():
-        user = request.user
-        #
-    # /profile/ and not logged in
-    elif username == None and not request.user.is_authenticated():
-        return HttpResponse("Not logged in")
-    # /profile/1
-    elif username:
-        user = get_object_or_404(UserProfile, user__username=username)
-    else:
+    
+    try:
+        if request.user.studentprofile:
+            pass
+    except ObjectDoesNotExist:
+        if request.user.teacherprofile:
+            form = TeacherProfileForm(request.POST or None)
+    finally:
         pass
     
-    
-    return render(request, 'uploader/profile.html', {})
+    return render(request, 'uploader/profile.html', {'form': form})
 
 
 @login_required
@@ -458,17 +495,18 @@ def user_lessons(request, user_id=None):
                 if types in rs and rs[types]:
                     num_items += len(rs[types])
             
-            # this check we've not missed an order number out
+            # this checks we've not missed an order number out
             items_okay = check_lesson_items(request, num_items)
             
             if num_items > 0 and items_okay:
-
+                public = True if request.POST.get('public') else False
                 slug = safe_slugify(request.POST['title'], Lesson)
                 
                 l = Lesson(title=request.POST['title'],
                             slug=slug,
                             objectives=request.POST['objectives'],
                             uploader=request.user,
+                            public=public
                            )
                 url = request.build_absolute_uri(reverse('uploader:lesson', 
                                                          args=[slug]))
@@ -539,7 +577,7 @@ def user_lessons(request, user_id=None):
             tasks_list.append(task)
             count += 1
     
-    lessons = Lesson.objects.filter(uploader=request.user)
+    lessons = Lesson.objects.filter(uploader=request.user).order_by('-pub_date')
     now = int(time.time())
     
     return render(request, 'uploader/user_lessons.html', 
@@ -548,8 +586,54 @@ def user_lessons(request, user_id=None):
          'time': now, 'form_errors': form_errors})
 
 
+@login_required
+def edit_lesson(request, slug):
+    l = get_object_or_404(Lesson, slug=slug)
+    if l.uploader != request.user:
+        return HttpResponseForbidden("permission denied")
+        
+    form = LessonForm(request.POST or None, instance=l)
+    
+    lis = LessonItem.objects.filter(lesson=l)
+    
+    for li in lis:
+        if li.type == 'resources':
+            item = Resource.objects.get(slug=li.slug)
+            li.display = item.get_title()
+            
+    if request.POST and form.is_valid():
+        l = form.save(commit=False)
+        l.slug = safe_slugify(l.title, Lesson)
+        l.save()
+        return HttpResponseRedirect(reverse('uploader:user_lessons'))
+            
+    
+    context = {'form': form, 'items': lis}
+    
+    return render(request, 'uploader/edit_lesson.html', context)
+
+
+@login_required
+def edit_lesson_item(request, id):
+    li = get_object_or_404(LessonItem, pk=id)
+    if li.lesson.uploader != request.user:
+        return HttpResponseForbidden("permission denied")
+        
+    form = LessonItemForm(request.POST or None, instance=li)
+            
+    if request.POST and form.is_valid():
+        form.save()
+        return HttpResponseRedirect(reverse('uploader:user_lessons'))
+    
+    return render(request, 'uploader/edit_lesson_item.html', {'form': form})
+
+
 def lesson(request, slug):
     l = get_object_or_404(Lesson, slug=slug)
+    
+    if not l.public and l.uploader != request.user:
+        return HttpResponseForbidden("permission denied")
+        
     l.objectives = render_markdown(l.objectives)
     lis = LessonItem.objects.filter(lesson=l).order_by('order')
     
@@ -588,6 +672,8 @@ def add_item_to_lesson(request, slug, type):
             elif slug not in request.session['resources']:
                 request.session['resources'].append(slug)
             request.session.modified = True
+            messages.success(request, "Added to a new lesson, go to My " + 
+                                      "Folder > Lessons to view")
     
     elif type == 'notes':
         unit_topic = get_object_or_404(UnitTopic, slug=slug)
@@ -602,6 +688,8 @@ def add_item_to_lesson(request, slug, type):
             elif slug not in request.session['notes']:
                 request.session['notes'].append(slug)
             request.session.modified = True
+            messages.success(request, "Added to a new lesson, go to My " + 
+                                      "Folder > Lessons to view")
 
     elif type == 'test':
         unit_topic = get_object_or_404(UnitTopic, slug=slug)
@@ -610,6 +698,8 @@ def add_item_to_lesson(request, slug, type):
         elif slug not in request.session['tests']:
             request.session['tests'].append(slug)
         request.session.modified = True
+        messages.success(request, "Added to a new lesson, go to My " + 
+                                  "Folder > Lessons to view")
         
     elif type == 'task':
         
@@ -618,8 +708,8 @@ def add_item_to_lesson(request, slug, type):
         elif slug not in request.session['tasks']:
             request.session['tasks'].append(slug)
         request.session.modified = True 
-    
-    messages.success(request,"Added to lesson")
+        messages.success(request, "Added to a new lesson, go to My " + 
+                                  "Folder > Lessons to view")
     
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 

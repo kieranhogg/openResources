@@ -7,37 +7,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <script src="{% static 'js/jquery.js' %}" type="text/javascript"></script>
-<script type="text/javascript"> 
-  $(function() {
-    moveScroller();
-  });
-  
-  function moveScroller() {
-    var move = function() {
-        var st = $(window).scrollTop();
-        var ot = $("#menu-anchor").offset().top;
-        var s = $("#menu");
-        if(st > ot) {
-            s.css({
-                position: "fixed",
-                top: "0px"
-            });
-        } else {
-            if(st <= ot) {
-                s.css({
-                    position: "relative",
-                    top: ""
-                });
-            }
-        }
-    };
-    $(window).scroll(move);
-    move();
-}
+<script>
+  pic = new Image();
+  pic.src="{% static 'uploader/img/splash/1.jpg' %}";
 </script>
 <link rel="stylesheet" type="text/css" href="{% static 'uploader/style.css' %}" />
 <link rel="stylesheet" type="text/css" media="only screen and (max-width: 480px), only screen and (max-device-width: 480px)" href="{% static 'uploader/small-devices.css' %}" />
-<title>{{ SITE_NAME }} | {% block head_title %}{% endblock %}</title>
+<title>{{ SITE_NAME }}</title>
 <link rel="shortcut icon" type="image/png" href="{{STATIC_URL}}/favicon.ico" />
 </head>
 <body>
@@ -78,7 +54,6 @@
             <!--Search-->
         </div>
     </div>
-    <div id="menu-anchor"></div>
     <div id="menu">
         <ul>
             <!--<li id="menu_home">-->
@@ -87,6 +62,11 @@
             <!--    <span class="menu_text">Home</span>-->
             <!--    </a>-->
             <!--</li>-->
+            <li id="menu_submit"><a href="{% url 'uploader:favourites' %}">
+                <img class="menu_icon" src="{% static 'uploader/img/18x18/heart.png' %}" height="18" width="18"/>
+                <span class="menu_text">My Favourites</span>
+                </a>
+            </li>
             <li id="menu_submit"><a href="{% url 'uploader:add_resource' %}">
                 <img class="menu_icon" src="{% static 'uploader/img/18x18/upload.png' %}" height="18" width="18"/>
                 <span class="menu_text">Add Resource</span>
@@ -150,20 +130,27 @@
             {% endif %}
         </ul>
     </div>
+    {% if homepage %}
+    <div id="splash">
+        <span id="source"><a href="https://www.flickr.com/photos/wackystuff/5355788728/in/photolist-9agPoY-dtroJc-59THhy-7BAEiV-5RzRtp-7JKRHh-bF51FS-hVQBKP-6iUdMZ-2bUDT-988BVE-89pQhQ-9k6cM-6YTcyf-9q7jAU-dQugec-8s4PDi-8pvSWc-6YTeg5-dynb6k-2JNeAw-2TcoEu-mpgrkA-bsSo3-zV2x5-EykCH-7G9fHf-4xWMzG-6m1PW8-5v4A14-6HLhYf-9ezxNp-6CK1od-7Cby3b-8MF9B5-9t3zWm-38hJJt-9ezxHt-bsSoM-dsxGqc-b4jsc2-6ch2aS-8YyqSQ-ayP4oL-4Kp7mS-9K29J9-6YFiWi-7ruPJx-M4Xwq-6FQEh7">
+           source 
+        </a></span>
+    </div>
+    {% endif %}
     <div id="content">
         {% if user_messages %}
             {% for message in user_messages %}
-                <div class="{{ message.get_type_display }}">
-                {% if message.get_type_display == "Sticky" %}
-                    {{ message|safe }}
-                {% elif message.get_type_display == "Announcement" %}
-                    {{ message|safe }}
-                    <div class="message_dismiss">[X]</div>
-                {% else %}
-                    {{ message }}
-                    <div class="message_dismiss">[X]</div>
-                {% endif %}
-                </div>
+                <!--<div class="{{ message.get_type_display }}">-->
+                <!--{% if message.get_type_display == "Sticky" %}-->
+                <!--    {{ message|safe }}-->
+                <!--{% elif message.get_type_display == "Announcement" %}-->
+                <!--    {{ message|safe }}-->
+                <!--    <div class="message_dismiss">[X]</div>-->
+                <!--{% else %}-->
+                <!--    {{ message }}-->
+                <!--    <div class="message_dismiss">[X]</div>-->
+                <!--{% endif %}-->
+                <!--</div>-->
             {% endfor %}
         {% endif %}
         

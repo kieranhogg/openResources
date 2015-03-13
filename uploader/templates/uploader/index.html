@@ -2,23 +2,19 @@
 {% block body_block %}
 {% load static %}
 {% get_static_prefix as STATIC_PREFIX %}
-        <h2>{% block head_title %}Welcome{% endblock %}</h2>
-        <h3>How does it work?</h3>
-        <p>There are lots of educational resource sites, so what makes this one
-        different? The primary aim is for resources to be aimed at specific
-        syllabuses. The most important part is that resources are linked and 
-        rated <strong>per syllabus</strong>. This means that the resource you
-        upload on fractions might be well rated for a GCSE syllabus but not
-        an A-Level one. The programming resource you upload might be excellent
-        for one exam board and get great reviews but not great for another 
-        which will be reflected in the rating.</p>
-        <p>The ultimate aim is to have the best curated set of resource 
-        possible, not the most.</p>
-        <h3>Why?</h3>
-        <p>Two reasons: 1) resources tailored to specific syllabuses are of 
-        higher quality and 2) resources can be useful for multiple subjects
-        but the rating of the resource doesn't reflect the suitability for all
-        syllabuses.</p>
+        <h3>Teachers</h3>
+        <p>This site will allow you to share and find relevant resources, bookmarks,
+        notes and tests. They are based around syllabuses so they should be 
+        relevant to the content you are teaching.</p>
+        <h3>Students</h3>
+        <p>For your specific course, we have materials such as notes and tests
+        to help you learn and revise</p>
+        <a href="{% url 'uploader:subjects' %}">
+            <button class='btn'>
+                Bring on the subjects
+            </button>
+            
+        </a>
         <!--
         <p>
             Why another teaching resource site? We all know that teachers are 
@@ -38,22 +34,4 @@
             linked and resources will be shared between exam boards where 
             appropriate.
         </p>-->
-        <hr />
-        <h2>Subjects</h2>
-        <div id="subjects">
-        {% if subjects %}
-        <ul>
-        {% for subject in subjects %}
-            <a href="{% url 'uploader:subject' subject.slug %}">
-                <li>
-                <img src="{{ STATIC_PREFIX }}uploader/img/subjects/{{ subject.slug }}.jpg" width="300px" height="200px" alt="{{ subject }}"/>
-                    {{ subject.subject_name }}
-                </li>
-            </a>
-        {% endfor %}
-        </ul>
-        </div>
-    {% else %}
-        <p>No subjects :(</p>
-    {% endif %}
 {% endblock %}

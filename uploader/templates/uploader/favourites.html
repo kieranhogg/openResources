@@ -1,0 +1,83 @@
+{% extends 'uploader/base.html' %}
+{% block body_block %}
+{% load static %}
+{% get_static_prefix as STATIC_PREFIX %}
+<h2>Favourites</h2>
+    <h3>Subjects</h3>
+    {% if subjects %}
+    <p>To change your subjects, you can do so in your 
+        <a href="{% url 'uploader:profile' %}">profile</a>.
+    </p>
+        <div id="subjects">
+            <ul>
+                {% for subject in subjects %}
+                    <a href="{% url 'uploader:subject' subject.slug %}">
+                        <li>
+                        <img src="{{ STATIC_PREFIX }}uploader/img/subjects/{{ subject.slug }}.jpg" width="300px" height="200px" alt="{{ subject }}"/>
+                            {{ subject.subject_name }}
+                        </li>
+                    </a>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+    
+    <h3>Syllabus</h3>
+    {% if syllabuses %}
+        <div>
+            <ul>
+                {% for syllabus in syllabuses %}
+                {% with syllabus=syllabus.syllabus %}
+                    <a href="{% url 'uploader:syllabus' syllabus.subject.slug syllabus.exam_level.slug syllabus.slug %}">
+                        <li>
+                            {{ syllabus }}
+                        </li>
+                    </a>
+                {% endwith %}
+                {% endfor %}
+            </ul>
+        </div>
+    {% else %}
+        <p>Click the favourite icon on any
+        syllabus page to add them to this page.</p>
+    {% endif %}
+    
+    <h3>Unit</h3>
+    {% if units %}
+        <div>
+            <ul>
+                {% for unit in units %}
+                {% with unit=unit.unit %}
+                    <a href="{% url 'uploader:unit' unit.syllabus.subject.slug unit.syllabus.exam_level.slug unit.syllabus.slug unit.slug %}">
+                        <li>
+                            {{ unit }}
+                        </li>
+                    </a>
+                    {% endwith %}
+                {% endfor %}
+            </ul>
+        </div>
+    {% else %}
+        <p>Click the favourite icon on any unit page to add them to this page.</p>
+    {% endif %}
+    
+    <h3>Unit Topic</h3>
+    {% if unit_topics %}
+        <div>
+            <ul>
+                {% for unit_topic in unit_topics %}
+                {% with unit_topic=unit_topic.unit_topic %}
+                    <a href="{% url 'uploader:unit_topic' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
+                        <li>
+                            {{ unit_topic }}
+                        </li>
+                    </a>
+                {% endwith %}
+                {% endfor %}
+            </ul>
+        </div>
+    {% else %}
+        <p>Click the favourite icon on any
+        syllabus page to add them to this page.</p>
+    {% endif %}
+{% endblock %}

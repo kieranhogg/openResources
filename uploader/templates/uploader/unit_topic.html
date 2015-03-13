@@ -1,5 +1,6 @@
 {% extends 'uploader/base.html' %}
 {% block body_block %}
+{% load static %}
 <div id="crumbs">
     <a href="{% url 'uploader:index' %}">Home</a> > 
     <a href="{% url 'uploader:subject' unit_topic.unit.syllabus.subject.slug %}">
@@ -13,6 +14,11 @@
      {{ unit_topic.title|truncatechars:45 }}
 </div>
 <h2>{% block head_title %}{{ unit_topic.title }}{% endblock %}</h2>
+<p><a class='btn' href="{% url 'uploader:add_favourite' 'unit_topic' unit_topic.slug %}">
+        <img src="{% static 'uploader/img/18x18/heart.png' %}" />
+        Add to favourites
+    </a>
+</p>
 <!-- TODO write * -> <li> filter -->
 {% if unit_topic.description and unit_topic.description != "" %}
 <h3>Description</h3>

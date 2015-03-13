@@ -1,11 +1,18 @@
 {% extends 'uploader/base.html' %}
 {% block body_block %}
 <h2>{% block head_title %}My Profile{% endblock %}</h2>
-<ul>
-    <li><a href="{% url 'uploader:user_resources' %}">My resources</a></li>
-	<li><a href="{% url 'account_email' %}">Change e-mail</a></li>
-	<li><a href="{% url 'account_set_password' %}">Change password</a></li>
+<h3>Actions</h3>
+<p><a href="{% url 'account_email' %}">
+	<button class='btn'>Change e-mail</button>
+</a></p>
+<p>
+<a href="{% url 'account_set_password' %}">
+	<button class='btn'>Change password</button>
+</a>
+</p>
 	<!--<li><a href="{ url 'socialaccount_connections' }">Login using another account</a>-->
-	{{ form|as_p }}
-</ul>
+<h3>Details</h3>
+<form>
+{{ form.as_p }}
+</form>
 {% endblock %}
