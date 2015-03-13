@@ -409,7 +409,14 @@ class UserProfile(models.Model):
         abstract = True
         
 class TeacherProfile(UserProfile):
-    title = models.CharField(max_length='7')
+    TITLES = (
+        ('Mr', 'Mr'),
+        ('Mrs', 'Mrs'),
+        ('Miss', 'Miss'),
+        ('Ms', 'Ms'),
+        ('Dr', 'Dr'),
+    )
+    title = models.CharField(max_length='7', choices=TITLES)
     
 class StudentProfile(UserProfile):
     pass

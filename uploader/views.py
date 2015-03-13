@@ -415,10 +415,21 @@ def profile(request, username=None):
     
     try:
         if request.user.studentprofile:
-            pass
+            sp = get_object_or_404(StudentProfile, user=request.user)
+            form = StudentProfileForm(request.POST or None, instance=sp)
+            
+            if request.POST and form.is_valid():
+                form.save()
+                messages.success(request, "Profile saved successfully")
+
     except ObjectDoesNotExist:
         if request.user.teacherprofile:
-            form = TeacherProfileForm(request.POST or None)
+            tp = get_object_or_404(TeacherProfile, user=request.user)
+            form = TeacherProfileForm(request.POST or None, instance=tp)
+            
+            if request.POST and form.is_valid():
+                form.save()
+                messages.success(request, "Profile saved successfully")
     finally:
         pass
     

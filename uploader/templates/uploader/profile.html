@@ -12,7 +12,9 @@
 </p>
 	<!--<li><a href="{ url 'socialaccount_connections' }">Login using another account</a>-->
 <h3>Details</h3>
-<form>
+<form action method='post'>
+	{% csrf_token %}
 {{ form.as_p }}
+<input type="submit" name="Save" />
 </form>
 {% endblock %}

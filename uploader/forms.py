@@ -1,12 +1,9 @@
-import urllib2, urllib, os
 from django import forms
 from django.conf import settings
 from django.template.defaultfilters import filesizeformat
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import slugify
 from django.shortcuts import get_object_or_404
-from django.core.files import File as DjangoFile
-from django.core.files.temp import NamedTemporaryFile
 from uploader.models import *
 
 
@@ -199,7 +196,7 @@ class TeacherProfileForm(forms.ModelForm):
         model = TeacherProfile
         exclude = ('user', 'score', 'profile_setup')
         # widgets = {
-        #     'title': forms.ChoiceField()
+        #             'title': forms.ChoiceField()
         #             }
 
 
