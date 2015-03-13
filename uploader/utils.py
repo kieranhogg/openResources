@@ -4,6 +4,7 @@ from django.utils.text import slugify
 from django.conf import settings
 from django.core.files.base import File as DjangoFile
 from uploader.models import *
+from openteach import settings
 
 
 def screenshot(site):
