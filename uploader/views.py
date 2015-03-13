@@ -1003,7 +1003,7 @@ def teacher_signup(request):
 @login_required
 def groups_list(request):
     groups = Group.objects.filter(teacher=request.user.teacherprofile)
-    return render(request, 'uploader/classes.html', {'groups': groups})
+    return render(request, 'uploader/groups.html', {'groups': groups})
     
 
 @login_required
