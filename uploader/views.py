@@ -618,7 +618,7 @@ def edit_lesson(request, slug):
     if request.POST and form.is_valid():
         lesson = form.save(commit=False)
         # FIXME only need to do this if it's changed
-        lesson.slug = safe_slugify(lesson.title, Lesson)
+        #lesson.slug = safe_slugify(lesson.title, Lesson)
         url = request.build_absolute_uri(reverse('uploader:lesson', 
                                                  args=[lesson.slug]))
         lesson.url = shorten_url(url)
