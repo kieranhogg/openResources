@@ -1026,7 +1026,7 @@ def groups(request, slug=None):
             g.slug = safe_slugify(g.name, Group)
             g.code = group_code()
             g.save()
-            return HttpResponseRedirect(reverse('uploader:classes_list'))
+            return HttpResponseRedirect(reverse('uploader:groups_list'))
     else:
         form = GroupForm(instance=group)
 
