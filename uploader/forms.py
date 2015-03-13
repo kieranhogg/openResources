@@ -116,7 +116,7 @@ class StudentForm(forms.Form):
         except User.DoesNotExist:
             return self.cleaned_data['username']
     
-        raise forms.ValidationError("this user exist already")
+        raise forms.ValidationError("Username already taken")
     
     
     def clean(self): # check if password 1 and password2 match each other
@@ -210,3 +210,9 @@ class LessonItemForm(forms.ModelForm):
     class Meta:
         model = LessonItem
         exclude = ('lesson', 'slug', 'type')
+        
+        
+class GroupForm(forms.ModelForm):
+    class Meta:
+        model = Group
+        exclude = ('teacher', 'code', 'slug')

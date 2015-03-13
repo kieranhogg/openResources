@@ -56,12 +56,12 @@
     </div>
     <div id="menu">
         <ul>
-            <!--<li id="menu_home">-->
-            <!--    <a href="{% url 'uploader:index' %}">-->
-            <!--    <img class="menu_icon" src="{% static 'uploader/img/18x18/home.png' %}" height="18" width="18"/>-->
-            <!--    <span class="menu_text">Home</span>-->
-            <!--    </a>-->
-            <!--</li>-->
+            <li id="menu_home">
+                <a href="{% url 'uploader:index' %}">
+                <img class="menu_icon" src="{% static 'uploader/img/18x18/home.png' %}" height="18" width="18"/>
+                <span class="menu_text">Home</span>
+                </a>
+            </li>
             <li id="menu_submit"><a href="{% url 'uploader:favourites' %}">
                 <img class="menu_icon" src="{% static 'uploader/img/18x18/heart.png' %}" height="18" width="18"/>
                 <span class="menu_text">My Favourites</span>
@@ -73,6 +73,11 @@
                 </a>
             </li>
             {% if user.teacherprofile %}
+            <li id="menu_submit"><a href="{% url 'uploader:groups_list' %}">
+                <img class="menu_icon" src="{% static 'uploader/img/18x18/people.png' %}" height="18" width="18"/>
+                <span class="menu_text">My Groups</span>
+                </a>
+            </li>
             <li id="menu_my_resources"><a href="javascript:void(0)">
                 <img class="menu_icon" src="{% static 'uploader/img/18x18/folder.png' %}" height="18" width="18"/>
                 <span class="menu_text">My Folder</span>

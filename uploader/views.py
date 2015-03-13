@@ -15,6 +15,7 @@ from django.views.generic.edit import UpdateView
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth import authenticate, login
 
 from uploader.utils import *
 
@@ -258,7 +259,7 @@ def file(request, slug=None):
     if slug:
         file = get_object_or_404(File, slug=slug)
 
-        if file.uploader != request.user and not request.user.is_superuser:
+        if file.uploader != request.user and not request.user.is_superuser():
             return HttpResponseForbidden("No stairway, denied!")
     else:
         if request.user.is_authenticated():
@@ -301,7 +302,7 @@ def bookmark(request, slug=None):
     
     if slug:
         bookmark = get_object_or_404(Bookmark, slug=slug)
-        if bookmark.uploader != request.user and not request.user.is_superuser:
+        if bookmark.uploader != request.user and not request.user.is_superuser():
             return HttpResponseForbidden("No stairway, denied!")
     else:
         if request.user.is_authenticated():
@@ -968,8 +969,17 @@ def student_signup(request):
         
     form = StudentForm(request.POST or None)
     if request.POST and form.is_valid():
-        form.save()
-        return HttpResponseRedirect('/')
+        try:
+            g = Group.objects.get(code=request.POST['group_code'])
+            s = form.save()
+            StudentGroup(group=g, student=s.studentprofile).save()
+            messages.info(success, "Thanks for registering. You are now logged in.")
+            new_user = authenticate(username=request.POST['username'],
+                                    password=request.POST['password'])
+            login(request, new_user)
+            return HttpResponseRedirect('/')
+        except ObjectDoesNotExist:
+            form.add_error('group_code', "Invalid group code")
 
     return render(request, 'uploader/student_signup.html', {'form': form})
 
@@ -981,10 +991,50 @@ def teacher_signup(request):
     form = TeacherForm(request.POST or None)
     if request.POST and form.is_valid():
         form.save()
+        messages.success(request, "Thanks for registering. You are now logged in.")
+        new_user = authenticate(username=request.POST['username'],
+                                password=request.POST['password'])
+        login(request, new_user)
         return HttpResponseRedirect('/')
 
     return render(request, 'uploader/teacher_signup.html', {'form': form})
+    
 
+@login_required
+def groups_list(request):
+    groups = Group.objects.filter(teacher=request.user.teacherprofile)
+    return render(request, 'uploader/classes.html', {'groups': groups})
+    
+
+@login_required
+def groups(request, slug=None):
+    group = None
+    
+    if slug:
+        group = get_object_or_404(Group, slug=slug)
+        if group.teacher != request.user.teacherprofile and not (
+                request.user.is_superuser()):
+            return HttpResponseForbidden("No stairway, denied!")
+    else:
+        group = Group(teacher=request.user.teacherprofile)
+
+    if request.POST:
+        form = GroupForm(request.POST, instance=group)
+        
+        if form.is_valid():
+            g = form.save(commit=False)
+            g.slug = safe_slugify(g.name, Group)
+            g.code = group_code()
+            g.save()
+            return HttpResponseRedirect(reverse('uploader:classes_list'))
+    else:
+        form = GroupForm(instance=group)
+
+    return render(request, 'uploader/add_group.html', {'form': form})
+        
+@login_required
+def view_group(request, slug):
+    pass
   
 """ 
 ajax views

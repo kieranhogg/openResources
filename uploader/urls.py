@@ -22,6 +22,11 @@ urlpatterns = patterns('',
     url(r'^lesson_item/(?P<id>[\d-]+)/edit', views.edit_lesson_item, name='edit_lesson_item'),
     #url(r'^resource/(?P<slug>[\w\d-]+)/edit$', views.resource, name='resource'),
     
+    url(r'^groups/$', views.groups_list, name='groups_list'),
+    url(r'^groups/add/$', views.groups, name='groups'),
+    url(r'^groups/(?P<slug>[\w\d-]+)/$', views.view_group, name='view_group'),
+    url(r'^groups/(?P<slug>[\w\d-]+)/edit$', views.groups, name='groups'),
+    
     url(r'^bookmark/add/$', views.bookmark, name='bookmark'),
     url(r'^bookmark/link/(?P<slug>[\w\d-]+)/$', views.link_bookmark, name='link_bookmark'),
     url(r'^bookmark/add/stage_two/$', views.link_resource, name='link_resource'),

@@ -1,8 +1,9 @@
-import requests, json, shutil, os
+import requests, json, shutil, os, random, string
 from tempfile import NamedTemporaryFile
 from django.utils.text import slugify
 from django.conf import settings
 from django.core.files.base import File as DjangoFile
+from uploader.models import *
 
 
 def screenshot(site):
@@ -70,3 +71,16 @@ def get_resource_rating(resource_id, use='display'):
             total = total + rating.rating
             count = count + 1
         return float(total) / float(count)
+
+
+def random_key(length):
+    key = ''
+    for i in range(length):
+        key += random.choice(string.lowercase + string.uppercase + string.digits)
+    return key
+    
+    
+def group_code():
+    # TODO check DB
+    # a length of 3 gives us: 238328 codes
+    return random_key(3)
