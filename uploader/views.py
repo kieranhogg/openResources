@@ -53,16 +53,18 @@ def subjects(request):
 
 
 def favourites(request):
-    subjects = (request.user.teacherprofile.subjects.all() or 
-                request.user.teacherprofile.subjects.all())
-                
-    syllabuses = SyllabusFavourite.objects.filter(user=request.user)
-    units = UnitFavourite.objects.filter(user=request.user)
-    unit_topics = UnitTopicFavourite.objects.filter(user=request.user)
-    
-    
-    context = {'subjects': subjects, 'syllabuses': syllabuses, 'units': units,
-               'unit_topics': unit_topics}
+    context = {}
+    if request.user:
+        subjects = (request.user.teacherprofile.subjects.all() or 
+                    request.user.teacherprofile.subjects.all())
+                    
+        syllabuses = SyllabusFavourite.objects.filter(user=request.user)
+        units = UnitFavourite.objects.filter(user=request.user)
+        unit_topics = UnitTopicFavourite.objects.filter(user=request.user)
+        
+        
+        context = {'subjects': subjects, 'syllabuses': syllabuses, 'units': units,
+                   'unit_topics': unit_topics}
                 
     return render(request, 'uploader/favourites.html', context)
 
