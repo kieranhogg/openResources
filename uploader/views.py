@@ -617,11 +617,10 @@ def edit_lesson(request, slug):
             
     if request.POST and form.is_valid():
         lesson = form.save(commit=False)
-        if (l.title != lesson.title):
-            lesson.slug = safe_slugify(lesson.title, Lesson)
-            url = request.build_absolute_uri(reverse('uploader:lesson', 
-                                                     args=[lesson.slug]))
-            lesson.url = shorten_url(url)
+        lesson.slug = safe_slugify(lesson.title, Lesson)
+        url = request.build_absolute_uri(reverse('uploader:lesson', 
+                                                 args=[lesson.slug]))
+        lesson.url = shorten_url(url)
         lesson.save()
         return HttpResponseRedirect(reverse('uploader:user_lessons'))
             
