@@ -19,7 +19,7 @@
 </p>
 {% if unit.description %}
 <div id="description">
-    {{ unit.description }}
+    {{ unit.description|linebreaks }}
 </div>
 {% endif %}
 {% if resources %}
