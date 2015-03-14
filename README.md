@@ -1,1 +1,1 @@
-Just another crappy Django app.
+Code behind https://eduresourc.es
