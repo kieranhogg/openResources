@@ -4,6 +4,7 @@ from django.template.defaultfilters import filesizeformat
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import slugify
 from django.shortcuts import get_object_or_404
+from django.core.mail import send_mail
 from uploader.models import *
 
 
@@ -189,6 +190,16 @@ class TeacherForm(forms.Form):
                             forename=self.cleaned_data['first_name'],
                             surname=self.cleaned_data['last_name'])
         up.save()
+        
+        if settings.NEW_ACCOUNT_EMAIL:
+            message = "A new teacher has signed up. \n\n"
+            message += "Name: " + self.cleaned_data['first_name'] + " "
+            message += self.cleaned_data['last_name'] + "\n"
+            message += "Email: " + self.cleaned_data['email']
+            
+            send_mail('New Teacher', message, 'no_reply@eduresourc.es',
+                settings.NEW_ACCOUNT_EMAIL, fail_silently=False)
+        
         return new_user
         
 class TeacherProfileForm(forms.ModelForm):

@@ -32,7 +32,6 @@ MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 AUTHENTICATION_BACKENDS = (
     # Needed to login by username in Django admin, regardless of `allauth`
     "django.contrib.auth.backends.ModelBackend",
-
     # `allauth` specific authentication methods, such as login by e-mail
     "allauth.account.auth_backends.AuthenticationBackend",
 )
@@ -43,8 +42,6 @@ AUTHENTICATION_BACKENDS = (
 ALLOWED_HOSTS = []
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-AUTH_PROFILE_MODULE = 'accounts.UserProfile'
-ACCOUNT_SIGNUP_FORM_CLASS = 'uploader.forms.TeacherForm'
 # Application definition
 
 INSTALLED_APPS = (
@@ -75,15 +72,18 @@ INSTALLED_APPS = (
     
 )
 MICAWBER_PROVIDERS = 'micawber.contrib.mcdjango.providers.bootstrap_embedly'
+
 # Allauth
 SITE_ID = 1
-
-REGISTRATION_OPEN = True # If True, users can register
-ACCOUNT_ACTIVATION_DAYS = 7     # One-week activation window; you may, of course, use a different value.
-REGISTRATION_AUTO_LOGIN = True  # If True, the user will be automatically logged in.
-LOGIN_REDIRECT_URL = '/favourites/'  # The page you want users to arrive at after they successful log in
-LOGIN_URL = '/accounts/login/'  # The page users are directed to if they are not logged in,
-                                                                # and are trying to access pages requiring authentication
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_USERNAME_BLACKLIST = ['admin']
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
+REGISTRATION_OPEN = True
+ACCOUNT_ACTIVATION_DAYS = 7
+REGISTRATION_AUTO_LOGIN = True
+LOGIN_REDIRECT_URL = '/favourites/'
+LOGIN_URL = '/accounts/login/'
+ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URLL = '/favourites/'
 
 UPLOAD_FILE_TYPES = ['pdf', 'vnd.oasis.opendocument.text','vnd.ms-excel','msword','application/vnd.openxmlformats-officedocument.presentationml.presentation',]
 UPLOAD_FILE_MAX_SIZE = 52428800 # 50mb
