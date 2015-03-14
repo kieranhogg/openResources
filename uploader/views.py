@@ -940,7 +940,7 @@ def test(request, slug):
                         answer_list.append(answer)
                     
                     question.answers = answer_list
-        except ObjectDoesNotExist:
+        except ObjectDoesNotExist, AttributeError:
             questions = MultipleChoiceQuestion.objects.filter(
                 unit_topic=unit_topic)
             # FIXME think there's a function to do this
