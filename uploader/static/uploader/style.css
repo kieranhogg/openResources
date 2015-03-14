@@ -922,6 +922,9 @@ p.error em {
     background: green;
     color: #fff;
 }
+#messages ul {
+    list-style: none;
+}
 input[type=submit] {
     /*font-weight:normal;*/
     /*padding: 4px 8px;*/

@@ -191,14 +191,17 @@ class TeacherForm(forms.Form):
                             surname=self.cleaned_data['last_name'])
         up.save()
         
-        if settings.NEW_ACCOUNT_EMAIL:
+        try:
+            to = settings.NEW_ACCOUNT_EMAIL
             message = "A new teacher has signed up. \n\n"
             message += "Name: " + self.cleaned_data['first_name'] + " "
             message += self.cleaned_data['last_name'] + "\n"
             message += "Email: " + self.cleaned_data['email']
             
             send_mail('New Teacher', message, 'no_reply@eduresourc.es',
-                settings.NEW_ACCOUNT_EMAIL, fail_silently=False)
+                to, fail_silently=False)
+        except AttributeError: # no NEW_ACCOUNT_EMAIL setting
+            pass
         
         return new_user
         

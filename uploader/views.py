@@ -16,6 +16,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import authenticate, login
+from django.core.mail import send_mail
 
 from uploader.utils import *
 
@@ -280,6 +281,19 @@ def file(request, slug=None):
                 file.mimetype = request.FILES['file'].content_type
                 if request.user.is_authenticated():
                     file.uploader = request.user
+                else:
+                    try:
+                        to = settings.NEW_ACCOUNT_EMAIL
+                        message = "An anonymous file was uploaded. \n\n"
+                        message += "Title: " + file.title + "\n"
+                        message += "Filename: " + file.filename + "\n"
+                        message += "Filesize: " + filesizeformat(file.filesize)
+                        
+                        send_mail('New File', message, 'no_reply@eduresourc.es',
+                            to, fail_silently=True)
+                            
+                    except AttributeError: # no NEW_ACCOUNT_EMAIL setting
+                        pass
                 
                 file.slug = safe_slugify(file.title, File)
 
@@ -319,6 +333,23 @@ def bookmark(request, slug=None):
                 bookmark = form.save(commit=False)
                 bookmark.slug = safe_slugify(bookmark.title, Bookmark)
                 form.save()
+                
+                if not request.user.is_authenticated():
+                    try:
+                        to = settings.NEW_ACCOUNT_EMAIL
+                        message = "An anonymous bookmark was added. \n\n"
+                        message += "Title: " + bookmark.title + " "
+                        message += "URL: " + bookmark.url
+                        
+                        send_mail('New Bookmark', message, 'no_reply@eduresourc.es',
+                            to, fail_silently=True)
+                            
+                    except AttributeError: # no NEW_ACCOUNT_EMAIL setting
+                        pass
+                
+                form.save()
+
+                
                 return HttpResponseRedirect(
                     reverse('uploader:link_bookmark', args=[bookmark.slug]))
             else:
