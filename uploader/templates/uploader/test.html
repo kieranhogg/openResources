@@ -12,9 +12,10 @@
      {{ unit_topic.unit.syllabus|truncatechars:45 }}</a> >
     <a href="{% url 'uploader:unit' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug %}">
      {{ unit_topic.unit.title|truncatechars:45 }}</a> >
-     {{ unit_topic.title|truncatechars:45 }}
+    <a href="{% url 'uploader:unit_topic' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug  %}">
+     {{ unit_topic.title|truncatechars:45 }}</a> >
+    {% if request.user.studentprofile %}Test{% else %}Questions{% endif %}
 </div>
-{% include 'uploader/unit_topic_tabs.html' %}
 {% if not request.user.studentprofile %}
     <h2>Questions</h2>
     {% if request.user.teacherprofile %}
@@ -49,6 +50,13 @@
     <p>No questions</p>
     {% endif %}
 {% else %}
+<h2>{{ unit_topic }} Test</h2>
+<p>
+<a class='btn' href="{% url 'uploader:test_feedback' unit_topic.slug %}">
+    <img src="{% static 'uploader/img/18x18/leaderboard.png' %}" />
+    Feedback
+</a>
+</p>
     {% if question_count > 0 and questions %}
     <form action method="post">
         {% csrf_token %}

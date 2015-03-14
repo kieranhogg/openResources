@@ -27,7 +27,7 @@ list of available HTML tags are
 <form action method="post" novalidate>
     {% csrf_token %}
 {{ form }}
-<input type="submit" />
+<input type="submit" value="Save" />
 <h3>Upload Image</h3>
 <iframe src="/upload_image" width="80%"></iframe>
 {% endblock %}

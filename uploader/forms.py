@@ -209,9 +209,12 @@ class TeacherProfileForm(forms.ModelForm):
     class Meta:
         model = TeacherProfile
         exclude = ('user', 'score', 'profile_setup')
-        # widgets = {
-        #             'title': forms.ChoiceField()
-        #             }
+
+        
+class StudentProfileForm(forms.ModelForm):
+    class Meta:
+        model = StudentProfile
+        exclude = ('user', 'score', 'profile_setup')
 
 
 class LessonForm(forms.ModelForm):

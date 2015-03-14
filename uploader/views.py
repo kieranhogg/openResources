@@ -57,8 +57,10 @@ def subjects(request):
 def favourites(request):
     context = {}
     if request.user.is_authenticated():
-        subjects = (request.user.teacherprofile.subjects.all() or 
-                    request.user.teacherprofile.subjects.all())
+        try:
+            subjects = request.user.teacherprofile.subjects.all()
+        except ObjectDoesNotExist:
+            subjects = request.user.studentprofile.subjects.all()
                     
         syllabuses = SyllabusFavourite.objects.filter(user=request.user)
         units = UnitFavourite.objects.filter(user=request.user)
@@ -67,6 +69,7 @@ def favourites(request):
         
         context = {'subjects': subjects, 'syllabuses': syllabuses, 'units': units,
                    'unit_topics': unit_topics}
+
                 
     return render(request, 'uploader/favourites.html', context)
 
@@ -135,7 +138,13 @@ def unit_topic(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug)
     context = {'unit_topic': unit_topic, 'resources': resources, 
                'questions': questions, 'notes': notes}
     return render(request, 'uploader/unit_topic.html', context)  
- 
+    
+    
+def unit_topic_resources(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
+    unit_topic = get_object_or_404(UnitTopic, slug=slug)
+    resources = Resource.objects.filter(unit_topic=unit_topic)
+    context = {'unit_topic': unit_topic, 'resources': resources}
+    return render(request, 'uploader/unit_topic_resources.html', context) 
     
 def unit_resources(request, subject_slug, exam_slug, syllabus_slug, unit_slug):
     unit = get_object_or_404(Unit, slug=unit_slug)
@@ -1008,7 +1017,7 @@ def student_signup(request):
             g = Group.objects.get(code=request.POST['group_code'])
             s = form.save()
             StudentGroup(group=g, student=s.studentprofile).save()
-            messages.info(success, "Thanks for registering. You are now logged in.")
+            messages.success(request, "Thanks for registering. You are now logged in.")
             new_user = authenticate(username=request.POST['username'],
                                     password=request.POST['password'])
             login(request, new_user)

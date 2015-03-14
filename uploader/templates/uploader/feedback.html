@@ -11,31 +11,9 @@
      {{ unit_topic.unit.syllabus|truncatechars:45 }}</a> >
     <a href="{% url 'uploader:unit' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug %}">
      {{ unit_topic.unit.title|truncatechars:45 }}</a> >
-     {{ unit_topic.title|truncatechars:45 }}
-</div>
-<div id="tabs">
-<ul id="navigation">
-    <li><a href="{% url 'uploader:unit_topic' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
-        <img class="menu_icon" src="/static/uploader/img/18x18/download.png" height="18" width="18"/>
-        <span class="menu_text">Resources</span>
-        </a>
-    </li>
-    <li><a href="{% url 'uploader:view_notes' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
-        <img class="menu_icon" src="/static/uploader/img/18x18/book.png" height="18" width="18"/>
-        <span class="menu_text">Notes</span>
-        </a>
-    </li>
-    <li><a href="{% url 'uploader:test' unit_topic.slug %}">
-        <img class="menu_icon" src="/static/uploader/img/18x18/leaderboard.png" height="18" width="18"/>
-        <span class="menu_text">Test</span>
-        </a>
-    </li>
-    <li><a class="selected" href="javascript:(0)">
-        <img class="menu_icon" src="/static/uploader/img/18x18/eye.png" height="18" width="18"/>
-        <span class="menu_text">Feedback</span>
-        </a>
-    </li>
-</ul>
+    <a href="{% url 'uploader:unit_topic' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug  %}">
+     {{ unit_topic.title|truncatechars:45 }}</a> >
+     Feedback
 </div>
 <h2>Feedback</h2>
 {% if questions %} 
@@ -51,5 +29,7 @@
 {% endif %}
 <br /><br /><br />
 {% endfor %}
+{% else %}
+<p>No feedback yet, answer some questions.</p>
 {% endif %}
 {% endblock %}

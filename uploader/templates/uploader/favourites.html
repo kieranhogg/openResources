@@ -5,10 +5,10 @@
 <h2>My Favourites</h2>
 {% if user.is_authenticated %}
     <h3>Subjects</h3>
-    {% if subjects %}
     <p>To change your subjects, you can do so in your 
         <a href="{% url 'uploader:profile' %}">profile</a>.
     </p>
+    {% if subjects %}
         <div id="subjects">
             <ul>
                 {% for subject in subjects %}

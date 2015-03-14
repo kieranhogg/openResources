@@ -10,10 +10,11 @@
      {{ unit_topic.unit.syllabus|truncatechars:45 }}</a> >
     <a href="{% url 'uploader:unit' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug %}">
      {{ unit_topic.unit.title|truncatechars:45 }}</a> >
-     {{ unit_topic.title|truncatechars:45 }}
+    <a href="{% url 'uploader:unit_topic' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug  %}">
+     {{ unit_topic.title|truncatechars:45 }}</a> >
+     Resources
 </div>
-{% include 'uploader/unit_topic_tabs.html' %}
-<h2>{% block head_title %}{{ unit_topic.title }}{% endblock %}</h2>
+<h2>{% block head_title %}{{ unit_topic.title }} Resources{% endblock %}</h2>
 <!-- TODO write * -> <li> filter -->
 {% if unit_topic.description and unit_topic.description != "" %}
 <h3>Description</h3>
@@ -22,7 +23,6 @@
 </div>
 {% endif %}
 {% if resources %}
-<h3>Resources</h3>
 <ul>
 {% for resource in resources %}
     {% if resource.bookmark %}

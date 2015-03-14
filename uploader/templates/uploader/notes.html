@@ -12,9 +12,14 @@
      {{ unit_topic.unit.syllabus|truncatechars:45 }}</a> >
     <a href="{% url 'uploader:unit' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug %}">
      {{ unit_topic.unit.title|truncatechars:45 }}</a> >
-     {{ unit_topic.title|truncatechars:45 }}
+    <a href="{% url 'uploader:unit_topic' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug  %}">
+     {{ unit_topic.title|truncatechars:45 }}</a> >
+     Notes
 </div>
-{% include 'uploader/unit_topic_tabs.html' %}
+<a class='btn' href="{% url 'uploader:notes' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
+    <img src="{% static 'uploader/img/18x18/edit.png' %}" />
+    Edit
+</a>
 <div id="add-to-lesson">
 <a href="{% url 'uploader:add_item_to_lesson' unit_topic.slug 'notes' %}">
     <button class='btn'>

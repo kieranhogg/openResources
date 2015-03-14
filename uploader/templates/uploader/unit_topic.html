@@ -31,28 +31,26 @@
 <h3>Information</h3>
 <p>For this unit topic, we have the following:</p>
 <p>
-    <button class='btn'>
+    <a class='btn' href="{% url 'uploader:unit_topic_resources' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
     <img class="menu_icon" src="/static/uploader/img/18x18/download.png" height="18" width="18"/>
         <span class="menu_text">Resources 
         {% if resources %}✓ ({{ resources }})
         {% else %}✘{% endif %}
         </span>
-    </button>
+    </a>
     </p>
 <p>
-    <button class='btn'>
+    <a class='btn' href="{% url 'uploader:view_notes' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
     <img class="menu_icon" src="/static/uploader/img/18x18/book.png" height="18" width="18"/>
         <span class="menu_text">Notes {% if notes %}✓{% else %}✘{% endif %}</span>
-    </button>
+    </a>
 </p>
 <p>
-    <a href="{% url 'uploader:test' unit_topic.slug %}">
-    <button class='btn'>
+    <a class ='btn' href="{% url 'uploader:test' unit_topic.slug %}">
     <img class="menu_icon" src="/static/uploader/img/18x18/speech_bubble.png" height="18" width="18"/>
         <span class="menu_text">Questions 
         {% if questions %}✓ ({{ questions }})
         {% else %}✘{% endif %}</span>
-    </button>
     </a>
 </p>
 {% endblock %}
