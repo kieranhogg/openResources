@@ -53,7 +53,7 @@ def subjects(request):
     }
     return render(request, 'uploader/subjects.html', context)
 
-
+@login_required
 def favourites(request):
     context = {}
     if request.user.is_authenticated():
@@ -70,7 +70,7 @@ def favourites(request):
                 
     return render(request, 'uploader/favourites.html', context)
 
-
+@login_required
 def add_favourite(request, slug, thing):
     """ Adds items to favourites
     """
