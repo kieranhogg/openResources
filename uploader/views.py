@@ -719,6 +719,7 @@ def lesson_show(request, slug):
         {'lesson': l})
 
 
+@login_required
 def add_item_to_lesson(request, slug, type):
     
     if type == 'resource':
