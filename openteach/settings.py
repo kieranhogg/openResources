@@ -75,7 +75,7 @@ MICAWBER_PROVIDERS = 'micawber.contrib.mcdjango.providers.bootstrap_embedly'
 
 # Allauth
 SITE_ID = 1
-ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_EMAIL_VERIFICATION = 'optional'
 ACCOUNT_USERNAME_BLACKLIST = ['admin']
 ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
 REGISTRATION_OPEN = True
@@ -87,7 +87,6 @@ ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URLL = '/favourites/'
 
 UPLOAD_FILE_TYPES = ['pdf', 'vnd.oasis.opendocument.text','vnd.ms-excel','msword','application/vnd.openxmlformats-officedocument.presentationml.presentation',]
 UPLOAD_FILE_MAX_SIZE = 52428800 # 50mb
-
 
 
 MIDDLEWARE_CLASSES = (
