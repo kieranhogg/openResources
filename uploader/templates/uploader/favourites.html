@@ -68,7 +68,7 @@
             <ul>
                 {% for unit_topic in unit_topics %}
                 {% with unit_topic=unit_topic.unit_topic %}
-                    <a href="{% url 'uploader:unit_topic' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
+                    <a href="{% url 'uploader:unit_topic' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
                         <li>
                             {{ unit_topic }}
                         </li>
