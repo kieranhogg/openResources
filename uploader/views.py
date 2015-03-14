@@ -593,9 +593,9 @@ def user_lessons(request, user_id=None):
     # check if we've got any stuff added to lesson
     resources = request.session.get('resources', None)
     resource_list = []
-    count = 0
+    count = 1
+    
     if resources:
-        count = 1
         for resource in resources:
             _resource = get_object_or_404(Resource, slug=resource)
             if _resource is not None:
