@@ -10,11 +10,13 @@
      {{ syllabus|truncatechars:45 }}
 </div>
 <h2>{% block head_title %}{{ syllabus }}{% endblock %}</h2>
+{% if user.is_authenticated %}
 <p><a class='btn' href="{% url 'uploader:add_favourite' 'syllabus' syllabus.slug %}">
         <img src="{% static 'uploader/img/18x18/heart.png' %}" />
         Add to favourites
     </a>
 </p>
+{% endif %}
 </a>
 <div id="syllabus_validity">
     {% if syllabus.teach_from %}

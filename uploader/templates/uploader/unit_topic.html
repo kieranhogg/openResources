@@ -14,7 +14,7 @@
      {{ unit_topic.title|truncatechars:45 }}
 </div>
 <h2>{% block head_title %}{{ unit_topic.title }}{% endblock %}</h2>
-{% is user.is_authenticated %}
+{% if user.is_authenticated %}
 <p><a class='btn' href="{% url 'uploader:add_favourite' 'unit_topic' unit_topic.slug %}">
         <img src="{% static 'uploader/img/18x18/heart.png' %}" />
         Add to favourites
