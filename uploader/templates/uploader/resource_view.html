@@ -93,7 +93,7 @@ function vote(resourceID, rating)
                 {{ resource.file.uploader.st.udentprofile.forename }} {{ resource.file.uploader.teacherprofile.surname }}
             {% endif %}
         {% elif resource.bookmark %}
-            {% if resource.bookmark.uploaderteacherprofile %}
+            {% if resource.bookmark.uploader.teacherprofile %}
                 {{ resource.bookmark.uploader.teacherprofile.title }} {{ resource.bookmark.uploader.teacherprofile.surname }}
             {% elif resource.bookmark.uploader.studentprofile %}
                 {{ resource.bookmark.uploader.studentprofile.forename }} {{ resource.bookmark.uploader.teacherprofile.surname }}
