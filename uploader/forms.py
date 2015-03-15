@@ -88,6 +88,7 @@ class ImageForm(forms.ModelForm):
         widgets = {
             'uploader': forms.HiddenInput(),
         }
+        fields = '__all__'
         
 class MultipleChoiceQuestionForm(forms.ModelForm):
     answer1 = forms.CharField(label='First answer')
