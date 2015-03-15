@@ -21,7 +21,7 @@ their own page.</p>
         <th>Syllabus</th>
         <th>Unit</th>
         <th>Unit Topic</th>
-        <th width="14%">Actions</th>
+        <th width="16%">Actions</th>
     </tr>
     {% for resource in resources %}
     <tr> 
@@ -55,17 +55,16 @@ their own page.</p>
             {% endif %}
         </td>
         <td style='text-align: center'>
+            <a href="{% url 'uploader:add_item_to_lesson' resource.slug 'resource' %}">
+                <button class='btn'>
+                <img src="{% static 'uploader/img/18x18/inbox.png' %}" alt='Add to lesson' title='Add to lesson'/>
+                </button>
+            </a>
             {% if resource.file %}
             <a href="{% url 'uploader:link_file' resource.file.slug %}">
                 <button class="btn">
                 <!--<img src="{% static 'uploader/img/18x18/add.png' %}" alt="link" title="link"/>-->
                 Add Link
-                </button>
-            </a>
-            <a href="{% url 'uploader:delete_resource' resource.slug %}" onclick="javascript:return confirm('UNLINK this resource? To delete the file, delete it from the files tab')">
-                <button class="btn_danger">
-                    <!--<img src="{% static 'uploader/img/    18x18/unlink.png' %}" alt="unlink" title="unlink" />-->
-                    Unlink
                 </button>
             </a>
             {% elif resource.bookmark %}
@@ -75,13 +74,13 @@ their own page.</p>
                 Add Link
                 </button>
             </a>
+            {% endif %}
             <a href="{% url 'uploader:delete_resource' resource.slug %}" onclick="javascript:return confirm('UNLINK this resource? To delete the bookmark, delete it from the files tab')">
                 <button class="btn_danger">
                 <!--<img src="{% static 'uploader/img/18x18/unlink.png' %}" alt="unlink" title="unlink"/>-->
                 Unlink
                 </button>
             </a>
-            {% endif %}
         </td>
     </tr>
     {% endfor %}

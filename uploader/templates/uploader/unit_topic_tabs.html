@@ -2,17 +2,17 @@
 <div class="shortcuts">
   <p>
     <a class='btn' href="{% url 'uploader:unit_topic_resources' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
-    <img class="menu_icon" src="/static/uploader/img/18x18/download.png" height="18" width="18"/>
+    <img class="menu_icon" src="/static/uploader/img/18x18/download.png" height="18" width="18" alt='Resources' title='Resources' />
     </a>
     </p>
 <p>
     <a class='btn' href="{% url 'uploader:view_notes' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
-    <img class="menu_icon" src="/static/uploader/img/18x18/book.png" height="18" width="18"/>
+    <img class="menu_icon" src="/static/uploader/img/18x18/book.png" height="18" width="18" alt='Notes' title='Notes' />
     </a>
 </p>
 <p>
     <a class ='btn' href="{% url 'uploader:test' unit_topic.slug %}">
-    <img class="menu_icon" src="/static/uploader/img/18x18/speech_bubble.png" height="18" width="18"/>
+    <img class="menu_icon" src="/static/uploader/img/18x18/speech_bubble.png" height="18" width="18" alt='Questions' title='Questions' />
     </a>
 </p>
 </div>
