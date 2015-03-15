@@ -47,7 +47,7 @@ class ExamBoardAdmin(admin.ModelAdmin):
 class ExamLevel(models.Model):
     NONE = '0'
     KS1 = '1'
-    KS3 = '2'
+    KS2 = '2'
     KS3 = '3'
     KS4 = '4'
     KS5 = '5'
