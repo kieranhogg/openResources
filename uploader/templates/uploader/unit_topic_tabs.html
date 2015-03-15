@@ -1,46 +1,18 @@
 {% load static %}
-<div id="tabs">
-<ul id="navigation">
-    <li>{% if resources_v %}<a class="selected" href="javascript:(0)">
-        {% else %} 
-        <a href="{% url 'uploader:unit_topic' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
-        {% endif %}
-        <img class="menu_icon" src="/static/uploader/img/18x18/download.png" height="18" width="18"/>
-        <span class="menu_text">Resources</span>
-        </a>
-    </li>
-    <li>{% if notes_v %}<a class="selected" href="javascript:(0)">
-        {% else %} 
-        <a href="{% url 'uploader:view_notes' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
-        {% endif %}
-        <img class="menu_icon" src="/static/uploader/img/18x18/book.png" height="18" width="18"/>
-        <span class="menu_text">Notes</span>
-        </a>
-    </li>
-    {% if request.user.studentprofile %}
-    <li>{% if questions_v %}<a class="selected" href="javascript:(0)">
-        {% else %}<a href="{% url 'uploader:test' unit_topic.slug %}">
-        <img class="menu_icon" src="/static/uploader/img/18x18/leaderboard.png" height="18" width="18"/>
-        {% endif %}
-        <span class="menu_text">Test</span>
-        </a>
-    </li>
-    <li>{% if feedback_v %}<a class="selected" href="javascript:(0)">
-        {% else %}<a href="{% url 'uploader:test_feedback' unit_topic.slug %}">
-        <img class="menu_icon" src="/static/uploader/img/18x18/eye.png" height="18" width="18"/>
-        {% endif %}
-        <span class="menu_text">Feedback</span>
-        </a>
-    </li>
-    {% else %}
-        <li>{% if questions_v %}<a class="selected" href="javascript:(0)">
-        {% else %} <a class="selected" href="{% url 'uploader:test' unit_topic.slug %}">
-        <img class="menu_icon" src="/static/uploader/img/18x18/speech_bubble.png" height="18" width="18"/>
-        {% endif %}
-        <span class="menu_text">Questions</span>
-        </a>
-    </li>
-    {% endif %}
-
-</ul>
+<div class="shortcuts">
+  <p>
+    <a class='btn' href="{% url 'uploader:unit_topic_resources' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
+    <img class="menu_icon" src="/static/uploader/img/18x18/download.png" height="18" width="18"/>
+    </a>
+    </p>
+<p>
+    <a class='btn' href="{% url 'uploader:view_notes' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
+    <img class="menu_icon" src="/static/uploader/img/18x18/book.png" height="18" width="18"/>
+    </a>
+</p>
+<p>
+    <a class ='btn' href="{% url 'uploader:test' unit_topic.slug %}">
+    <img class="menu_icon" src="/static/uploader/img/18x18/speech_bubble.png" height="18" width="18"/>
+    </a>
+</p>
 </div>

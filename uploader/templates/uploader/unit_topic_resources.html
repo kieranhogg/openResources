@@ -15,6 +15,7 @@
      Resources
 </div>
 <h2>{% block head_title %}{{ unit_topic.title }} Resources{% endblock %}</h2>
+{% include 'uploader/unit_topic_tabs.html' %}
 <!-- TODO write * -> <li> filter -->
 {% if unit_topic.description and unit_topic.description != "" %}
 <h3>Description</h3>

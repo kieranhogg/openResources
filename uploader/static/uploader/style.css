@@ -431,6 +431,10 @@ h6 {
 #link a {
     vertical-align: middle;
 }
+.shortcuts {
+  position: fixed;
+  margin-left: -60px;
+}
 .actions {
     margin: 15px 0;
 }
