@@ -46,12 +46,16 @@ class ExamBoardAdmin(admin.ModelAdmin):
 
 class ExamLevel(models.Model):
     NONE = '0'
+    KS1 = '1'
+    KS3 = '2's
     KS3 = '3'
     KS4 = '4'
     KS5 = '5'
 
     YEAR_IN_SCHOOL_CHOICES = (
         (NONE, 'None'),
+        (KS1, 'KS1'),
+        (KS2, 'KS2'),
         (KS3, 'KS3'),
         (KS4, 'KS4'),
         (KS5, 'KS5'),
