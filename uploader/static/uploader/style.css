@@ -104,36 +104,6 @@ h6 {
     color: #fff;
     /*text-shadow: 1px 1px #fff;*/
 }
-/** main page layout */
-#subjects, #lesson_items {
-    width: 93%;
-    margin: 0 auto;
-}
-#subjects li, #lesson_items li {
-        text-align: center;
-        padding: 5px;
-        width: 300px;
-        min-height: 150px;
-        /*border: 1px solid #000;*/
-        display: -moz-inline-stack;
-        display: inline-block;
-        vertical-align: top;
-        margin: 5px;
-        zoom: 1;
-        *display: inline;
-        _height: 250px;
-}
-#lesson_items li {
-    padding: 5px;
-    width: 20%;
-    border: 1px solid #E5E5E5;
-    background-color: #FCFCFC;
-    text-align: left;
-}
-#lesson_items li:hover {
-    border: 1px solid #cc0000;
-}
-
 /** menu */
 
 #menu {
@@ -404,6 +374,39 @@ h6 {
 }
 #link_or_oembed p {
     text-align: center;
+}
+/* tiles */
+#subjects, #lesson_items {
+    width: 93%;
+    margin: 0 auto;
+}
+#subjects li, #lesson_items li {
+        text-align: center;
+        padding: 5px;
+        width: 300px;
+        min-height: 150px;
+        /*border: 1px solid #000;*/
+        display: -moz-inline-stack;
+        display: inline-block;
+        vertical-align: top;
+        margin: 5px;
+        zoom: 1;
+        *display: inline;
+        _height: 250px;
+}
+#lesson_items li {
+    padding: 5px;
+    width: 20%;
+    border: 1px solid #E5E5E5;
+    background-color: #FCFCFC;
+    text-align: left;
+}
+#lesson_items li:hover {
+    border: 1px solid #cc0000;
+}
+.task_num {
+    float: right;
+    font-size: 300%;
 }
 /* download page */
 #resource_details {
