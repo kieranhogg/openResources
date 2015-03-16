@@ -533,13 +533,18 @@ def check_lesson_items(request, num_items):
 @login_required
 def user_lessons(request, user_id=None):
     form_errors = []
+    form_data = None
     
-    if request.POST.get('submit', None):
-        if request.POST.get('clear', None) == 'on':
+    if request.POST.get('submit', False):
+        form_data = request.POST
+        if request.POST.get('clear', False) == 'on':
             request.session['resources'] = None
             request.session['notes'] = None
             request.session['tests'] = None
             request.session['tasks'] = None
+        
+        elif request.POST.get('add_task'):
+            add_item_to_lesson(request, None, 'task')
         elif not request.POST['title']:
             form_errors.append('Please enter a lesson title')
         else:
@@ -638,7 +643,7 @@ def user_lessons(request, user_id=None):
     return render(request, 'uploader/user_lessons.html', 
         {'resources': resource_list, 'notes': notes_list, 
          'tests': tests_list, 'lessons': lessons, 'tasks': tasks_list, 
-         'time': now, 'form_errors': form_errors})
+         'time': now, 'form_errors': form_errors, 'form_data': form_data})
 
 
 @login_required
@@ -767,9 +772,7 @@ def add_item_to_lesson(request, slug, type):
             request.session['tasks'] = (slug,)
         elif slug not in request.session['tasks']:
             request.session['tasks'].append(slug)
-        request.session.modified = True 
-        messages.success(request, "Added to a new lesson, go to My " + 
-                                  "Folder > Lessons to view")
+        request.session.modified = True
     
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 

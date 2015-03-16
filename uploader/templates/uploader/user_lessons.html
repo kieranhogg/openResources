@@ -14,9 +14,9 @@ you can leave, add some more items and come back.</p>
     {% endfor %}
     <form action method="post">
         {% csrf_token %}
-    <p><label for="title">Lesson title</label><input name="title" /></p>
+    <p><label for="title">Lesson title</label><input name="title" value="{{ form_data.title }}" /></p>
     <p><label for="objectives">Learning Objectives/outcomes</label>
-        <textarea name="objectives"></textarea></p>
+        <textarea name="objectives" value="{{ form_data.objectives }}"></textarea></p>
         <p class="help_text">For bullet points, use *. Other markdown supported.</p>
 {% else %}
 <p>If you add items (resources, notes or questions) to a lesson, they will show up on this page and you can create
@@ -31,11 +31,15 @@ new lessons with those items.</p>
         <input type="hidden" name="slug{{ resource.count }}" value="{{ resource.slug }}" />
         <input type="hidden" name="type{{ resource.count }}" value="resources" />
         <div class='order'>
-        <p><label for="order{{ resource.count }}">Order</label><input name="order{{ resource.count }}" style="width: 20px" value="{{ resource.count }}" /></p>
+            <p>
+                <label for="order{{ resource.count }}">Order</label>
+                <input name="order{{ resource.count }}" style="width: 20px" value="{{ resource.count }}" />
+            </p>
         </div>
         <div class="instructions">
-        <p><label for="instructions{{resource.count}}">Instructions</label>
-        <textarea name="instructions{{resource.count}}"></textarea></p>
+            <p><label for="instructions{{resource.count}}">Instructions</label>
+                <textarea name="instructions{{resource.count}}" value="{{ form_data.val }}"></textarea>
+            </p>
         </div>
         </div>
     {% endfor %}
@@ -98,10 +102,10 @@ new lessons with those items.</p>
 
 {% if resources or notes or questions or tasks %}
 <p>
-    <a class='btn' href="{% url 'uploader:add_item_to_lesson' time 'task' %}">
+    <label for="add_task">Add extra blank task? (Click submit after)</label>
+    <input type="checkbox" name="add_task" />
         <img src="{% static 'uploader/img/18x18/add.png' %}" />
         Add blank task
-    </a>
 </p>
 <p>
     <label for="public">Lesson is visible to others?</label>
