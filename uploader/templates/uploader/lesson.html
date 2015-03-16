@@ -9,6 +9,9 @@
 {% for item in lesson_items %}
     <li>
     <h3 class="task_num">{{ forloop.counter }}</h3>
+    {% if item.instructions %}
+    <p>{{ item.instructions|linebreaks }}</p>
+    {% endif %}
     {% if item.type == 'resources' %}
     <p>
     <a href="{% url 'uploader:view_resource' item.slug %}">
@@ -27,13 +30,6 @@
         Take {{ item.title }} test
     </a>
     </p>
-    {% endif %}
-    
-    {% if item.instructions and item.type != "task" %}
-    <h4>Instructions</h4>
-    <p>{{ item.instructions|linebreaks }}</p>
-    {% elif item.instructions %}
-    <p>{{ item.instructions|linebreaks }}</p>
     {% endif %}
     </li>
 {% endfor %}
