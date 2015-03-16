@@ -12,12 +12,14 @@
     {% if item.type == 'resources' %}
     <p>
     <a href="{% url 'uploader:view_resource' item.slug %}">
-        Open {{ item.title }} resource
+        <img src="{% static 'uploader/img/18x18/eye.png' %}" /> 
+        {{ item.title }} resource
     </a>
     </p>
     {% elif item.type == 'notes' %}
     <p><a href="{% url 'uploader:view_notes_d' item.slug %}">
-        Open {{ item.title }} notes
+        <img src="{% static 'uploader/img/18x18/eye.png' %}" /> 
+        {{ item.title }} notes
     </a>
     </p>
     {% elif item.type == 'test' %}
