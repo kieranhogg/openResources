@@ -29,9 +29,9 @@
     
     {% if item.instructions and item.type != "task" %}
     <h4>Instructions</h4>
-    <p>{{ item.instructions }}</p>
+    <p>{{ item.instructions|linebreaks }}</p>
     {% elif item.instructions %}
-    <p>{{ item.instructions }}</p>
+    <p>{{ item.instructions|linebreaks }}</p>
     {% endif %}
     </li>
 {% endfor %}
