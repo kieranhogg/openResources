@@ -134,9 +134,12 @@ def unit_topic(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug)
     notes = Note.objects.filter(unit_topic=unit_topic).count()
     question = MultipleChoiceQuestion.objects.filter(unit_topic=unit_topic)
     questions = question.count()
+    related = (UnitTopicLink.objects.filter(unit_topic_1=unit_topic) | 
+        UnitTopicLink.objects.filter(unit_topic_2=unit_topic))
 
     context = {'unit_topic': unit_topic, 'resources': resources, 
-               'questions': questions, 'notes': notes}
+               'questions': questions, 'notes': notes, 
+               'related_topics': related}
     return render(request, 'uploader/unit_topic.html', context)  
     
     

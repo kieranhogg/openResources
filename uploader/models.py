@@ -578,8 +578,11 @@ class Group(models.Model):
     name = models.CharField(max_length='100')
     teacher = models.ForeignKey(TeacherProfile)
     slug = models.SlugField(unique=True, max_length='100')
-    code = models.CharField(max_length='4')
+    code = models.CharField(max_length='4', unique=True)
     pub_date = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ["name", "teacher"]
     
 
 class StudentGroup(models.Model):
@@ -587,7 +590,18 @@ class StudentGroup(models.Model):
     student = models.ForeignKey(StudentProfile)
     joined = models.DateTimeField(auto_now_add=True)
     
+    class Meta:
+        unique_together = ["group", "student"]
+    
 
+class UnitTopicLink(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    unit_topic_1 = models.ForeignKey(UnitTopic)
+    unit_topic_2 = models.ForeignKey(UnitTopic, related_name='unit_topic_2')
+    pub_date = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ["unit_topic_1", "unit_topic_2"]
     
 ######## signals TODO move to own file #########
 

@@ -31,7 +31,7 @@
 <h3>Information</h3>
 <p>For this unit topic, we have the following:</p>
 <p>
-    <a class='btn' href="{% url 'uploader:unit_topic_resources' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
+    <a href="{% url 'uploader:unit_topic_resources' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
     <img class="menu_icon" src="/static/uploader/img/18x18/download.png" height="18" width="18"/>
         <span class="menu_text">Resources 
         {% if resources %}✓ ({{ resources }})
@@ -40,17 +40,36 @@
     </a>
     </p>
 <p>
-    <a class='btn' href="{% url 'uploader:view_notes' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
+    <a href="{% url 'uploader:view_notes' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
     <img class="menu_icon" src="/static/uploader/img/18x18/book.png" height="18" width="18"/>
         <span class="menu_text">Notes {% if notes %}✓{% else %}✘{% endif %}</span>
     </a>
 </p>
 <p>
-    <a class ='btn' href="{% url 'uploader:test' unit_topic.slug %}">
+    <a href="{% url 'uploader:test' unit_topic.slug %}">
     <img class="menu_icon" src="/static/uploader/img/18x18/speech_bubble.png" height="18" width="18"/>
         <span class="menu_text">Questions 
         {% if questions %}✓ ({{ questions }})
         {% else %}✘{% endif %}</span>
     </a>
 </p>
+{% if related_topics %}
+    <h3>Related Unit Topics</h3>
+    <p>You might also want to check other similar unit topics for resources.</p>
+    <ul>
+    {% for related in related_topics %}
+    <li>
+    {% if related.unit_topic_1 == unit_topic %}
+        <a href="{% url 'uploader:unit_topic' related.unit_topic_2.unit.syllabus.subject.slug related.unit_topic_2.unit.syllabus.exam_level.slug related.unit_topic_2.unit.syllabus.slug related.unit_topic_2.unit.slug related.unit_topic_2.slug %}">
+        {{ related.unit_topic_2.unit.syllabus }} > {{ related.unit_topic_2 }}
+        </a>
+    {% else %}
+        <a href="{% url 'uploader:unit_topic' related.unit_topic_1.unit.syllabus.subject.slug related.unit_topic_1.unit.syllabus.exam_level.slug related.unit_topic_1.unit.syllabus.slug related.unit_topic_1.unit.slug related.unit_topic_1.slug %}">
+        {{ related.unit_topic_1.unit.syllabus }} > {{ related.unit_topic_1 }} 
+        </a>
+    </li>
+    {% endif %}
+    {% endfor %}
+    </ul>
+{% endif %}
 {% endblock %}
