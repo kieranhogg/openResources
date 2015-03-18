@@ -16,6 +16,7 @@ urlpatterns = patterns('',
     url(r'^favourites/add-(?P<thing>[\w\d-]+)/(?P<slug>[\w\d-]+)$', views.add_favourite, name='add_favourite'),
     
     url(r'^resource/(?P<slug>[\w\d-]+)/$', views.view_resource, name='view_resource'),
+    url(r'^resource/(?P<slug>[\w\d-]+)/embed/$', views.view_resource_embed, name='view_resource_embed'),
     url(r'^resource/(?P<slug>[\w\d-]+)/delete$', views.delete_resource, name='delete_resource'),
     url(r'^lesson/(?P<slug>[\w\d-]+)/add-(?P<type>[\w]+)', views.add_item_to_lesson, name='add_item_to_lesson'),
     url(r'^lesson/(?P<slug>[\w\d-]+)/edit', views.edit_lesson, name='edit_lesson'),

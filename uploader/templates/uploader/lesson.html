@@ -14,19 +14,19 @@
     {% endif %}
     {% if item.type == 'resources' %}
     <p>
-    <a href="{% url 'uploader:view_resource' item.slug %}">
+    <a href="javascript:void(0)" class="jQuery fancybox.iframe" onclick="jQuery.fancybox({href:'{% url 'uploader:view_resource_embed' item.slug %}', type: 'iframe', width: 1000, height: 600, overlayColor: '#000', hideOnContentClick: false, hideOnOverlayClick: false });">
         <img src="{% static 'uploader/img/18x18/eye.png' %}" /> 
         {{ item.title }} resource
     </a>
     </p>
     {% elif item.type == 'notes' %}
-    <p><a href="{% url 'uploader:view_notes_d' item.slug %}">
+    <p><a href="{% url 'uploader:view_notes_d' item.slug %}" class="jQuery fancybox.iframe">
         <img src="{% static 'uploader/img/18x18/eye.png' %}" /> 
         {{ item.title }} notes
     </a>
     </p>
     {% elif item.type == 'test' %}
-    <p><a href="{% url 'uploader:test' item.slug %}">
+    <p><a href="{% url 'uploader:test' item.slug %}" class="jQuery fancybox.iframe">
         Take {{ item.title }} test
     </a>
     </p>

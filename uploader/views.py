@@ -223,10 +223,14 @@ def unit(request, subject_slug, exam_slug, syllabus_slug, slug):
 #     return render(request, 'uploader/unit_topic.html', context)
 
     
-def view_resource(request, slug):
+def view_resource(request, slug, embed=False):
     """A single resource view
     """
     resource = get_object_or_404(Resource, slug=slug)
+    if embed:
+        template = 'uploader/resource_view_embed.html'
+    else:
+        template = 'uploader/resource_view.html'
     
     context = {
         'resource': resource, 
@@ -257,8 +261,12 @@ def view_resource(request, slug):
             session = api.create_session(doc_id, duration=300)
             context['ses_id'] = session['id']
 
-    return render_to_response('uploader/resource_view.html', 
+    return render_to_response(template, 
         context_instance=RequestContext(request, context))
+
+
+def view_resource_embed(request, slug):
+    return view_resource(request, slug, True)
 
         
 @login_required

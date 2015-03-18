@@ -827,7 +827,13 @@ button, input[type=submit], .btn {
 .btn:hover {
     color: #000;
 }
-
+.btn_good {
+  padding: 12px 20px;
+  background-color: forestgreen;
+  box-shadow: 1px 1px 0px rgba(255, 255, 255, 0.4) inset;
+  color: white;
+  text-shadow: 0px 1px 1px black;
+}
 input[type=submit] {
     display:block;
     margin: 0 auto;

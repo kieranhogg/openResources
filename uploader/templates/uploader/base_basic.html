@@ -1,0 +1,24 @@
+{% load gravatar %}
+{% load staticfiles %}
+{% load tags %}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<script src="{% static 'js/jquery.js' %}" type="text/javascript"></script>
+<script src="{% static 'jquery.fancybox.js' %}" type="text/javascript"></script>
+<link rel="stylesheet" href="{% static 'jquery.fancybox.css' %}" type="text/css" media="screen" />
+<link rel="stylesheet" type="text/css" href="{% static 'uploader/style.css' %}" />
+<link rel="stylesheet" type="text/css" media="only screen and (max-width: 480px), only screen and (max-device-width: 480px)" href="{% static 'uploader/small-devices.css' %}" />
+<title>{{ SITE_NAME }}</title>
+<link rel="shortcut icon" type="image/png" href="{{STATIC_URL}}/favicon.ico" />
+</head>
+<body>
+<div id="container">
+    <div id="content">
+        {% block body_block %}{% endblock %}
+    </div>
+</div>
+</body>
+</html>

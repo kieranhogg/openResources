@@ -8,5 +8,7 @@ django-registration
 django-allauth
 django-gravatar2
 django-jquery
-django-suit
+#django-suit
 micawber
+django-grappelli
+python-boxview

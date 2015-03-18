@@ -1,0 +1,36 @@
+{% extends 'uploader/base_basic.html' %}
+{% load url from future %}
+{% load micawber_tags %}
+{% load static %}
+{% block body_block %}
+
+{% if resource.file %}
+    {% if ses_id %}
+    <p>
+    <iframe src="https://view-api.box.com/1/sessions/{{ ses_id }}/view?theme=light" seamless fullscreen style="display: block; margin: 0 auto; border: none; width:1000px;height:600px"></iframe>
+    </p>
+    {% endif %}
+    
+{% else %}
+    <div id="link_or_oembed">
+    <p><strong>{{ resource.bookmark.link | oembed }}</strong></p>
+    </div>
+{% endif %}
+<div class="action">
+    
+    {% if resource.file %}
+    <a href='{{ MEDIA_URL }}{{ resource.file.file }}'>
+        <button class='btn'>
+        Download
+        </button>    
+    </a>
+        
+    {% else %}
+        <div id="link">
+            <a href='{{ resource.bookmark.link }}'>
+                <button class='btn'>Open link</button>
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
