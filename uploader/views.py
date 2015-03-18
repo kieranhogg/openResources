@@ -236,8 +236,7 @@ def view_resource(request, slug):
     if resource.file:
         api = boxview.BoxView(settings.BOX_VIEW_KEY)
         file = str(settings.MEDIA_URL + resource.file.filename)
-        
-        doc = api.create_document(url=file)
+        doc = api.create_document(url=resource.file.file.url)
         
         doc_id = doc['id']
         
