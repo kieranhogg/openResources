@@ -85,8 +85,18 @@ LOGIN_REDIRECT_URL = '/favourites/'
 LOGIN_URL = '/accounts/login/'
 ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URLL = '/favourites/'
 
-UPLOAD_FILE_TYPES = ['pdf', 'vnd.oasis.opendocument.text','vnd.ms-excel','msword','application/vnd.openxmlformats-officedocument.presentationml.presentation',]
-UPLOAD_FILE_MAX_SIZE = 52428800 # 50mb
+CONTENT_TYPES = ['pdf', 
+                    'vnd.oasis.opendocument.text',
+                    'vnd.ms-excel',
+                    'application/msword',
+                    'application/excel',
+                    'application/mspowerpoint',
+                    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+]
+                    
+MAX_UPLOAD_SIZE = 52428800 # 50mb
 
 
 MIDDLEWARE_CLASSES = (

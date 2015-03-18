@@ -18,7 +18,7 @@ class BookmarkForm(forms.ModelForm):
 
 
 class FileForm(forms.ModelForm):
-    url = forms.URLField(help_text='Or save file from URL')
+    url = forms.URLField(help_text='Or save file from URL', required=False)
     class Meta:
         model = File
         # exclude = ('approved', 'uploader', 'mimetype', 'filesize', 'filename',
@@ -27,28 +27,29 @@ class FileForm(forms.ModelForm):
         fields = ['title', 'file', 'url', 'description', 'type', 
                   'uploader_is_author', 'author', 'author_link', 'licence']
 
+    def clean_file(self):
+        file = self.cleaned_data['file']
+        content_type = file.content_type
+        if content_type in settings.CONTENT_TYPES:
+            if content._size > settings.MAX_UPLOAD_SIZE:
+                raise forms.ValidationError(_('Please keep filesize under %s. Current filesize %s') % (filesizeformat(settings.MAX_UPLOAD_SIZE), filesizeformat(content._size)))
+        else:
+            raise forms.ValidationError(_('File type is not supported'))
+        return file
+        
     def clean(self):
         data = super(FileForm, self).clean()
         if not data.get('url') and not data.get('file'):
              raise forms.ValidationError("Either upload a file or specify a " +
                                          "URL to a file")
-            
-                                         
-        data = super(FileForm, self).clean()
-        valid = super(FileForm, self).is_valid()
+    
+    def clean_url(self):
+        url = self.cleaned_data.get('url')
+        if url:
+            mimetype, encoding = mimetypes.guess_type(url)
+            if mimetype not in settings.CONTENT_TYPES:
+                raise forms.ValidationError(_('File type is not supported'))
 
-        try:
-            if data.content_type in settings.UPLOAD_FILE_TYPES:
-                if data.size > settings.UPLOAD_FILE_MAX_SIZE:
-                    raise forms.ValidationError(_(
-                        'File size must be under%s, yours was %s.') %
-                        (filesizeformat(settings.UPLOAD_FILE_MAX_SIZE),
-                         filesizeformat(data.size)))
-                else:
-                    raise forms.ValidationError(_(
-                        'File type (%s) not supported.') % data.content_type)
-        except AttributeError:
-            pass
 
     
 class LinkResourceForm(forms.ModelForm):

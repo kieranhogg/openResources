@@ -14,7 +14,7 @@ from django.contrib.auth.models import User
 from django.views.generic.edit import UpdateView
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.contrib.auth import authenticate, login
 from django.core.mail import send_mail
 from django.core.files import File as DjangoFile
@@ -325,6 +325,8 @@ def file(request, slug=None):
                 file = form.save(commit=False)
                 
                 # if we are fetching from a URL
+                mimetype = None
+                
                 if request.POST['url']:
                     url = request.POST['url']
                     filename = url.split('/')[-1]
@@ -375,9 +377,7 @@ def file(request, slug=None):
     else:
         form = FileForm(instance=file)
 
-    return render_to_response('uploader/add_file.html', {
-        'form': form,
-    }, context_instance=RequestContext(request))
+    return render(request, 'uploader/add_file.html', {'form': form})
 
 
 def bookmark(request, slug=None):
