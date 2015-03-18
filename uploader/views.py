@@ -240,14 +240,22 @@ def view_resource(request, slug):
         
         doc_id = doc['id']
         
+        count = 0
+        success = True
         while True:
             if not bool(api.ready_to_view(doc_id)):
-                time.sleep(0.5)
+                if count == 5:
+                    success = False
+                    break
+                else: 
+                    time.sleep(0.5)
+                    count += 0.5
             else:
                 break
         
-        session = api.create_session(doc_id, duration=300)
-        context['ses_id'] = session['id']
+        if success:
+            session = api.create_session(doc_id, duration=300)
+            context['ses_id'] = session['id']
 
     return render_to_response('uploader/resource_view.html', 
         context_instance=RequestContext(request, context))

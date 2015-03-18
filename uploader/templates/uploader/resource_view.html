@@ -132,9 +132,12 @@ function vote(resourceID, rating)
             {{ resource.file.uploader }}.
         </a>
     {% endif %}
+    
+    {% if ses_id %}
     <p>
     <iframe src="https://view-api.box.com/1/sessions/{{ ses_id }}/view?theme=light" seamless fullscreen style="display: block; margin: 0 auto; border: none; width:1000px;height:600px"></iframe>
     </p>
+    {% endif %}
     
     {% if not "None" in resource.file.licence %}
     Published under 
