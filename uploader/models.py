@@ -290,7 +290,7 @@ class Bookmark(models.Model):
     link = models.URLField(max_length=400)
     description = models.TextField(null=True)
     uploader = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
-    screenshot = models.ImageField(upload_to='screenshots/%Y/%m', null=True)
+    screenshot = models.ImageField(upload_to='screenshots/%Y/%m', null=True, blank=True)
     slug = models.SlugField(unique=True, max_length=100)
     pub_date = models.DateTimeField(
         'Date published',
