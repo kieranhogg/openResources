@@ -125,24 +125,32 @@ function vote(resourceID, rating)
 </div>
 
 {% if resource.file %}
-<div id="author">
-{% if not resource.file.uploader_is_author %}
-Resource created by 
-    <a href="{{ resource.file.author_link }}">
-        {{ resource.file.uploader }}.
-    </a>
-{% endif %}
-{% if not "None" in resource.file.licence %}
-Published under 
-        <a href="{{ resource.licence.link }}">
-            {{ resource.file.licence }} licence
+    <div id="author">
+    {% if not resource.file.uploader_is_author %}
+    Resource created by 
+        <a href="{{ resource.file.author_link }}">
+            {{ resource.file.uploader }}.
         </a>
-{% endif %}
-</div>
+    {% endif %}
+    <p>
+    <iframe src="https://view-api.box.com/1/sessions/{{ ses_id }}/view?theme=light" seamless fullscreen style="display: block; margin: 0 auto; border: none; width:1200px;height:1000px"></iframe>
+    </p>
+    
+    {% if not "None" in resource.file.licence %}
+    Published under 
+            <a href="{{ resource.licence.link }}">
+                {{ resource.file.licence }} licence
+            </a>
+    {% endif %}
+    <br />
+
+    </div>
 {% else %}
-<div id="link_or_oembed">
-<p><strong>{{ resource.bookmark.link | oembed }}</strong></p>
-</div>
+    <div id="link_or_oembed">
+    <p><strong>{{ resource.bookmark.link | oembed }}</strong></p>
+    </div>
+
+
 {% endif %}
 <div id="published">Uploaded {{ resource.pub_date }}</div>
 

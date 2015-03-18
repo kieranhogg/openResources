@@ -17,6 +17,8 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import authenticate, login
 from django.core.mail import send_mail
+from boxview import boxview
+
 
 from uploader.utils import *
 
@@ -231,6 +233,23 @@ def view_resource(request, slug):
         'rating': get_resource_rating(resource.id),
         'rating_val': get_resource_rating(resource.id, 'values')
     }
+    if resource.file:
+        api = boxview.BoxView(settings.BOX_VIEW_KEY)
+        file = str(settings.MEDIA_URL + resource.file.filename)
+        
+        doc = api.create_document(url=file)
+        
+        doc_id = doc['id']
+        
+        while True:
+            if not bool(api.ready_to_view(doc_id)):
+                time.sleep(0.5)
+            else:
+                break
+        
+        session = api.create_session(doc_id, duration=300)
+        context['ses_id'] = session['id']
+
     return render_to_response('uploader/resource_view.html', 
         context_instance=RequestContext(request, context))
 
