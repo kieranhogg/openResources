@@ -232,7 +232,7 @@ class File(models.Model):
     )
     title = models.CharField(max_length=200)
     filename = models.CharField(max_length=200)
-    file = models.FileField(upload_to='%Y/%m')
+    file = models.FileField(upload_to='%Y/%m', blank=True)
     mimetype = models.CharField(max_length=200)
     filesize = models.IntegerField()
     description = models.TextField('Description', null=True)
@@ -533,6 +533,7 @@ class Lesson(models.Model):
     objectives = models.TextField(blank=True, null=True)
     url = models.URLField()
     public = models.BooleanField(default=True, blank=True)
+    unit_topic = models.ForeignKey(UnitTopic, null=True, blank=True)
     pub_date = models.DateTimeField(auto_now_add=True)
     
     def __unicode__(self):

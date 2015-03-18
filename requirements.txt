@@ -12,3 +12,4 @@ django-jquery
 micawber
 django-grappelli
 python-boxview
+python-magic

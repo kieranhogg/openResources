@@ -18,17 +18,25 @@ class BookmarkForm(forms.ModelForm):
 
 
 class FileForm(forms.ModelForm):
+    url = forms.URLField(help_text='Or save file from URL')
     class Meta:
         model = File
-        exclude = ('approved', 'uploader', 'mimetype', 'filesize', 'filename',
-                   'date_pub', 'topics', 'slug')
+        # exclude = ('approved', 'uploader', 'mimetype', 'filesize', 'filename',
+        #           'date_pub', 'topics', 'slug')
         widgets = {'description': forms.Textarea()}
-
+        fields = ['title', 'file', 'url', 'description', 'type', 
+                  'uploader_is_author', 'author', 'author_link', 'licence']
 
     def clean(self):
-        valid = super(FileForm, self).is_valid()
-        #data = self.cleaned_data
         data = super(FileForm, self).clean()
+        if not data.get('url') and not data.get('file'):
+             raise forms.ValidationError("Either upload a file or specify a " +
+                                         "URL to a file")
+            
+                                         
+        data = super(FileForm, self).clean()
+        valid = super(FileForm, self).is_valid()
+
         try:
             if data.content_type in settings.UPLOAD_FILE_TYPES:
                 if data.size > settings.UPLOAD_FILE_MAX_SIZE:
@@ -41,6 +49,7 @@ class FileForm(forms.ModelForm):
                         'File type (%s) not supported.') % data.content_type)
         except AttributeError:
             pass
+
     
 class LinkResourceForm(forms.ModelForm):
     class Meta:
@@ -55,6 +64,7 @@ class LinkResourceForm(forms.ModelForm):
         if unit_topic and not unit:
             raise forms.ValidationError("You can't set a unit topic without " +
                                         " a unit")
+
 
 class NotesForm(forms.ModelForm):
     class Meta:

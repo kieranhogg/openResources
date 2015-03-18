@@ -1,4 +1,4 @@
-import re, requests, logging, json, time
+import re, requests, logging, json, time, urllib2, mimetypes
 import requests
 from django.shortcuts import (render, get_object_or_404, get_list_or_404, 
     render_to_response, redirect)
@@ -17,6 +17,9 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import authenticate, login
 from django.core.mail import send_mail
+from django.core.files import File as DjangoFile
+from django.core.files.temp import NamedTemporaryFile
+from django.contrib.contenttypes.models import ContentType
 from boxview import boxview
 
 
@@ -321,10 +324,30 @@ def file(request, slug=None):
                 # new record
                 file = form.save(commit=False)
                 
+                # if we are fetching from a URL
+                if request.POST['url']:
+                    url = request.POST['url']
+                    filename = url.split('/')[-1]
+                    file_temp = NamedTemporaryFile(delete=True)
+                    file_temp.write(urllib2.urlopen(url).read())
+                    file_temp.flush()
+                    file.file.save(filename, DjangoFile(file_temp),save=False)
+                    file.filename = filename
+
+                    mimetype, encoding = mimetypes.guess_type(url)
+                    the_file = file.file
+                else:
+                    the_file = request.FILES['file']
+                    file.filename = the_file.name
+                    
                 # set excluded fields
-                file.filesize = request.FILES['file'].size
-                file.filename = request.FILES['file'].name
-                file.mimetype = request.FILES['file'].content_type
+                file.filesize = the_file.size
+                
+                if mimetype:
+                    file.mimetype = mimetype
+                else:
+                    file.mimetype = the_file.content_type
+
                 if request.user.is_authenticated():
                     file.uploader = request.user
                 else:

@@ -16,6 +16,14 @@ def screenshot(site):
     return out_file
 
 
+def save_file(url):
+    response = requests.get(url, stream=True)
+    with NamedTemporaryFile() as out_file:
+        shutil.copyfileobj(response.raw, DjangoFile(out_file))
+    del response
+    return DjangoFile(out_file)
+
+
 def safe_slugify(text, model):
     """ Safely creates a slug using the given text and model. Check in the
     database to find duplicate slugs and appends an increasing number if a
