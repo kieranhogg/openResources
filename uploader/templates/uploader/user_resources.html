@@ -85,18 +85,18 @@ their own page.</p>
     </tr>
     {% endfor %}
 </table>
-<div class="pagination">
+<div class="pagination" style="text-align:center">
     <span class="step-links">
         {% if resources.has_previous %}
-            <a href="?page={{ resources.previous_page_number }}">previous</a>
+            <a href="?page={{ resources.previous_page_number }}"><< previous</a> |
         {% endif %}
 
         <span class="current">
-            Page {{ resources.number }} of {{ resources.paginator.num_pages }}.
+            Page {{ resources.number }} of {{ resources.paginator.num_pages }}
         </span>
 
         {% if resources.has_next %}
-            <a href="?page={{ resources.next_page_number }}">next</a>
+           | <a href="?page={{ resources.next_page_number }}">next >></a>
         {% endif %}
     </span>
 </div>
