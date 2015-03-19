@@ -15,13 +15,15 @@
     {% if item.type == 'resources' %}
     <p>
     <a href="javascript:void(0)" class="jQuery fancybox.iframe" onclick="jQuery.fancybox({href:'{% url 'uploader:view_resource_embed' item.slug %}', type: 'iframe', width: 1000, height: 600, overlayColor: '#000', hideOnContentClick: false, hideOnOverlayClick: false });">
-        <img src="{% static 'uploader/img/18x18/eye.png' %}" /> 
+        <img src="{% static 'uploader/img/18x18/eye.png' %}" alt='Preview' title='Preview' />
+    </a>
+    <a href="{% url 'uploader:view_resource' item.slug %}">
         {{ item.title }} resource
     </a>
     </p>
     {% elif item.type == 'notes' %}
     <p><a href="{% url 'uploader:view_notes_d' item.slug %}" class="jQuery fancybox.iframe">
-        <img src="{% static 'uploader/img/18x18/eye.png' %}" /> 
+        <img src="{% static 'uploader/img/18x18/book.png' %}" alt='Notes' title='Notes' /> 
         {{ item.title }} notes
     </a>
     </p>
