@@ -152,8 +152,6 @@ h6 {
   width: 137px;
   box-shadow: none;
   display: none;
-  opacity: 0;
-  visibility: hidden;
   -webkit-transiton: opacity 0.2s;
   -moz-transition: opacity 0.2s;
   -ms-transition: opacity 0.2s;
@@ -163,19 +161,12 @@ h6 {
 #menu ul li ul li { 
   background: #fff; 
   display: block; 
-  /*color: #fff;*/
-  /*text-shadow: 0 -1px 0 #000;*/
     border-left: 1px solid #E5E5E5;
     border-bottom: 1px solid #E5E5E5;
     border-right: 1px solid #E5E5E5;
 }
 
 #menu ul li ul li:hover { background: #FCFCFC; color: #cc000;}
-#menu ul li:hover ul {
-  display: block;
-  opacity: 1;
-  visibility: visible;
-}
 
 #menu img {
     margin: 0px;
