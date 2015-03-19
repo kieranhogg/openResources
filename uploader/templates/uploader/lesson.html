@@ -4,11 +4,12 @@
 <h2>{% block head_title %}{{ lesson.title }}{% endblock %}</h2>
 <h3>Lesson Objectives</h3>
 {{ lesson.objectives|safe }}
+<h3>Lesson Tasks</h3>
 <div id="lesson_items">
 <ul>
 {% for item in lesson_items %}
     <li>
-    <h3 class="task_num">{{ forloop.counter }}</h3>
+    <h4 class="task_num">{{ forloop.counter }}</h3>
     {% if item.instructions %}
     <p>{{ item.instructions|linebreaks }}</p>
     {% endif %}
