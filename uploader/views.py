@@ -20,6 +20,7 @@ from django.core.mail import send_mail
 from django.core.files import File as DjangoFile
 from django.core.files.temp import NamedTemporaryFile
 from django.contrib.contenttypes.models import ContentType
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from boxview import boxview
 
 
@@ -544,13 +545,28 @@ def user_resources(request, user_id=None):
     if not user_id:
         user_id = request.user
     resources = Resource.objects.filter(uploader=user_id)
+    paginator = Paginator(resources, 15)
     
+    page = request.GET.get('page')
+    try:
+        resources = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        resources = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        resources = paginator.page(paginator.num_pages)    
+        
     # TODO this could get slow if the user has a lot of resources, maybe store
     # on the resource table after each rating?
+    # 03/15: Should be okay now we're paginated
     for resource in resources:
         resource.rating = get_resource_rating(resource.id)
+    
     return render(request, 'uploader/user_resources.html', 
                   {'resources': resources})
+                  
+        
 
     
 @login_required
