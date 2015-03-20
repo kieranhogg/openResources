@@ -857,7 +857,7 @@ def add_item_to_lesson(request, slug, type):
             elif slug not in request.session['resources']:
                 request.session['resources'].append(slug)
             request.session.modified = True
-            messages.success(request, MESSAGES.success, "Added to a new lesson, go to My " + 
+            messages.success(request, "Added to a new lesson, go to My " + 
                                       "Folder > Lessons to view")
     
     elif type == 'notes':
