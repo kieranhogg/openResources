@@ -1,5 +1,6 @@
 {% extends 'uploader/base.html' %}
 {% block body_block %}
+{% load bootstrap %}
 {% load static %}
 <h2>{% block head_title %}My Lessons{% endblock %}</h2>
 {% if resources or notes or questions or tasks %}
@@ -12,12 +13,16 @@ you can leave, add some more items and come back.</p>
     {% for error in form_errors %}
     <div id="error">{{ error }}</div>
     {% endfor %}
-    <form action method="post">
+    <form role="form" action method="post">
         {% csrf_token %}
-    <p><label for="title">Lesson title</label><input name="title" value="{{ form_data.title }}" /></p>
-    <p><label for="objectives">Learning Objectives/outcomes</label>
-        <textarea name="objectives" value="{{ form_data.objectives }}"></textarea></p>
-        <p class="help_text">For bullet points, use *. Other markdown supported.</p>
+        <div class="form-group">
+            <label for="title">Lesson title</label>
+            <input name="title" class="form-control" value="{{ form_data.title }}" placeholder="A short but descriptive title for your lesson" />
+        </div>
+        <div class="form-group">
+            <label for="objectives">Learning Objectives/outcomes</label>
+            <textarea name="objectives" class="form-control" value="{{ form_data.objectives }}" placeholder="For bullet points, use * other markdown supported"></textarea>
+        </div>
 {% else %}
 <p>If you add items (resources, notes or questions) to a lesson, they will show up on this page and you can create
 new lessons with those items.</p>
@@ -38,7 +43,7 @@ new lessons with those items.</p>
         </div>
         <div class="instructions">
             <p><label for="instructions{{resource.count}}">Instructions</label>
-                <textarea name="instructions{{resource.count}}" value="{{ form_data.val }}"></textarea>
+                <textarea name="instructions{{resource.count}}" class="form-control" value="{{ form_data.val }}"></textarea>
             </p>
         </div>
         </div>
@@ -101,24 +106,31 @@ new lessons with those items.</p>
 {% endif %}
 
 {% if resources or notes or questions or tasks %}
-<p>
-    <label for="add_task">Add extra blank task? (Click submit after)</label>
-    <input type="checkbox" name="add_task" />
-        <span class="glyphicon glyphicon-plus-sign" aria-hidden="true" title='Preview'></span>
-        Add blank task
-</p>
-<p>
-    <label for="public">Lesson is visible to others?</label>
+<h4>Visibility</h4>
+<div class="checkbox">
+    <label>
     <input type="checkbox" name="public" checked="checked" />
-    Recommended unless there are school-specific instructions in the lesson
-</p>
-<p><label>Clear current lesson items?</label>
+    Lesson is visible to others?
+    (Recommended unless there are school-specific instructions in the lesson)
+    </label>
+</div>
+<h4>Actions</h4>
+<p>To add another task or to clear all items, choose an options and click submit.</p>
+<div class="checkbox">
+    <label>
+    <input type="checkbox" name="add_task" />
+        Add empty task?
+    </label>
+</div>
+
+<div class="checkbox">
+<label>
     <input type="checkbox" name="clear">
-    Removes all tasks above
-</p>
-<p>
-    <input type="submit" name="submit" />
-</p>
+    Clear current lesson items?</label>
+</div>
+    <div class="form-group text-center">
+        <button type="submit" class="btn btn-success">Submit</button>
+</div>
     </form>
 {% endif %}
 
