@@ -121,6 +121,7 @@ h6 {
   -ms-transition: opacity 0.2s;
   -o-transition: opacity 0.2s;
   -transition: opacity 0.2s;
+  z-index:1;
 }
 #menu ul li ul li { 
   background: #fff; 
