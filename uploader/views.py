@@ -21,7 +21,7 @@ from django.core.files import File as DjangoFile
 from django.core.files.temp import NamedTemporaryFile
 from django.contrib.contenttypes.models import ContentType
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.contrib.messages import constants as messages
+# from django.contrib.messages import constants as messages
 from boxview import boxview
 
 
@@ -857,7 +857,7 @@ def add_item_to_lesson(request, slug, type):
             elif slug not in request.session['resources']:
                 request.session['resources'].append(slug)
             request.session.modified = True
-            messages.add_message(request, MESSAGES.success, "Added to a new lesson, go to My " + 
+            messages.success(request, MESSAGES.success, "Added to a new lesson, go to My " + 
                                       "Folder > Lessons to view")
     
     elif type == 'notes':
@@ -873,7 +873,7 @@ def add_item_to_lesson(request, slug, type):
             elif slug not in request.session['notes']:
                 request.session['notes'].append(slug)
             request.session.modified = True
-            messages.add_message(request, MESSAGES.success, "Added to a new lesson, go to My " + 
+            messages.success(request, "Added to a new lesson, go to My " + 
                                       "Folder > Lessons to view")
 
     elif type == 'test':
@@ -883,7 +883,7 @@ def add_item_to_lesson(request, slug, type):
         elif slug not in request.session['tests']:
             request.session['tests'].append(slug)
         request.session.modified = True
-        messages.add_message(request, MESSAGES.success, "Added to a new lesson, go to My " + 
+        messages.success(request, "Added to a new lesson, go to My " + 
                                   "Folder > Lessons to view")
         
     elif type == 'task':
