@@ -8,7 +8,7 @@
         {% for subject in subjects %}
           <div class="col-sm-6 col-md-3">
             <a href="{% url 'uploader:subject' subject.slug %}" class="thumbnail">
-              <img src="{{ STATIC_PREFIX }}uploader/img/subjects/{{ subject.slug }}.jpg" height="164px" alt="{{ subject.slug }}">
+              <img src="{{ STATIC_PREFIX }}uploader/img/subjects/{{ subject.slug }}.jpg" height="164" alt="{{ subject.slug }}">
             </a>
             <h4 class="text-center">{{ subject.subject_name }}</h4>
           </div>
