@@ -21,6 +21,7 @@ from django.core.files import File as DjangoFile
 from django.core.files.temp import NamedTemporaryFile
 from django.contrib.contenttypes.models import ContentType
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.contrib.messages import constants as messages
 from boxview import boxview
 
 
@@ -242,28 +243,33 @@ def view_resource(request, slug, embed=False):
         'rating_val': get_resource_rating(resource.id, 'values')
     }
     if resource.file:
-        api = boxview.BoxView(settings.BOX_VIEW_KEY)
-        file = str(settings.MEDIA_URL + resource.file.filename)
-        doc = api.create_document(url=resource.file.file.url)
-        
-        doc_id = doc['id']
-        
-        count = 0
-        success = True
-        while True:
-            if not bool(api.ready_to_view(doc_id)):
-                if count == 5:
-                    success = False
+        try:
+            api = boxview.BoxView(settings.BOX_VIEW_KEY)
+            file = str(settings.MEDIA_URL + resource.file.filename)
+            doc = api.create_document(url=resource.file.file.url)
+            
+            doc_id = doc['id']
+            
+            count = 0
+            success = True
+            while True:
+                if not bool(api.ready_to_view(doc_id)):
+                    if count == 5:
+                        success = False
+                        break
+                    else: 
+                        time.sleep(0.5)
+                        count += 0.5
+                else:
                     break
-                else: 
-                    time.sleep(0.5)
-                    count += 0.5
-            else:
-                break
-        
-        if success:
-            session = api.create_session(doc_id, duration=300)
-            context['ses_id'] = session['id']
+            
+            if success:
+                session = api.create_session(doc_id, duration=300)
+                context['ses_id'] = session['id']
+        except:
+            # so many things to go wrong here, silently bail if it does, users
+            # can still download the file
+            pass
 
     return render_to_response(template, 
         context_instance=RequestContext(request, context))
@@ -551,15 +557,10 @@ def user_resources(request, user_id=None):
     try:
         resources = paginator.page(page)
     except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
         resources = paginator.page(1)
     except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
         resources = paginator.page(paginator.num_pages)    
         
-    # TODO this could get slow if the user has a lot of resources, maybe store
-    # on the resource table after each rating?
-    # 03/15: Should be okay now we're paginated
     for resource in resources:
         resource.rating = get_resource_rating(resource.id)
     
@@ -574,6 +575,17 @@ def user_files(request, user_id=None):
     if not user_id:
         user_id = request.user
     files = File.objects.filter(uploader=user_id)
+    paginator = Paginator(files, 15)
+    
+    page = request.GET.get('page')
+    try:
+        files = paginator.page(page)
+    except PageNotAnInteger:
+        files = paginator.page(1)
+    except EmptyPage:
+        files = paginator.page(paginator.num_pages)  
+    
+    
     for file in files:
         file.link_count = Resource.objects.filter(file=file).count()
     return render(request, 'uploader/user_files.html', {'files': files})
@@ -582,8 +594,19 @@ def user_files(request, user_id=None):
 @login_required
 def user_bookmarks(request, user_id=None):
     bookmarks = Bookmark.objects.filter(uploader=request.user)
+    paginator = Paginator(bookmarks, 15)
+    
+    page = request.GET.get('page')
+    try:
+        bookmarks = paginator.page(page)
+    except PageNotAnInteger:
+        bookmarks = paginator.page(1)
+    except EmptyPage:
+        bookmarks = paginator.page(paginator.num_pages)    
+    
     for bookmark in bookmarks:
         bookmark.link_count = Resource.objects.filter(bookmark=bookmark).count()
+        
     return render(request, 'uploader/user_bookmarks.html', 
                   {'bookmarks': bookmarks})
 
@@ -591,6 +614,16 @@ def user_bookmarks(request, user_id=None):
 @login_required
 def user_questions(request, user_id=None):
     questions = MultipleChoiceQuestion.objects.filter(uploader=request.user)
+    paginator = Paginator(questions, 15)
+    
+    page = request.GET.get('page')
+    try:
+        questions = paginator.page(page)
+    except PageNotAnInteger:
+        questions = paginator.page(1)
+    except EmptyPage:
+        questions = paginator.page(paginator.num_pages)    
+    
     return render(request, 'uploader/user_questions.html', 
                   {'questions': questions})
 
@@ -714,6 +747,17 @@ def user_lessons(request, user_id=None):
             count += 1
     
     lessons = Lesson.objects.filter(uploader=request.user).order_by('-pub_date')
+    paginator = Paginator(lessons, 15)
+    
+    page = request.GET.get('page')
+    try:
+        lessons = paginator.page(page)
+    except PageNotAnInteger:
+        lessons = paginator.page(1)
+    except EmptyPage:
+        lessons = paginator.page(paginator.num_pages)  
+    
+    
     now = int(time.time())
     
     return render(request, 'uploader/user_lessons.html', 

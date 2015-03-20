@@ -2,10 +2,10 @@
 {% load staticfiles %}
 {% load tags %}
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="{% static 'js/jquery.js' %}" type="text/javascript"></script>
 <script src="{% static 'jquery.fancybox.js' %}" type="text/javascript"></script>
 <link rel="stylesheet" href="{% static 'jquery.fancybox.css' %}" type="text/css" media="screen" />
@@ -17,24 +17,32 @@
                 $('#submenu_my_resources').slideToggle("fast");
         });
     });
+    
+    // Fix partially hidden dropdowns in tables
+    $('.table-responsive tbody tr').slice(-2).find('#dropdown-toggle').addClass('dropup');
+
+
 </script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 <link rel="stylesheet" type="text/css" href="{% static 'uploader/style.css' %}" />
 <link rel="stylesheet" type="text/css" media="only screen and (max-width: 480px), only screen and (max-device-width: 480px)" href="{% static 'uploader/small-devices.css' %}" />
+
 <title>{{ SITE_NAME }}</title>
 <link rel="shortcut icon" type="image/png" href="{{STATIC_URL}}/favicon.ico" />
 </head>
 <body>
-<div id="container">
-    <div id="header">
-        <div id="logo">
+<!--<div class="container">-->
+    <div class="header">
+        <div class="logo">
             <a href="{% url 'uploader:index' %}">
             <img src="{% static 'uploader/logo_s.png' %}" alt="logo" width="64" height="64" />
             <h1>{{ SITE_NAME }}</h1>
             </a>
         </div>
         {% try_to_include "uploader/top_banner.html" %}
-        <div id="login">
-                <div id='login_links'>
+        <div class="login">
             {% if user.is_authenticated %}
                 <span id='user_icon'>
                 <a href="{% url 'uploader:profile' %}">
@@ -55,63 +63,65 @@
                 <a href="{% url 'account_login' %}">Sign In</a> or 
                 <a href="{% url 'uploader:signup' %}">Sign Up</a></p>
             {% endif %}
-                </div>
-        </div>
-        <div id="search">
-            <!--Search-->
-        </div>
+            </div>
     </div>
     <div id="menu">
         <ul>
             <a href="{% url 'uploader:index' %}">
                 <li id="menu_home">
-                <img class="menu_icon" src="{% static 'uploader/img/18x18/home.png' %}" height="18" width="18"/>
+                <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
                 <span class="menu_text">Home</span>
+                </li>
+            </a>
+            <a href="{% url 'uploader:subjects' %}">
+                <li id="menu_resources">
+                <span class="glyphicon glyphicon-education" aria-hidden="true"></span>
+                <span class="menu_text">Resources</span>
                 </li>
             </a>
             <a href="{% url 'uploader:favourites' %}">
                 <li id="menu_favourites">
-                <img class="menu_icon" src="{% static 'uploader/img/18x18/heart.png' %}" height="18" width="18"/>
+                <span class="glyphicon glyphicon-heart" aria-hidden="true"></span>
                 <span class="menu_text">My Favourites</span>
                 </li>
             </a>
             <a href="{% url 'uploader:add_resource' %}">
                 <li id="menu_submit">
-                <img class="menu_icon" src="{% static 'uploader/img/18x18/upload.png' %}" height="18" width="18"/>
+                <span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>
                 <span class="menu_text">Add Resource</span>
                 </li>
             </a>
             {% if user.teacherprofile %}
             <a href="{% url 'uploader:groups_list' %}">
                 <li id="menu_groups">
-                <img class="menu_icon" src="{% static 'uploader/img/18x18/people.png' %}" height="18" width="18"/>
+                <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
                 <span class="menu_text">My Groups</span>
                 </li>
             </a>
             <a href="javascript:void(0)">
                 <li id="menu_my_resources">
-                <img class="menu_icon" src="{% static 'uploader/img/18x18/folder.png' %}" height="18" width="18"/>
+                <span class="glyphicon glyphicon-briefcase" aria-hidden="true"></span>
                 <span class="menu_text">My Folder ▾</span>
                 </a>
                 <ul id="submenu_my_resources">
                     <a href="{% url 'uploader:user_resources' %}"><li>
-                        <img class="menu_icon" src="{% static 'uploader/img/18x18/download.png' %}" height="18" width="18"/>
+                <span class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span>
                 <span class="menu_text">
                         Resources</span></li></a>
                 <a href="{% url 'uploader:user_files' %}"><li>
-                        <img class="menu_icon" src="{% static 'uploader/img/18x18/files.png' %}" height="18" width="18"/>
+                <span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span>
                 <span class="menu_text">Files</span></li></a>
                 <a href="{% url 'uploader:user_bookmarks' %}"><li>
-                        <img class="menu_icon" src="{% static 'uploader/img/18x18/bookmark.png' %}" height="18" width="18"/>
+                    <span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span>
                 <span class="menu_text">Bookmarks</span></li></a>
                 <!--    <a href="javascript:void(0)"><li>-->
                 <!--        <img class="menu_icon" src="{% static 'uploader/img/18x18/book.png' %}" height="18" width="18"/>-->
                 <!--<span class="menu_text">Notes</span></li></a>-->
                     <a href="{% url 'uploader:user_questions' %}"><li>
-                        <img class="menu_icon" src="{% static 'uploader/img/18x18/speech_bubble.png' %}" height="18" width="18"/>
+                    <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
                 <span class="menu_text">Questions</span></li></a>
                     <a href="{% url 'uploader:user_lessons' %}"><li>
-                        <img class="menu_icon" src="{% static 'uploader/img/18x18/inbox.png' %}" height="18" width="18"/>
+                    <span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span>
                 <span class="menu_text">Lessons</span></li></a>
                 </ul>
             </li>
@@ -123,7 +133,7 @@
             <!--</li>-->
             <a href="{% url 'uploader:about' %}">
                 <li id="menu_about">
-                <img class="menu_icon" src="{% static 'uploader/img/18x18/website.png' %}" height="18" width="18"/>
+                    <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
                 <span class="menu_text">About</span>
                 </li>
             </a>
@@ -141,7 +151,7 @@
             {% if user.is_superuser or user.is_staff %}
             <a href="/admin/">
                 <li id="admin_button">
-                 <img class="menu_icon" src="{% static 'uploader/img/18x18/settings.png' %}" height="18" width="18"/>
+                <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
                 <span class="menu_text">Admin</span>
                 </li>
             </a>
@@ -165,7 +175,7 @@
         </a></span>
     </div>
     {% endif %}
-    <div id="content">
+    <div class="container">
         {% if user_messages %}
             {% for message in user_messages %}
                 <!--<div class="{{ message.get_type_display }}">-->
@@ -183,11 +193,9 @@
         {% endif %}
         
         {% if messages %}
-        <ul class="messages">
             {% for message in messages %}
-            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
             {% endfor %}
-        </ul>
         {% endif %}
         {% block body_block %}{% endblock %}
     </div>
@@ -198,6 +206,6 @@
         </p>
     </div>
 
-</div>
+<!--</div>-->
 </body>
 </html>

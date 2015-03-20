@@ -13,3 +13,4 @@ micawber
 django-grappelli
 python-boxview
 python-magic
+django-bootstrap-form

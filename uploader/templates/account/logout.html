@@ -1,5 +1,5 @@
 {% extends "uploader/base.html" %}
-
+{% load bootstrap %}
 {% load url from future %}
 {% load i18n %}
 
@@ -10,12 +10,14 @@
 <div class="small_form">
   <p style="text-align: center">{% trans 'Are you sure you want to sign out?' %}</p>
   
-  <form method="post" action="{% url 'account_logout' %}">
+  <form role="form" method="post" action="{% url 'account_logout' %}">
     {% csrf_token %}
     {% if redirect_field_value %}
     <input type="hidden" name="{{redirect_field_name}}" value="{{redirect_field_value}}"/>
     {% endif %}
-    <input type="submit" value="{% trans 'Sign Out' %}" />
+    <div class="form group text-center">
+      <button type="submit" class="btn btn-danger">Sign out</button>
+    </div>
   </form>
 </div>
 

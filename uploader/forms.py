@@ -26,22 +26,25 @@ class FileForm(forms.ModelForm):
         widgets = {'description': forms.Textarea()}
         fields = ['title', 'file', 'url', 'description', 'type', 
                   'uploader_is_author', 'author', 'author_link', 'licence']
-
-    def clean_file(self):
-        file = self.cleaned_data['file']
-        content_type = file.content_type
-        if content_type in settings.CONTENT_TYPES:
-            if content._size > settings.MAX_UPLOAD_SIZE:
-                raise forms.ValidationError(_('Please keep filesize under %s. Current filesize %s') % (filesizeformat(settings.MAX_UPLOAD_SIZE), filesizeformat(content._size)))
-        else:
-            raise forms.ValidationError(_('File type is not supported'))
-        return file
         
     def clean(self):
         data = super(FileForm, self).clean()
         if not data.get('url') and not data.get('file'):
              raise forms.ValidationError("Either upload a file or specify a " +
                                          "URL to a file")
+                                         
+                                         
+    def clean_file(self):
+        file = self.cleaned_data['file']
+        if file:
+            content_type = file.content_type
+            if content_type in settings.CONTENT_TYPES:
+                if content._size > settings.MAX_UPLOAD_SIZE:
+                    raise forms.ValidationError(_('Please keep filesize under %s. Current filesize %s') % (filesizeformat(settings.MAX_UPLOAD_SIZE), filesizeformat(content._size)))
+            else:
+                raise forms.ValidationError(_('File type is not supported'))
+        else:
+            return file
     
     def clean_url(self):
         url = self.cleaned_data.get('url')
@@ -100,6 +103,7 @@ class ImageForm(forms.ModelForm):
             'uploader': forms.HiddenInput(),
         }
         fields = '__all__'
+
         
 class MultipleChoiceQuestionForm(forms.ModelForm):
     answer1 = forms.CharField(label='First answer')

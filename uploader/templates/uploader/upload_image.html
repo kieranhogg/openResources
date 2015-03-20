@@ -1,5 +1,13 @@
-<form action method="POST" enctype="multipart/form-data">
+{% extends 'uploader/base_basic.html' %}
+{% load bootstrap %}
+{% block body_block %}
+
+<form role="form" action method="POST" enctype="multipart/form-data">
     {% csrf_token %}
-    {{ form }}
+    {% if field.field.required %}<span class="label label-danger">required</span>{% endif %}
+    {{ form|bootstrap }}
     
-<br /><input type="submit" value="Upload">
+<div class="form-group text-center">
+    <button type="submit" class="btn btn-success">Upload</button>
+</div> 
+{% endblock %}

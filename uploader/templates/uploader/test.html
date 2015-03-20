@@ -22,8 +22,8 @@
     {% if request.user.teacherprofile %}
         <div id="add-to-lesson">
     <a href="{% url 'uploader:add_item_to_lesson' unit_topic.slug 'test' %}">
-        <button class='btn'>
-        <img src="{% static 'uploader/img/18x18/inbox.png' %}" />
+        <button class='btn btn-primary'>
+            <span class="glyphicon glyphicon-blackboard" aria-hidden="true" title='Add to lesson'></span>
         Add to lesson
         </button>
     </a>
@@ -54,7 +54,7 @@
 <h2>{{ unit_topic }} Test</h2>
 <p>
 <a class='btn' href="{% url 'uploader:test_feedback' unit_topic.slug %}">
-    <img src="{% static 'uploader/img/18x18/leaderboard.png' %}" />
+    <span class="glyphicon glyphicon-ok" aria-hidden="true" title='Preview'></span>
     Feedback
 </a>
 </p>

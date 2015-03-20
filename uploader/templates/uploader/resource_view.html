@@ -4,6 +4,13 @@
 {% load static %}
 {% block body_block %}
 <script>
+$(document).ready(function () {
+    // hide link if oembed fails, we have a button
+    $("div p:contains('http')").closest("div").hide();
+    // $("link_or_oembed:has(p:contains('http'))").hide();
+//   $("link_or_oembed p:contains('http')").parent('link_or_oembed').hide();
+});
+
 function vote(resourceID, rating)
 {
     var xmlHttp = null;
@@ -15,8 +22,8 @@ function vote(resourceID, rating)
     $('#thankyou').show();
     return xmlHttp.responseText;
 }
-    
 </script>
+<div class="">
 <h2>
     {% block head_title %}
     {% if resource.file %}
@@ -30,8 +37,8 @@ function vote(resourceID, rating)
 <div id="resource_details">
     <div id="add-to-lesson">
     <a href="{% url 'uploader:add_item_to_lesson' resource.slug 'resource' %}">
-        <button class='btn'>
-        <img src="{% static 'uploader/img/18x18/inbox.png' %}" />
+        <button class='btn btn-primary'>
+            <span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span>
         Add to lesson
         </button>
     </a>
@@ -78,7 +85,7 @@ function vote(resourceID, rating)
                 <span>☆</span>
             {% endif %}
         </a>
-        <div class="rating_value">{{ rating }}</div>
+        <div class="rating_value text-center">{{ rating }}</div>
     </div>
     <div id="thankyou" style="display:none">
         Thank you for rating.
@@ -116,7 +123,7 @@ function vote(resourceID, rating)
     </div>
 </div>
 <!--<hr />-->
-<div id="description">
+<div  class="well">
     {% if resource.file %}
         {{ resource.file.description }}
     {% else %}
@@ -150,7 +157,7 @@ function vote(resourceID, rating)
     </div>
 {% else %}
     <div id="link_or_oembed">
-    <p><strong>{{ resource.bookmark.link | oembed }}</strong></p>
+    <p>{{ resource.bookmark.link | oembed }}</p>
     </div>
 
 
@@ -161,7 +168,8 @@ function vote(resourceID, rating)
     
     {% if resource.file %}
     <a href='{{ MEDIA_URL }}{{ resource.file.file }}'>
-        <button class='btn'>
+        <button class='btn btn-success'>
+        <span class="glyphicon glyphicon-save" style="color:white" aria-hidden="true"></span>
         Download
         </button>    
     </a>
@@ -169,9 +177,13 @@ function vote(resourceID, rating)
     {% else %}
         <div id="link">
             <a href='{{ resource.bookmark.link }}'>
-                <button class='btn'>Open link</button>
+                <button class='btn btn-success'>
+                <span class="glyphicon glyphicon-globe" style="color:white" aria-hidden="true"></span>
+
+                    Open link</button>
             </a>
         </div>
     {% endif %}
+</div>
 </div>
 {% endblock %}

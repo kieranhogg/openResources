@@ -12,7 +12,8 @@ or unit topic. Unlinking removes the copy but will keep the original file or boo
 <p>If you are looking to edit or delete a file or bookmark, you can do so on 
 their own page.</p>
 <hr />
-<table>
+<!--<div class="table-responsive">-->
+<table class='table'>
     <tr>
         <th></th>
         <th width="16%">Title</th>
@@ -21,14 +22,17 @@ their own page.</p>
         <th>Syllabus</th>
         <th>Unit</th>
         <th>Unit Topic</th>
-        <th width="16%">Actions</th>
+        <th></th>
     </tr>
+    <tbody>
+
     {% for resource in resources %}
     <tr> 
         {% if resource.file %}
-        <td><img src="{% static 'uploader/img/18x18/folder.png' %}" alt="file" title="file" /></td>
+        <td><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></td>
         {% else %}
-        <td><img src="{% static 'uploader/img/18x18/bookmark.png' %}" alt="bookmark" title="bookmark" /></td>
+        <td>
+            <span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span></td>
         {% endif %}
         <td><a href="{% url 'uploader:view_resource' resource.slug %}">{{ resource }}</a></td>
         <td style='text-align: center'>{{ resource.rating }}</td></t>
@@ -54,51 +58,53 @@ their own page.</p>
             {% else %} {{ resource.unit_topic }}
             {% endif %}
         </td>
-        <td style='text-align: center'>
-            <a href="{% url 'uploader:add_item_to_lesson' resource.slug 'resource' %}">
-                <button class='btn'>
-                <img src="{% static 'uploader/img/18x18/inbox.png' %}" alt='Add to lesson' title='Add to lesson'/>
-                </button>
-            </a>
-            {% if resource.file %}
-            <a href="{% url 'uploader:link_file' resource.file.slug %}">
-                <button class="btn">
-                <!--<img src="{% static 'uploader/img/18x18/add.png' %}" alt="link" title="link"/>-->
-                Add Link
-                </button>
-            </a>
-            {% elif resource.bookmark %}
-            <a href="{% url 'uploader:link_bookmark' resource.bookmark.slug %}">
-                <button class="btn">
-                <!--<img src="{% static 'uploader/img/18x18/add.png' %}" alt="link" title="link"/>-->
-                Add Link
-                </button>
-            </a>
-            {% endif %}
-            <a href="{% url 'uploader:delete_resource' resource.slug %}" onclick="javascript:return confirm('UNLINK this resource? To delete the bookmark, delete it from the files tab')">
-                <button class="btn_danger">
-                <!--<img src="{% static 'uploader/img/18x18/unlink.png' %}" alt="unlink" title="unlink"/>-->
-                Unlink
-                </button>
-            </a>
+        <td>
+            <div class="btn-group">
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                Actions <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="{% url 'uploader:add_item_to_lesson' resource.slug 'resource' %}">
+                    <span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span>
+                    Add to lesson
+                    </a></li>
+                <li>
+                {% if resource.file %}
+                    <a href="{% url 'uploader:link_file' resource.file.slug %}">
+                {% elif resource.bookmark %}
+                    <a href="{% url 'uploader:link_bookmark' resource.bookmark.slug %}">
+                {% endif %}
+                    <span class="glyphicon glyphicon-link" aria-hidden="true"></span>
+                    Add another link</a>
+                </li>
+                <li><a href="{% url 'uploader:delete_resource' resource.slug %}" onclick="javascript:return confirm('UNLINK this resource? To delete the bookmark, delete it from the files tab')">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    Unlink</a></li>
+              </ul>
+            </div>
         </td>
     </tr>
     {% endfor %}
+    </tbody>
 </table>
-<div class="pagination" style="text-align:center">
-    <span class="step-links">
+<!--</div>-->
+<div class="row">
+    <div class="col-md-12 text-center">
+    <ul class="pagination pagination-centered">
         {% if resources.has_previous %}
-            <a href="?page={{ resources.previous_page_number }}"><< previous</a> |
+                <li><a href="?page=1"><<</a></li>
+                <li><a href="?page={{ resources.previous_page_number }}"><</a></li>
         {% endif %}
-
-        <span class="current">
-            Page {{ resources.number }} of {{ resources.paginator.num_pages }}
-        </span>
+        
+        {% for i in resources.paginator.page_range %}
+            <li {% if resources.number == i %} class="active" {% endif %}><a href="?page={{i}}">{{i}}</a></li>
+        {% endfor %}
 
         {% if resources.has_next %}
-           | <a href="?page={{ resources.next_page_number }}">next >></a>
-        {% endif %}
-    </span>
+                <li><a href="?page={{ resources.next_page_number }}">></a></li>
+                <li><a href="?page={{ resources.paginator.num_pages }}">>></a></li>{% endif %}
+    </div>
 </div>
-{% endif %}
+
+<!--{% endif %}-->
 {% endblock %}

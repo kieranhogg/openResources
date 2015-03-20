@@ -1,5 +1,5 @@
 {% extends "uploader/base.html" %}
-
+{% load bootstrap %}
 {% load i18n %}
 {% load account %}
 {% load url from future %}
@@ -10,37 +10,38 @@
 
 <h2>{% trans "Sign In" %}</h2>
 <div class="small_form">
-  {% if socialaccount.providers  %}
-  <p>{% blocktrans with site.name as site_name %}Please sign in with one
-  of your existing third party accounts. Or, <a href="{{ signup_url }}">sign up</a>
-  for a {{site_name}} account and sign in below:{% endblocktrans %}</p>
+  <!--{% if socialaccount.providers  %}-->
+  <!--<p>{% blocktrans with site.name as site_name %}Please sign in with one-->
+  <!--of your existing third party accounts. Or, <a href="{{ signup_url }}">sign up</a>-->
+  <!--for a {{site_name}} account and sign in below:{% endblocktrans %}</p>-->
   
-  <div class="socialaccount_ballot">
+  <!--<div class="socialaccount_ballot">-->
   
-    <ul class="socialaccount_providers">
-      {% include "socialaccount/snippets/provider_list.html" with process="login" %}
-    </ul>
+  <!--  <ul class="socialaccount_providers">-->
+  <!--    {% include "socialaccount/snippets/provider_list.html" with process="login" %}-->
+  <!--  </ul>-->
   
-    <div class="login-or">{% trans 'or' %}</div>
+  <!--  <div class="login-or">{% trans 'or' %}</div>-->
   
-  </div>
+  <!--</div>-->
   
-  {% include "socialaccount/snippets/login_extra.html" %}
+  <!--{% include "socialaccount/snippets/login_extra.html" %}-->
   
-  {% else %}
+  <!--{% else %}-->
   <p>If you have not created an account yet, then please
   <a href="{% url 'uploader:signup' %}">sign up</a> first.</p>
-  {% endif %}
+  <!--{% endif %}-->
   
-  <form class="login" method="POST" action="{% url 'account_login' %}">
+  <form role="form" method="POST" action="{% url 'account_login' %}">
     {% csrf_token %}
-    {{ form.as_p }}
+    {{ form|bootstrap }}
     {% if redirect_field_value %}
     <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
     {% endif %}
-    <input type="submit" value="Sign In" /> 
-    <a class="button secondaryAction" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
-   
+    <div class="form-group text-center">
+    <p><button type="submit" class="btn btn-success">Sign in</button></p>
+        <a class="button secondaryAction" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
+  </div>
   </form>
 </div>
 {% endblock %}

@@ -2,6 +2,8 @@
 {% block body_block %}
 {% load static %}
 {% get_static_prefix as STATIC_PREFIX %}
+    <div class="jumbotron">
+        <h1>Resources done right</h1>
         <h3>Teachers</h3>
         <p>This site will allow you to share and find relevant resources, bookmarks,
         notes and tests. They are based around syllabuses so they should be 
@@ -9,12 +11,14 @@
         <h3>Students</h3>
         <p>For your specific course, we have materials such as notes and tests
         to help you learn and revise</p>
+        <div class="col-md-12 text-center">
         <a href="{% url 'uploader:subjects' %}">
-            <button class='btn'>
-                Bring on the subjects
+            <button type="button" class="btn btn-success">
+                View Resources
             </button>
             
         </a>
+        </div>
         <!--
         <p>
             Why another teaching resource site? We all know that teachers are 

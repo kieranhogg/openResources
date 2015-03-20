@@ -1,4 +1,5 @@
 {% extends 'uploader/base.html' %}
+{% load bootstrap %}
 {% block body_block %}
 <h2>{% block head_title %}
 {% if form.instance.id %}
@@ -13,27 +14,47 @@ this in future, please register and log in first.</p>
 {% endif %}
 
 {% if form.non_field_errors %}
-    <div class="error">
     {% for error in form.non_field_errors %}
+    <div class="alert alert-danger" role="alert">
+      <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+      <span class="sr-only">Error:</span>
         {{error}}
-    {% endfor %}
     </div>
+    {% endfor %}
 {% endif %}
 
-<form enctype="multipart/form-data" action method="post" novalidate>
-    {% csrf_token %}  
+<form role="form" enctype="multipart/form-data" action method="post">
+    {% csrf_token %}
+
     {% for field in form %}
-    <div id="input_{{ field.html_name }}">
-        {{ field.errors }}
-        {{ field.label_tag }} {{ field }}
-        {{ field.help_text }}
+    <div>
+        {% if field.field.required %}<span class="label label-danger">required</span>{% endif %}
+        {{ field|bootstrap }}
     </div>
-{% endfor %}
-<br />
-{% if form.instance.id %}
-    <input type="submit" value="Update">
-{% else %}
-    <input type="submit" value="Next">
-{% endif %}
+    {% endfor %}
+    
+    <div class="form-group text-center">
+    {% if form.instance.id %}
+        <button type="submit" class="btn btn-success">Update</button>
+    {% else %}
+        <button type="submit" class="btn btn-success">Next</button>
+    {% endif %}
+    </div>
 </form>
+
+
+<!--    {% for field in form %}-->
+<!--    <div class="form-group">-->
+<!--        {{ field.errors }}-->
+<!--        {{ field.label_tag }} {{ field }}-->
+<!--        {{ field.help_text }}-->
+<!--    </div>-->
+<!--{% endfor %}-->
+<!--<br />-->
+<!--{% if form.instance.id %}-->
+<!--    <button type="submit" class="btn btn-success">Update</button>-->
+<!--{% else %}-->
+<!--    <button type="submit" class="btn btn-success">Next</button>-->
+<!--{% endif %}-->
+<!--</form>-->
 {% endblock %}

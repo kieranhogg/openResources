@@ -1,18 +1,18 @@
 {% load static %}
 <div class="shortcuts">
   <p>
-    <a class='btn' href="{% url 'uploader:unit_topic_resources' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
-    <img class="menu_icon" src="/static/uploader/img/18x18/download.png" height="18" width="18" alt='Resources' title='Resources' />
+    <a class='btn btn-default' href="{% url 'uploader:unit_topic_resources' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
+        <span class="glyphicon glyphicon-cloud-download" aria-hidden="true" title="Resources"></span>
     </a>
     </p>
 <p>
-    <a class='btn' href="{% url 'uploader:view_notes' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
-    <img class="menu_icon" src="/static/uploader/img/18x18/book.png" height="18" width="18" alt='Notes' title='Notes' />
+    <a class='btn btn-default' href="{% url 'uploader:view_notes' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
+        <span class="glyphicon glyphicon-book" aria-hidden="true" title="Notes"></span>
     </a>
 </p>
 <p>
-    <a class ='btn' href="{% url 'uploader:test' unit_topic.slug %}">
-    <img class="menu_icon" src="/static/uploader/img/18x18/speech_bubble.png" height="18" width="18" alt='Questions' title='Questions' />
+    <a class ='btn btn-default' href="{% url 'uploader:test' unit_topic.slug %}">
+        <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="Questions"></span>
     </a>
 </p>
 </div>

@@ -4,7 +4,7 @@
 <h2>{% block head_title %}My Questions{% endblock %}</h2>
 
 {% if questions %}
-<table width='100%'>
+<table class="table">
     <tr>
         <th>Question</th>
         <th>Unit Topic</th>
@@ -38,7 +38,7 @@
             <!--    </button>-->
             <!--</a>-->
             <a href="{% url 'uploader:test' question.unit_topic.slug %}">
-                <button class="btn">
+                <button type="button" class="btn btn-default">
                 View
                 </button>
             </a>
@@ -46,5 +46,22 @@
     </tr>
     {% endfor %}
 </table>
+<div class="row">
+    <div class="col-md-12 text-center">
+    <ul class="pagination pagination-centered">
+        {% if questions.has_previous %}
+                <li><a href="?page=1"><<</a></li>
+                <li><a href="?page={{ questions.previous_page_number }}"><</a></li>
+        {% endif %}
+        
+        {% for i in questions.paginator.page_range %}
+            <li {% if questions.number == i %} class="active" {% endif %}><a href="?page={{i}}">{{i}}</a></li>
+        {% endfor %}
+
+        {% if questions.has_next %}
+                <li><a href="?page={{ questions.next_page_number }}">></a></li>
+                <li><a href="?page={{ questions.paginator.num_pages }}">>></a></li>{% endif %}
+    </div>
+</div>
 {% endif %}
 {% endblock %}

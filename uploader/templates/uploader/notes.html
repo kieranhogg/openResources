@@ -16,15 +16,15 @@
      {{ unit_topic.title|truncatechars:45 }}</a> >
      Notes
 </div>
-<a class='btn' href="{% url 'uploader:notes' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
-    <img src="{% static 'uploader/img/18x18/edit.png' %}" />
+<a class='btn btn-default' href="{% url 'uploader:notes' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
+        <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
     Edit
 </a>
 {% include 'uploader/unit_topic_tabs.html' %}
 <div id="add-to-lesson">
 <a href="{% url 'uploader:add_item_to_lesson' unit_topic.slug 'notes' %}">
-    <button class='btn'>
-    <img src="{% static 'uploader/img/18x18/inbox.png' %}" />
+    <button class='btn btn-default'>
+    <span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span>
     Add to lesson
     </button>
 </a>

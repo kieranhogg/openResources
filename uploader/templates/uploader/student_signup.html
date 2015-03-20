@@ -1,5 +1,5 @@
 {% extends "uploader/base.html" %}
-
+{% load bootstrap %}
 {% load url from future %}
 
 {% block body_block %}
@@ -7,8 +7,10 @@
 <div class="small_form">
     <form action method="POST">
         {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Sign up" />
+        {{ form|bootstrap }}
+        <div class="form-group text-center">
+            <button type="submit" class="btn btn-success">Sign up</button>
+          </div>
     </form>
 </div>
 {% endblock %}

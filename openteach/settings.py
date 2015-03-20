@@ -70,6 +70,7 @@ INSTALLED_APPS = (
     #'allauth.socialaccount.providers.twitter',
     #'allauth.socialaccount.providers.openid',
     'micawber.contrib.mcdjango',
+    'bootstrapform'
 )
 MICAWBER_PROVIDERS = 'micawber.contrib.mcdjango.providers.bootstrap_embedly'
 
@@ -86,14 +87,15 @@ LOGIN_URL = '/accounts/login/'
 ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URLL = '/favourites/'
 
 CONTENT_TYPES = ['pdf', 
-                    'vnd.oasis.opendocument.text',
-                    'vnd.ms-excel',
-                    'application/msword',
-                    'application/excel',
-                    'application/mspowerpoint',
-                    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'vnd.oasis.opendocument.text',
+                'vnd.ms-excel',
+                'application/msword',
+                'application/excel',
+                'application/mspowerpoint',
+                'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'image/*'
 ]
                     
 MAX_UPLOAD_SIZE = 52428800 # 50mb

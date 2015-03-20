@@ -9,17 +9,15 @@
         <a href="{% url 'uploader:profile' %}">profile</a>.
     </p>
     {% if subjects %}
-        <div id="subjects">
-            <ul>
-                {% for subject in subjects %}
-                    <a href="{% url 'uploader:subject' subject.slug %}">
-                        <li>
-                        <img src="{{ STATIC_PREFIX }}uploader/img/subjects/{{ subject.slug }}.jpg" width="300px" height="200px" alt="{{ subject }}"/>
-                            {{ subject.subject_name }}
-                        </li>
-                    </a>
-                {% endfor %}
-            </ul>
+    <div class="row">
+        {% for subject in subjects %}
+          <div class="col-sm-6 col-md-3">
+            <a href="{% url 'uploader:subject' subject.slug %}" class="thumbnail">
+              <img src="{{ STATIC_PREFIX }}uploader/img/subjects/{{ subject.slug }}.jpg" alt="{{ subject.slug }}">
+            </a>
+            <h4 class="text-center">{{ subject.subject_name }}</h4>
+          </div>
+        {% endfor %}
         </div>
     {% endif %}
     

@@ -4,15 +4,16 @@
 <h2>{% block head_title %}My Files{% endblock %}</h2>
 
 {% if files %}
-<table width='100%'>
+<table class="table">
     <tr>
         <th>Title</th>
         <th>Filename</th>
         <th># of Resources using</th>
         <th>Filesize</th>
         <th>Uploaded</th>
-        <th width="16%">Actions</th>
+        <th></th>
     </tr>
+    <tbody>
     {% for file in files %}
     <tr> 
         <td>{{ file.title }}</td></t>
@@ -21,28 +22,47 @@
         <td style='text-align: center'>{{ file.filesize|filesizeformat }}</td>
         <td style='text-align: center'>{{ file.pub_date|date:"d M Y" }}</td>
         <td style='text-align: center'>
-            <a href="{% url 'uploader:link_file' file.slug %}">
-                <button class="btn">
-                <!--<img src="{% static 'uploader/img/18x18/add.png' %}" />-->
-                Link
-                </button>
-            </a>
-            <a href="{% url 'uploader:file' file.slug %}">
-                <button class="btn">
-                <!--<img src="{% static 'uploader/img/18x18/edit.png' %}" />-->
-                Edit
-                </button>
-            </a>
-            <a href="{% url 'uploader:delete_file' file.slug %}" onclick="javascript:return confirm('DELETE this file?')">
-                <button class="btn_danger">
-                <!--<img src="{% static 'uploader/img/18x18/delete.png' %}" />-->
-                Delete
-                </button>
-            </a>
+            
+        <div class="btn-group">
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                Actions <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="{% url 'uploader:link_file' file.slug %}">
+                    <span class="glyphicon glyphicon-link" aria-hidden="true"></span>
+                    Link
+                    </a></li>
+                <li>
+                    <a href="{% url 'uploader:file' file.slug %}">
+                    <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                    Edit</a>
+                </li>
+                <li><a href="{% url 'uploader:delete_file' file.slug %}" onclick="javascript:return confirm('DELETE this file?')">
+                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                    Delete</a></li>
+              </ul>
+            </div>
         </td>
     </tr>
     {% endfor %}
+    </tbdoy>
 </table>
+<div class="row">
+    <div class="col-md-12 text-center">
+    <ul class="pagination pagination-centered">
+        {% if files.has_previous %}
+                <li><a href="?page=1"><<</a></li>
+                <li><a href="?page={{ files.previous_page_number }}"><</a></li>
+        {% endif %}
+        
+        {% for i in files.paginator.page_range %}
+            <li {% if files.number == i %} class="active" {% endif %}><a href="?page={{i}}">{{i}}</a></li>
+        {% endfor %}
 
+        {% if files.has_next %}
+                <li><a href="?page={{ files.next_page_number }}">></a></li>
+                <li><a href="?page={{ files.paginator.num_pages }}">>></a></li>{% endif %}
+    </div>
+</div>
 {% endif %}
 {% endblock %}

@@ -13,14 +13,15 @@
 </div>
 <h2>{% block head_title %}{{ unit }}{% endblock %}</h2>
 {% if user.is_authenticated %}
-<p><a class='btn' href="{% url 'uploader:add_favourite' 'unit' unit.slug %}">
-        <img src="{% static 'uploader/img/18x18/heart.png' %}" />
-        Add to favourites
+<div class="favourite">
+    <a class='btn btn-primary' href="{% url 'uploader:add_favourite' 'unit' unit.slug %}">
+            <span class="glyphicon glyphicon-heart-empty" aria-hidden="true"></span>
+            Add to favourites
     </a>
-</p>
+</div>
 {% endif %}
 {% if unit.description %}
-<div id="description">
+<div class="well">
     {{ unit.description|linebreaks }}
 </div>
 {% endif %}

@@ -6,8 +6,9 @@
 <p>{{ group.name }} (<strong>Code:</strong> {{ group.code }})</p>
 {% endfor %}
 <p>
-<a class='btn' href="{% url 'uploader:groups' %}">
-	<img src="{% static 'uploader/img/18x18/add.png' %}" />
-	Add group</a>
+<a href="{% url 'uploader:groups' %}">
+	<button class="btn btn-default">
+    <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></a>
+	Add group</button></a>
 </p>
 {% endblock %}

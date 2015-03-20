@@ -3,6 +3,9 @@
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 <link rel="stylesheet" type="text/css" href="{% static 'uploader/style.css' %}" />
 <title>{{ SITE_NAME }} | {% block head_title %}{% endblock %}</title>
 <link rel="shortcut icon" type="image/png" href="{{STATIC_URL}}/favicon.ico" />
@@ -28,7 +31,8 @@
 </script>
 </head>
 <body>
-    <div id="content" style="width: 100%; height: 100%">
+      <div id="content" style="width: 100%; height: 100%">
+        <div class="container" style="width: 95%">
 <h2 style="font-size: 500%; margin: 5px">{{ lesson.title }}</h2>
 <h3 style="font-size: 400%; margin: 5px">{% now "d/m/y" %}</h3>
 <h3 style="font-size: 300%; margin: 5px">Lesson Objectives</h3>
@@ -38,8 +42,11 @@
 <p style="font-size: 300%">Today's resources and tasks are at:</p>
 <p style="font-size: 500%; text-align:center;">{{ lesson.url }}</p>
 </div>
+</div>
 <p style="text-align:center">
-    <button class='btn' onclick="goFullscreen('content'); return false">Fullscreen</button>
+  <a href="javascript:void(0)" onclick="goFullscreen('content'); return false">
+    <button class='btn btn-success' id='fullscreen'>Fullscreen</button>
+    </a>
 </p>
 </div>
 </body>

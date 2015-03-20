@@ -10,7 +10,7 @@
         <th>URL</th>
         <th># of Resources using</th>
         <th>Uploaded</th>
-        <th width="16%">Actions</th>
+        <th></th>
     </tr>
     {% for bookmark in bookmarks %}
     <tr> 
@@ -19,24 +19,25 @@
         <td style='text-align: center'>{{ bookmark.link_count }}</td>
         <td style='text-align: center'>{{ bookmark.pub_date|date:"d M Y" }}</td>
         <td style='text-align: center'>
-            <a href="{% url 'uploader:link_bookmark' bookmark.slug %}">
-                <button class="btn">
-                <!--<img src="{% static 'uploader/img/18x18/add.png' %}" />-->
-                Link
-                </button>
-            </a>
-            <a href="{% url 'uploader:bookmark' bookmark.slug %}">
-                <button class="btn">
-                <!--<img src="{% static 'uploader/img/18x18/edit.png' %}" />-->
-                Edit
-                </button>
-            </a>
-            <a href="{% url 'uploader:delete_bookmark' bookmark.slug %}" onclick="javascript:return confirm('DELETE this bookmark?')">
-                <!--<img src="{% static 'uploader/img/18x18/delete.png' %}" />-->
-                <button class="btn_danger">
-                Delete
-                </button>
-            </a>
+             <div class="btn-group">
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                Actions <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="{% url 'uploader:link_bookmark' bookmark.slug %}">
+                    <span class="glyphicon glyphicon-link" aria-hidden="true"></span>
+                    Link
+                    </a></li>
+                <li>
+                    <a href="{% url 'uploader:bookmark' bookmark.slug %}">
+                    <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                    Edit</a>
+                </li>
+                <li><a href="{% url 'uploader:delete_bookmark' bookmark.slug %}" onclick="javascript:return confirm('DELETE this bookmark?')">
+                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                    Delete</a></li>
+              </ul>
+            </div>
         </td>
     </tr>
     <tr>
@@ -47,5 +48,22 @@
     </tr>
     {% endfor %}
 </table>
+<div class="row">
+    <div class="col-md-12 text-center">
+    <ul class="pagination pagination-centered">
+        {% if bookmarks.has_previous %}
+                <li><a href="?page=1"><<</a></li>
+                <li><a href="?page={{ bookmarks.previous_page_number }}"><</a></li>
+        {% endif %}
+        
+        {% for i in bookmarks.paginator.page_range %}
+            <li {% if bookmarks.number == i %} class="active" {% endif %}><a href="?page={{i}}">{{i}}</a></li>
+        {% endfor %}
+
+        {% if bookmarks.has_next %}
+                <li><a href="?page={{ bookmarks.next_page_number }}">></a></li>
+                <li><a href="?page={{ bookmarks.paginator.num_pages }}">>></a></li>{% endif %}
+    </div>
+</div>
 {% endif %}
 {% endblock %}

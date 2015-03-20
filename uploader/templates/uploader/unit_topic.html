@@ -15,42 +15,44 @@
 </div>
 <h2>{% block head_title %}{{ unit_topic.title }}{% endblock %}</h2>
 {% if user.is_authenticated %}
-<p><a class='btn' href="{% url 'uploader:add_favourite' 'unit_topic' unit_topic.slug %}">
-        <img src="{% static 'uploader/img/18x18/heart.png' %}" />
-        Add to favourites
+<div class="favourite" style="margin-top: -5px">
+    <a class='btn btn-primary' href="{% url 'uploader:add_favourite' 'unit_topic' unit_topic.slug %}">
+            <span class="glyphicon glyphicon-heart-empty" aria-hidden="true"></span>
+            Add to favourites
     </a>
-</p>
+</div>
 {% endif %}
-<!-- TODO write * -> <li> filter -->
 {% if unit_topic.description and unit_topic.description != "" %}
 <h3>Description</h3>
-<div id="description">
-<p>{{ unit_topic.description|safe|linebreaks }}</p>
+<div class="well">
+    {% autoescape off %}
+    {{ unit_topic.description}}
+    {% endautoescape %}
 </div>
 {% endif %}
 <h3>Information</h3>
 <p>For this unit topic, we have the following:</p>
 <p>
     <a href="{% url 'uploader:unit_topic_resources' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
-    <img class="menu_icon" src="/static/uploader/img/18x18/download.png" height="18" width="18"/>
+        <span class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span>
         <span class="menu_text">Resources 
-        {% if resources %}✓ ({{ resources }})
-        {% else %}✘{% endif %}
+        {% if resources %}<span class="badge">{{ resources }}</span>
+        {% else %}<span class="badge">0</span>{% endif %}
         </span>
     </a>
     </p>
 <p>
     <a href="{% url 'uploader:view_notes' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
-    <img class="menu_icon" src="/static/uploader/img/18x18/book.png" height="18" width="18"/>
-        <span class="menu_text">Notes {% if notes %}✓{% else %}✘{% endif %}</span>
+        <span class="glyphicon glyphicon-book" aria-hidden="true"></span>
+        <span class="menu_text">Notes {% if notes %}<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>{% else %}<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>{% endif %}</span>
     </a>
 </p>
 <p>
     <a href="{% url 'uploader:test' unit_topic.slug %}">
-    <img class="menu_icon" src="/static/uploader/img/18x18/speech_bubble.png" height="18" width="18"/>
+        <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
         <span class="menu_text">Questions 
-        {% if questions %}✓ ({{ questions }})
-        {% else %}✘{% endif %}</span>
+        {% if questions %}<span class="badge">{{ questions }}</span>
+        {% else %}<span class="badge">0</span>{% endif %}</span>
     </a>
 </p>
 {% if related_topics %}

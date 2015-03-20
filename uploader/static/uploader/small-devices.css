@@ -7,7 +7,7 @@
 }
 
 #content {
-    margin-top: 40px;
+    margin-top: 1em;
     width: 95%;
 }
 
@@ -35,25 +35,25 @@
     visibility: hidden;
     display:none;
 }
-#menu {
-    background: #f5f5f5;
-}
+/*#menu {*/
+/*    background: #f5f5f5;*/
+/*}*/
 #menu li {
-    width: 80px;
-    min-height: 80px;
-}
-#menu img {
-    margin-left: 13px;
-    margin-top: 10px;
-    height: 36px;
-    width: 36px;
+    /*width: 80px;*/
+    /*min-height: 80px;*/
 }
 #h1 {
-    font-size: 3em%;
+    font-size: 0.2em;
 }
 #content {
     font-size: 150%;
 }
-#crumbs {
+.glyphicon {
+    font-size: 2em;
+    padding: 0em 15%;
+}
+
+#splash, #menu_twitter, #menu_email, #crumbs {
+    display: none;
     visibility: hidden;
 }

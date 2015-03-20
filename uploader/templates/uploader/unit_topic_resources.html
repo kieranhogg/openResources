@@ -16,20 +16,14 @@
 </div>
 <h2>{% block head_title %}{{ unit_topic.title }} Resources{% endblock %}</h2>
 {% include 'uploader/unit_topic_tabs.html' %}
-<!-- TODO write * -> <li> filter -->
-{% if unit_topic.description and unit_topic.description != "" %}
-<h3>Description</h3>
-<div id="description">
-<p>{{ unit_topic.description|safe|linebreaks }}</p>
-</div>
-{% endif %}
 {% if resources %}
-<ul>
 {% for resource in resources %}
     {% if resource.bookmark %}
-        <li data-type="bookmark"><a href="{% url 'uploader:view_resource' resource|slugify %}">{{ resource }}</a></li>
+        <p><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span>
+            <a href="{% url 'uploader:view_resource' resource|slugify %}">{{ resource }}</a></p>
     {% else %}
-        <li data-type="file"><a href="{% url 'uploader:view_resource' resource|slugify %}">{{ resource }}</a></li>
+        <p><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span>
+            <a href="{% url 'uploader:view_resource' resource|slugify %}">{{ resource }}</a></p>
     {% endif %}
 {% endfor %}
 </ul>
