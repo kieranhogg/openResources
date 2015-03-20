@@ -857,7 +857,7 @@ def add_item_to_lesson(request, slug, type):
             elif slug not in request.session['resources']:
                 request.session['resources'].append(slug)
             request.session.modified = True
-            messages.success(request, "Added to a new lesson, go to My " + 
+            messages.add_message(request, MESSAGES.success, "Added to a new lesson, go to My " + 
                                       "Folder > Lessons to view")
     
     elif type == 'notes':
@@ -873,7 +873,7 @@ def add_item_to_lesson(request, slug, type):
             elif slug not in request.session['notes']:
                 request.session['notes'].append(slug)
             request.session.modified = True
-            messages.success(request, "Added to a new lesson, go to My " + 
+            messages.add_message(request, MESSAGES.success, "Added to a new lesson, go to My " + 
                                       "Folder > Lessons to view")
 
     elif type == 'test':
@@ -883,7 +883,7 @@ def add_item_to_lesson(request, slug, type):
         elif slug not in request.session['tests']:
             request.session['tests'].append(slug)
         request.session.modified = True
-        messages.success(request, "Added to a new lesson, go to My " + 
+        messages.add_message(request, MESSAGES.success, "Added to a new lesson, go to My " + 
                                   "Folder > Lessons to view")
         
     elif type == 'task':
