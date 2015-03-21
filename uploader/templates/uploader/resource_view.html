@@ -5,10 +5,7 @@
 {% block body_block %}
 <script>
 $(document).ready(function () {
-    // hide link if oembed fails, we have a button
     $("div p:contains('http')").closest("div").hide();
-    // $("link_or_oembed:has(p:contains('http'))").hide();
-//   $("link_or_oembed p:contains('http')").parent('link_or_oembed').hide();
 });
 
 function vote(resourceID, rating)

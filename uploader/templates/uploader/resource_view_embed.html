@@ -3,7 +3,11 @@
 {% load micawber_tags %}
 {% load static %}
 {% block body_block %}
-
+<script>
+$(document).ready(function () {
+    $("div p:contains('http')").closest("div").hide();
+});
+</script>
 {% if resource.file %}
     {% if ses_id %}
     <p>
@@ -28,7 +32,7 @@
     {% else %}
         <div id="link">
             <a href='{{ resource.bookmark.link }}' target="_blank">
-                <button class='btn'>Open link</button>
+                <button class='btn btn-success'>Open link</button>
             </a>
         </div>
     {% endif %}

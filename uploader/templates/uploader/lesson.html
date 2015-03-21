@@ -1,12 +1,18 @@
 {% extends 'uploader/base.html' %}
 {% block body_block %}
 {% load static %}
+<script>
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
+</script>
 <h2>{% block head_title %}{{ lesson.title }}{% endblock %}</h2>
 <h3>Lesson Objectives</h3>
 {% autoescape off %}
 {{ lesson.objectives }}
 {% endautoescape %}
 <h3>Lesson Tasks</h3>
+
 <div class="row">
   {% for item in lesson_items %}
   <div class="col-sm-6 col-md-3">
@@ -20,7 +26,7 @@
         
         {% if item.type == 'resources' %}
         <p>
-        <a href="javascript:void(0)" class="jQuery fancybox.iframe" onclick="jQuery.fancybox({href:'{% url 'uploader:view_resource_embed' item.slug %}', type: 'iframe', width: 1000, height: 600, overlayColor: '#000', hideOnContentClick: false, hideOnOverlayClick: false });">
+        <a href="javascript:void(0)" data-toggle="modal" data-target="#myModal">
             <span class="glyphicon glyphicon-eye-open" aria-hidden="true" title='Preview'></span>
         </a>
         <a href="{% url 'uploader:view_resource' item.slug %}">
@@ -43,6 +49,24 @@
       <!--</div>-->
     </div>
   </div>
+  {% if item.type == 'resources' %}
+           <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">{{ item.title }}</h4>
+              </div>
+              <div class="modal-body">
+                <iframe src="{% url 'uploader:view_resource_embed' item.slug %}" width="100%" frameborder="0" />
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+  {% endif %}
   {% endfor %}
 </div>
 {% endblock %}
