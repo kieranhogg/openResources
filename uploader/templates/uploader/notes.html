@@ -2,6 +2,10 @@
 {% block head_title %}{{ unit_topic }} Notes{% endblock %}
 {% block body_block %}
 {% load static %}
+<script>
+    // Fix styles that come back from github's markdown API
+    $( "table" ).last().addClass( "table" );
+</script>
 <div id="crumbs">
     <a href="{% url 'uploader:index' %}">Home</a> > 
     <a href="{% url 'uploader:subject' unit_topic.unit.syllabus.subject.slug %}">
