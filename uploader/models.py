@@ -145,6 +145,7 @@ class Unit(models.Model):
 
 class UnitAdmin(admin.ModelAdmin):
     list_display = ('title', 'syllabus', 'description', 'pub_date')
+    list_filter = ('syllabus__subject', 'syllabus')
     prepopulated_fields = {"slug": ("title",)}
 
 
