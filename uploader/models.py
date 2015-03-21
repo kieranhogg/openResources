@@ -125,6 +125,8 @@ class SyllabusAdmin(admin.ModelAdmin):
 
 class Unit(models.Model):
     title = models.CharField(max_length=200)
+    order = models.IntegerField(null=True, blank=True,
+        help_text='Use to correctly order units')
     syllabus = models.ForeignKey(Syllabus)
     description = models.TextField(
         blank=True,

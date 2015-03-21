@@ -190,7 +190,8 @@ def syllabus(request, subject_slug, exam_slug, slug):
     """Show one syllabuses page, has units on
     """
     syllabus = get_object_or_404(Syllabus, slug=slug)
-    units = Unit.objects.filter(syllabus__id=syllabus.id)
+    units = Unit.objects.filter(syllabus__id=syllabus.id).order_by('order', 
+                                                                   'title')
     context = {'syllabus': syllabus, 'units': units}
     return render(request, 'uploader/syllabus.html', context)
 
