@@ -67,6 +67,7 @@
                 {% for answer in question.answers %}
                     <input type="radio" name="question{{question.id}}" value="{{ answer.number }}">
                     <label class='answer' for="{{ question.id|add:"-"|add:answer.number }}">{{ answer.text }}</label>
+                    <br />
                 {% endfor %}
             </p>
         {% endfor %}
