@@ -61,28 +61,11 @@ def render_markdown(text):
     
 
 def shorten_url(url):
+    """Returns a short URL from tinyurl.com
+    """
     get_url = 'http://tinyurl.com/api-create.php?url=%s' % url
     r = requests.get(get_url)
     return r.text
-    
-def shorten_url_google(url): 
-    return_url = False
-    tries = 0
-    # we sometimes don't get a URL from Google, this unhelpful, so keep trying
-    while not return_url and tries <= 3:
-        post_url = 'https://www.googleapis.com/urlshortener/v1/url?key='
-        post_url += settings.GOOGLE_URL_KEY
-        payload = {'longUrl': url, 'key': settings.GOOGLE_URL_KEY}
-        headers = {'content-type': 'application/json'}
-        r = requests.post(post_url, data=json.dumps(payload), headers=headers)
-        data = r.json()
-        try:
-            return_url = data['id']
-            break
-        except KeyError:
-            tries += 1
-    return json.dumps(data)
-    return return_url
     
     
 def get_resource_rating(resource_id, use='display'):
