@@ -1,4 +1,5 @@
 {% extends 'uploader/base.html' %}
+{% load boostrap %}
 {% block body_block %}
 <h2>{% block head_title %}
 {% if form.instance.id %}
@@ -18,16 +19,17 @@ Question{% endblock %}</h2>
 {% if not form.instance.id %}
 <p>You are adding a new question to: <strong>{{ unit_topic }}</strong></p>
 {% endif %}
-<form action method="post" novalidate>
+<form role="form" action method="post" novalidate>
     {% csrf_token %}
-    {{ form.as_p }}
+    {{ form|bootstrap }}
     
-<br />
-{% if form.instance.id %}
-    <input type="submit" value="Update">
-{% else %}
-    <input type="submit" value="Add">
-{% endif %}
+    <div class="form-group text-center">
+    {% if form.instance.id %}
+        <button type="submit" class="btn btn-success">Update</button>
+    {% else %}
+        <button type="submit" class="btn btn-success">Next</button>
+    {% endif %}
+    </div>
 
 </form>
 {% endblock %}
