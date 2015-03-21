@@ -645,7 +645,7 @@ def user_lessons(request, user_id=None):
     form_errors = []
     form_data = None
     
-    if request.POST.get('submit', False):
+    if request.POST:
         form_data = request.POST
         if request.POST.get('clear', False) == 'on':
             request.session['resources'] = None

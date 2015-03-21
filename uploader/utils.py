@@ -4,6 +4,8 @@ from django.utils.text import slugify
 from django.conf import settings
 from django.core.files.base import File as DjangoFile
 from django.conf import settings
+from django.http import (HttpResponse, HttpResponseRedirect, JsonResponse, 
+    Http404, HttpResponseForbidden)
 from uploader.models import *
 
 
@@ -58,12 +60,21 @@ def render_markdown(text):
     return r.text.encode('utf-8')
     
 def shorten_url(url): 
-    post_url = 'https://www.googleapis.com/urlshortener/v1/url'
-    payload = {'longUrl': url, 'key': settings.GOOGLE_URL_KEY}
-    headers = {'content-type': 'application/json'}
-    r = requests.post(post_url, data=json.dumps(payload), headers=headers)
-    data = r.json()
-    return data['id']
+    return_url = False
+    tries = 0
+    # we sometimes don't get a URL from Google, this unhelpful, so keep trying
+    while not return_url and tries <= 3:
+        post_url = 'https://www.googleapis.com/urlshortener/v1/url'
+        payload = {'longUrl': url, 'key': settings.GOOGLE_URL_KEY}
+        headers = {'content-type': 'application/json'}
+        r = requests.post(post_url, data=json.dumps(payload), headers=headers)
+        data = r.json()
+        try:
+            return_url = data['id']
+            break
+        except KeyError:
+            tries += 1
+    return return_url
     
     
 def get_resource_rating(resource_id, use='display'):
