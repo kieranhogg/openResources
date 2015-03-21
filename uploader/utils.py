@@ -63,7 +63,7 @@ def render_markdown(text):
 def shorten_url(url):
     get_url = 'http://tinyurl.com/api-create.php?url=%s' % url
     r = requests.get(get_url)
-    return r
+    return r.text
     
 def shorten_url_google(url): 
     return_url = False
