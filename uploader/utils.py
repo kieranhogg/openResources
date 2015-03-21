@@ -59,7 +59,13 @@ def render_markdown(text):
     r = requests.post(url, headers=headers, data=data)
     return r.text.encode('utf-8')
     
-def shorten_url(url): 
+
+def shorten_url(url):
+    get_url = 'http://tinyurl.com/api-create.php?url=%s' % url
+    r = requests.get(get_url)
+    return r
+    
+def shorten_url_google(url): 
     return_url = False
     tries = 0
     # we sometimes don't get a URL from Google, this unhelpful, so keep trying
@@ -75,6 +81,7 @@ def shorten_url(url):
             break
         except KeyError:
             tries += 1
+    return json.dumps(data)
     return return_url
     
     
