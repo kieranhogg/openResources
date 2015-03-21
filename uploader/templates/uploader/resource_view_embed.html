@@ -11,7 +11,7 @@ $(document).ready(function () {
 {% if resource.file %}
     {% if ses_id %}
     <p>
-    <iframe src="https://view-api.box.com/1/sessions/{{ ses_id }}/view?theme=light" seamless fullscreen style="display: block; margin: 0 auto; border: none; width:1000px;height:600px"></iframe>
+    <iframe src="https://view-api.box.com/1/sessions/{{ ses_id }}/view?theme=light" seamless fullscreen style="display: block; margin: 0 auto; border: none; width:1000px;height:500px"></iframe>
     </p>
     {% endif %}
     
@@ -24,7 +24,7 @@ $(document).ready(function () {
     
     {% if resource.file %}
     <a href='{{ MEDIA_URL }}{{ resource.file.file }}'>
-        <button class='btn'>
+        <button class='btn btn-success'>
         <span class="glyphicon glyphicon-save" style="color:white" aria-hidden="true"></span>
          Download
         </button>    
