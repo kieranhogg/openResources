@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 <link rel="stylesheet" type="text/css" href="{% static 'uploader/style.css' %}" />
-<title>{{ SITE_NAME }} | {% block head_title %}{% endblock %}</title>
+<title>{{ SITE_NAME }} | {% block head_title %}{{ lesson.title }}{% endblock %}</title>
 <link rel="shortcut icon" type="image/png" href="{{STATIC_URL}}/favicon.ico" />
 <script type="text/javascript">
   function goFullscreen(id) {
@@ -40,12 +40,19 @@
 {{ lesson.objectives|safe }}
 </div>
 <p style="font-size: 300%">Today's resources and tasks are at:</p>
-<p style="font-size: 500%; text-align:center;">{{ lesson.url }}</p>
+<p style="font-size: 500%; text-align:center;">
+  <span class="glyphicon glyphicon-globe" aria-hidden="true" style="font-size: 80%; color: black"></span>
+  {{ lesson.url }}
+</p>
 </div>
 </div>
 <p style="text-align:center">
   <a href="javascript:void(0)" onclick="goFullscreen('content'); return false">
-    <button class='btn btn-success' id='fullscreen'>Fullscreen</button>
+    <button class='btn btn-success' id='fullscreen'>
+      <span class="glyphicon glyphicon-fullscreen" aria-hidden="true" style="color: white"></span>
+
+      Fullscreen
+      </button>
     </a>
 </p>
 </div>

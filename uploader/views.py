@@ -841,6 +841,7 @@ def lesson(request, slug):
         
 def lesson_show(request, slug):
     l = get_object_or_404(Lesson, slug=slug)
+    l.url = string.replace(l.url, "http://", "")
     l.objectives = render_markdown(l.objectives)
 
     return render(request, 'uploader/lesson_show.html', 

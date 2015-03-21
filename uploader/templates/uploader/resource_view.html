@@ -134,10 +134,12 @@ function vote(resourceID, rating)
 {% if resource.file %}
     <div id="author">
     {% if not resource.file.uploader_is_author %}
-    Resource created by 
+    Resource originally created by 
+        {% if resource.file.author_link %}
         <a href="{{ resource.file.author_link }}">
-            {{ resource.file.uploader }}.
+            {{ resource.file.author }}
         </a>
+        {% endif %}
     {% endif %}
     
     {% if ses_id %}
@@ -146,13 +148,15 @@ function vote(resourceID, rating)
     </p>
     {% endif %}
     
-    {% if not "None" in resource.file.licence %}
+    {% if "None" not in resource.file.licence %}
+    <p>
     Published under 
             <a href="{{ resource.licence.link }}">
                 {{ resource.file.licence }} licence
             </a>
+    </p>
     {% endif %}
-    <br />
+
 
     </div>
 {% else %}
