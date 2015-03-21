@@ -496,3 +496,6 @@ a.btn-primary {
 .thumbnail {
     min-height: 6em;
 }
+.modal-dialog {
+     width: 80% !important;
+}
