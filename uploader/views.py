@@ -1033,7 +1033,7 @@ def test(request, slug):
             answer_num = request.POST.get(question_key)
             answer = get_object_or_404(MultipleChoiceAnswer, 
                                        question=question, number=answer_num)
-
+            # return HttpResponse('%s|%s|%s|%s' % (question_num, question, answer_num, answer))
             answer = MultipleChoiceUserAnswer(
                 question=question, 
                 answer_chosen=answer,
@@ -1088,16 +1088,22 @@ def test(request, slug):
     
 def test_feedback(request, slug):
     unit_topic = get_object_or_404(UnitTopic, slug=slug)
+    
+    # get all questions for this unit topic
     questions = MultipleChoiceQuestion.objects.filter(unit_topic=unit_topic)
     question_list = []
+    
     for question in questions:
+        # find user answers
         user_answer = MultipleChoiceUserAnswer.objects.filter(
             question=question, user=request.user)
-        if user_answer.count() == 1:
-            question.answer = MultipleChoiceAnswer.objects.filter(question=question)[0]
-            question.user_answer = user_answer
-            question_list.append(question)
         
+        # if the user has answered this one
+        if user_answer.count() > 0:
+            question.answer = MultipleChoiceAnswer.objects.filter(question=question)[0]
+            question.user_answer = user_answer[0].answer_chosen.text
+            question_list.append(question)
+
     return render(request, 'uploader/feedback.html', 
     {'questions': question_list, 'unit_topic': unit_topic})
     
