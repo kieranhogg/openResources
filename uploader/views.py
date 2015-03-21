@@ -679,6 +679,7 @@ def user_lessons(request, user_id=None):
                            )
                 url = request.build_absolute_uri(reverse('uploader:lesson', 
                                                          args=[slug]))
+
                 l.url = shorten_url(url)
                 l.save()
     
