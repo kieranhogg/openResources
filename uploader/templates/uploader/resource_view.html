@@ -32,6 +32,7 @@ function vote(resourceID, rating)
 </h2>
 
 <div id="resource_details">
+    {% if user.teacherprofile %}
     <div id="add-to-lesson">
     <a href="{% url 'uploader:add_item_to_lesson' resource.slug 'resource' %}">
         <button class='btn btn-primary'>
@@ -40,6 +41,7 @@ function vote(resourceID, rating)
         </button>
     </a>
     </div>
+    {% endif %}
     <div id="syllabus">Suitable for: 
     <strong>{{ resource.syllabus }}
     {% if resource.unit %} > {{ resource.unit }}{% endif %}
