@@ -25,14 +25,17 @@ $(document).ready(function () {
     {% if resource.file %}
     <a href='{{ MEDIA_URL }}{{ resource.file.file }}'>
         <button class='btn'>
-        Download
+        <span class="glyphicon glyphicon-save" style="color:white" aria-hidden="true"></span>
+         Download
         </button>    
     </a>
         
     {% else %}
         <div id="link">
             <a href='{{ resource.bookmark.link }}' target="_blank">
-                <button class='btn btn-success'>Open link</button>
+                <button class='btn btn-success'> 
+                <span class="glyphicon glyphicon-globe" style="color:white" aria-hidden="true"></span> 
+                Open link</button>
             </a>
         </div>
     {% endif %}
