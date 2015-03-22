@@ -28,13 +28,6 @@ class FileForm(forms.ModelForm):
                   'uploader_is_author', 'author', 'author_link', 'licence']
         
     def clean(self):
-        data = super(FileForm, self).clean()
-        if not data.get('url') and not data.get('file'):
-             raise forms.ValidationError("Either upload a file or specify a " +
-                                         "URL to a file")
-                                         
-                                         
-    def clean_file(self):
         file = self.cleaned_data['file']
         if file:
             content_type = file.content_type
@@ -43,15 +36,17 @@ class FileForm(forms.ModelForm):
                     raise forms.ValidationError(_('Please keep filesize under %s. Current filesize %s') % (filesizeformat(settings.MAX_UPLOAD_SIZE), filesizeformat(content._size)))
             else:
                 raise forms.ValidationError(_('File type is not supported'))
-        else:
-            return file
     
-    def clean_url(self):
         url = self.cleaned_data.get('url')
         if url:
             mimetype, encoding = mimetypes.guess_type(url)
             if mimetype not in settings.CONTENT_TYPES:
                 raise forms.ValidationError(_('File type is not supported'))
+        data = super(FileForm, self).clean()
+        
+        if not data.get('url') and not data.get('file'):
+             raise forms.ValidationError("Either upload a file or specify a " +
+                                         "URL to a file")
 
 
     
