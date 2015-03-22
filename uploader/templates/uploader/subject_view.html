@@ -3,7 +3,7 @@
 {% get_static_prefix as STATIC_PREFIX %}
 {% block body_block %}
 <div id="crumbs">
-    <a href="{% url 'uploader:index' %}">Home</a> > {{ subject.subject_name }}
+    <a href="{% url 'uploader:subjects' %}">Home</a> > {{ subject.subject_name }}
 </div>
 <h2>{% block head_title %}{{ subject.subject_name }}{% endblock %}</h2>
 <!--<img src="{% static 'uploader/img/18x18/subjects/' %}{{ subject.subject_name|slugify }}_large.jpg" />-->

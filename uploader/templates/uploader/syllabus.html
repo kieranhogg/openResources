@@ -2,7 +2,7 @@
 {% block body_block %}
 {% load static %}
 <div id="crumbs">
-    <a href="{% url 'uploader:index' %}">Home</a> > 
+    <a href="{% url 'uploader:subjects' %}">Home</a> > 
     <a href="{% url 'uploader:subject' syllabus.subject.slug %}">
         {{ syllabus.subject.subject_name|truncatechars:45 }}</a> >
     <a href="{% url 'uploader:syllabuses' syllabus.subject.slug syllabus.exam_level.slug %}">
