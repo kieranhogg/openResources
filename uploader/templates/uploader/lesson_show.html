@@ -11,6 +11,9 @@
 <link rel="shortcut icon" type="image/png" href="{{STATIC_URL}}/favicon.ico" />
 <script type="text/javascript">
   function goFullscreen(id) {
+    // keep screen on in firefox
+    var lock = window.navigator.requestWakeLock('screen');
+    
     // Get the element that we want to take into fullscreen mode
     var element = document.getElementById(id);
     
