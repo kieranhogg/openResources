@@ -21,7 +21,7 @@ $(function () {
         <h4 class="task_num">{{ forloop.counter }}</h4>
         
         {% if item.instructions %}
-        <p>{{ item.instructions|linebreaks }}</p>
+        <p>{{ item.instructions|linebreaks|urlize }}</p>
         {% endif %}
         
         {% if item.type == 'resources' %}
