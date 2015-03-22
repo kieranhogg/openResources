@@ -20,13 +20,22 @@
 </div>
 {% endif %}
 </a>
-<div id="syllabus_validity">
+<div id="syllabus_validity" class="well">
     {% if syllabus.teach_from %}
     <p><strong>First teaching</strong>: {{ syllabus.teach_from|date:"F Y" }}</p>
     {% endif %}
     
     {% if syllabus.teach_until %}
     <p><strong>Last exam</strong>: {{ syllabus.teach_until|date:"F Y" }}</p>
+    {% endif %}
+    
+    {% if syllabus.exam_board.board_name == "National Curriculum" %}
+        <p><strong>Syllabus</strong>: {{ syllabus.exam_board }}</p>
+        <p><strong>Level</strong>: {{ syllabus.exam_level }}</p>
+        <p><strong>Subject</strong>: {{ syllabus.subject }}</p>
+    {% else %}
+    <p><strong>Exam board</strong>: {{ syllabus.exam_board }}</p>
+    <p><strong>Syllabus level</strong>: {{ syllabus.exam_level }}</p>
     {% endif %}
 </div>
 {% if syllabus.description %}
@@ -37,25 +46,27 @@
 <p><a href="{{ syllabus.official_site }}">Official site</a></p>
 {% endif %}
 <h3>Syllabus Resources</h3>
-<p>Under syllabus resources you will find syllabus-specific resources
-such as schemes of work.</p>
+<p>E.g. syllabus schemes of work.</p>
 <p>
     <a href="{% url 'uploader:syllabus_resources' syllabus.subject.slug syllabus.exam_level.slug syllabus.slug %}">
         View syllabus resources
     </a>
 </p>
+{% if syllabus.exam_board.board_name == "National Curriculum" %}
+<h3>Years</h3>
+{% else %}
 <h3>Units</h3>
+{% endif %}
+
 {% if units %}
-<p>View unit-specific resources:</p>
 <div id="resource_list">
     <ul>
     {% for unit in units %}
-              <li><a href="{% url 'uploader:unit' syllabus.subject.slug syllabus.exam_level.slug syllabus.slug unit.slug %}">{{ unit.title }}</a></li> 
+        <li><a href="{% url 'uploader:unit' syllabus.subject.slug syllabus.exam_level.slug syllabus.slug unit.slug %}">{{ unit.title }}</a></li> 
     {% endfor %}
     </ul>
     {% else %}
-        No resources :(
-        <a href="{% url 'uploader:add_resource' %}">Add some?</a>
+       <p>No results</p>
     {% endif %}
 </div>
 {% endblock %}

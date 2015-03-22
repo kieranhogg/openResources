@@ -107,8 +107,10 @@ class Syllabus(models.Model):
     def __unicode__(self):
         # Fix for BTEC and IB oddities as the qualification and exam board
         # are the same and read badly
-        if 'BTEC' in str(self.exam_board) or 'Baccalaureate' in str(self.exam_board):
-            first_part = str(self.exam_board) + " " + str(self.subject_name or self.subject)
+        if ('BTEC' in str(self.exam_board) or 
+            'Baccalaureate' in str(self.exam_board) or 
+            'National Curriculum' in str(self.exam_board)):
+                first_part = str(self.exam_board) + " " + str(self.subject_name or self.subject)
         else:
             first_part = str(self.exam_board) + " " + str(self.subject_name or 
                 self.subject) + " " + str(self.exam_level)
