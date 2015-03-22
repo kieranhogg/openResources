@@ -39,7 +39,7 @@ class FileForm(forms.ModelForm):
         if file:
             content_type = file.content_type
             if content_type in settings.CONTENT_TYPES:
-                if content._size > settings.MAX_UPLOAD_SIZE:
+                if file.size > settings.MAX_UPLOAD_SIZE:
                     raise forms.ValidationError(_('Please keep filesize under %s. Current filesize %s') % (filesizeformat(settings.MAX_UPLOAD_SIZE), filesizeformat(content._size)))
             else:
                 raise forms.ValidationError(_('File type is not supported'))
