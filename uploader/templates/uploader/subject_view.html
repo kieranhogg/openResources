@@ -2,9 +2,10 @@
 {% load static %}
 {% get_static_prefix as STATIC_PREFIX %}
 {% block body_block %}
-<div id="crumbs">
-    <a href="{% url 'uploader:subjects' %}">Home</a> > {{ subject.subject_name }}
-</div>
+<ol class="breadcrumb">
+    <li><a href="{% url 'uploader:subjects' %}">Home</a></li>
+    <li class="active">{{ subject.subject_name }}</li>
+</ol>
 <h2>{% block head_title %}{{ subject.subject_name }}{% endblock %}</h2>
 <!--<img src="{% static 'uploader/img/18x18/subjects/' %}{{ subject.subject_name|slugify }}_large.jpg" />-->
 <p>Choose which level of syllabus you are looking for:</p>

@@ -1,11 +1,10 @@
 {% extends 'uploader/base.html' %}
 {% block body_block %}
-<div id="crumbs">
-    <a href="{% url 'uploader:subjects' %}">Home</a> > 
-    <a href="{% url 'uploader:subject' subject.slug %}">
-        {{ subject.subject_name }}</a> >
-     {{ level.level_name }}
-</div>
+<ol class="breadcrumb">
+    <li><a href="{% url 'uploader:subjects' %}">Home</a></li>
+    <li><a href="{% url 'uploader:subject' subject.slug %}">{{ subject.subject_name }}</a></li>
+    <li class="active">{{ level.level_name }}</li>
+</ol>
 <h2>{% block head_title %}{{ subject.subject_name }} Syllabuses{% endblock %}</h2>
 <p>I found the following syllabuses:</p>
 {% if syllabus_list %}

@@ -1,14 +1,14 @@
 {% extends 'uploader/base.html' %}
 {% block body_block %}
 {% load static %}
-<div id="crumbs">
-    <a href="{% url 'uploader:subjects' %}">Home</a> > 
-    <a href="{% url 'uploader:subject' syllabus.subject.slug %}">
-        {{ syllabus.subject.subject_name|truncatechars:45 }}</a> >
-    <a href="{% url 'uploader:syllabuses' syllabus.subject.slug syllabus.exam_level.slug %}">
-     {{ syllabus.exam_level.level_name|truncatechars:45 }}</a> >
-     {{ syllabus|truncatechars:45 }}
-</div>
+<ol class="breadcrumb">
+    <li><a href="{% url 'uploader:subjects' %}">Home</a></li>
+    <li><a href="{% url 'uploader:subject' syllabus.subject.slug %}">
+        {{ syllabus.subject.subject_name|truncatechars:45 }}</a></li>
+   <li> <a href="{% url 'uploader:syllabuses' syllabus.subject.slug syllabus.exam_level.slug %}">
+     {{ syllabus.exam_level.level_name|truncatechars:45 }}</a></li>
+    <li class="active">{{ syllabus|truncatechars:45 }}</li>
+</ol>
 <h2>{% block head_title %}{{ syllabus }}{% endblock %}</h2>
 {% if user.is_authenticated %}
 <div class="favourite">
@@ -20,7 +20,7 @@
 </div>
 {% endif %}
 </a>
-<div id="syllabus_validity" class="well">
+<div id="syllabus_validity">
     {% if syllabus.teach_from %}
     <p><strong>First teaching</strong>: {{ syllabus.teach_from|date:"F Y" }}</p>
     {% endif %}
@@ -43,7 +43,11 @@
 {% endif %}
 
 {% if syllabus.official_site %}
-<p><a href="{{ syllabus.official_site }}">Official site</a></p>
+<p><a class='btn btn-info' href="{{ syllabus.official_site }}">
+    <span style="color: white" class="glyphicon glyphicon-globe" aria-hidden="true"></span>
+    Official site
+    </a>
+</p>
 {% endif %}
 <h3>Syllabus Resources</h3>
 <p>E.g. syllabus schemes of work.</p>

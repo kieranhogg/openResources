@@ -1,16 +1,16 @@
 {% extends 'uploader/base.html' %}
 {% block body_block %}
 {% load static %}
-<div id="crumbs">
-    <a href="{% url 'uploader:subjects' %}">Home</a> > 
-    <a href="{% url 'uploader:subject' unit.syllabus.subject.slug %}">
-        {{ unit.syllabus.subject.subject_name|truncatechars:45 }}</a> >
-    <a href="{% url 'uploader:syllabuses' unit.syllabus.subject.slug unit.syllabus.exam_level.slug %}">
-     {{ unit.syllabus.exam_level.level_name|truncatechars:45 }}</a> >
-    <a href="{% url 'uploader:syllabus' unit.syllabus.subject.slug unit.syllabus.exam_level.slug unit.syllabus.slug%}"> 
-     {{ unit.syllabus|truncatechars:45 }}</a> >
-     {{ unit.title|truncatechars:45 }}
-</div>
+<ol class="breadcrumb">
+    <li><a href="{% url 'uploader:subjects' %}">Home</a></li>
+    <li><a href="{% url 'uploader:subject' unit.syllabus.subject.slug %}">
+        {{ unit.syllabus.subject.subject_name|truncatechars:45 }}</a></li>
+    <li><a href="{% url 'uploader:syllabuses' unit.syllabus.subject.slug unit.syllabus.exam_level.slug %}">
+     {{ unit.syllabus.exam_level.level_name|truncatechars:45 }}</a></li>
+    <li><a href="{% url 'uploader:syllabus' unit.syllabus.subject.slug unit.syllabus.exam_level.slug unit.syllabus.slug%}"> 
+     {{ unit.syllabus|truncatechars:45 }}</a></li>
+     <li class="active">{{ unit.title|truncatechars:45 }}</li>
+</ol>
 <h2>{% block head_title %}{{ unit }}{% endblock %}</h2>
 {% if user.is_authenticated %}
 <div class="favourite">

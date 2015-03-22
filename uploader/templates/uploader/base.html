@@ -29,7 +29,7 @@
 <link rel="stylesheet" type="text/css" href="{% static 'uploader/style.css' %}" />
 <link rel="stylesheet" type="text/css" media="only screen and (max-width: 480px), only screen and (max-device-width: 480px)" href="{% static 'uploader/small-devices.css' %}" />
 
-<title>{{ SITE_NAME }}</title>
+<title>{{ SITE_NAME }} {% block head_title %}{% endblock %}</title>
 <link rel="shortcut icon" type="image/png" href="{{STATIC_URL}}/favicon.ico" />
 </head>
 <body>

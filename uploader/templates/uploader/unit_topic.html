@@ -1,18 +1,18 @@
 {% extends 'uploader/base.html' %}
 {% block body_block %}
 {% load static %}
-<div id="crumbs">
-    <a href="{% url 'uploader:subjects' %}">Home</a> > 
-    <a href="{% url 'uploader:subject' unit_topic.unit.syllabus.subject.slug %}">
-        {{ unit_topic.unit.syllabus.subject.subject_name|truncatechars:45 }}</a> >
-    <a href="{% url 'uploader:syllabuses' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug %}">
-     {{ unit_topic.unit.syllabus.exam_level.level_name|truncatechars:45 }}</a> >
-    <a href="{% url 'uploader:syllabus' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug %}"> 
-     {{ unit_topic.unit.syllabus|truncatechars:45 }}</a> >
-    <a href="{% url 'uploader:unit' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug %}">
-     {{ unit_topic.unit.title|truncatechars:45 }}</a> >
-     {{ unit_topic.title|truncatechars:45 }}
-</div>
+<ol class="breadcrumb">
+    <li><a href="{% url 'uploader:subjects' %}">Home</a></li>
+    <li><a href="{% url 'uploader:subject' unit_topic.unit.syllabus.subject.slug %}">
+        {{ unit_topic.unit.syllabus.subject.subject_name|truncatechars:30 }}</a></li>
+    <li><a href="{% url 'uploader:syllabuses' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug %}">
+     {{ unit_topic.unit.syllabus.exam_level.level_name|truncatechars:30 }}</a></li>
+    <li><a href="{% url 'uploader:syllabus' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug %}"> 
+     {{ unit_topic.unit.syllabus|truncatechars:30 }}</a></li>
+    <li><a href="{% url 'uploader:unit' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug %}">
+     {{ unit_topic.unit.title|truncatechars:30 }}</a></li>
+     <li class="active">{{ unit_topic.title|truncatechars:30 }}</li>
+</ol>
 <h2>{% block head_title %}{{ unit_topic.title }}{% endblock %}</h2>
 {% if user.is_authenticated %}
 <div class="favourite" style="margin-top: -5px">
