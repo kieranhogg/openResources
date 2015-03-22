@@ -496,3 +496,6 @@ a.btn-primary {
 .modal-dialog {
      width: 80% !important;
 }
+.breadcrumb {
+    background-color: #FCFCFC;
+}
