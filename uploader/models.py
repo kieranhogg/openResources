@@ -105,13 +105,19 @@ class Syllabus(models.Model):
     pub_date = models.DateTimeField('Date published')
 
     def __unicode__(self):
+        # Fix for BTEC and IB oddities as the qualification and exam board
+        # are the same and read badly
+        if 'BTEC' in str(self.exam_board) or 'Baccalaureate' in str(self.exam_board):
+            first_part = str(self.exam_board) + " " + str(self.subject_name or self.subject)
+        else:
+            first_part = str(self.exam_board) + " " + str(self.subject_name or 
+                self.subject) + " " + str(self.exam_level)
+                
         if self.teach_from is not None:
-            return str(self.exam_board) + " " + (str(self.subject_name) or 
-                str(self.subject)) + " " + str(self.exam_level) + " (" + str(
+            return str(first_part) + " (" + str(
                     self.teach_from.strftime("%Y")) + ")"
         else:
-            return str(self.exam_board) + " " + (str(self.subject_name) or 
-                str(self.subject)) + " " + str(self.exam_level)
+            return str(first_part)
         
     class Meta:
         ordering = ('exam_board', 'exam_level', 'subject')
