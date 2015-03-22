@@ -654,7 +654,7 @@ def user_lessons(request, user_id=None):
             request.session['tasks'] = None
         
         elif request.POST.get('add_task'):
-            add_item_to_lesson(request, None, 'task')
+            add_item_to_lesson(request, int(time.time()), 'task')
         elif not request.POST['title']:
             form_errors.append('Please enter a lesson title')
         else:
@@ -890,7 +890,6 @@ def add_item_to_lesson(request, slug, type):
                                   "Folder > Lessons to view")
         
     elif type == 'task':
-        
         if request.session.get('tasks', None) is None:
             request.session['tasks'] = (slug,)
         elif slug not in request.session['tasks']:

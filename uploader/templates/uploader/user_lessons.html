@@ -30,7 +30,6 @@ new lessons with those items.</p>
 {% if resources %}
     <h3>Lesson items</h3>
     {% for resource in resources %}
-        {% if not forloop.first %}<hr />{% endif %}
         <div class="lesson-resource">
         <h4>Resource: {{ resource }}</h3>
         <input type="hidden" name="slug{{ resource.count }}" value="{{ resource.slug }}" />
@@ -52,7 +51,6 @@ new lessons with those items.</p>
         
 {% if notes %}
     {% for note in notes %}
-        {% if not forloop.first %}<hr />{% endif %}
         <h4>Notes: {{ note.unit_topic }}</h4>
         <input type="hidden" name="slug{{ note.count }}" value="{{ note.slug }}" />
         <input type="hidden" name="type{{ note.count }}" value="notes" />
@@ -71,7 +69,6 @@ new lessons with those items.</p>
 
 {% if tests %}
     {% for test in tests %}
-        {% if not forloop.first %}<hr />{% endif %}
         <h4>Test: {{ test }}</h4>
         <input type="hidden" name="slug{{ test.count }}" value="{{ test.slug }}" />
         <input type="hidden" name="type{{ test.count }}" value="test" />
@@ -90,7 +87,6 @@ new lessons with those items.</p>
 
 {% if tasks %}
     {% for task in tasks %}
-        {% if not forloop.first %}<hr />{% endif %}
         <h4>Task</h4>
         <input type="hidden" name="type{{ task }}" value="task" />
         <div class='order'>
