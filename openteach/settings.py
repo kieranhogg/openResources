@@ -86,7 +86,7 @@ LOGIN_REDIRECT_URL = '/favourites/'
 LOGIN_URL = '/accounts/login/'
 ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URLL = '/favourites/'
 
-CONTENT_TYPES = ['pdf', 
+CONTENT_TYPES = ['application/pdf', 
                 'vnd.oasis.opendocument.text',
                 'vnd.ms-excel',
                 'application/msword',
