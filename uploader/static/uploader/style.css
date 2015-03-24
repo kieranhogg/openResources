@@ -470,21 +470,21 @@ table .altrow td {
     float: right;
 }
 
-.link_or_oembed {
+/*.link_or_oembed {*/
     overflow-y: scroll; /* has to be scroll, not auto or hidden*/
-    -webkit-overflow-scrolling: touch;
-    position: relative;
-    padding-bottom: 90%; // (450 ÷ 500 = 0.9 = 90%)
-    height: 0;
-    overflow: hidden;
-}
-.link_or_oembed iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
+/*    -webkit-overflow-scrolling: touch;*/
+/*    position: relative;*/
+/*    padding-bottom: 90%; // (450 ÷ 500 = 0.9 = 90%)*/
+/*    height: 0;*/
+/*    overflow: hidden;*/
+/*}*/
+/*.link_or_oembed iframe {*/
+/*    position: absolute;*/
+/*    top: 0;*/
+/*    left: 0;*/
+/*    width: 100%;*/
+/*    height: 100%;*/
+/*}*/
 
 /* bootstrap overrides */
 .pagination>li>a, .pagination>li>span {
