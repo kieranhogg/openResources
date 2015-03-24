@@ -471,7 +471,7 @@ table .altrow td {
 }
 
 /*.link_or_oembed {*/
-    overflow-y: scroll; /* has to be scroll, not auto or hidden*/
+/*    overflow-y: scroll; /* has to be scroll, not auto or hidden
 /*    -webkit-overflow-scrolling: touch;*/
 /*    position: relative;*/
 /*    padding-bottom: 90%; // (450 ÷ 500 = 0.9 = 90%)*/
