@@ -377,6 +377,7 @@ def file(request, slug=None):
                 file.slug = safe_slugify(file.title, File)
 
                 form.save()
+                form.save_m2m()
                 return HttpResponseRedirect(
                     reverse('uploader:link_file', args=[file.slug]))
             else:
@@ -385,7 +386,7 @@ def file(request, slug=None):
     else:
         form = FileForm(instance=file)
 
-    return render(request, 'uploader/add_file.html', {'form': form})
+    return render(request, 'uploader/add_file.html', {'form': form, 'media': form.media})
 
 
 def bookmark(request, slug=None):
@@ -824,6 +825,7 @@ def lesson(request, slug):
     lis = LessonItem.objects.filter(lesson=l).order_by('order')
     
     for li in lis:
+        li.instructions = render_markdown(li.instructions)
         if li.type == 'resources':
             r = get_object_or_404(Resource, slug=li.slug)
             if r.file:
