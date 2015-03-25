@@ -834,7 +834,9 @@ def lesson(request, slug):
     if not l.public and l.uploader != request.user:
         return HttpResponseForbidden("permission denied")
         
-    l.objectives = render_markdown(l.objectives)
+    if l.objectives:
+        l.objectives = render_markdown(l.objectives)
+        
     lis = LessonItem.objects.filter(lesson=l).order_by('order')
     
     for li in lis:
