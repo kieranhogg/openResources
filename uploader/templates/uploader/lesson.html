@@ -7,10 +7,21 @@ $(function () {
 })
 </script>
 <h2>{% block head_title %}{{ lesson.title }}{% endblock %}</h2>
+{% if lesson.objectives %}
 <h3>Lesson Objectives</h3>
 {% autoescape off %}
 {{ lesson.objectives }}
 {% endautoescape %}
+{% endif %}
+{% if lesson.presentation %}
+  {% if lesson.show_presentation_to_students %}
+    <h3>Lesson Presentation</h3>
+    <a href="{{MEDIA_URL}}{{ lesson.presentation.file }}">Click to view</a>
+  {% elif user.teacherprofile %}
+    <h3>Lesson Presentation</h3>
+    <a href="{{MEDIA_URL}}{{ lesson.presentation.file }}">Click to view</a>
+  {% endif %}
+{% endif %}
 <h3>Lesson Tasks</h3>
 
 <div class="row">
