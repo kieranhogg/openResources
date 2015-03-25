@@ -2,10 +2,12 @@ import logging
 from django.db import models
 from django.conf import settings
 from django.contrib import admin
+from django.db import models
 from django.db.models.signals import pre_delete, post_save
 from django.dispatch.dispatcher import receiver
 from django.utils.safestring import mark_safe
 from django.contrib.auth.models import User
+from taggit_autosuggest.managers import TaggableManager
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
@@ -275,19 +277,20 @@ class File(models.Model):
             'ShareAlike</strong> is a safe bet for new resources) ' +
             '<a href="/licences/">Still unsure?</a> ')
     )
-    topics = models.ManyToManyField(Topic, null=True, blank=True)
+    topics = TaggableManager()
     slug = models.SlugField(unique=True, max_length=100)
     pub_date = models.DateTimeField(
         'Date published',
         auto_now_add=True,
         blank=True
     )
-
+    
     def __unicode__(self):
         return self.filename
 
     class Meta:
         ordering = ('-pub_date',)
+
 
 
 class FileAdmin(admin.ModelAdmin):
@@ -544,6 +547,8 @@ class Lesson(models.Model):
     objectives = models.TextField(blank=True, null=True)
     url = models.URLField()
     public = models.BooleanField(default=True, blank=True)
+    presentation = models.FileField(upload_to='%Y/%m', null=True, blank=True)
+    show_presentation_to_students = models.BooleanField(default=False)
     unit_topic = models.ForeignKey(UnitTopic, null=True, blank=True)
     pub_date = models.DateTimeField(auto_now_add=True)
     

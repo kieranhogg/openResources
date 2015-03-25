@@ -15,6 +15,7 @@ you can leave, add some more items and come back.</p>
     {% endfor %}
     <form role="form" action method="post">
         {% csrf_token %}
+        <span class="label label-danger">required</span>
         <div class="form-group">
             <label for="title">Lesson title</label>
             <input name="title" class="form-control" value="{{ form_data.title }}" placeholder="A short but descriptive title for your lesson" />
@@ -23,6 +24,16 @@ you can leave, add some more items and come back.</p>
             <label for="objectives">Learning Objectives/outcomes</label>
             <textarea name="objectives" class="form-control" value="{{ form_data.objectives }}" placeholder="For bullet points, use * other markdown supported"></textarea>
         </div>
+        <div class="form-group">
+            <label for="objectives">Lesson Presentation</label>
+            <input type="file" name="presentation" />
+            Upload an optional lesson presentation
+        </div>
+        <div class="checkbox">
+        <label>
+        <input type="checkbox" name="show_presentation_to_students">
+        Show lesson presentation to students?</label>
+</div>
 {% else %}
 <p>If you add items (resources, notes or questions) to a lesson, they will show up on this page and you can create
 new lessons with those items.</p>
@@ -31,7 +42,8 @@ new lessons with those items.</p>
     <h3>Lesson items</h3>
     {% for resource in resources %}
         <div class="lesson-resource">
-        <h4>Resource: {{ resource }}</h3>
+        <h4>Resource: {{ resource }}</h4>
+        <span class="label label-danger">required</span>
         <input type="hidden" name="slug{{ resource.count }}" value="{{ resource.slug }}" />
         <input type="hidden" name="type{{ resource.count }}" value="resources" />
         <div class='order'>

@@ -641,6 +641,7 @@ def check_lesson_items(request, num_items):
     return True
         
 
+#FIXME this is too hacky
 @login_required
 def user_lessons(request, user_id=None):
     form_errors = []
@@ -671,11 +672,18 @@ def user_lessons(request, user_id=None):
             if num_items > 0 and items_okay:
                 public = True if request.POST.get('public') else False
                 slug = safe_slugify(request.POST['title'], Lesson)
+
+                show_to_students = False
+                if request.POST.get('show_presentation_to_students') == 'on':
+                    show_to_students = True
+
                 
                 l = Lesson(title=request.POST['title'],
                             slug=slug,
-                            objectives=request.POST['objectives'],
+                            objectives=request.POST.get('objectives', None),
                             uploader=request.user,
+                            presentation=request.POST.get('presentation', None),
+                            show_presentation_to_students=show_to_students,
                             public=public
                            )
                 url = request.build_absolute_uri(reverse('uploader:lesson', 
@@ -685,18 +693,23 @@ def user_lessons(request, user_id=None):
                 l.save()
     
                 rp = request.POST
-                check_lesson_items(request, num_items)
-                for i in range(1, num_items + 1):
-                    _i = str(i)
-                    li = LessonItem(
-                        lesson=l,
-                        type=rp.get('type' + _i, None),
-                        slug=rp.get('slug' + _i, None),
-                        order=rp.get('order' + _i, None),
-                        instructions=rp.get('instructions' + _i, None),
-                    )
-                    
-                    li.save()
+                if check_lesson_items(request, num_items):
+                    for i in range(1, num_items + 1):
+                        _i = str(i)
+                        # don't save blank tasks
+                        if (len(rp.get('instructions' + _i)) == 0 and 
+                                rp.get('type' + _i) == 'task'):
+                                    pass
+                        else:
+                            li = LessonItem(
+                                lesson=l,
+                                type=rp.get('type' + _i, None),
+                                slug=rp.get('slug' + _i, None),
+                                order=rp.get('order' + _i, None),
+                                instructions=rp.get('instructions' + _i, None),
+                            )
+                            
+                            li.save()
                 
                 request.session['resources'] = None
                 request.session['notes'] = None
