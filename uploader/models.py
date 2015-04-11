@@ -576,6 +576,7 @@ class TestResult(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
     taken = models.DateTimeField(auto_now_add=True)
     score = models.IntegerField()
+    total = models.IntegerField(default=10)
 
         
 class Lesson(models.Model):
