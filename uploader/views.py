@@ -1049,12 +1049,20 @@ def test(request, slug):
             answer_num = request.POST.get(question_key)
             answer = get_object_or_404(MultipleChoiceAnswer, 
                                        question=question, number=answer_num)
-            # return HttpResponse('%s|%s|%s|%s' % (question_num, question, answer_num, answer))
+            correct = int(answer_num) == int(question.answer)
             answer = MultipleChoiceUserAnswer(
                 question=question, 
                 answer_chosen=answer,
-                user=request.user)
+                user=request.user,
+                correct=correct
+            )
             answer.save()
+            if correct:
+                score += 1
+                
+        t = Test(subject=unit_topic.unit.syllabus.subject, 
+            unit_topic=unit_topic).save()
+        TestResult(user=request.user, score=score, test=t).save()
 
         return HttpResponseRedirect(
             reverse('uploader:test_feedback', args=[slug]))
@@ -1117,7 +1125,7 @@ def test_feedback(request, slug):
         # if the user has answered this one
         if user_answer.count() > 0:
             question.answer = MultipleChoiceAnswer.objects.filter(question=question)[0]
-            question.user_answer = user_answer[0].answer_chosen.text
+            question.user_answer = user_answer[0]
             question_list.append(question)
 
     return render(request, 'uploader/feedback.html', 

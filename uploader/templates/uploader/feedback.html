@@ -20,9 +20,9 @@
 {% for question in questions %}
 <p><strong>Question</strong>: {{ question.text }}</p>
 
-<p><strong>You said</strong>: {{ question.user_answer }} <br />
+<p><strong>You said</strong>: {{ question.user_answer.answer_chosen.text }} <br />
 <strong>Answer</strong>: {{ question.answer }}</p>
-{% if question.user_answer.is_correct %}
+{% if question.user_answer.correct %}
 <p><span style="color: green">Correct!</span></p>
 {% else %}
 <p><span style="color: red">Incorrect!</span></p>

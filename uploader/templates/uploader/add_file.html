@@ -1,6 +1,7 @@
 {% extends 'uploader/base.html' %}
 {% load bootstrap %}
 {% block body_block %}
+{{ media }}
 <h2>{% block head_title %}
 {% if form.instance.id %}
     Edit

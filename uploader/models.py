@@ -527,18 +527,56 @@ class MultipleChoiceAnswer(Answer):
     def __unicode__(self):
         return self.text
         
-
-class MultipleChoiceUserAnswer(models.Model):
+class UserAnswer(models.Model):
     question = models.ForeignKey(MultipleChoiceQuestion)
-    answer_chosen = models.ForeignKey(MultipleChoiceAnswer)
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
     answered = models.DateTimeField(auto_now_add=True)
+    correct = models.BooleanField(default=False)
 
-    def is_correct(self):
-        return int(self.question.answer) == int(self.answer_chosen.number)
-    
-    class Meta:   
+    class Meta:
+        abstract = True
         unique_together = (("user", "question"),)
+        
+
+class MultipleChoiceUserAnswer(UserAnswer):
+    answer_chosen = models.ForeignKey(MultipleChoiceAnswer)
+    
+    def question(self):
+        return super.question
+    question.short_name = "Question"
+    
+    def user(self):
+        return super.user
+    user.short_name = "User"
+    
+    def answered(self):
+        return super.answered
+    answered.short_name = "Answered"
+    
+    def correct(self):
+        return super.correct
+    correct.short_name = "Correct"
+    
+
+class MultipleChoiceUserAnswerAdmin(admin.ModelAdmin):
+    list_display = ('question', 'user', 'correct', 'answered',
+        'answer_chosen')
+
+
+class Test(models.Model):
+    subject = models.ForeignKey(Subject)
+    syllabus = models.ForeignKey(Syllabus, null=True)
+    unit = models.ForeignKey(Unit, null=True)
+    unit_topic = models.ForeignKey(UnitTopic, null=True)
+    public = models.BooleanField(default=False)
+    
+
+class TestResult(models.Model):
+    test = models.ForeignKey(Test, null=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    taken = models.DateTimeField(auto_now_add=True)
+    score = models.IntegerField()
+
         
 class Lesson(models.Model):
     title = models.CharField(max_length=200)

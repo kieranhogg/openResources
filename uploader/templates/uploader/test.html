@@ -57,22 +57,28 @@
 </a>
 </p>
     {% if question_count > 0 and questions %}
+    <div id="questions">
     <form action method="post">
         {% csrf_token %}
         {% for question in questions %}
             <div class='question'>{{ question.text|linebreaks }}</div>
             <p>
                 {% for answer in question.answers %}
-                    <input type="radio" name="question{{question.id}}" value="{{ answer.number }}">
+                    <input type="radio" name="question{{question.id}}" value="{{ answer.number }}"
+                    {% if forloop.first %}
+                    checked="checked"
+                    {% endif %}
+                    >
                     <label class='answer' for="{{ question.id|add:"-"|add:answer.number }}">{{ answer.text }}</label>
                     <br />
                 {% endfor %}
             </p>
         {% endfor %}
         <div class="form-group text-center">
-            <button type="submit" class="btn btn-success">Check answers</button>
-        </form>
+            <button type="submit" class="btn btn-success" onclick="testRadios()">Check answers</button>
+        </div>
     </form>
+    </div>
     {% else %}
     <div align='center'>
     <p>No questions to complete.</p>
