@@ -7,7 +7,7 @@ from django.db.models.signals import pre_delete, post_save
 from django.dispatch.dispatcher import receiver
 from django.utils.safestring import mark_safe
 from django.contrib.auth.models import User
-from taggit_autosuggest.managers import TaggableManager
+#from taggit_autosuggest.managers import TaggableManager
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
@@ -277,7 +277,7 @@ class File(models.Model):
             'ShareAlike</strong> is a safe bet for new resources) ' +
             '<a href="/licences/">Still unsure?</a> ')
     )
-    topics = TaggableManager()
+    #topics = TaggableManager()
     slug = models.SlugField(unique=True, max_length=100)
     pub_date = models.DateTimeField(
         'Date published',
