@@ -49,12 +49,12 @@ def render_markdown(text):
         data = text.encode('utf-8')
     
     url = None
-    if len(settings.GITHUB_CLIENT_SECRET) == 40 and len(settings.GITHUB_CLIENT_ID) == 20:
-        url = ('https://api.github.com/markdown/raw?clientid=' + 
-               settings.GITHUB_CLIENT_ID + "&client_secret=" + 
-               settings.GITHUB_CLIENT_SECRET)
-    else:
-        url = 'https://api.github.com/markdown/raw'
+    #if len(settings.GITHUB_CLIENT_SECRET) == 40 and len(settings.GITHUB_CLIENT_ID) == 20:
+    url = ('https://api.github.com/markdown/raw?clientid=' + 
+           settings.GITHUB_CLIENT_ID + "&client_secret=" + 
+           settings.GITHUB_CLIENT_SECRET)
+    #else:
+    #    url = 'https://api.github.com/markdown/raw'
 
     r = requests.post(url, headers=headers, data=data)
     return r.text.encode('utf-8')
