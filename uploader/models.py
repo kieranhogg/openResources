@@ -565,14 +565,16 @@ class MultipleChoiceUserAnswerAdmin(admin.ModelAdmin):
 
 class Test(models.Model):
     subject = models.ForeignKey(Subject)
-    syllabus = models.ForeignKey(Syllabus, null=True)
-    unit = models.ForeignKey(Unit, null=True)
-    unit_topic = models.ForeignKey(UnitTopic, null=True)
+    syllabus = models.ForeignKey(Syllabus, blank=True, null=True)
+    unit = models.ForeignKey(Unit, blank=True, null=True)
+    unit_topic = models.ForeignKey(UnitTopic, blank=True, null=True)
     public = models.BooleanField(default=False)
+    teacher = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
+    pub_date = models.DateTimeField(auto_now_add=True)
     
 
 class TestResult(models.Model):
-    test = models.ForeignKey(Test, null=True)
+    test = models.ForeignKey(Test, blank=True, null=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
     taken = models.DateTimeField(auto_now_add=True)
     score = models.IntegerField()
