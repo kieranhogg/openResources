@@ -21,7 +21,7 @@
 <p><strong>Question</strong>: {{ question.text }}</p>
 
 <p><strong>You said</strong>: {{ question.user_answer.answer_chosen.text }} <br />
-<strong>Answer</strong>: {{ question.answer }}</p>
+<strong>Answer</strong>: {{ question.answer.text }}</p>
 {% if question.user_answer.correct %}
 <p><span style="color: green">Correct!</span></p>
 {% else %}
