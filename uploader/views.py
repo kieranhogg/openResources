@@ -1061,7 +1061,7 @@ def test(request, slug):
                 score += 1
                 
         t = Test(subject=unit_topic.unit.syllabus.subject, 
-            unit_topic=unit_topic).save()
+            unit_topic=unit_topic).save()   
         TestResult(user=request.user, score=score, test=t).save()
 
         return HttpResponseRedirect(
@@ -1124,7 +1124,7 @@ def test_feedback(request, slug):
         
         # if the user has answered this one
         if user_answer.count() > 0:
-            question.answer = MultipleChoiceAnswer.objects.filter(question=question)[0]
+            question.answer = MultipleChoiceAnswer.objects.filter(question=question)[question.answer_num - 1]
             question.user_answer = user_answer[0]
             question_list.append(question)
 
@@ -1235,8 +1235,12 @@ def groups(request, slug=None):
     return render(request, 'uploader/add_group.html', {'form': form})
         
 @login_required
-def view_group(request, slug):
-    pass
+def group(request, slug):
+    group = get_object_or_404(Group, slug=slug)
+    students = StudentGroup.objects.filter(group=group)
+    context = {'group': group, 'students': students}
+    
+    return render(request, 'uploader/group.html', context)
   
 """ 
 ajax views
