@@ -25,8 +25,8 @@ urlpatterns = patterns('',
     
     url(r'^groups/$', views.groups_list, name='groups_list'),
     url(r'^groups/add/$', views.groups, name='groups'),
-    url(r'^groups/(?P<slug>[\w\d-]+)/$', views.view_group, name='view_group'),
     url(r'^groups/(?P<slug>[\w\d-]+)/edit$', views.groups, name='groups'),
+    url(r'^group/(?P<slug>[\w\d-]+)', views.group, name='group'),
     
     url(r'^bookmark/add/$', views.bookmark, name='bookmark'),
     url(r'^bookmark/link/(?P<slug>[\w\d-]+)/$', views.link_bookmark, name='link_bookmark'),

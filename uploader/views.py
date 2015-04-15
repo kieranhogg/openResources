@@ -1237,8 +1237,27 @@ def groups(request, slug=None):
 @login_required
 def group(request, slug):
     group = get_object_or_404(Group, slug=slug)
-    students = StudentGroup.objects.filter(group=group)
-    context = {'group': group, 'students': students}
+    student_group = StudentGroup.objects.filter(group=group)
+    tests = Test.objects.filter(teacher=request.user).order_by('-pub_date')
+    
+    for student_group_object in student_group:
+        student = student_group_object.student
+        student.results = []
+        tests_taken = 0
+        for test in tests:
+            test_result = TestResult.objects.filter(user=student, test=test).order_by('-score')
+            logger.error(test_result.query)
+            actual_test = TestResult.objects.filter()[1]
+            logger.error(student)
+            logger.error(actual_test.test.id)
+
+            tests_taken += test_result.count()
+            if test_result.count() > 0:
+                student.results.append(test_result[0].score)
+            else:
+                student.results.append(False)
+    # return HttpResponse(tests_taken)
+    context = {'group': group, 'students': student_group, 'tests': tests}
     
     return render(request, 'uploader/group.html', context)
   

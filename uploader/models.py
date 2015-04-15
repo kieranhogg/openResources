@@ -572,6 +572,9 @@ class Test(models.Model):
     teacher = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
     pub_date = models.DateTimeField(auto_now_add=True)
     
+    def __unicode__(self):
+       return unicode(self.unit_topic)
+    
 
 class TestResult(models.Model):
     test = models.ForeignKey(Test, blank=True, null=True)
@@ -645,9 +648,9 @@ class Group(models.Model):
 
 class StudentGroup(models.Model):
     group = models.ForeignKey(Group)
-    student = models.ForeignKey(StudentProfile)
+    student = models.ForeignKey(settings.AUTH_USER_MODEL)
     joined = models.DateTimeField(auto_now_add=True)
-    
+
     class Meta:
         unique_together = ["group", "student"]
     
