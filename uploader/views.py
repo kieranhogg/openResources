@@ -244,33 +244,36 @@ def view_resource(request, slug, embed=False):
         'rating_val': get_resource_rating(resource.id, 'values')
     }
     if resource.file:
-        try:
-            api = boxview.BoxView(settings.BOX_VIEW_KEY)
-            file = str(settings.MEDIA_URL + resource.file.filename)
-            doc = api.create_document(url=resource.file.file.url)
-            
-            doc_id = doc['id']
-            
-            count = 0
-            success = True
-            while True:
-                if not bool(api.ready_to_view(doc_id)):
-                    if count == 5:
-                        success = False
+        if 'image' in resource.file.mimetype:
+            resource.file.image = True
+        else:
+            try:
+                api = boxview.BoxView(settings.BOX_VIEW_KEY)
+                file = str(settings.MEDIA_URL + resource.file.filename)
+                doc = api.create_document(url=resource.file.file.url)
+                
+                doc_id = doc['id']
+                
+                count = 0
+                success = True
+                while True:
+                    if not bool(api.ready_to_view(doc_id)):
+                        if count == 5:
+                            success = False
+                            break
+                        else: 
+                            time.sleep(0.5)
+                            count += 0.5
+                    else:
                         break
-                    else: 
-                        time.sleep(0.5)
-                        count += 0.5
-                else:
-                    break
-            
-            if success:
-                session = api.create_session(doc_id, duration=300)
-                context['ses_id'] = session['id']
-        except:
-            # so many things to go wrong here, silently bail if it does, users
-            # can still download the file
-            pass
+                
+                if success:
+                    session = api.create_session(doc_id, duration=300)
+                    context['ses_id'] = session['id']
+            except:
+                # so many things to go wrong here, silently bail if it does, users
+                # can still download the file
+                pass
 
     return render_to_response(template, 
         context_instance=RequestContext(request, context))

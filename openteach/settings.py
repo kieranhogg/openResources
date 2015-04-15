@@ -47,6 +47,8 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 INSTALLED_APPS = (
     #'suit',
     'grappelli',
+    'taggit',
+    'taggit_autosuggest',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -70,8 +72,13 @@ INSTALLED_APPS = (
     #'allauth.socialaccount.providers.twitter',
     #'allauth.socialaccount.providers.openid',
     'micawber.contrib.mcdjango',
-    'bootstrapform'
+    'bootstrapform',
 )
+
+AJAXLOOKUPCHANNELS = {
+    'topics' : dict(model='uploader.topic',searchfield='topic'),
+}
+
 MICAWBER_PROVIDERS = 'micawber.contrib.mcdjango.providers.bootstrap_embedly'
 
 # Allauth
@@ -95,7 +102,9 @@ CONTENT_TYPES = ['application/pdf',
                 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
                 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
                 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                'image/*'
+                'image/gif',
+                'image/png',
+                'image/jpg'
 ]
                     
 MAX_UPLOAD_SIZE = 52428800 # 50mb
@@ -133,6 +142,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = '/static/'
+
 try:
     from local_settings import *
 except ImportError:

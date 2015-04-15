@@ -13,6 +13,8 @@ $(document).ready(function () {
     <p>
     <iframe src="https://view-api.box.com/1/sessions/{{ ses_id }}/view?theme=light" seamless fullscreen style="display: block; margin: 0 auto; border: none; width:1000px;height:500px"></iframe>
     </p>
+    {% elif resource.file.image %}
+        <img style="display: block; margin: 0 auto" src="{{ MEDIA_URL }}{{resource.file.file}}" />
     {% endif %}
     
 {% else %}
