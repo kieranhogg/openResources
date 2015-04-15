@@ -491,6 +491,8 @@ class MessageAdmin(admin.ModelAdmin):
 class Image(models.Model):
     image = models.ImageField(upload_to='images/%Y/%m')
     uploader = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True)
+    credit = models.CharField(max_length=300, blank=True, null=True,
+        help_text='Give credit if required')
     licence = models.ForeignKey(Licence)
     pub_date = models.DateTimeField(auto_now_add=True)
  
@@ -571,6 +573,7 @@ class Test(models.Model):
     public = models.BooleanField(default=False)
     teacher = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
     pub_date = models.DateTimeField(auto_now_add=True)
+    total = models.IntegerField(default=10)
     
     def __unicode__(self):
        return unicode(self.unit_topic)
@@ -581,7 +584,6 @@ class TestResult(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
     taken = models.DateTimeField(auto_now_add=True)
     score = models.IntegerField()
-    total = models.IntegerField(default=10)
 
         
 class Lesson(models.Model):
