@@ -250,7 +250,7 @@ class GroupForm(forms.ModelForm):
         
 
 class TestForm(forms.ModelForm):
-    deadline = forms.DateField(required=False,
+    deadline = forms.DateTimeField(required=False,
         widget=DateTimePicker(options={"format": "YYYY-MM-DD HH:mm",
                                        "pickSeconds": False}))
     class Meta:
