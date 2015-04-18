@@ -1,0 +1,31 @@
+{% extends 'uploader/base.html' %}
+{% block body_block %}
+{% load static %}
+{% get_static_prefix as STATIC_PREFIX %}
+<h2>{{ user.studentprofile }}'s Home</h2>
+<h3>Tests</h3>
+<table class='table'>
+{% for group, tests in tests.iteritems %}
+    {% for test in tests %}
+    <tr>
+        <th>Class</th><th>Topic</th><th>Result</th><th>Deadline</th><th></th></tr>
+        <td>{{ group }}</td>
+        <td>{{ test }}</td>
+        <td>{{ test.result.score }} / {{ test.total }}</td>
+        <td>{{ test.deadline }}</td>
+        <td>
+            {% if test.result.score %}
+            <a href="{% url 'uploader:test_feedback' test.code %}">
+            <button class='btn btn-info'>View Feedback</button>
+            </a>
+            {% else %}
+            <a href="{% url 'uploader:test' test.code %}">
+                <button class='btn btn-success'>Take test</button>
+            </a>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+{% endfor %}
+</table>
+{% endblock %}
