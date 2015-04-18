@@ -16,3 +16,4 @@ python-magic
 django-bootstrap-form
 django-bootstrap3-datetimepicker
 markdown
+Pygments
