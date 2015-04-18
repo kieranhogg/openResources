@@ -19,9 +19,10 @@
         <td>{{ student.student.studentprofile.forename }} {{ student.student.studentprofile.surname }}</td>
             {% for result in student.student.results %}
                 <td>
-                {% if result %}
-                    {{ result }}
+                {% if result.score %}
+                    {{ result.score }}
                 {% endif %}
+                 / {{ result.total }}
                 </td>
         {% endfor %}
     </tr>

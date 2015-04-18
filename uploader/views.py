@@ -1358,9 +1358,9 @@ def group(request, slug):
 
             tests_taken += test_result.count()
             if test_result.count() > 0:
-                student.results.append(test_result[0].score)
+                student.results.append({'score': test_result[0].score, 'total': test.total})
             else:
-                student.results.append(False)
+                student.results.append({'total': test.total})
     # return HttpResponse(tests_taken)
     context = {'group': group, 'students': student_group, 'tests': tests}
     
