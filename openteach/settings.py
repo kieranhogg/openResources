@@ -73,6 +73,7 @@ INSTALLED_APPS = (
     #'allauth.socialaccount.providers.openid',
     'micawber.contrib.mcdjango',
     'bootstrapform',
+    'bootstrap3_datetime'
 )
 
 AJAXLOOKUPCHANNELS = {
