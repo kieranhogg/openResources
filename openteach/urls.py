@@ -7,6 +7,6 @@ urlpatterns = patterns('',
     url(r'^accounts/', include('allauth.urls')),
     url(r'', include('uploader.urls', namespace="uploader")),
     url(r'^uploader/', include('uploader.urls', namespace="uploader")),
-
+    #(r'^taggit_autosuggest/', include('taggit_autosuggest.urls')),
 )
 

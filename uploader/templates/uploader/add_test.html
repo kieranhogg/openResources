@@ -1,0 +1,46 @@
+{% extends 'uploader/base.html' %}
+{% load bootstrap %}
+{% block body_block %}
+{{ form.media }}
+<h2>{% block head_title %}
+{% if form.instance.id %}
+    Edit
+{% else %}
+    Add
+{% endif %} Test{% endblock %}</h2>
+
+{% if form.non_field_errors %}
+    {% for error in form.non_field_errors %}
+    <div class="alert alert-danger" role="alert">
+      <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+      <span class="sr-only">Error:</span>
+        {{error}}
+    </div>
+    {% endfor %}
+{% endif %}
+<div class="small_form">
+    <form role="form" enctype="multipart/form-data" action method="post">
+    
+    {% include "uploader/linking_embed.html" %}
+    
+    {% csrf_token %}
+    {% for field in form %}
+    <div>
+        {% if field.field.required %}<span class="label label-danger">required</span>{% endif %}
+        {{ field|bootstrap }}
+    </div>
+    {% endfor %}
+    
+    <h3>Grading</h3><span class="label label-info">Coming soon</span>
+    <p>Choose from your grading presets as to how this test will be graded.</p>
+    
+    <div class="form-group text-center">
+    {% if form.instance.id %}
+        <button type="submit" class="btn btn-success">Update</button>
+    {% else %}
+        <button type="submit" class="btn btn-success">Next</button>
+    {% endif %}
+    </div>
+</form>
+</div>
+{% endblock %}
