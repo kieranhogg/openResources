@@ -32,24 +32,44 @@ logger = logging.getLogger(__name__)
 
 
 def index(request):
-    """Homepage view, shows subjects
+    """Homepage view depending on logged in an user type
     """
-    if request.GET and request.GET['s'] == "1":
-        messages.success(request, 'Resource added, thank you!')
+    if not request.user.is_authenticated():
+        if request.GET and request.GET['s'] == "1":
+            messages.success(request, 'Resource added, thank you!')
+        
+        subjects = Subject.objects.filter(active=1)
+        
+        # get messages TODO use constants
+        user_messages = Message.objects.filter(user_to=request.user.id)
+        announce_messages = Message.objects.filter(type=2)
+        sticky_messages = Message.objects.filter(type=3)
     
-    subjects = Subject.objects.filter(active=1)
-    
-    # get messages TODO use constants
-    user_messages = Message.objects.filter(user_to=request.user.id)
-    announce_messages = Message.objects.filter(type=2)
-    sticky_messages = Message.objects.filter(type=3)
+        context = {
+            'subjects': subjects,
+            'user_messages': user_messages | announce_messages | sticky_messages,
+            'homepage': True
+        }
+        return render(request, 'uploader/index.html', context)
+    else:
+        if hasattr(request.user, 'teacherprofile'):
+            return render(request, 'uploader/teacher_home.html', {})
+        else:
+            #FIXME use a filter
+            groups = StudentGroup.objects.filter(student=request.user)
+            test_list = {}
+            for group in groups:
+                tests = Test.objects.filter(group=group.group)
+                if tests.count() > 0:
+                    test_list[group.group.name] = tests
+                    for test in tests:
+                        try:
+                            result = TestResult.objects.get(test=test)
+                            test.result = result
+                        except TestResult.DoesNotExist:
+                            pass
 
-    context = {
-        'subjects': subjects,
-        'user_messages': user_messages | announce_messages | sticky_messages,
-        'homepage': True
-    }
-    return render(request, 'uploader/index.html', context)
+            return render(request, 'uploader/student_home.html', {'tests': test_list})
 
 
 def subjects(request):
@@ -458,55 +478,70 @@ def link_bookmark(request, slug):
 def link_resource(request, type, slug):
     bookmark = None
     file = None
+    test = None
 
     if type == 'bookmark':
         bookmark = get_object_or_404(Bookmark, slug=slug)
     elif type == 'file':
         file = get_object_or_404(File, slug=slug)
+    elif type == 'test':
+        test = get_object_or_404(Test, code=slug)
 
-    if request.user.is_authenticated():
-        resource = Resource(uploader=request.user, file=file or None, 
-                            bookmark=bookmark or None, approved=False)
-    else:
-        resource = Resource(file=file or None, 
-                            bookmark=bookmark or None, approved=False)
+    if type == 'bookmark' or type == 'file':
+        if request.user.is_authenticated():
+            resource = Resource(uploader=request.user, file=file or None, 
+                                bookmark=bookmark or None, approved=False)
+        else:
+            resource = Resource(file=file or None, 
+                                bookmark=bookmark or None, approved=False)
                             
     if request.method == 'POST':
-        form = LinkResourceForm(request.POST, instance=resource)
-        if form.is_valid():
-            resource = form.save(commit = False)
-            #work out slug
-            if resource.file is not None:
-                resource.slug = resource.file.slug
-            else:
-                resource.slug = resource.bookmark.slug
+        if type == 'bookmark' or type == 'file':
+            form = LinkResourceForm(request.POST, instance=resource)
+            if form.is_valid():
+                resource = form.save(commit = False)
+                #work out slug
+                if resource.file is not None:
+                    resource.slug = resource.file.slug
+                else:
+                    resource.slug = resource.bookmark.slug
+                    
+                # check if we already have one with that name, append number if so
+                starts_with = resource.slug + '-'
+                starting_matches = Resource.objects.filter(
+                    slug__startswith=starts_with).count()
+                exact = Resource.objects.filter(
+                    slug=resource.slug).count()
                 
-            # check if we already have one with that name, append number if so
-            starts_with = resource.slug + '-'
-            starting_matches = Resource.objects.filter(
-                slug__startswith=starts_with).count()
-            exact = Resource.objects.filter(
-                slug=resource.slug).count()
-            
-            num_results = exact + starting_matches
-            
-            if num_results > 0:
-                append = num_results + 1
-                resource.slug += '-' + str(append)
-            
-            if request.user.is_authenticated():
-                # if we're logged in auto-approve
-                resource.approved = True
-                score_points(request.user, "Add Resource")
-            form.save()
-    
-            return redirect("/?s=1")
+                num_results = exact + starting_matches
+                
+                if num_results > 0:
+                    append = num_results + 1
+                    resource.slug += '-' + str(append)
+                
+                if request.user.is_authenticated():
+                    # if we're logged in auto-approve
+                    resource.approved = True
+                    score_points(request.user, "Add Resource")
+                form.save()
+        
+                return redirect("/?s=1")
+        elif type == 'test':
+            test.subject = Subject.objects.get(pk=request.POST['subject'])
+            test.syllabus = Syllabus.objects.get(pk=request.POST['syllabus'])
+            test.unit = Unit.objects.get(pk=request.POST.get('unit'))
+            test.unit_topic = UnitTopic.objects.get(pk=request.POST.get('unit_topic'))
+            test.save()
+            #FIXME my tests
+            return redirect("/")
     else:
-        form = LinkResourceForm(instance=resource)
+        try:
+            form = LinkResourceForm(instance=resource)
+        except UnboundLocalError: #linking a test
+            form = LinkResourceForm()
 
-    return render_to_response('uploader/link_resource.html', {
-        'form': form,
-    }, context_instance=RequestContext(request))
+    return render(request, 'uploader/link_resource.html', {'form': form, 
+        'type': type, 'subject': test.subject.id})
 
     
 def score_points(user, action):
@@ -1035,8 +1070,8 @@ def view_image(request, image_id):
     return render(request, 'uploader/image.html', {'url': image.image.url})
 
     
-def test(request, slug):
-    unit_topic = get_object_or_404(UnitTopic, slug=slug)
+def test2(request, code):
+    unit_topic = get_object_or_404(UnitTopic, slug=code)
     complete_count = 0
     question_count = 0
     questions = None
@@ -1111,12 +1146,83 @@ def test(request, slug):
     return render(request, 'uploader/test.html', 
     {'questions': questions, 'unit_topic': unit_topic, 
      'complete_count': complete_count, 'question_count': question_count})
- 
+     
+     
+def test(request, code):
+    test = get_object_or_404(Test, code=code)
+    number_of_questions = test.total
+    unit_topic = test.unit_topic
+    complete_count = 0
+    question_count = 0
+    questions = None
     
-def test_feedback(request, slug):
-    unit_topic = get_object_or_404(UnitTopic, slug=slug)
+    if request.POST:
+        score = 0
+        
+        for question_key in [key for key in request.POST.keys() if \
+                key.startswith('question')]:
+            question_num = question_key.replace('question', '')
+            question = get_object_or_404(MultipleChoiceQuestion, 
+                                         pk=question_num)
+            answer_num = request.POST.get(question_key)
+            answer = get_object_or_404(MultipleChoiceAnswer, 
+                                       question=question, number=answer_num)
+            correct = int(answer_num) == int(question.answer)
+            answer = MultipleChoiceUserAnswer(
+                test=test,
+                question=question, 
+                answer_chosen=answer,
+                user=request.user,
+                correct=correct
+            )
+            answer.save()
+            if correct:
+                score += 1
+                
+        TestResult(user=request.user, score=score, test=test).save()
+
+        return HttpResponseRedirect(
+            reverse('uploader:test_feedback', args=[code]))
+    else:
+        if hasattr(request.user, 'studentprofile'):
+                # FIXME random sorting could be more efficient
+                questions = MultipleChoiceQuestion.objects.filter(
+                    unit_topic=unit_topic).order_by('?')[:number_of_questions]
+
+                # FIXME think there's a function to do this
+                for question in questions:
+                    answer_list = []
+                    answers = MultipleChoiceAnswer.objects.filter(
+                            question=question).order_by('number')
+                    for answer in answers:
+                        answer_list.append(answer)
+                    
+                    question.answers = answer_list
+        else:
+            questions = MultipleChoiceQuestion.objects.filter(
+                unit_topic=unit_topic)
+            # FIXME think there's a function to do this
+            for question in questions:
+                answer_list = []
+                answers = MultipleChoiceAnswer.objects.filter(
+                    question=question).order_by('number')
+                for answer in answers:
+                    answer_list.append(answer)
+                
+                question.answers = answer_list
+
+    return render(request, 'uploader/test.html', 
+    {'questions': questions, 'unit_topic': unit_topic, 
+     'complete_count': complete_count, 'question_count': question_count})
+
+
+    
+def test_feedback(request, code):
+    test = get_object_or_404(Test, code=code)
+    unit_topic = test.unit_topic
     
     # get all questions for this unit topic
+    # FIXME just get answered ones!
     questions = MultipleChoiceQuestion.objects.filter(unit_topic=unit_topic)
     question_list = []
     
@@ -1207,7 +1313,7 @@ def teacher_signup(request):
 
 @login_required
 def groups_list(request):
-    groups = Group.objects.filter(teacher=request.user.teacherprofile)
+    groups = Group.objects.filter(teacher=request.user)
     return render(request, 'uploader/groups.html', {'groups': groups})
     
 
@@ -1249,10 +1355,6 @@ def group(request, slug):
         tests_taken = 0
         for test in tests:
             test_result = TestResult.objects.filter(user=student, test=test).order_by('-score')
-            logger.error(test_result.query)
-            actual_test = TestResult.objects.filter()[1]
-            logger.error(student)
-            logger.error(actual_test.test.id)
 
             tests_taken += test_result.count()
             if test_result.count() > 0:
@@ -1263,6 +1365,34 @@ def group(request, slug):
     context = {'group': group, 'students': student_group, 'tests': tests}
     
     return render(request, 'uploader/group.html', context)
+    
+    
+@login_required
+def add_test(request):
+    form = TestForm(request.POST or None)
+    form.fields['group'].queryset = Group.objects.filter(teacher=request.user)
+    
+    if request.POST:
+        if form.is_valid():
+            #FIXME I'm sure I don't normally have to do this?
+            subject = get_object_or_404(Subject, pk=request.POST['subject'])
+            group = get_object_or_404(Group, pk=request.POST['group'])
+            code = random_key(4, 'Test')
+
+            Test(subject=subject,
+                 teacher=request.user,
+                 group=group,
+                 code=code,
+                 total=request.POST['total']
+                 ).save()
+            
+            return redirect(reverse('uploader:link_test', args=[code]))
+    return render(request, 'uploader/add_test.html', {'form': form})
+    
+    
+@login_required
+def link_test(request, code):
+    return link_resource(request, 'test', code)
   
 """ 
 ajax views

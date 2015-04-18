@@ -67,8 +67,12 @@ urlpatterns = patterns('',
     url(r'^upload_image', views.upload_image, name='upload_image'),
     url(r'^image/(?P<image_id>\d+)/$', views.view_image, name='view_image'),
     
-    url(r'^test/(?P<slug>[\w\d-]+)/feedback', views.test_feedback, name='test_feedback'),
-    url(r'^test/(?P<slug>[\w\d-]+)', views.test, name='test'),
+    url(r'^test/add', views.add_test, name='add_test'),
+    url(r'^test/(?P<code>[\w\d-]+)/feedback', views.test_feedback, name='test_feedback'),
+    url(r'^test/(?P<code>[\w\d-]+)/link', views.link_test, name='link_test'),
+    url(r'^test/(?P<code>[\w\d-]+)', views.test, name='test'),
+
+    
     url(r'^add-question/(?P<slug>[\w\d-]+)', views.question, name='question'),
     
     url(r'^(?P<subject_slug>[\w\d-]+)/(?P<exam_slug>[\w\d-]+)/(?P<slug>[\w\d-]+)/$', views.syllabus, name='syllabus'),

@@ -1,3 +1,4 @@
+import mimetypes
 from django import forms
 from django.conf import settings
 from django.template.defaultfilters import filesizeformat
@@ -5,6 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.text import slugify
 from django.shortcuts import get_object_or_404
 from django.core.mail import send_mail
+from bootstrap3_datetime.widgets import DateTimePicker
 from uploader.models import *
 
 
@@ -19,6 +21,7 @@ class BookmarkForm(forms.ModelForm):
 
 class FileForm(forms.ModelForm):
     url = forms.URLField(help_text='Or save file from URL', required=False)
+
     class Meta:
         model = File
         # exclude = ('approved', 'uploader', 'mimetype', 'filesize', 'filename',
@@ -244,3 +247,27 @@ class GroupForm(forms.ModelForm):
     class Meta:
         model = Group
         exclude = ('teacher', 'code', 'slug')
+        
+
+class TestForm(forms.ModelForm):
+    deadline = forms.DateField(required=False,
+        widget=DateTimePicker(options={"format": "YYYY-MM-DD HH:mm",
+                                       "pickSeconds": False}))
+    class Meta:
+        model = Test
+        fields = ('group', 'subject', 'total', 'deadline', 'use_own_questions')
+        exclude = ('syllabus', 'unit', 'unit_topic', 'public', 'teacher', 
+                   'code', 'pub_date')
+        
+    def __init__(self, *args, **kwargs):
+        super(TestForm, self).__init__(*args, **kwargs)
+        # instance = getattr(self, 'instance', None)
+        # if instance and instance.pk:
+        self.fields['use_own_questions'].widget.attrs['disabled'] = True
+
+    def clean_use_own_questions(self):
+        instance = getattr(self, 'instance', None)
+        if instance and instance.pk:
+            return instance.use_own_questions
+        else:
+            return self.cleaned_data['use_own_questions']

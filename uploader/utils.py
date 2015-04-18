@@ -40,24 +40,25 @@ def safe_slugify(text, model):
     return text
     
 def render_markdown(text):
-    headers = {'Content-Type': 'text/plain'}
-    #data = notes.content.encode('utf-8')
-    data = None
-    if type(text) == bytes:  # sometimes body is str sometimes bytes...
-        data = text
-    else:
-        data = text.encode('utf-8')
+    # headers = {'Content-Type': 'text/plain'}
+    # #data = notes.content.encode('utf-8')
+    # data = None
+    # if type(text) == bytes:  # sometimes body is str sometimes bytes...
+    #     data = text
+    # else:
+    #     data = text.encode('utf-8')
     
-    url = None
-    #if len(settings.GITHUB_CLIENT_SECRET) == 40 and len(settings.GITHUB_CLIENT_ID) == 20:
-    url = ('https://api.github.com/markdown/raw?clientid=' + 
-           settings.GITHUB_CLIENT_ID + "&client_secret=" + 
-           settings.GITHUB_CLIENT_SECRET)
-    #else:
-    #    url = 'https://api.github.com/markdown/raw'
+    # url = None
+    # #if len(settings.GITHUB_CLIENT_SECRET) == 40 and len(settings.GITHUB_CLIENT_ID) == 20:
+    # url = ('https://api.github.com/markdown/raw?clientid=' + 
+    #       settings.GITHUB_CLIENT_ID + "&client_secret=" + 
+    #       settings.GITHUB_CLIENT_SECRET)
+    # #else:
+    # #    url = 'https://api.github.com/markdown/raw'
 
-    r = requests.post(url, headers=headers, data=data)
-    return r.text.encode('utf-8')
+    # r = requests.post(url, headers=headers, data=data)
+    # return r.text.encode('utf-8')
+    return text
     
 
 def shorten_url(url):
@@ -84,10 +85,20 @@ def get_resource_rating(resource_id, use='display'):
         return float(total) / float(count)
 
 
-def random_key(length):
-    key = ''
-    for i in range(length):
-        key += random.choice(string.lowercase + string.uppercase + string.digits)
+def random_key(length, item=None):
+    unique = False
+    
+    while not unique:
+        key = ''
+        for i in range(length):
+            key += random.choice(string.lowercase + string.uppercase + string.digits)
+        if not item:
+            unique = True
+        else:
+            if item == 'Test':
+                if Test.objects.filter(code=key).count() == 0:
+                    unique = True
+                    
     return key
     
     

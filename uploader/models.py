@@ -410,23 +410,8 @@ class Rating(models.Model):
 class RatingAdmin(admin.ModelAdmin):
     list_display = ('resource', 'rating', 'user', 'pub_date')
 
-
-class UserProfile(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL)
-    forename = models.CharField(max_length=100)
-    surname = models.CharField(max_length=100)
-    subjects = models.ManyToManyField(Subject, null=True, blank=True)
-    score = models.IntegerField(default=0)
-    profile_setup = models.BooleanField(default=False)
-
-    def __unicode__(self):
-        return unicode(self.user)
-
-    class Meta:
-        ordering = ('user',)
-        abstract = True
         
-class TeacherProfile(UserProfile):
+class TeacherProfile(models.Model):
     TITLES = (
         ('Mr', 'Mr'),
         ('Mrs', 'Mrs'),
@@ -434,10 +419,28 @@ class TeacherProfile(UserProfile):
         ('Ms', 'Ms'),
         ('Dr', 'Dr'),
     )
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, parent_link=True)
     title = models.CharField(max_length='7', choices=TITLES)
+    forename = models.CharField(max_length=100)
+    surname = models.CharField(max_length=100)
+    subjects = models.ManyToManyField(Subject, null=True, blank=True)
+    score = models.IntegerField(default=0)
+    profile_setup = models.BooleanField(default=False)
     
-class StudentProfile(UserProfile):
-    pass
+    def __unicode__(self):
+        return unicode(self.title + ' ' + self.surname)
+
+    
+class StudentProfile(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, parent_link=True)
+    forename = models.CharField(max_length=100)
+    surname = models.CharField(max_length=100)
+    subjects = models.ManyToManyField(Subject, null=True, blank=True)
+    score = models.IntegerField(default=0)
+    profile_setup = models.BooleanField(default=False)
+
+    def __unicode__(self):
+        return unicode(self.forename + ' ' + self.surname)
 
 
 class TeacherProfileAdmin(admin.ModelAdmin):
@@ -529,7 +532,51 @@ class MultipleChoiceAnswer(Answer):
     def __unicode__(self):
         return self.text
         
+        
+class Group(models.Model):
+    name = models.CharField(max_length='100')
+    teacher = models.ForeignKey(settings.AUTH_USER_MODEL)
+    slug = models.SlugField(unique=True, max_length='100')
+    code = models.CharField(max_length='4', unique=True)
+    pub_date = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ["name", "teacher"]
+    
+    def __unicode__(self):
+        return self.name
+        
+        
+class Test(models.Model):
+    subject = models.ForeignKey(Subject)
+    syllabus = models.ForeignKey(Syllabus, blank=True, null=True)
+    unit = models.ForeignKey(Unit, blank=True, null=True)
+    unit_topic = models.ForeignKey(UnitTopic, blank=True, null=True)
+    public = models.BooleanField(default=False)
+    use_own_questions = models.BooleanField(default=False, 
+        help_text='Coming soon')
+    teacher = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
+    group = models.ForeignKey(Group)
+    code = models.CharField(max_length='5', unique=True)
+    pub_date = models.DateTimeField(auto_now_add=True)
+    deadline = models.DateTimeField(blank=True, null=True)
+    total = models.IntegerField(default=10, help_text='If the total is ' + 
+        ' greater than the number of available questions, it will be changed')
+    
+    def __unicode__(self):
+        rep = None
+        if self.unit_topic:
+            rep = self.unit_topic
+        elif self.unit:
+            rep = self.unit
+        elif self.syllabus:
+            rep = self.syllabus
+            
+        return unicode(rep)
+        
+        
 class UserAnswer(models.Model):
+    test = models.ForeignKey(Test)
     question = models.ForeignKey(MultipleChoiceQuestion)
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
     answered = models.DateTimeField(auto_now_add=True)
@@ -565,19 +612,17 @@ class MultipleChoiceUserAnswerAdmin(admin.ModelAdmin):
         'answer_chosen')
 
 
-class Test(models.Model):
-    subject = models.ForeignKey(Subject)
-    syllabus = models.ForeignKey(Syllabus, blank=True, null=True)
-    unit = models.ForeignKey(Unit, blank=True, null=True)
-    unit_topic = models.ForeignKey(UnitTopic, blank=True, null=True)
-    public = models.BooleanField(default=False)
-    teacher = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
-    pub_date = models.DateTimeField(auto_now_add=True)
-    total = models.IntegerField(default=10)
-    
-    def __unicode__(self):
-       return unicode(self.unit_topic)
-    
+
+
+class StudentGroup(models.Model):
+    group = models.ForeignKey(Group)
+    student = models.ForeignKey(settings.AUTH_USER_MODEL)
+    joined = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ["group", "student"]
+
+
 
 class TestResult(models.Model):
     test = models.ForeignKey(Test, blank=True, null=True)
@@ -636,26 +681,6 @@ class UnitTopicFavourite(Favourite):
     class Meta:
         unique_together = ["user", "unit_topic"]
 
-
-class Group(models.Model):
-    name = models.CharField(max_length='100')
-    teacher = models.ForeignKey(TeacherProfile)
-    slug = models.SlugField(unique=True, max_length='100')
-    code = models.CharField(max_length='4', unique=True)
-    pub_date = models.DateTimeField(auto_now_add=True)
-    
-    class Meta:
-        unique_together = ["name", "teacher"]
-    
-
-class StudentGroup(models.Model):
-    group = models.ForeignKey(Group)
-    student = models.ForeignKey(settings.AUTH_USER_MODEL)
-    joined = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ["group", "student"]
-    
 
 class UnitTopicLink(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
