@@ -45,13 +45,13 @@ $(function () {
         </a>
         </p>
         {% elif item.type == 'notes' %}
-        <p><a href="{% url 'uploader:view_notes_d' item.slug %}" class="jQuery fancybox.iframe">
+        <p><a href="{% url 'uploader:view_notes_d' item.slug %}">
             <span class="glyphicon glyphicon-book" aria-hidden="true" title='Notes'></span>
             {{ item.title }} notes
         </a>
         </p>
         {% elif item.type == 'test' %}
-        <p><a href="{% url 'uploader:test' item.slug %}" class="jQuery fancybox.iframe">
+        <p><a href="{% url 'uploader:test' item.slug %}">
             Take {{ item.title }} test
         </a>
         </p>
@@ -64,7 +64,8 @@ $(function () {
 </div>
 
 {% for item in lesson_items %}
-{% if item.type == 'resources' %}
+  {{forloop.counter}}
+   {% if item.type == 'resources' %}
            <div class="modal fade bs-example-modal-lg" id="myModal{{ forloop.counter }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel{{ forloop.counter }}" aria-hidden="true">
             <div class="modal-dialog modal-lg">
               <div class="modal-content">

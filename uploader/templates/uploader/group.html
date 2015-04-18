@@ -11,7 +11,7 @@
     <tr>
         <th>Student Name</th>
         {% for test in tests %}
-        <th>{{ test.unit_topic }}</th>
+        <th>{{ test }}</th>
         {% endfor %}
     </tr>
     {% for student in students %}
@@ -26,8 +26,10 @@
         {% endfor %}
     </tr>
     {% endfor %}
-
 </table>
+<a href="{% url 'uploader:add_test' %}">
+    <button class='btn btn-success'>New Test</button>
+</a>
 {% else %}
 <p>No students in group.</p>
 {% endif %}

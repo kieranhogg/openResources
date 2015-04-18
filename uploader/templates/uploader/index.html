@@ -5,47 +5,28 @@
     <div class="jumbotron">
         <h1>Resources done right</h1>
         <h3>Teachers</h3>
-        <p>This site will allow you to share and find relevant resources, bookmarks,
-        notes and tests. They are based around syllabuses so they should be 
-        relevant to the content you are teaching.</p>
+        <p>We are a learning platform centered around courses and sharing. You and your classes
+        can share and reuse lessons, resources and tests.</p>
+        <a href="{% url 'uploader:signup' %}">
+            <button type="button" class="btn btn-lg btn-success">
+                Sign up
+            </button>
+        </a>
         <h3>Students</h3>
-        <p>For your specific course, we have materials such as notes and tests
-        to help you learn and revise</p>
-        <div class="col-md-12 text-center">
+        <p>For your specific course, we have materials such as notes and resources to help you revise.</p>
         <a href="{% url 'uploader:subjects' %}">
             <button type="button" class="btn btn-lg btn-success">
                 View Resources
             </button>
         </a>
-        </div>
-    <br />
-    </div>
-<div class="jumbotron">
-<h1>Features</h1>
-<h2>Lessons</h2>
-<p>You can combine resources to create a lesson. This will give you both a version to use on the big screen and a 
-version for students to access the resources.</p>
-<div class="text-center">
-    <img src="{% static 'uploader/img/features/1.png'%}" class="img-thumbnail" alt="IWB Lesson" height="70%" width="70%"><br /><br />
-    <img src="{% static 'uploader/img/features/2.png'%}" class="img-thumbnail" alt="Student Lesson" height="70%" width="70%">
-</div>
-<h2>Resources</h2>
-<p>The site can host different types of resources, files, bookmarks, notes (wiki-style pages) and questions. Everything you might
-need for a lesson or revision.</p>
-<div class="text-center">
-    <img src="{% static 'uploader/img/features/6.png'%}" class="img-thumbnail" alt="Notes"><br /><br />
-    <img src="{% static 'uploader/img/features/7.png'%}" class="img-thumbnail" alt="File"><br /><br />
-    <img src="{% static 'uploader/img/features/8.png'%}" class="img-thumbnail" alt="Bookmark"><br /><br />
-    <img src="{% static 'uploader/img/features/3.png'%}" class="img-thumbnail" alt="Resource types">
+        <h3>Still not sure?</h3>
 
-</div>
+            <a href="{% url 'uploader:about' %}">
+            <button type="button" class="btn btn-lg btn-info">
+                Learn more
+            </button>
+        </a>
+        <br />
+     </div>
 
-<h2>Tests</h2>
-<p>You can assign a set of questions to a lesson task to assess student understanding of the topics you have taught.
-Students can get feedback instantly.</p>
-<div class="text-center">
-    <img src="{% static 'uploader/img/features/4.png'%}" class="img-thumbnail" alt="Questions" height="70%" width="70%"><br /><br />
-    <img src="{% static 'uploader/img/features/5.png'%}" class="img-thumbnail" alt="Feedback" height="70%" width="70%">
-</div>
-</div>
 {% endblock %}

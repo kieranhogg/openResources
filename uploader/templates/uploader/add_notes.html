@@ -1,6 +1,12 @@
 {% extends 'uploader/base.html' %}
 {% load bootstrap %}
 {% block body_block %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'uploader/meltdown.css' %}">
+<style type="text/css">
+/* Place both meltdowns at the top for easier testings (in a large enough window): */
+.meltdown_wrap { display: inline-block; vertical-align: top; }
+</style>
 <h2>{% block head_title %}{{ unit_topic.title }} Notes{% endblock %}</h2>
 <p>Notes are written in Markdown format. A full list of the syntax can be found
 <a href="https://help.github.com/articles/markdown-basics/">here</a> and a full
@@ -8,30 +14,57 @@ list of available HTML tags are
 <a href="https://github.com/github/markup/tree/master#html-sanitization">
     here</a>, common tags are as follows:
 </p>
-<p><pre>
-    ## title
-    ### subtitle
-    #### subsubtitle
+<!--<p><pre>-->
+<!--    ## title-->
+<!--    ### subtitle-->
+<!--    #### subsubtitle-->
     
-    *This text will be italic*
-    **This text will be bold**
+<!--    *This text will be italic*-->
+<!--    **This text will be bold**-->
     
-    * Bullet lists
-    * start
-    * with bullets
+<!--    * Bullet lists-->
+<!--    * start-->
+<!--    * with bullets-->
     
-    1. Numbered lists
-    2. start 
-    3. with numbers
-</pre></p>
+<!--    1. Numbered lists-->
+<!--    2. start -->
+<!--    3. with numbers-->
+<!--</pre></p>-->
 
 <form role="form" action method="post" novalidate>
     {% csrf_token %}
     {{ form|bootstrap }}
+
 <div class="form-group text-center">
     <button type="submit" class="btn btn-success">Update</button>
 </div>    
 <h3>Upload Image</h3>
 <p>Use this form to upload an image to our servers to use in the notes.</p>
-<iframe src="/upload_image" width="100%" height="250" frameborder="0"></iframe>
+<iframe src="/upload_image" width="100%" height="300" frameborder="0"></iframe>
+
+<script src="{% static 'uploader/rangyinputs-jquery.min.js' %}"></script>
+<script src="{% static 'uploader/element_resize_detection.js' %}"></script>
+<script src="{% static 'uploader/js-markdown-extra.js' %}"></script>
+<script src="{% static 'uploader/jquery.meltdown.js' %}"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.0/jquery-ui.min.js"></script>
+<!--[if lt IE 9]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+<script type="text/javascript">
+jQuery(document).ready(function($) {
+    document.getElementById('id_content').className += ' meltdown';
+	// Variables are exposed on the window object for easy testings in your console:
+	// window.m1 = $('#id_content').meltdown({
+	// 	openPreview: true,
+	// 	previewHeight: "auto"
+	// });
+	// window.m2 = $('#meltdown2').meltdown({
+	// 	previewCollapses: false
+	// });
+	// // And this for debugging:
+	// window.mm1 = m1.data("Meltdown");
+	// window.mm2 = m2.data("Meltdown");
+		  jQuery('#id_content').meltdown();
+		  setTimeout('jQuery(".meltdown_control-preview").click();', 500);
+});
+</script>
+
 {% endblock %}

@@ -1,5 +1,6 @@
 {% extends 'uploader/base.html' %}
 {% block body_block %}
+{% load bootstrap %}
 <script>
 $(function() {
     $('select[name=syllabus]')
@@ -58,7 +59,29 @@ $(document).ready(function(){
 });
 </script>
 
-<h2>{% block head_title %}Add Resource{% endblock %}</h2>
+{% if type == 'test' %}
+<script>
+// we set subject on the previous page, fill this in and pre-fill syllabuses
+$(document).ready(function(){
+    var subject = '{{subject}}';
+    $('[name=subject]').val(subject);
+    subject_id = $('[name=subject]').val();
+    $.getJSON("/lookup/syllabus/" + subject_id, null, function(data) {
+    $.each(data, function(key, value) {   
+     $('select[name=syllabus]')
+        .append($('<option>', { value : key })
+        .text(value)); 
+        });
+    });
+});
+</script>
+    <h2>Choose Test Topic</h2>
+    <p>
+        Pick which unit topic your questions will be drawn from.
+    </p>
+{% else %}
+    <h2>Add Resource</h2>
+
 <h3>Important!</h3>
 <div class="important">
 <p>You now need to put this resource where it belongs. Ideally, the resource
@@ -71,7 +94,7 @@ make sense, e.g. for a whole-syllabus SoW, set subject and syllabus and leave
 the rest blank.</p>
 </strong>
 </div>
-{{ file_id }} {{ bookmark_id }}
+{% endif %}
 {% if form.non_field_errors %}
 <div id="error">
 {% for error in form.non_field_errors %}
@@ -80,34 +103,21 @@ the rest blank.</p>
 </div>
 {% endif %}
 
-<form enctype="multipart/form-data" action method="post" novalidate>
-    {% csrf_token %}  
+<div style="width: 60%; margin: 0 auto">
+<form action method="post" novalidate>
+    {% csrf_token %}
 
-    {% for field in form.visible_fields %}
-    <div class="field_content">
-        <label>
-        {% if field.field.required %}
-            <span class="required">{{ field.label_tag }}</span>
-        {% else %}
-            {{ field.label_tag }}
+    {% for field in form %}
+        <!-- check what's required -->
+        {% if type == 'test'  %}
+            <span class="label label-danger">required</span>
         {% endif %}
-        </label>  
-    <div class="field">
-        {% if field.help_text %}
-        <div class = "help_text">
-            {{ field.help_text }}
-        </div>
-        {% endif %}
-        {{ field }}
-        <span class="field_error">{{ field.errors }}</span>
-    </div> 
-    </div>
+        {{ field|bootstrap }}
     {% endfor %}
     
-    <!--{% for field in form.hidden_fields %}-->
-    <!--    {{ field }}-->
-    <!--{% endfor %}-->
-    
-<br /><input type="submit" value="Save">
+    <div class="form-group text-center">
+        <button type="submit" class="btn btn-success">Save</button>
+    </div>
 </form>
+</div>
 {% endblock %}

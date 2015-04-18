@@ -96,19 +96,19 @@
                 </li>
             </a>
             {% if user.teacherprofile %}
-            <a href="{% url 'uploader:groups_list' %}">
-                <li id="menu_groups">
-                <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
-                <span class="menu_text">My Groups</span>
-                </li>
-            </a>
             <a href="javascript:void(0)">
                 <li id="menu_my_resources">
                 <span class="glyphicon glyphicon-briefcase" aria-hidden="true"></span>
                 <span class="menu_text">My Folder ▾</span>
                 </a>
                 <ul id="submenu_my_resources">
-                    <a href="{% url 'uploader:user_resources' %}"><li>
+                <a href="{% url 'uploader:groups_list' %}">
+                <li id="menu_groups">
+                <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
+                <span class="menu_text">My Groups</span>
+                </li>
+                </a>
+                <a href="{% url 'uploader:user_resources' %}"><li>
                 <span class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span>
                 <span class="menu_text">
                         Resources</span></li></a>
@@ -127,7 +127,14 @@
                     <a href="{% url 'uploader:user_lessons' %}"><li>
                     <span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span>
                 <span class="menu_text">Lessons</span></li></a>
+                <a href="{% url 'uploader:user_resources' %}"><li>
+                <span class="glyphicon glyphicon-check" aria-hidden="true"></span>
+                <span class="menu_text">
+                        Tests</span></li></a>
                 </ul>
+                
+                
+                
             </li>
             {% endif %}
             <!--<li id="menu_leaderboards"><a href="{% url 'uploader:leaderboard' %}">-->
