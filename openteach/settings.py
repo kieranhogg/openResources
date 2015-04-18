@@ -8,7 +8,7 @@ APP_VERSION = "0.3"
 Django settings
 """
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+# Build paths inside the project like this: os.path.join(BASE_DIR,', #...)
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 TEMPLATE_DIRS = (os.path.join(BASE_DIR, 'templates'),)
@@ -47,7 +47,7 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 INSTALLED_APPS = (
     #'suit',
     'grappelli',
-    #'taggit',
+    'taggit',
     #'taggit_autosuggest',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -64,7 +64,7 @@ INSTALLED_APPS = (
     'allauth.account',
     #'allauth.socialaccount',
     'jquery',
-    # ... include the providers you want to enable:
+    #', #... include the providers you want to enable:
     #'allauth.socialaccount.providers.facebook',
     #'allauth.socialaccount.providers.github',
     #'allauth.socialaccount.providers.google',
@@ -107,6 +107,34 @@ CONTENT_TYPES = ['application/pdf',
                 'image/png',
                 'image/jpg'
 ]
+
+# files that can be embedded
+# https://developers.box.com/view/#filetypes 18/04/15
+PREVIEW_CONTENT_TYPES = ['application/pdf',
+    'application/msword', #.doc	
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document', #.docx	
+    'application/vnd.ms-powerpoint', #.ppt	
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation', #.pptx	
+    'application/vnd.ms-excel', #.xls	
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', #.xlsx	
+    'text/plain', #.txt	
+    'application/x-python', #.py
+    'text/x-python', #.py
+    'text/x-script.python', #.py
+    'text/javascript', #.js	
+    'application/x-javascript', #.js
+    'application/javascript', #.js	
+    'text/xml', #.xml	
+    'application/xml', #.xml	
+    'text/html', #.html
+    'text/css', #.css
+    'text/x-markdown', #.md	
+    'text/x-script.perl', #.pl
+    'text/x-c', #.c	
+    'text/x-m', #.m
+    'application/json' #.json
+    ]
+
                     
 MAX_UPLOAD_SIZE = 52428800 # 50mb
 

@@ -266,7 +266,7 @@ def view_resource(request, slug, embed=False):
     if resource.file:
         if 'image' in resource.file.mimetype:
             resource.file.image = True
-        else:
+        elif resource.file.mimetype in settings.PREVIEW_CONTENT_TYPES:
             try:
                 api = boxview.BoxView(settings.BOX_VIEW_KEY)
                 file = str(settings.MEDIA_URL + resource.file.filename)
