@@ -42,7 +42,7 @@
     padding: 0em 30%;
 }
 
-#splash, #menu_twitter, #menu_email, #crumbs {
+#splash, #menu_twitter, #menu_email, #breadcrumb {
     display: none;
     visibility: hidden;
 }
