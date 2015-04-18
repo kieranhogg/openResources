@@ -60,7 +60,7 @@ def render_markdown(text):
     # r = requests.post(url, headers=headers, data=data)
     # return r.text.encode('utf-8')
     return markdown.markdown(text, extensions=['markdown.extensions.tables',
-        'markdown.extensions.fenced_code'])
+        'markdown.extensions.fenced_code', 'markdown.extensions.codehilite'])
     
 
 def shorten_url(url):
