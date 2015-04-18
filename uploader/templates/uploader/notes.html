@@ -2,10 +2,9 @@
 {% block head_title %}{{ unit_topic }} Notes{% endblock %}
 {% block body_block %}
 {% load static %}
-<script src="{% static 'uploader/js-markdown-extra.js' %}"></script>
 <script>
 $(document).ready(function () {
-    // Fix styles that come back from github's markdown API
+    // Add bootstrap style to tables
     $( "table" ).addClass( "table" );
     
 });
@@ -41,26 +40,8 @@ $(document).ready(function () {
 {% endif %}
 <div id="notes">
 {% if notes %}
-    {{ notes.content|safe|linebreaks }}
+    {{ notes.content|safe }}
 </div>
-<script>
-        var mdtextElement = document.getElementById('notes');
-        var mdtext = mdtextElement.innerText ? mdtextElement.innerText : mdtextElement.textContent;
-        /*
-        document.write('<pre>' + mdtext
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;') + '</pre>');
-        document.write('<hr/>');*/
-        var html = Markdown(mdtext);
-        // document.write(html
-        //     .replace(/&/g, '&amp;')
-        //     .replace(/</g, '&lt;')
-        //     .replace(/>/g, '&gt;'));
-        // document.write('<hr/>');
-        //document.write(html);
-        $("#notes").html(html);
-</script>
 <p style="text-align: center; font-size: 80%">Except where otherwise noted, content is licensed under 
     <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
         CC Attribution-NonCommercial-ShareAlike 4.0 International licence.

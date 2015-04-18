@@ -6,6 +6,7 @@ from django.core.files.base import File as DjangoFile
 from django.conf import settings
 from django.http import (HttpResponse, HttpResponseRedirect, JsonResponse, 
     Http404, HttpResponseForbidden)
+import markdown
 from uploader.models import *
 
 
@@ -58,7 +59,7 @@ def render_markdown(text):
 
     # r = requests.post(url, headers=headers, data=data)
     # return r.text.encode('utf-8')
-    return text
+    return markdown.markdown(text, extensions=['markdown.extensions.tables'])
     
 
 def shorten_url(url):
