@@ -64,7 +64,6 @@ $(function () {
 </div>
 
 {% for item in lesson_items %}
-  {{forloop.counter}}
    {% if item.type == 'resources' %}
            <div class="modal fade bs-example-modal-lg" id="myModal{{ forloop.counter }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel{{ forloop.counter }}" aria-hidden="true">
             <div class="modal-dialog modal-lg">
