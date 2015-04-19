@@ -897,7 +897,7 @@ def lesson(request, slug):
         elif li.type == 'notes':
             li.title = get_object_or_404(UnitTopic, slug=li.slug).title
         elif li.type == 'test':
-            li.title = get_object_or_404(Test, code=li.slug).title
+            li.title = get_object_or_404(Test, code=li.slug)
         elif li.type == 'task':
             pass
 
