@@ -97,4 +97,7 @@ urlpatterns = patterns('',
     url(r'^signup',
     TemplateView.as_view(template_name='uploader/signup.html'),
     name='signup'),
+    url(r'^denied',
+    TemplateView.as_view(template_name='uploader/permission_denied.html'),
+    name='denied'),
 ) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

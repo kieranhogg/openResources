@@ -5,8 +5,6 @@ from django.shortcuts import (render, get_object_or_404, get_list_or_404,
 from django.http import (HttpResponse, HttpResponseRedirect, JsonResponse, 
     Http404, HttpResponseForbidden)
 from django.template import RequestContext, loader
-from uploader.models import *
-from uploader.forms import *
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 from django.db import IntegrityError
@@ -21,8 +19,12 @@ from django.core.files import File as DjangoFile
 from django.core.files.temp import NamedTemporaryFile
 from django.contrib.contenttypes.models import ContentType
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.contrib.auth.decorators import user_passes_test
 # from django.contrib.messages import constants as messages
 from boxview import boxview
+from uploader.models import *
+from uploader.forms import *
+from uploader.decorators import is_teacher
 
 
 from uploader.utils import *
@@ -1069,7 +1071,8 @@ def view_image(request, image_id):
     image = get_object_or_404(Image, pk=image_id)
     return render(request, 'uploader/image.html', {'url': image.image.url})
 
-    
+@login_required
+@user_passes_test(is_teacher, login_url='/denied')
 def questions(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
     unit_topic = get_object_or_404(UnitTopic, slug=slug)
     complete_count = 0
@@ -1287,6 +1290,7 @@ def student_signup(request):
             messages.success(request, "Thanks for registering. You are now logged in.")
             new_user = authenticate(username=request.POST['username'],
                                     password=request.POST['password'])
+            new_user.groups.add(Group.objects.get(name='student'))
             login(request, new_user)
             return HttpResponseRedirect('/')
         except ObjectDoesNotExist:
@@ -1305,6 +1309,7 @@ def teacher_signup(request):
         messages.success(request, "Thanks for registering. You are now logged in.")
         new_user = authenticate(username=request.POST['username'],
                                 password=request.POST['password'])
+        new_user.groups.add(Group.objects.get(name='teacher'))
         login(request, new_user)
         return HttpResponseRedirect('/')
 
