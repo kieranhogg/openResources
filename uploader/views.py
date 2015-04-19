@@ -20,6 +20,7 @@ from django.core.files.temp import NamedTemporaryFile
 from django.contrib.contenttypes.models import ContentType
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import user_passes_test
+from django.template import Context
 # from django.contrib.messages import constants as messages
 from boxview import boxview
 from uploader.models import *
@@ -541,9 +542,14 @@ def link_resource(request, type, slug):
             form = LinkResourceForm(instance=resource)
         except UnboundLocalError: #linking a test
             form = LinkResourceForm()
-
-    return render(request, 'uploader/link_resource.html', {'form': form, 
-        'type': type, 'subject': test.subject.id})
+            
+    c = Context()
+    c['form'] = form
+    c['type'] = type
+    if type == 'test':
+        c['subject'] = test.subject.id
+    
+    return render(request, 'uploader/link_resource.html', c)
 
     
 def score_points(user, action):
