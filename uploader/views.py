@@ -894,8 +894,10 @@ def lesson(request, slug):
                 li.title = r.file.title
             else:
                 li.title = r.bookmark.title
-        elif li.type == 'notes' or li.type == 'test':
+        elif li.type == 'notes':
             li.title = get_object_or_404(UnitTopic, slug=li.slug).title
+        elif li.type == 'test':
+            li.title = get_object_or_404(Test, code=li.slug).title
         elif li.type == 'task':
             pass
 
