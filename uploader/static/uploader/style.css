@@ -516,3 +516,6 @@ a.btn-primary {
 .breadcrumb {
     background-color: #FCFCFC;
 }
+.btn-success, .btn-info {
+    color: white !important;
+}
