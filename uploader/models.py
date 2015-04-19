@@ -690,6 +690,16 @@ class UnitTopicLink(models.Model):
     
     class Meta:
         unique_together = ["unit_topic_1", "unit_topic_2"]
+        
+
+class Assignment(models.Model):
+    title = models.TextField()
+    description = models.TextField()
+    group = models.ForeignKey(Group)
+    teacher = models.ForeignKey(settings.AUTH_USER_MODEL)
+    deadline = models.DateTime()
+    pub_date = models.DateTime(auto_now_add=True)
+    
     
 ######## signals TODO move to own file #########
 
