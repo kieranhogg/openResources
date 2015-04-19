@@ -25,7 +25,7 @@ from django.template import Context
 from boxview import boxview
 from uploader.models import *
 from uploader.forms import *
-from uploader.decorators import is_teacher
+from uploader.decorators import is_teacher, is_student
 
 
 from uploader.utils import *
