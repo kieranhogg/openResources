@@ -109,7 +109,7 @@ the rest blank.</p>
 
     {% for field in form %}
         <!-- check what's required -->
-        {% if type == 'test'  %}
+        {% if type == 'test' or field.name == 'subject' or field.name == 'syllabus' %}
             <span class="label label-danger">required</span>
         {% endif %}
         {{ field|bootstrap }}

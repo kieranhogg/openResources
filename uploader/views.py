@@ -543,13 +543,14 @@ def link_resource(request, type, slug):
         except UnboundLocalError: #linking a test
             form = LinkResourceForm()
             
-    c = Context()
-    c['form'] = form
-    c['type'] = type
+    #FIXME
     if type == 'test':
-        c['subject'] = test.subject.id
+        subject = test.subject.id
+    else:
+        subject = None
     
-    return render(request, 'uploader/link_resource.html', c)
+    return render(request, 'uploader/link_resource.html', {'form': form, 'type': type,
+        'subject': subject})
 
     
 def score_points(user, action):
