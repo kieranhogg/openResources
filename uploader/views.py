@@ -1159,9 +1159,13 @@ def questions(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
     {'questions': questions, 'unit_topic': unit_topic, 
      'complete_count': complete_count, 'question_count': question_count})
      
-     
+@login_required
+@user_passes_test(is_student, login_url='/denied')
 def test(request, code):
     test = get_object_or_404(Test, code=code)
+    user_group = StudentGroup.objects.filter(student=request.user, group=test.group)
+    if user_group.count() == 0:
+        return HttpResponseRedirect('/denied')
     number_of_questions = test.total
     unit_topic = test.unit_topic
     complete_count = 0
