@@ -1,13 +1,20 @@
 {% extends 'uploader/base.html' %}
 {% load static %}
 {% block body_block %}
+<script type="text/javascript" src="{{STATIC_URL}}uploader/jquery.fixedheadertable.js"></script>
+<script>
+$(document).ready(function() {
+    $('#table').fixedHeaderTable({ footer: true, fixedColumn: true });
+});
+</script>
 <h2>{% block head_title %}{{ group.name }} {% endblock %}</h2>
 <h3>Invite code</h3>
 <p>{{ group.code }}</p>
 
 {% if students %}
 <h3>Tests</h3>
-<table class='table'>
+<div class='table-responsive' style='width: 100%; overflow: auto;'>
+<table class='table' style=" display: table; table-layout: fixed; width: 100%;">
     <tr>
         <th>Student Name</th>
         {% for test in tests %}
@@ -16,7 +23,7 @@
     </tr>
     {% for student in students %}
     <tr>
-        <td>{{ student.student.studentprofile.forename }} {{ student.student.studentprofile.surname }}</td>
+        <th>{{ student.student.studentprofile.forename }} {{ student.student.studentprofile.surname }}</th>
             {% for result in student.student.results %}
                 <td>
                 {% if result.score %}
@@ -28,6 +35,7 @@
     </tr>
     {% endfor %}
 </table>
+</div>
 <a href="{% url 'uploader:add_test' %}">
     <button class='btn btn-success'>New Test</button>
 </a>

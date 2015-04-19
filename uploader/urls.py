@@ -83,6 +83,7 @@ urlpatterns = patterns('',
     url(r'^(?P<subject_slug>[\w\d-]+)/(?P<exam_slug>[\w\d-]+)/(?P<syllabus_slug>[\w\d-]+)/(?P<unit_slug>[\w\d-]+)/(?P<slug>[\w\d-]+)/resources/$', views.unit_topic_resources, name='unit_topic_resources'),
     url(r'^(?P<subject_slug>[\w\d-]+)/(?P<exam_slug>[\w\d-]+)/(?P<syllabus_slug>[\w\d-]+)/(?P<unit_slug>[\w\d-]+)/(?P<slug>[\w\d-]+)/notes/$', views.view_notes, name='view_notes'),
     url(r'^(?P<subject_slug>[\w\d-]+)/(?P<exam_slug>[\w\d-]+)/(?P<syllabus_slug>[\w\d-]+)/(?P<unit_slug>[\w\d-]+)/(?P<slug>[\w\d-]+)/notes/edit/$', views.notes, name='notes'),
+    url(r'^(?P<subject_slug>[\w\d-]+)/(?P<exam_slug>[\w\d-]+)/(?P<syllabus_slug>[\w\d-]+)/(?P<unit_slug>[\w\d-]+)/(?P<slug>[\w\d-]+)/questions/$', views.questions, name='questions'),
     url(r'^(?P<subject_slug>[\w\d-]+)/(?P<exam_slug>[\w\d-]+)/(?P<syllabus_slug>[\w\d-]+)/(?P<unit_slug>[\w\d-]+)/(?P<slug>[\w\d-]+)/$', views.unit_topic, name='unit_topic'),
     url(r'^(?P<slug>[\w\d-]+)/$', views.subject, name='subject'),
 

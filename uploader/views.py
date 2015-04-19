@@ -1070,8 +1070,8 @@ def view_image(request, image_id):
     return render(request, 'uploader/image.html', {'url': image.image.url})
 
     
-def test2(request, code):
-    unit_topic = get_object_or_404(UnitTopic, slug=code)
+def questions(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
+    unit_topic = get_object_or_404(UnitTopic, slug=slug)
     complete_count = 0
     question_count = 0
     questions = None
@@ -1143,7 +1143,7 @@ def test2(request, code):
                 
                 question.answers = answer_list
 
-    return render(request, 'uploader/test.html', 
+    return render(request, 'uploader/unit_topic_questions.html', 
     {'questions': questions, 'unit_topic': unit_topic, 
      'complete_count': complete_count, 'question_count': question_count})
      

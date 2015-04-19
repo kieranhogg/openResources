@@ -16,7 +16,6 @@
      {{ unit_topic.title|truncatechars:25 }}</a></li>
     <li class='active'>{% if request.user.studentprofile %}Test{% else %}Questions{% endif %}</li>
 </ol>
-{% if not request.user.studentprofile %}
     <h2>Questions</h2>
     {% include 'uploader/unit_topic_tabs.html' %}
         <div id="add-to-lesson">
@@ -27,11 +26,10 @@
         </button>
     </a>
     </div>
-    <p>As a teacher, you can will see the full list of questions, students will see a random set of 10 questions.</p>
     <p>
         <a href="{% url 'uploader:question' unit_topic.slug %}">
-            <button class='btn btn-default'>
-                <img src="{% static 'uploader/img/18x18/add.png' %}" />
+            <button class='btn btn-success'>
+                <span class="glyphicon glyphicon-plus-sign" aria-hidden="true" title='Add to lesson'></span>
                 Add Question</button>
         </a>    
     </p>
@@ -48,44 +46,4 @@
     {% else %}
     <p>No questions</p>
     {% endif %}
-{% else %}
-<h2>{{ unit_topic }} Test</h2>
-<p>
-<a class='btn btn-default' href="{% url 'uploader:test_feedback' unit_topic.slug %}">
-    <span class="glyphicon glyphicon-ok" aria-hidden="true" title='Preview'></span>
-    Feedback
-</a>
-</p>
-    {% if question_count > 0 and questions %}
-    <div id="questions">
-    <form action method="post">
-        {% csrf_token %}
-        {% for question in questions %}
-            <div class='question'>{{ question.text|linebreaks }}</div>
-            <p>
-                {% for answer in question.answers %}
-                    <input type="radio" name="question{{question.id}}" value="{{ answer.number }}"
-                    {% if forloop.first %}
-                    checked="checked"
-                    {% endif %}
-                    >
-                    <label class='answer' for="{{ question.id|add:"-"|add:answer.number }}">{{ answer.text }}</label>
-                    <br />
-                {% endfor %}
-            </p>
-        {% endfor %}
-        <div class="form-group text-center">
-            <button type="submit" class="btn btn-success" onclick="testRadios()">Check answers</button>
-        </div>
-    </form>
-    </div>
-    {% else %}
-    <div align='center'>
-    <p>No questions to complete.</p>
-    {% if complete_count > 0%}
-    <p><strong>{{ complete_count }}</strong> already taken, choose feedback to see your feedback.</p>
-    </div>
-    {% endif %}
-    {% endif %}
-{% endif %}
 {% endblock %}
