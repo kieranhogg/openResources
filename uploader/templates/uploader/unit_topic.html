@@ -15,11 +15,18 @@
 </ol>
 <h2>{% block head_title %}{{ unit_topic.title }}{% endblock %}</h2>
 {% if user.is_authenticated %}
-<div class="favourite" style="margin-top: -5px">
-    <a class='btn btn-primary' href="{% url 'uploader:add_favourite' 'unit_topic' unit_topic.slug %}">
+<div class="favourite">
+    {% if favourite %}
+    <a class='btn btn-primary' href="{% url 'uploader:remove_favourite' 'unit_topic' unit_topic.slug %}">
             <span class="glyphicon glyphicon-heart-empty" aria-hidden="true"></span>
-            Add to favourites
+            Unfavourite
     </a>
+    {% else %}
+    <a class='btn btn-primary' href="{% url 'uploader:add_favourite' 'unit_topic' unit_topic.slug %}">
+            <span class="glyphicon glyphicon-heart" aria-hidden="true"></span>
+            Favourite
+    </a>
+    {% endif %}
 </div>
 {% endif %}
 {% if unit_topic.description and unit_topic.description != "" %}

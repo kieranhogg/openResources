@@ -12,11 +12,17 @@
 <h2>{% block head_title %}{{ syllabus }}{% endblock %}</h2>
 {% if user.is_authenticated %}
 <div class="favourite">
-    <p><a class='btn btn-primary' href="{% url 'uploader:add_favourite' 'syllabus' syllabus.slug %}">
+    {% if favourite %}
+    <a class='btn btn-primary' href="{% url 'uploader:remove_favourite' 'syllabus' syllabus.slug %}">
             <span class="glyphicon glyphicon-heart-empty" aria-hidden="true"></span>
-            Add to favourites
-        </a>
-    </p>
+            Unfavourite
+    </a>
+    {% else %}
+    <a class='btn btn-primary' href="{% url 'uploader:add_favourite' 'syllabus' syllabus.slug %}">
+            <span class="glyphicon glyphicon-heart" aria-hidden="true"></span>
+            Favourite
+    </a>
+    {% endif %}
 </div>
 {% endif %}
 </a>

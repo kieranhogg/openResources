@@ -14,10 +14,17 @@
 <h2>{% block head_title %}{{ unit }}{% endblock %}</h2>
 {% if user.is_authenticated %}
 <div class="favourite">
-    <a class='btn btn-primary' href="{% url 'uploader:add_favourite' 'unit' unit.slug %}">
+    {% if favourite %}
+    <a class='btn btn-primary' href="{% url 'uploader:remove_favourite' 'unit' unit.slug %}">
             <span class="glyphicon glyphicon-heart-empty" aria-hidden="true"></span>
-            Add to favourites
+            Unfavourite
     </a>
+    {% else %}
+    <a class='btn btn-primary' href="{% url 'uploader:add_favourite' 'unit' unit.slug %}">
+            <span class="glyphicon glyphicon-heart" aria-hidden="true"></span>
+            Favourite
+    </a>
+    {% endif %}
 </div>
 {% endif %}
 {% if unit.description %}

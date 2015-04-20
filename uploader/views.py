@@ -134,6 +134,28 @@ def add_favourite(request, slug, thing):
     messages.success(request, "Added to favourites")
     
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+    
+    
+@login_required
+def remove_favourite(request, slug, thing):
+    """ Removes items to favourites
+    """
+    if thing == 'syllabus':
+        s = get_object_or_404(Syllabus, slug=slug)
+        sf = SyllabusFavourite.objects.get(user=request.user, syllabus=s)
+        sf.delete()
+    elif thing == 'unit':
+        u = get_object_or_404(Unit, slug=slug)
+        uf = UnitFavourite.objects.get(user=request.user, unit=u)   
+        uf.delete()
+    elif thing == 'unit_topic':
+        ut = get_object_or_404(UnitTopic, slug=slug)
+        utf = UnitTopicFavourite.objects.get(user=request.user, unit_topic=ut)
+        utf.delete()
+
+    messages.success(request, "Removed from favourites")
+    
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 def subject(request, slug):
     """View one subject, shows exam levels, e.g. GCSE
@@ -166,10 +188,16 @@ def unit_topic(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug)
     questions = question.count()
     related = (UnitTopicLink.objects.filter(unit_topic_1=unit_topic) | 
         UnitTopicLink.objects.filter(unit_topic_2=unit_topic))
-
+    
+    favourite = False
+    try:
+        favourite = UnitTopicFavourite.objects.get(unit_topic=unit_topic, user=request.user)
+    except ObjectDoesNotExist:
+        pass
+    
     context = {'unit_topic': unit_topic, 'resources': resources, 
                'questions': questions, 'notes': notes, 
-               'related_topics': related}
+               'related_topics': related, 'favourite': favourite}
     return render(request, 'uploader/unit_topic.html', context)  
     
     
@@ -215,7 +243,14 @@ def syllabus(request, subject_slug, exam_slug, slug):
     syllabus = get_object_or_404(Syllabus, slug=slug)
     units = Unit.objects.filter(syllabus__id=syllabus.id).order_by('order', 
                                                                    'title')
-    context = {'syllabus': syllabus, 'units': units}
+                                                                   
+    favourite = False
+    try:
+        favourite = SyllabusFavourite.objects.get(syllabus=syllabus, user=request.user)
+    except ObjectDoesNotExist:
+        pass                                                              
+                                                                   
+    context = {'syllabus': syllabus, 'units': units, 'favourite': favourite}
     return render(request, 'uploader/syllabus.html', context)
 
 
@@ -225,6 +260,12 @@ def unit(request, subject_slug, exam_slug, syllabus_slug, slug):
     unit = get_object_or_404(Unit, slug=slug)
     unit_topics = UnitTopic.objects.filter(unit__id = unit.id).order_by(
             'section', 'pub_date')
+    favourite = False
+    try:
+        favourite = UnitFavourite.objects.get(unit=unit, user=request.user)
+    except ObjectDoesNotExist:
+        pass
+        
     resources = None
 
     if unit_topics.count() == 0:
@@ -234,6 +275,7 @@ def unit(request, subject_slug, exam_slug, syllabus_slug, slug):
         'resources': resources, 
         'unit': unit,
         'unit_topics': unit_topics,
+        'favourite': favourite
     }
     return render(request, 'uploader/unit.html', context)
 
