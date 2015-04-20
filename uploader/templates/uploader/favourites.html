@@ -2,7 +2,7 @@
 {% block body_block %}
 {% load static %}
 {% get_static_prefix as STATIC_PREFIX %}
-<h2>My Favourites</h2>
+<h2>{% block head_title %}My Favourites{% endblock %}</h2>
 {% if user.is_authenticated %}
     <h3>Subjects</h3>
     <p>To change your subjects, you can do so in your 
