@@ -303,11 +303,17 @@ class Bookmark(models.Model):
     GENERAL = 'general'
     NEWS = 'news'
     VIDEO = 'video'
+    INFO = 'info'
+    BLOG = 'blog'
+    PIC = 'picture'
 
     BOOKMARK_TYPES = (
         (GENERAL, 'A website'),
         (NEWS, 'A news article'),
         (VIDEO, 'A video'),
+        (INFO, 'An informational source, e.g. Wikipedia'),
+        (BLOG, 'A blog'),
+        (PIC, 'An image')
     )
     
     title = models.CharField(max_length=200)
@@ -389,32 +395,16 @@ class ResourceAdmin(admin.ModelAdmin):
 
 
 class Rating(models.Model):
-    AWFUL = 0
-    VPOOR = 1
-    POOR = 2
-    MEDIOCRE = 3
-    GOOD = 4
-    VGOOD = 5
-
-    RATING_CHOICES = (
-        (AWFUL, 'Just awful'),
-        (VPOOR, 'Very poor'),
-        (POOR, 'Poor'),
-        (MEDIOCRE, 'Mediocre'),
-        (GOOD, 'Good'),
-        (VGOOD, 'Very good'),
-    )
-
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
     resource = models.ForeignKey(Resource)
-    rating = models.IntegerField(max_length=1, choices=RATING_CHOICES)
+    rating = models.IntegerField(max_length=1, choices=((0, "0"), (1, "1"), (2, "2"), (3, "3"), (4, "4"), (5, '5')))
     pub_date = models.DateTimeField(auto_now_add=True, blank=True)
 
     def __unicode__(self):
         return str(self.resource) + ': ' + str(self.get_rating_display())
 
     class Meta:
-        ordering = ('-pub_date',)
+        # ordering = ('-pub_date',)
         unique_together = ["user", "resource"]
 
 
