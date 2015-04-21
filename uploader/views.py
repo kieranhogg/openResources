@@ -21,6 +21,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import user_passes_test
 from django.template import Context
+from django.db.models import Avg
 # from django.contrib.messages import constants as messages
 from boxview import boxview
 from uploader.models import *
@@ -207,7 +208,13 @@ def unit_topic(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug)
     
 def unit_topic_resources(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
     unit_topic = get_object_or_404(UnitTopic, slug=slug)
-    resources = Resource.objects.filter(unit_topic=unit_topic)
+    # resources = Resource.objects.filter(unit_topic=unit_topic).values()
+    
+    #FIXME when Django 1.8 gets COALESCE we get set a default (https://code.djangoproject.com/ticket/10929)
+
+    # resources = Resource.objects.filter(unit_topic=unit_topic).annotate(avg_rating=Coalesce(Avg('rating__rating'), 3.0)).order_by('-avg_rating')
+    resources = Resource.objects.filter(unit_topic=unit_topic).annotate(avg_rating=Avg('rating__rating')).order_by('-avg_rating')
+    
     context = {'unit_topic': unit_topic, 'resources': resources}
     return render(request, 'uploader/unit_topic_resources.html', context) 
     
@@ -465,6 +472,11 @@ def file(request, slug=None):
 def bookmark(request, slug=None):
     bookmark = None
     
+    # stick the referer in so if we're coming from deep in user bookmarks
+    # we get back to the same place
+    if 'edit' not in request.META.get('HTTP_REFERER', None):
+        request.session['refer'] = request.META.get('HTTP_REFERER', None)
+
     if slug:
         bookmark = get_object_or_404(Bookmark, slug=slug)
         if bookmark.uploader != request.user and not request.user.is_superuser():
@@ -505,7 +517,7 @@ def bookmark(request, slug=None):
                     reverse('uploader:link_bookmark', args=[bookmark.slug]))
             else:
                 form.save()
-                return HttpResponseRedirect(reverse('uploader:user_bookmarks'))
+                return HttpResponseRedirect(request.session['refer'] or reverse('uploader:user_bookmarks'))
 
     else:
         form = BookmarkForm(instance=bookmark)
