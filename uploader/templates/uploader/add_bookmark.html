@@ -6,6 +6,8 @@ $(function() {
     $('#id_link').change(function() {
     
         var url = $.trim($(this).val());
+        url = url.replace(/^http:\/\/www\./, '');
+        url = url.replace(/^https:\/\/www\./, '')
         if (url.length > 0) {
             var me = this;
             var json = '';
