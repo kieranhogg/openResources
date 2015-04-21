@@ -6,6 +6,7 @@
 {% if bookmarks %}
 <table width='100%' class='table'>
     <tr>
+        <th>Type</th>
         <th>Title</th>
         <th>URL</th>
         <th># of Resources using</th>
@@ -13,7 +14,22 @@
         <th></th>
     </tr>
     {% for bookmark in bookmarks %}
-    <tr> 
+    <tr>
+        <td>
+            {% if bookmark.type == 'video' %}
+            <span class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span>
+            {% elif bookmark.type == 'news' %}
+            <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
+            {% elif bookmark.type == 'image' %}
+            <span class="glyphicon glyphicon-image" aria-hidden="true"></span>
+            {% elif bookmark.type == 'info' %}
+            <span class="glyphicon glyphicon-info" aria-hidden="true"></span>
+            {% elif bookmark.type == 'blog' %}
+            <span class="glyphicon glyphicon-comment" aria-hidden="true"></span>
+            {% else %}
+            <span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span>
+            {% endif %}
+        </td>
         <td>{{ bookmark.title }}</td></t>
         <td><a href="{{ bookmark.link }}">{{ bookmark.link|truncatechars:60 }}</a></td>
         <td style='text-align: center'>{{ bookmark.link_count }}</td>
