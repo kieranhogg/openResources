@@ -22,6 +22,12 @@ $(function() {
                 title.val(json.title)
                 
                 guessType(url);
+             },
+             error: function() {
+                var description = $("#id_description");
+                var title = $("#id_title");
+                description.val("");
+                title.val("") 
              }
             });
         }
