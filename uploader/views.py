@@ -1521,7 +1521,7 @@ def rate(request, resource_id, rating):
     return HttpResponse('')
 
 def get_url_description(request, url):
-    json = {}
+    json = {'description': "", 'title': ""}
     url_info = extract(url)
     json['description'] = url_info['description'] or ""
     json['title'] = url_info['title'] or ""
