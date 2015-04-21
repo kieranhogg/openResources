@@ -197,10 +197,11 @@ def unit_topic(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug)
         UnitTopicLink.objects.filter(unit_topic_2=unit_topic))
     
     favourite = False
-    try:
-        favourite = UnitTopicFavourite.objects.get(unit_topic=unit_topic, user=request.user)
-    except ObjectDoesNotExist:
-        pass
+    if request.user.is_authenticated():                                               
+        try:
+            favourite = UnitTopicFavourite.objects.get(unit_topic=unit_topic, user=request.user)
+        except ObjectDoesNotExist:
+            pass
     
     context = {'unit_topic': unit_topic, 'resources': resources, 
                'questions': questions, 'notes': notes, 
