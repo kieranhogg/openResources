@@ -300,9 +300,20 @@ class FileAdmin(admin.ModelAdmin):
 
 
 class Bookmark(models.Model):
+    GENERAL = 'general'
+    NEWS = 'news'
+    VIDEO = 'video'
+
+    BOOKMARK_TYPES = (
+        (GENERAL, 'A website'),
+        (NEWS, 'A news article'),
+        (VIDEO, 'A video'),
+    )
+    
     title = models.CharField(max_length=200)
     link = models.URLField(max_length=400)
     description = models.TextField(null=True)
+    type = models.CharField(max_length=7, choices=BOOKMARK_TYPES, default='general')
     uploader = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
     screenshot = models.ImageField(upload_to='screenshots/%Y/%m', null=True, blank=True)
     slug = models.SlugField(unique=True, max_length=100)
@@ -573,6 +584,9 @@ class Test(models.Model):
             rep = self.syllabus
             
         return unicode(rep)
+        
+    class Meta:
+        ordering = ('-deadline','-pub_date')
         
         
 class UserAnswer(models.Model):

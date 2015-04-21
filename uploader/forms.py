@@ -13,7 +13,7 @@ from uploader.models import *
 class BookmarkForm(forms.ModelForm):
     class Meta:
         model = Bookmark
-        exclude = ('approved','slug', 'uploader', 'screenshot')
+        fields = ('link', 'title', 'description', 'type')
         widgets = {
             'description': forms.Textarea(),
         }
