@@ -1,0 +1,29 @@
+<div class='table-responsive' style='width: 100%; overflow: auto;'>
+<table class='table' style=" display: table; table-layout: fixed; width: 100%;">
+    <tr>
+        <th>Test</th>
+        <th>Group</th>
+        <!--<th>Status</th>-->
+        <th>Set</th>
+        <th>Deadline</th>
+        <th></th>
+        {% for test in tests %}
+        <tr>
+            <td>{{ test }}</td>
+            <td>{{ test.group }}</td>
+            <!--<td></td>-->
+            <td>{{ test.pub_date }}</td>
+            <td>{{ test.deadline }}</td>
+            {% if teacher_or_student == 'teacher' %}
+            <td><a href="" class='btn btn-default'>View Test</a></td>
+            {% else %}
+            <td>student</td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </tr>
+</table>
+</div>
+<a href="{% url 'uploader:add_test' %}">
+    <button class='btn btn-success'>New Test</button>
+</a>
