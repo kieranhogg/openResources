@@ -45,7 +45,7 @@
     {% endif %}
 </div>
 {% if syllabus.description %}
-<div class="well">{{ syllabus.description }}</div>
+<div class="well">{{ syllabus.description|safe }}</div>
 {% endif %}
 
 {% if syllabus.official_site %}

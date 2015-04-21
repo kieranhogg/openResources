@@ -37,7 +37,7 @@ logger = logging.getLogger(__name__)
 def index(request):
     """Homepage view depending on logged in and user type
     """
-    return HttpResponse(extract("http://qualifications.pearson.com/en/qualifications/btec-nationals/it-2010.html")['description'])
+    # return HttpResponse(extract("http://qualifications.pearson.com/en/qualifications/btec-nationals/it-2010.html")['description'])
     if not request.user.is_authenticated():
         
         subjects = Subject.objects.filter(active=1)
@@ -245,6 +245,7 @@ def syllabus(request, subject_slug, exam_slug, slug):
     """Show one syllabuses page, has units on
     """
     syllabus = get_object_or_404(Syllabus, slug=slug)
+    syllabus.description = render_markdown(syllabus.description)
     units = Unit.objects.filter(syllabus__id=syllabus.id).order_by('order', 
                                                                    'title')
                                                                    
