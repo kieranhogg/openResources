@@ -107,6 +107,7 @@ def favourites(request):
                 
     return render(request, 'uploader/favourites.html', context)
 
+
 @login_required
 def add_favourite(request, slug, thing):
     """ Adds items to favourites
@@ -160,6 +161,7 @@ def remove_favourite(request, slug, thing):
     messages.success(request, "Removed from favourites")
     
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
 
 def subject(request, slug):
     """View one subject, shows exam levels, e.g. GCSE
@@ -217,6 +219,7 @@ def unit_topic_resources(request, subject_slug, exam_slug, syllabus_slug, unit_s
     
     context = {'unit_topic': unit_topic, 'resources': resources}
     return render(request, 'uploader/unit_topic_resources.html', context) 
+
     
 def unit_resources(request, subject_slug, exam_slug, syllabus_slug, unit_slug):
     unit = get_object_or_404(Unit, slug=unit_slug)
@@ -291,21 +294,7 @@ def unit(request, subject_slug, exam_slug, syllabus_slug, slug):
     }
     return render(request, 'uploader/unit.html', context)
 
-    
-# def unit_topic(request, subject_slug, exam_slug, syllabus_slug, unit_slug, 
-#               slug):
-#     unit_topic = get_object_or_404(UnitTopic, slug=slug)
-#     notes = Note.objects.filter(unit_topic = unit_topic)
 
-#     resources = Resource.objects.filter(unit_topic_id = unit_topic.id)
-#     context = {
-#         'resources': resources, 
-#         'unit_topic': unit_topic,
-#         'notes': notes
-#     }
-#     return render(request, 'uploader/unit_topic.html', context)
-
-    
 def view_resource(request, slug, embed=False):
     """A single resource view
     """
@@ -393,6 +382,7 @@ def delete_bookmark(request, slug):
         return HttpResponseForbidden("Permission denied")
 
 
+@login_required
 def file(request, slug=None):
     if slug:
         file = get_object_or_404(File, slug=slug)
@@ -469,6 +459,7 @@ def file(request, slug=None):
     return render(request, 'uploader/add_file.html', {'form': form, 'media': form.media})
 
 
+@login_required
 def bookmark(request, slug=None):
     bookmark = None
     
@@ -677,8 +668,6 @@ def user_resources(request, user_id=None):
                   {'resources': resources})
                   
         
-
-    
 @login_required
 def user_files(request, user_id=None):
     if not user_id:
@@ -890,6 +879,7 @@ def user_lessons(request, user_id=None):
 
 
 @login_required
+@user_passes_test(is_teacher, login_url='/denied')
 def edit_lesson(request, slug):
     l = get_object_or_404(Lesson, slug=slug)
     if l.uploader != request.user:
@@ -921,6 +911,7 @@ def edit_lesson(request, slug):
 
 
 @login_required
+@user_passes_test(is_teacher, login_url='/denied')
 def edit_lesson_item(request, id):
     li = get_object_or_404(LessonItem, pk=id)
     if li.lesson.uploader != request.user:
@@ -964,7 +955,9 @@ def lesson(request, slug):
     return render(request, 'uploader/lesson.html', 
         {'lesson': l, 'lesson_items': lis})
 
-        
+
+@login_required
+@user_passes_test(is_teacher, login_url='/denied')
 def lesson_show(request, slug):
     l = get_object_or_404(Lesson, slug=slug)
     l.url = string.replace(l.url, "http://", "")
@@ -975,6 +968,7 @@ def lesson_show(request, slug):
 
 
 @login_required
+@user_passes_test(is_teacher, login_url='/denied')
 def add_item_to_lesson(request, slug, type):
     
     if type == 'resource':
@@ -1062,6 +1056,7 @@ def notes_d(request, slug):
 
 
 @login_required
+@user_passes_test(is_teacher, login_url='/denied')
 def notes(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
     unit_topic = get_object_or_404(UnitTopic, slug=slug)
     notes = Note.objects.filter(unit_topic=unit_topic)
@@ -1118,6 +1113,7 @@ def view_notes(request, subject_slug, exam_slug, syllabus_slug, unit_slug,
 
     
 @login_required
+@user_passes_test(is_teacher, login_url='/denied')
 def upload_image(request):
     form = ImageForm(
         request.POST or None, 
@@ -1139,6 +1135,7 @@ def upload_image(request):
 def view_image(request, image_id):
     image = get_object_or_404(Image, pk=image_id)
     return render(request, 'uploader/image.html', {'url': image.image.url})
+
 
 @login_required
 @user_passes_test(is_teacher, login_url='/denied')
@@ -1219,6 +1216,7 @@ def questions(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
     {'questions': questions, 'unit_topic': unit_topic, 
      'complete_count': complete_count, 'question_count': question_count})
      
+
 @login_required
 @user_passes_test(is_student, login_url='/denied')
 def test(request, code):
@@ -1292,7 +1290,7 @@ def test(request, code):
      'complete_count': complete_count, 'question_count': question_count})
 
 
-    
+@login_required    
 def test_feedback(request, code):
     test = get_object_or_404(Test, code=code)
     unit_topic = test.unit_topic
@@ -1316,7 +1314,9 @@ def test_feedback(request, code):
     return render(request, 'uploader/feedback.html', 
     {'questions': question_list, 'unit_topic': unit_topic})
     
-    
+
+@login_required
+@user_passes_test(is_teacher, login_url='/denied')
 def question(request, slug):
     unit_topic = get_object_or_404(UnitTopic, slug=slug)
     form = MultipleChoiceQuestionForm(request.POST or None)
@@ -1390,12 +1390,14 @@ def teacher_signup(request):
     
 
 @login_required
+@user_passes_test(is_teacher, login_url='/denied')
 def groups_list(request):
     groups = Group.objects.filter(teacher=request.user)
     return render(request, 'uploader/groups.html', {'groups': groups})
     
 
 @login_required
+@user_passes_test(is_teacher, login_url='/denied')
 def groups(request, slug=None):
     group = None
     
@@ -1421,7 +1423,9 @@ def groups(request, slug=None):
 
     return render(request, 'uploader/add_group.html', {'form': form})
         
+
 @login_required
+@user_passes_test(is_teacher, login_url='/denied')
 def group(request, slug):
     group = get_object_or_404(Group, slug=slug)
     student_group = StudentGroup.objects.filter(group=group)
@@ -1446,6 +1450,7 @@ def group(request, slug):
     
     
 @login_required
+@user_passes_test(is_teacher, login_url='/denied')
 def add_test(request):
     form = TestForm(request.POST or None)
     form.fields['group'].queryset = Group.objects.filter(teacher=request.user)
@@ -1469,6 +1474,7 @@ def add_test(request):
     
     
 @login_required
+@user_passes_test(is_teacher, login_url='/denied')
 def link_test(request, code):
     return link_resource(request, 'test', code)
   
@@ -1520,6 +1526,7 @@ def rate(request, resource_id, rating):
     
     return HttpResponse('')
 
+
 def get_url_description(request, url):
     json = {}
     url_info = extract(url)
@@ -1531,7 +1538,7 @@ def get_url_description(request, url):
 
     return JsonResponse(json)
 
-    
+@login_required  
 def bulk_bookmark_update(request, action, ids):
     """ Allows a user to bulk-update bookmarks
     """
