@@ -6,19 +6,17 @@ jQuery(document).ready(function($) {
     $('select').on('change', function (e) {
         // get action
         var valueSelected = this.value;
-        if (valueSelected == 'delete') {
-            var del = confirm('DELETE these bookmarks?')
-            if (del) {
-                // get list of bookmarks
-                var idSelector = function() { return this.id; };
-                var bookmarks = $(":checkbox:checked").map(idSelector).get();
-                
-                var xmlHttp = null;
-                theUrl = '/bulk/bookmark/' + valueSelected + '/' + bookmarks + '/';
-                xmlHttp = new XMLHttpRequest();
-                xmlHttp.open( "GET", theUrl, false );
-                xmlHttp.send( null );
-                window.location.reload()
+        if ((valueSelected == 'delete' && confirm('DELETE these bookmarks?')) || valueSelected != 'delete') {
+            // get list of bookmarks
+            var idSelector = function() { return this.id; };
+            var bookmarks = $(":checkbox:checked").map(idSelector).get();
+            
+            var xmlHttp = null;
+            theUrl = '/bulk/bookmark/' + valueSelected + '/' + bookmarks + '/';
+            xmlHttp = new XMLHttpRequest();
+            xmlHttp.open( "GET", theUrl, false );
+            xmlHttp.send( null );
+            window.location.reload()
             }
         }
         
