@@ -35,11 +35,10 @@ logger = logging.getLogger(__name__)
 
 
 def index(request):
-    """Homepage view depending on logged in an user type
+    """Homepage view depending on logged in and user type
     """
+    return HttpResponse(extract("http://qualifications.pearson.com/en/qualifications/btec-nationals/it-2010.html")['description'])
     if not request.user.is_authenticated():
-        if request.GET and request.GET['s'] == "1":
-            messages.success(request, 'Resource added, thank you!')
         
         subjects = Subject.objects.filter(active=1)
         
@@ -56,7 +55,11 @@ def index(request):
         return render(request, 'uploader/index.html', context)
     else:
         if hasattr(request.user, 'teacherprofile'):
-            return render(request, 'uploader/teacher_home.html', {})
+            groups = Group.objects.filter(teacher=request.user)
+            tests = Test.objects.filter(group__in=groups)[:5]
+
+            context = {'groups': groups, 'tests': tests}
+            return render(request, 'uploader/teacher_home.html', context)
         else:
             #FIXME use a filter
             groups = StudentGroup.objects.filter(student=request.user)
@@ -182,6 +185,7 @@ def syllabus_resources(request, subject_slug, exam_slug, slug):
 
 def unit_topic(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
     unit_topic = get_object_or_404(UnitTopic, slug=slug)
+    unit_topic.description = render_markdown(unit_topic.description)
     resources = Resource.objects.filter(unit_topic=unit_topic).count()
     notes = Note.objects.filter(unit_topic=unit_topic).count()
     question = MultipleChoiceQuestion.objects.filter(unit_topic=unit_topic)
@@ -569,8 +573,9 @@ def link_resource(request, type, slug):
                     resource.approved = True
                     score_points(request.user, "Add Resource")
                 form.save()
-        
-                return redirect("/?s=1")
+                
+                messages.success(request, 'Resource added, thank you!')
+                return redirect(reverse('uploader:index'))
         elif type == 'test':
             test.subject = Subject.objects.get(pk=request.POST['subject'])
             test.syllabus = Syllabus.objects.get(pk=request.POST['syllabus'])
@@ -1387,7 +1392,7 @@ def groups(request, slug=None):
                 request.user.is_superuser()):
             return HttpResponseForbidden("No stairway, denied!")
     else:
-        group = Group(teacher=request.user.teacherprofile)
+        group = Group(teacher=request.user)
 
     if request.POST:
         form = GroupForm(request.POST, instance=group)
@@ -1501,3 +1506,7 @@ def rate(request, resource_id, rating):
             pass
     
     return HttpResponse('')
+
+def get_url_description(request, url):
+    # return extract(url)['description']
+    return extract(url)
