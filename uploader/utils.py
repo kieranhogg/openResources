@@ -1,4 +1,4 @@
-import requests, json, shutil, os, random, string
+import requests, json, shutil, os, random, string, urllib
 from tempfile import NamedTemporaryFile
 from django.utils.text import slugify
 from django.conf import settings
@@ -109,3 +109,12 @@ def group_code():
     # TODO check DB
     # a length of 3 gives us: 238328 codes
     return random_key(3)
+
+
+def extract(url):
+    """extracts information from a URL using embed.ly API
+    """
+    # url = urllib.unquote(encoded_url).decode('utf8')
+    api_url = "http://api.embed.ly/1/extract?key=" + settings.MICAWBER_EMBEDLY_KEY + "&url=" + url + "&maxwidth=500"
+    r = requests.get(api_url)
+    return json.loads(r.text)

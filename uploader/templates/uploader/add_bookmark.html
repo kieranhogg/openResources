@@ -1,7 +1,47 @@
 {% extends 'uploader/base.html' %}
 {% block body_block %}
 {% load bootstrap %}
+<script>
+$(function() {
+    $('#id_link').change(function() {
+    
+        var url = $.trim($(this).val());
+        if (url.length > 0) {
+            var me = this;
+            var json = '';
+            $.ajax({ type: "GET",   
+             url: "/lookup/url_description/"+encodeURIComponent(url),   
+             async: true,
+             beforeSend: loadStart,
+             success : function(text)
+             {
+                json = text;
+                var description = $("#id_description");
+                var title = $("#id_title");
+                description.val(json.description);
+                title.val(json.title)
+                
+                guessType(url);
+             }
+            });
+        }
+    });
 
+
+});
+function guessType(url) {
+    //TODO
+}
+    
+function loadStart() {
+    var description = $("#id_description");
+    var title = $("#id_title");
+    description.val("Loading...");
+    title.val("Loading...")
+}
+
+
+</script>
 <h2>{% block head_title %}
 {% if form.instance.id %}
     Edit 

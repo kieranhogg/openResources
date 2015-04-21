@@ -474,7 +474,7 @@ def bookmark(request, slug=None):
     
     # stick the referer in so if we're coming from deep in user bookmarks
     # we get back to the same place
-    if 'edit' not in request.META.get('HTTP_REFERER', None):
+    if 'edit' not in request.META.get('HTTP_REFERER', ""):
         request.session['refer'] = request.META.get('HTTP_REFERER', None)
 
     if slug:
@@ -1521,8 +1521,13 @@ def rate(request, resource_id, rating):
     return HttpResponse('')
 
 def get_url_description(request, url):
-    # return extract(url)['description']
-    return extract(url)
+    json = {}
+    url_info = extract(url)
+    json['description'] = url_info['description'] or ""
+    json['title'] = url_info['title'] or ""
+
+    return JsonResponse(json)
+
     
 def bulk_bookmark_update(request, action, ids):
     """ Allows a user to bulk-update bookmarks
