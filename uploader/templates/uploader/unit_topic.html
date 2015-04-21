@@ -32,7 +32,7 @@
 {% if unit_topic.description and unit_topic.description != "" %}
 <h3>Description</h3>
 <div class="well">
-    {{ unit_topic.description|linebreaks|safe }}
+    {{ unit_topic.description|safe }}
 </div>
 {% endif %}
 <h3>Information</h3>
