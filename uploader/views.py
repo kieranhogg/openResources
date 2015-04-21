@@ -1523,3 +1523,18 @@ def rate(request, resource_id, rating):
 def get_url_description(request, url):
     # return extract(url)['description']
     return extract(url)
+    
+def bulk_bookmark_update(request, action, ids):
+    """ Allows a user to bulk-update bookmarks
+    """
+    try:
+        id_list = ids.split(',')
+        if action in ['general', 'news', 'blog', 'video', 'image', 'info', 'delete']:
+            if action == 'delete':
+                Bookmark.objects.filter(id__in=id_list, uploader=request.user).delete()
+            else:
+                Bookmark.objects.filter(id__in=id_list, uploader=request.user).update(type=action)
+    except Exception,e:
+        logger.error(e)
+    
+    return HttpResponse()

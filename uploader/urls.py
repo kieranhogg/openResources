@@ -10,6 +10,8 @@ urlpatterns = patterns('',
     url(r'^lookup/syllabus/(?P<subject_id>\d+)/$', views.get_syllabuses, name='get_syllabuses'),
     url(r'^lookup/unit/(?P<syllabus_id>\d+)/$', views.get_units, name='get_units'),
     url(r'^lookup/unit_topic/(?P<unit_id>\d+)/$', views.get_unit_topics, name='get_unit_topics'),
+    url(r'^lookup/url_description/(?P<url>.+)/$', views.get_url_description, name='get_url_description'),
+    url(r'^bulk/bookmark/(?P<action>.+)/(?P<ids>.+)/$', views.bulk_bookmark_update, name='bulk_bookmark_update'),
     
     url(r'^subjects/$', views.subjects, name='subjects'),
     url(r'^favourites/$', views.favourites, name='favourites'),

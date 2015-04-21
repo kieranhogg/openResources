@@ -1,11 +1,49 @@
 {% extends 'uploader/base.html' %}
 {% block body_block %}
 {% load static %}
+<script>
+jQuery(document).ready(function($) {
+    $('select').on('change', function (e) {
+        // get action
+        var valueSelected = this.value;
+        if (valueSelected == 'delete') {
+            var del = confirm('DELETE these bookmarks?')
+            if (del) {
+                // get list of bookmarks
+                var idSelector = function() { return this.id; };
+                var bookmarks = $(":checkbox:checked").map(idSelector).get();
+                
+                var xmlHttp = null;
+                theUrl = '/bulk/bookmark/' + valueSelected + '/' + bookmarks + '/';
+                xmlHttp = new XMLHttpRequest();
+                xmlHttp.open( "GET", theUrl, false );
+                xmlHttp.send( null );
+                window.location.reload()
+            }
+        }
+        
+
+    });
+});
+</script>
 <h2>{% block head_title %}My Bookmarks{% endblock %}</h2>
 
 {% if bookmarks %}
+<p>
+    <select id='actions'>
+        <option>Bulk actions</option>
+        <option value='default'>Change type: General website</option>
+        <option value='news'>Change type: News website</option>
+        <option value='blog'>Change type: Blog</option>
+        <option value='info'>Change type: Informational site</option>
+        <option value='video'>Change type: Video</option>
+        <option value='image'>Change type: Image</option>
+        <option value='delete'>DELETE</option>
+    </select>
+</p>
 <table width='100%' class='table'>
     <tr>
+        <th></th>
         <th>Type</th>
         <th>Title</th>
         <th>URL</th>
@@ -15,6 +53,9 @@
     </tr>
     {% for bookmark in bookmarks %}
     <tr>
+        <td>
+            <input id='{{bookmark.id}}' type='checkbox' />
+        </td>
         <td>
             {% if bookmark.type == 'video' %}
             <span class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span>
