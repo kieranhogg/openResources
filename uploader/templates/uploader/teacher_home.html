@@ -2,5 +2,24 @@
 {% block body_block %}
 {% load static %}
 {% get_static_prefix as STATIC_PREFIX %}
-<h2>{{ user.teacherprofile }}'s Home</h2>
+{% load tags %}
+
+<h2>{% block head_title %}{{ user.teacherprofile }}{% endblock %}'s Home</h2>
+<h3>Groups</h3>
+{% if groups %}
+    {% for group in groups %}
+        <p>
+            <a href="{% url 'uploader:group' group.slug %}">{{ group }}</a>
+        </p>
+    {% endfor %}
+    <!--<h3>Recent Assignments</h3>-->
+    <!-- assignment_table "teacher" assignments -->
+
+    <h3>Recent Tests</h3>
+    {% test_table "teacher" tests %}
+
+{% else %}
+    <p>No groups, you can add one <a href="{% url 'uploader:groups' %}">here</a>.</p>
+    
+{% endif %} 
 {% endblock %}
