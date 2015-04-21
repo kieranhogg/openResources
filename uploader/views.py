@@ -1521,10 +1521,13 @@ def rate(request, resource_id, rating):
     return HttpResponse('')
 
 def get_url_description(request, url):
-    json = {'description': "", 'title': ""}
+    json = {}
     url_info = extract(url)
-    json['description'] = url_info['description'] or ""
-    json['title'] = url_info['title'] or ""
+    try:
+        json['description'] = url_info['description'] or ""
+        json['title'] = url_info['title'] or ""
+    except KeyError:
+        pass
 
     return JsonResponse(json)
 
