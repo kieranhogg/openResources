@@ -32,9 +32,7 @@
 {% if unit_topic.description and unit_topic.description != "" %}
 <h3>Description</h3>
 <div class="well">
-    {% autoescape off %}
-    {{ unit_topic.description}}
-    {% endautoescape %}
+    {{ unit_topic.description|linebreaks|safe }}
 </div>
 {% endif %}
 <h3>Information</h3>
