@@ -31,3 +31,6 @@ def try_to_include(parser, token):
 
     return IncludeNode(template_name[1:-1])
 
+@register.inclusion_tag('uploader/snippets/test_table.html')
+def test_table(teacher_or_student, tests):
+    return {'teacher_or_student': teacher_or_student, 'tests': tests}
