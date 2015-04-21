@@ -33,7 +33,7 @@
         <span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span>
         {% endif %}
         <a href="{% url 'uploader:view_resource' resource|slugify %}">{{ resource }}</a>:
-         {{ resource.bookmark.description}} 
+         {{ resource.bookmark.description|truncatewords:20 }} 
          {% if resource.avg_rating %}
              ({{ resource.avg_rating }})
          {% endif %}
