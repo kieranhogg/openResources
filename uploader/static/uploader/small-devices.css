@@ -46,3 +46,19 @@
     display: none;
     visibility: hidden;
 }
+#link_form .subject, #link_form .syllabus, #link_form .unit, #link_form .unit_topic{
+    width: 100%;
+
+}
+#link_submit button{
+    display: table;
+    margin: 0 auto;
+}
+
+#link_submit {
+    margin-top: 1em;
+}
+
+.small_form {
+    width: 100%;
+}

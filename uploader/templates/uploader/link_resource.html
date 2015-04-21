@@ -80,42 +80,69 @@ $(document).ready(function(){
         Pick which unit topic your questions will be drawn from.
     </p>
 {% else %}
-    <h2>Add Resource</h2>
-
+<h2>Add Resource</h2>
 <h3>Important!</h3>
 <div class="important">
-<p>You now need to put this resource where it belongs. Ideally, the resource
+<p>You now need to put this resource where it belongs:
+<ul>
+    <li>Ideally, the resource
 should have a subject, syllabus, unit and unit topic to make it as useful as 
-possible.</p>
-<p>If the resource could be used for multiple syllabuses or topics, you 
-can add more later.</p>
-<p>If the resource is a scheme of work, you can leave the options blank that don't
-make sense, e.g. for a whole-syllabus SoW, set subject and syllabus and leave 
-the rest blank.</p>
-</strong>
-</div>
-{% endif %}
-{% if form.non_field_errors %}
-<div id="error">
-{% for error in form.non_field_errors %}
-    {{error}}
-{% endfor %}
+possible</li>
+<li>If it is a general resource such as a specification or scheme of work, you can leave unit and unit topic blank</li>
+<li>If the resource could be used for multiple syllabuses or topics, you 
+can add more later.</li>
+</ul>
 </div>
 {% endif %}
 
-<div style="width: 60%; margin: 0 auto">
+<hr />
+<div id="link_form">
 <form action method="post" novalidate>
     {% csrf_token %}
 
-    {% for field in form %}
+    <!--{% for field in form %}-->
         <!-- check what's required -->
-        {% if type == 'test' or field.name == 'subject' or field.name == 'syllabus' %}
+    <!--    {% if type == 'test' or field.name == 'subject' or field.name == 'syllabus' %}-->
+    <!--        <span class="label label-danger">required</span>-->
+    <!--    {% endif %}-->
+    <!--    {{ field|bootstrap }}-->
+    <!--{% endfor %}-->
+    
+    {{ form.non_field_errors }}
+    
+    <div class="subject">
+        {{ form.subject.errors }}
+        <label for="{{ form.subject.id_for_label }}">Subject</label>
+            <span class="label label-danger">required</span>
+        {{ form.subject }}
+    </div>
+    
+    <div class="syllabus">
+        {{ form.syllabus.errors }}
+        <label for="{{ form.syllabus.id_for_label }}">Syllabus</label>
+            <span class="label label-danger">required</span>
+        {{ form.syllabus }}
+    </div>
+    
+    <div class="unit">
+        {{ form.unit.errors }}
+        <label for="{{ form.unit.id_for_label }}">Unit</label>
+        {% if type == 'test'  %}
             <span class="label label-danger">required</span>
         {% endif %}
-        {{ field|bootstrap }}
-    {% endfor %}
+        {{ form.unit }}
+    </div>
+
+    <div class="unit_topic">
+        {{ form.subject.errors }}
+        <label for="{{ form.unit_topic.id_for_label }}">Unit Topic</label>
+        {% if type == 'test'  %}
+            <span class="label label-danger">required</span>
+        {% endif %}
+        {{ form.unit_topic }}
+    </div>
     
-    <div class="form-group text-center">
+    <div id="link_submit">
         <button type="submit" class="btn btn-success">Save</button>
     </div>
 </form>
