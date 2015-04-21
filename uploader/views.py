@@ -258,12 +258,13 @@ def syllabus(request, subject_slug, exam_slug, slug):
     syllabus.description = render_markdown(syllabus.description)
     units = Unit.objects.filter(syllabus__id=syllabus.id).order_by('order', 
                                                                    'title')
-                                                                   
+     
     favourite = False
-    try:
-        favourite = SyllabusFavourite.objects.get(syllabus=syllabus, user=request.user)
-    except ObjectDoesNotExist:
-        pass                                                              
+    if request.user.is_authenticated():                                               
+        try:
+            favourite = SyllabusFavourite.objects.get(syllabus=syllabus, user=request.user)
+        except ObjectDoesNotExist:
+            pass                                                              
                                                                    
     context = {'syllabus': syllabus, 'units': units, 'favourite': favourite}
     return render(request, 'uploader/syllabus.html', context)
@@ -276,10 +277,11 @@ def unit(request, subject_slug, exam_slug, syllabus_slug, slug):
     unit_topics = UnitTopic.objects.filter(unit__id = unit.id).order_by(
             'section', 'pub_date')
     favourite = False
-    try:
-        favourite = UnitFavourite.objects.get(unit=unit, user=request.user)
-    except ObjectDoesNotExist:
-        pass
+    if request.user.is_authenticated():                                               
+        try:
+            favourite = UnitFavourite.objects.get(unit=unit, user=request.user)
+        except ObjectDoesNotExist:
+            pass
         
     resources = None
 
