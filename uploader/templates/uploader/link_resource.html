@@ -61,7 +61,7 @@ $(document).ready(function(){
                     section = value.section;
                 }
              $('select[name=unit_topic]')
-                .append($('<option>', { value : key })
+                .append($('<option>', { value : value.id })
                 .text(value.unit_topic)); 
             });
         });
