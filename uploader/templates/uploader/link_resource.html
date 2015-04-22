@@ -54,23 +54,33 @@ $(document).ready(function(){
             this.section = false;
             count = 0;
             $.each(data, function(key, value) {
-                if (!self.section || value.section != self.section) {
-                    console.log('changing from ' + self.section + ' to ' + value.section);
-                    if (count != 0) {
-                        $('select[name=unit_topic]').append('</optgroup>');
+                if (value.section) {
+                    if (!self.section || value.section != self.section) {
+                        console.log('changing from ' + self.section + ' to ' + value.section);
+                        if (count != 0) {
+                            $('select[name=unit_topic]').append('</optgroup>');
+                        }
+                        count++;
+                        $('select[name=unit_topic]').append('<optgroup label=" &gt; ' + value.section + '">');
+                        self.section = value.section;
                     }
-                    count++;
-                    $('select[name=unit_topic]').append('<optgroup label=" &gt; ' + value.section + '">');
-                    self.section = value.section;
                 }
-             $('select[name=unit_topic]')
-                .append($('<option>', { value : value.id })
-                .text(value.unit_topic)); 
-            });
+                 $('select[name=unit_topic]')
+                    .append($('<option>', { value : value.id })
+                    .text(value.unit_topic)); 
+                });
         });
     });
 });
 </script>
+<h2>{% block head_title %}
+{% if type == 'test' %}
+    Choose Test Topic
+{% else %}
+    Link Resource
+{% endif %}
+
+{% endblock %}</h2>
 
 {% if type == 'test' %}
 <script>
@@ -88,12 +98,11 @@ $(document).ready(function(){
     });
 });
 </script>
-    <h2>Choose Test Topic</h2>
+    
     <p>
         Pick which unit topic your questions will be drawn from.
     </p>
 {% else %}
-<h2>Add Resource</h2>
 <h3>Important!</h3>
 <div class="important">
 <p>You now need to put this resource where it belongs:
