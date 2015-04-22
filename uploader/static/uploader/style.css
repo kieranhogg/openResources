@@ -530,3 +530,16 @@ a.btn-primary {
     /* symbol for "collapsed" panels */
     content: "\e080";    /* adjust as needed, taken from bootstrap.css */
 }
+#link_form {
+    margin-top: 2em;
+}
+#link_form .subject, #link_form .syllabus, #link_form .unit, #link_form .unit_topic{
+    width: 22%;
+    float:left;
+    margin-right: 1%;
+}
+#link_submit {
+    padding-top: 25px;
+    /*margin-top: 2.1%;*/
+    /*clear: left;*/
+}
