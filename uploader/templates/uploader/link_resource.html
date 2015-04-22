@@ -53,7 +53,7 @@ $(document).ready(function(){
             count = 0;
             $.each(data, function(key, value) {
                 if (section = "" || value.section != section) {
-                    if (count == 0) {
+                    if (count != 0) {
                         $('select[name=unit_topic]').append('</optgroup>');
                     }
                     count++;
