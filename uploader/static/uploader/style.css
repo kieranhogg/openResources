@@ -231,6 +231,10 @@ h6 {
 #link_or_oembed p {
     text-align: center;
 }
+#link_or_embed iframe {
+    display:block;
+    margin: 0 auto;
+}
 /* tiles */
 #lesson_items {
     width: 93%;
