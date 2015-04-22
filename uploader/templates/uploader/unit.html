@@ -68,7 +68,22 @@
             {% ifchanged %}<h4>{{ unit_topic.section }}</h4>{% endifchanged %}
             {% ifchanged %}
                 {% if unit_topic.section_description %}
-                    {{ unit_topic.section_description|safe }}
+                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                  <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="heading{{unit_topic.id}}">
+                      <h4 class="panel-title">
+                        <a class="toggle-button collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse{{unit_topic.id}}" aria-expanded="false" aria-controls="collapse{{unit_topic.id}}">
+                          Introduction
+                        </a>
+                      </h4>
+                    </div>
+                    <div id="collapse{{unit_topic.id}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading{{unit_topic.id}}">
+                      <div class="panel-body">
+                        {{ unit_topic.section_description|safe }}
+                      </div>
+                    </div>
+                  </div>
+              </div>
                 {% endif %}
             {% endifchanged %}
                   <!--<li>{{ item.name }}: {{ item.population }}</li>-->

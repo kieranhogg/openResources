@@ -496,27 +496,14 @@ table .altrow td {
 /*    border: 1px solid #cc0000 !important;*/
 /*    color: white !important;*/
 /*}*/
-#link_form {
-    margin-top: 2em;
-}
-#link_form .subject, #link_form .syllabus, #link_form .unit, #link_form .unit_topic{
-    width: 22%;
-    float:left;
-    margin-right: 1%;
-}
-#link_submit {
-    padding-top: 25px;
-    /*margin-top: 2.1%;*/
-    /*clear: left;*/
-}
 #menu_home {
     margin-left: -35px;
 }
 
-/*form .label-danger {*/
-/*    float: right*/
+form .label-danger {
+    float: right
     /*margin-top: -40px;*/
-/*} */
+} 
 a.btn-primary {
     color: white !important;
 }
@@ -531,4 +518,15 @@ a.btn-primary {
 }
 .btn-success, .btn-info {
     color: white !important;
+}
+.panel-heading .toggle-button:after {
+    /* symbol for "opening" panels */
+    font-family: 'Glyphicons Halflings';  /* essential for enabling glyphicon */
+    content: "\e114";    /* adjust as needed, taken from bootstrap.css */
+    float: right;        /* adjust as needed */
+    color: grey;         /* adjust as needed */
+}
+.panel-heading .toggle-button.collapsed:after {
+    /* symbol for "collapsed" panels */
+    content: "\e080";    /* adjust as needed, taken from bootstrap.css */
 }
