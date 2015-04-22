@@ -57,7 +57,7 @@ $(document).ready(function(){
                         $('select[name=unit_topic]').append('</optgroup>');
                     }
                     count++;
-                    $('select[name=unit_topic]').append('<optgroup> &gt;' + value.section + '</optgroup>');
+                    $('select[name=unit_topic]').append('<optgroup label="&gt;' + value.section + '">');
                     section = value.section;
                 }
              $('select[name=unit_topic]')
