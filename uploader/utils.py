@@ -30,9 +30,10 @@ def save_file(url):
 def safe_slugify(text, model):
     """ Safely creates a slug using the given text and model. Check in the
     database to find duplicate slugs and appends an increasing number if a
-    duplicate is found
+    duplicate is found. Max length is 100
     """
     text = slugify(unicode(text))
+    text = (text[:100]) if len(text) > 100 else text
     num_slugs = model.objects.filter(slug__startswith=text).count()
     
     if num_slugs > 0:
