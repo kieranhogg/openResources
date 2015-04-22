@@ -1502,7 +1502,11 @@ def get_unit_topics(request, unit_id):
     unit_topics = UnitTopic.objects.filter(unit=unit)
     unit_topics_dict = {}
     for unit_topic in unit_topics:
-        unit_topics_dict[unit_topic.id] = str(unit_topic)
+        if unit_topic.section:
+            section = unit_topic.section
+        else:
+            section = ""
+        unit_topics_dict[unit_topic.id] = {'unit_topic': str(unit_topic), 'section': section}
     return JsonResponse(unit_topics_dict)
 
 

@@ -49,10 +49,19 @@ $(document).ready(function(){
             $.getJSON("/lookup/unit_topic/" + unit_id, null, function(data) {
             // $('select[name=unit_topic]')
             //     .empty().append($('<option><option>'))
-            $.each(data, function(key, value) {   
+            var section = "";
+            count = 0;
+            $.each(data, function(key, value) {
+                if (section = "" || value.section != section) {
+                    if (count == 0) {
+                        $('select[name=unit_topic]').append('</optgroup>');
+                    }
+                    count++;
+                    $('select[name=unit_topic]').append('<optgroup label=" > ' + value.section + '"');
+                }
              $('select[name=unit_topic]')
                 .append($('<option>', { value : key })
-                .text(value)); 
+                .text(value.unit_topic)); 
             });
         });
     });
