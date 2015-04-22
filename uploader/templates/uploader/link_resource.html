@@ -49,11 +49,12 @@ $(document).ready(function(){
             $.getJSON("/lookup/unit_topic/" + unit_id, null, function(data) {
             // $('select[name=unit_topic]')
             //     .empty().append($('<option><option>'))
+            
             var self = this;
-            this.section = "";
+            this.section = false;
             count = 0;
             $.each(data, function(key, value) {
-                if (self.section = "" || value.section != self.section) {
+                if (!self.section || value.section != self.section) {
                     console.log('changing from ' + self.section + ' to ' + value.section);
                     if (count != 0) {
                         $('select[name=unit_topic]').append('</optgroup>');
