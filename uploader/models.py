@@ -200,7 +200,7 @@ class UnitTopic(models.Model):
 class UnitTopicAdmin(admin.ModelAdmin):
     list_display = ('title', 'unit', 'description', 'pub_date')
     list_filter = ('unit__syllabus__subject', 'unit__syllabus', 'unit')
-    prepopulated_fields = {"slug": ("title",)}
+    prepopulated_fields = {"slug": ("section", "title",)}
     
     
 class Note(models.Model):
