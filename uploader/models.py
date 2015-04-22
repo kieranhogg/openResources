@@ -179,6 +179,9 @@ class UnitTopic(models.Model):
     topic = models.ManyToManyField(Topic, blank=True, null=True)
     section = models.CharField(max_length=100, blank=True, null=True,
             help_text='Use this to group topics by section')
+    section_description = models.TextField(blank=True, null=True, 
+        help_text='A hacky way of showing some guidance for a section as it ' +
+                  'doesn\'t have a page itself')
     description = models.TextField(
         blank=True,
         null=True,
@@ -305,7 +308,7 @@ class Bookmark(models.Model):
     VIDEO = 'video'
     INFO = 'info'
     BLOG = 'blog'
-    PIC = 'picture'
+    IMAGE = 'image'
 
     BOOKMARK_TYPES = (
         (GENERAL, 'A website'),
@@ -313,7 +316,7 @@ class Bookmark(models.Model):
         (VIDEO, 'A video'),
         (INFO, 'An informational source, e.g. Wikipedia'),
         (BLOG, 'A blog'),
-        (PIC, 'An image')
+        (IMAGE, 'An image')
     )
     
     title = models.CharField(max_length=200)
