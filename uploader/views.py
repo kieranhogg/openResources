@@ -478,7 +478,7 @@ def bookmark(request, slug=None):
     
     # stick the referer in so if we're coming from deep in user bookmarks
     # we get back to the same place
-    if 'edit' not in request.META.get('HTTP_REFERER', None):
+    if 'edit' not in request.META.get('HTTP_REFERER', ""):
         request.session['refer'] = request.META.get('HTTP_REFERER', None)
 
     if slug:
