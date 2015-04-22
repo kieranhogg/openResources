@@ -228,10 +228,7 @@ h6 {
     margin: 0 auto;
     display:block;
 }
-#link_or_oembed p {
-    text-align: center;
-}
-#link_or_embed iframe {
+.link_or_embed iframe {
     display:block;
     margin: 0 auto;
 }
