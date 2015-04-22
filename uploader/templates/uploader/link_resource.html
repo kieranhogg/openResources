@@ -50,7 +50,7 @@ $(document).ready(function(){
             // $('select[name=unit_topic]')
             //     .empty().append($('<option><option>'))
             var self = this;
-            var section = "";
+            this.section = "";
             count = 0;
             $.each(data, function(key, value) {
                 if (self.section = "" || value.section != self.section) {
