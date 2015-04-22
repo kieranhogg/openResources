@@ -66,6 +66,7 @@
         <!-- As we input data, we can assume that it if the first item has a group, they all do -->
         {% for unit_topic in unit_topics %}
             {% ifchanged %}<h4>{{ unit_topic.section }}</h4>{% endifchanged %}
+            {% ifchanged %}{{ unit_topic.section_description|safe }}{% endifchanged %}
                   <!--<li>{{ item.name }}: {{ item.population }}</li>-->
                   <li><a href="{% url 'uploader:unit_topic' unit.syllabus.subject.slug unit.syllabus.exam_level.slug unit.syllabus.slug unit.slug unit_topic.slug %}">{{ unit_topic }}</a></li> 
         {% endfor %}
