@@ -1499,7 +1499,7 @@ def get_units(request, syllabus_id):
     
 def get_unit_topics(request, unit_id):
     unit = Unit.objects.get(pk=unit_id)
-    unit_topics = UnitTopic.objects.filter(unit=unit)
+    unit_topics = UnitTopic.objects.filter(unit=unit).order_by('section','pub_date')
     unit_topics_dict = {}
     for unit_topic in unit_topics:
         if unit_topic.section:
