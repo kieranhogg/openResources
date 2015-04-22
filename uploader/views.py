@@ -1525,8 +1525,15 @@ def rate(request, resource_id, rating):
     return HttpResponse('')
 
 def get_url_description(request, url):
-    # return extract(url)['description']
-    return extract(url)
+    json = {}
+    url_info = extract(url)
+    try:
+        json['description'] = url_info['description'] or ""
+        json['title'] = url_info['title'] or ""
+    except KeyError:
+        pass
+
+    return JsonResponse(json)
     
 def bulk_bookmark_update(request, action, ids):
     """ Allows a user to bulk-update bookmarks
