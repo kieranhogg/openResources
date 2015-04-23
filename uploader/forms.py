@@ -32,13 +32,16 @@ class FileForm(forms.ModelForm):
         
     def clean(self):
         file = self.cleaned_data['file']
-        if file:
-            content_type = file.content_type
-            if content_type in settings.CONTENT_TYPES:
-                if file.size > settings.MAX_UPLOAD_SIZE:
-                    raise forms.ValidationError(_('Please keep filesize under %s. Current filesize %s') % (filesizeformat(settings.MAX_UPLOAD_SIZE), filesizeformat(content._size)))
-            else:
-                raise forms.ValidationError(_('File type is not supported'))
+        try:
+            if file:
+                content_type = file.content_type
+                if content_type in settings.CONTENT_TYPES:
+                    if file.size > settings.MAX_UPLOAD_SIZE:
+                        raise forms.ValidationError(_('Please keep filesize under %s. Current filesize %s') % (filesizeformat(settings.MAX_UPLOAD_SIZE), filesizeformat(content._size)))
+                else:
+                    raise forms.ValidationError(_('File type is not supported'))
+        except AttributeError:
+            pass #if we're editing
     
         url = self.cleaned_data.get('url')
         if url:
