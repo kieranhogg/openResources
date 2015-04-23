@@ -19,7 +19,7 @@ from django.core.files import File as DjangoFile
 from django.core.files.temp import NamedTemporaryFile
 from django.contrib.contenttypes.models import ContentType
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import user_passes_test, permission_required
 from django.template import Context
 from django.db.models import Avg
 # from django.contrib.messages import constants as messages
@@ -197,7 +197,7 @@ def unit_topic(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug)
     favourite = False
     try:
         favourite = UnitTopicFavourite.objects.get(unit_topic=unit_topic, user=request.user)
-    except ObjectDoesNotExist:
+    except ObjectDoesNotExist, TypeError:
         pass
     
     context = {'unit_topic': unit_topic, 'resources': resources, 
@@ -255,11 +255,12 @@ def syllabus(request, subject_slug, exam_slug, slug):
     syllabus.description = render_markdown(syllabus.description)
     units = Unit.objects.filter(syllabus__id=syllabus.id).order_by('order', 
                                                                    'title')
-                                                                   
+    
+                                                             
     favourite = False
     try:
         favourite = SyllabusFavourite.objects.get(syllabus=syllabus, user=request.user)
-    except ObjectDoesNotExist:
+    except ObjectDoesNotExist, TypeError:
         pass                                                              
                                                                    
     context = {'syllabus': syllabus, 'units': units, 'favourite': favourite}
@@ -275,11 +276,11 @@ def unit(request, subject_slug, exam_slug, syllabus_slug, slug):
     for unit_topic in unit_topics:
         if unit_topic.section_description:
             unit_topic.section_description = render_markdown(unit_topic.section_description)
-        
+    
     favourite = False
     try:
         favourite = UnitFavourite.objects.get(unit=unit, user=request.user)
-    except ObjectDoesNotExist:
+    except ObjectDoesNotExist, TypeError:
         pass
         
     resources = None
@@ -1066,6 +1067,7 @@ def notes_d(request, slug):
 
 
 @login_required
+@permission_required('notes.can_edit', '/denied?msg=For editing rights, please email contact@eduresourc.es')
 def notes(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
     unit_topic = get_object_or_404(UnitTopic, slug=slug)
     notes = Note.objects.filter(unit_topic=unit_topic)
@@ -1475,6 +1477,11 @@ def add_test(request):
 @login_required
 def link_test(request, code):
     return link_resource(request, 'test', code)
+    
+    
+def denied(request):
+    msg = request.GET['msg']
+    return render(request, 'uploader/permission_denied.html', {'msg': msg})
   
 """ 
 ajax views
