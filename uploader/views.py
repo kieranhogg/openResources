@@ -195,10 +195,11 @@ def unit_topic(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug)
         UnitTopicLink.objects.filter(unit_topic_2=unit_topic))
     
     favourite = False
-    try:
-        favourite = UnitTopicFavourite.objects.get(unit_topic=unit_topic, user=request.user)
-    except ObjectDoesNotExist, TypeError:
-        pass
+    if request.user.is_authenticated():
+        try:
+            favourite = UnitTopicFavourite.objects.get(unit_topic=unit_topic, user=request.user)
+        except ObjectDoesNotExist, TypeError:
+            pass
     
     context = {'unit_topic': unit_topic, 'resources': resources, 
                'questions': questions, 'notes': notes, 
@@ -258,10 +259,11 @@ def syllabus(request, subject_slug, exam_slug, slug):
     
                                                              
     favourite = False
-    try:
-        favourite = SyllabusFavourite.objects.get(syllabus=syllabus, user=request.user)
-    except ObjectDoesNotExist, TypeError:
-        pass                                                              
+    if request.user.is_authenticated():
+        try:
+            favourite = SyllabusFavourite.objects.get(syllabus=syllabus, user=request.user)
+        except ObjectDoesNotExist:
+            pass                                             
                                                                    
     context = {'syllabus': syllabus, 'units': units, 'favourite': favourite}
     return render(request, 'uploader/syllabus.html', context)
@@ -278,10 +280,11 @@ def unit(request, subject_slug, exam_slug, syllabus_slug, slug):
             unit_topic.section_description = render_markdown(unit_topic.section_description)
     
     favourite = False
-    try:
-        favourite = UnitFavourite.objects.get(unit=unit, user=request.user)
-    except ObjectDoesNotExist, TypeError:
-        pass
+    if request.user.is_authenticated():
+        try:
+            favourite = UnitFavourite.objects.get(unit=unit, user=request.user)
+        except ObjectDoesNotExist, TypeError:
+            pass
         
     resources = None
 
