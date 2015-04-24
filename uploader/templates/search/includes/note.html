@@ -5,7 +5,7 @@
         </td>
         <td>
         <h4><a href="{{ result.object.get_absolute_url }}">{{ result.object.unit_topic }}</a></h4>
-        <p><small>{{ result.object.unit_topic.unit.syllabus.subject }} > {{ result.object.unit_topic.unit.syllabus.exam_level }}
+        <p><small>{{ result.object.unit_topic.unit.syllabus.subject }} > {{ result.object.unit_topic.unit.syllabus.exam_level }} >
         {{ result.object.unit_topic.unit.syllabus }} > {{ result.object.unit_topic.unit }}</small></p>
         <p>
             {% highlight result.text with query %}
