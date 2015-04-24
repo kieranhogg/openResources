@@ -22,7 +22,12 @@
         <td>
         <h4><a href="{{ result.object.get_absolute_url }}">{{ result.object.get_title }}</a></h4>
         <p>{{ result.object.get_description }}</p>
-        <p><small>{{ result.object.subject }} > {{ result.object.syllabus.exam_level }}
-        {{ result.object.syllabus }} > {{ result.object.unit }}</small></p>
+        <p><small>
+            {{ result.object.subject }} 
+            > {{ result.object.syllabus }}
+            {% if result.object.unit %}
+            > {{ result.object.unit }}
+            {% else %}
+        </small></p>
         </td>
     </tr>
