@@ -47,7 +47,7 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 INSTALLED_APPS = (
     #'suit',
     'grappelli',
-    'taggit',
+    #'taggit',
     #'taggit_autosuggest',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -73,7 +73,8 @@ INSTALLED_APPS = (
     #'allauth.socialaccount.providers.openid',
     'micawber.contrib.mcdjango',
     'bootstrapform',
-    'bootstrap3_datetime'
+    'bootstrap3_datetime',
+    'haystack'
 )
 
 AJAXLOOKUPCHANNELS = {
