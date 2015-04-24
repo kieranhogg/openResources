@@ -1,34 +1,29 @@
 import re, requests, logging, json, time, urllib2, mimetypes
-import requests
-from django.shortcuts import (render, get_object_or_404, get_list_or_404, 
-    render_to_response, redirect)
-from django.http import (HttpResponse, HttpResponseRedirect, JsonResponse, 
-    Http404, HttpResponseForbidden)
-from django.template import RequestContext, loader
-from django.core.urlresolvers import reverse
+
 from django.contrib import messages
-from django.db import IntegrityError
-from django.contrib.auth.models import User
-from django.views.generic.edit import UpdateView
-from django.core.urlresolvers import reverse
-from django.contrib.auth.decorators import login_required
-from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.contrib.auth import authenticate, login
-from django.core.mail import send_mail
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.urlresolvers import reverse
 from django.core.files import File as DjangoFile
 from django.core.files.temp import NamedTemporaryFile
-from django.contrib.contenttypes.models import ContentType
+from django.core.mail import send_mail
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import user_passes_test, permission_required
-from django.template import Context
+from django.db import IntegrityError
 from django.db.models import Avg
-# from django.contrib.messages import constants as messages
+from django.http import (HttpResponse, HttpResponseRedirect, JsonResponse, 
+    Http404, HttpResponseForbidden)
+from django.shortcuts import (render, get_object_or_404, get_list_or_404, 
+    render_to_response, redirect)
+from django.template import Context, loader, RequestContext
+
 from boxview import boxview
+
 from uploader.models import *
 from uploader.forms import *
 from uploader.decorators import is_teacher, is_student
-
-
 from uploader.utils import *
 
 logging.basicConfig()
@@ -71,7 +66,7 @@ def index(request):
                     test_list[group.group.name] = tests
                     for test in tests:
                         try:
-                            result = TestResult.objects.get(test=test)
+                            result = TestResult.objects.get(test=test, student=request.user)
                             test.result = result
                         except TestResult.DoesNotExist:
                             pass
