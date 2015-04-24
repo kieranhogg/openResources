@@ -216,6 +216,9 @@ class Note(models.Model):
     slug = models.SlugField(
         unique=True,
         max_length=100)  # don't use this yet but may in future
+        
+    def get_absolute_url(self):
+        return reverse('note', kwargs={'slug': self.unit_topic.slug})
 
 
 class NoteAdmin(admin.ModelAdmin):
@@ -405,6 +408,9 @@ class Resource(models.Model):
 
     def get_description(self):
         return self.file.description if self.file else self.bookmark.description
+    
+    def get_absolute_url(self):
+        return reverse('resource', kwargs={'slug': self.slug})
 
 
 class ResourceAdmin(admin.ModelAdmin):
