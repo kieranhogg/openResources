@@ -220,7 +220,7 @@ class Note(models.Model):
         max_length=100)  # don't use this yet but may in future
         
     def get_absolute_url(self):
-        return reverse('note', kwargs={'slug': self.unit_topic.slug})
+        return reverse('uploader:view_notes_d', args=[self.unit_topic.slug])
 
 
 class NoteAdmin(admin.ModelAdmin):
@@ -412,7 +412,7 @@ class Resource(models.Model):
         return self.file.description if self.file else self.bookmark.description
     
     def get_absolute_url(self):
-        return reverse('resource', kwargs={'slug': self.slug})
+        return reverse('uploader:view_resource', args=[self.slug])
 
 
 class ResourceAdmin(admin.ModelAdmin):
