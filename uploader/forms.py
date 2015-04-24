@@ -157,6 +157,9 @@ class StudentForm(forms.Form):
                             forename=self.cleaned_data['first_name'],
                             surname=self.cleaned_data['last_name'])
         up.save()
+        
+        new_user.groups.add(Group.objects.get(name='student'))
+        
         return new_user
         
 class TeacherForm(forms.Form):
@@ -207,6 +210,7 @@ class TeacherForm(forms.Form):
                             forename=self.cleaned_data['first_name'],
                             surname=self.cleaned_data['last_name'])
         up.save()
+        new_user.groups.add(Group.objects.get(name='teacher'))
         
         try:
             to = settings.NEW_ACCOUNT_EMAIL
