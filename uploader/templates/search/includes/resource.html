@@ -1,5 +1,5 @@
     <tr>
-        <td>
+        <td style='padding: 10px'>
         {% if result.object.file %}
             <span style="font-size: 2.0em;" class="glyphicon glyphicon-paperclip" aria-hidden="true"></span>
         {% else %}
@@ -21,6 +21,8 @@
         </td>
         <td>
         <h4><a href="{{ result.object.get_absolute_url }}">{{ result.object.get_title }}</a></h4>
+        <p><small>{{ result.object.unit_topic.unit.syllabus.subject }} > {{ result.object.unit_topic.unit.syllabus.exam_level }}
+        {{ result.object.unit_topic.unit.syllabus }} > {{ result.object.unit_topic.unit }}</small></p>
         <p>{{ result.object.get_description }}</p>
         </td>
     </tr>

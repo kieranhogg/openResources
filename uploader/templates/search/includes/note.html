@@ -1,13 +1,12 @@
 {% load highlight %}
     <tr>
-        <td>
+        <td style='padding: 10px'>
             <span style="font-size: 2.0em;" class="glyphicon glyphicon-book" aria-hidden="true"></span>
         </td>
         <td>
         <h4><a href="{{ result.object.get_absolute_url }}">{{ result.object.unit_topic }}</a></h4>
-        <p>{{ result.object.unit_topic.unit.syllabus.subject }} > {{ result.object.unit_topic.unit.syllabus.exam_level }}
-        {{ result.object.unit_topic.unit.syllabus }} > {{ result.object.unit_topic.unit }}</p>
-        
+        <p><small>{{ result.object.unit_topic.unit.syllabus.subject }} > {{ result.object.unit_topic.unit.syllabus.exam_level }}
+        {{ result.object.unit_topic.unit.syllabus }} > {{ result.object.unit_topic.unit }}</small></p>
         <p>
             {% highlight result.text with query %}
         </p>
