@@ -21,14 +21,8 @@
         </td>
         <td>
         <h4><a href="{{ result.object.get_absolute_url }}">{{ result.object.get_title }}</a></h4>
-        {% if result.object.file %}
+        <p>{{ result.object.get_description }}</p>
         <p><small>{{ result.object.subject }} > {{ result.object.syllabus.exam_level }}
         {{ result.object.syllabus }} > {{ result.object.unit }}</small></p>
-        {% else %}
-        <p><small>{{ result.object.unit_topic.unit.syllabus.subject }} > {{ result.object.unit_topic.bookmark.unit.syllabus.exam_level }}
-        {{ result.object.unit_topic.unit.syllabus }} > {{ result.object.unit_topic.unit }} > 
-        {{ result.object.unit_topic }}</small></p>
-        {% endif %}
-        <p>{{ result.object.get_description }}</p>
         </td>
     </tr>
