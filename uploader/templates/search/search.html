@@ -4,17 +4,19 @@
     <h2>Search</h2>
 
         {% if query %}
-            {% for result in page.object_list %}
-                {% if result.content_type == "uploader.resource" %}
-                    {% include "search/includes/resource.html" %}
+            {% if page.object_list %}
+                <table>
+                {% for result in page.object_list %}
+                    {% if result.content_type == "uploader.resource" %}
+                        {% include "search/includes/resource.html" %}
+                        {% endif %}
+                    {% if result.content_type == "uploader.note" %}
+                       {% include "search/includes/note.html" %}
                     {% endif %}
-                {% if result.content_type == "uploader.note" %}
-                   {% include "search/includes/note.html" %}
-                {% endif %}
-            {% empty %}
+                </table>
+                {% endfor %}
+            {% else %}
                 <p>No results found.</p>
-            {% endfor %}
-
             {% if page.has_previous or page.has_next %}
                 <div>
                     {% if page.has_previous %}<a href="?q={{ query }}&amp;page={{ page.previous_page_number }}">{% endif %}&laquo; Previous{% if page.has_previous %}</a>{% endif %}
