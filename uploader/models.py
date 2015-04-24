@@ -380,6 +380,9 @@ class Resource(models.Model):
     def get_title(self):
         return self.file.title if self.file else self.bookmark.title
 
+    def get_description(self):
+        return self.file.description if self.file else self.bookmark.description
+
 
 class ResourceAdmin(admin.ModelAdmin):
     list_display = ('file', 'slug', 'bookmark', 'uploader', 'subject', 'syllabus',
