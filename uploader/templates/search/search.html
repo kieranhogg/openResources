@@ -18,16 +18,11 @@
             <h3>Results</h3>
 
             {% for result in page.object_list %}
-                <!--{% if result.content_type == "uploader.resource" %}-->
-                <!--    {% include "search/includes/resource.html" %}-->
-                <!--{% endif %}-->
-                <!--{% if result.content_type == "uploader.note" %}-->
-                <!--    {% include "search/includes/note.html" %}-->
-                {% for result in page.object_list %}
-                <p>
-                    <a href="{{ result.object.get_absolute_url }}">{{ result.object.unit_topic }} {{ result.object.get_title }} {{result.content_type}}</a>
-                </p>
-            {% empty %}
+                {% if result.content_type == "uploader.resource" %}
+                    {% include "search/includes/resource.html" %}
+                    {% endif %}
+                {% if result.content_type == "uploader.note" %}
+                   {% include "search/includes/note.html" %}
                 {% endif %}
             {% empty %}
                 <p>No results found.</p>
