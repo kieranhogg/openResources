@@ -1,12 +1,12 @@
 import logging
-from django.db import models
+
 from django.conf import settings
 from django.contrib import admin
+from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import pre_delete, post_save
 from django.dispatch.dispatcher import receiver
 from django.utils.safestring import mark_safe
-from django.contrib.auth.models import User
 #from taggit_autosuggest.managers import TaggableManager
 
 logging.basicConfig()
@@ -101,28 +101,35 @@ class Syllabus(models.Model):
     )
     description = models.TextField(null=True, blank=True)
     official_site = models.URLField(max_length=200, null=True, blank=True)
-    teach_from = models.DateField(null=True, blank=True, help_text='Date of first teaching')
-    teach_until = models.DateField(null=True, blank=True, help_text='Date of last teaching')
+    teach_from = models.DateField(
+        null=True,
+        blank=True,
+        help_text='Date of first teaching')
+    teach_until = models.DateField(
+        null=True,
+        blank=True,
+        help_text='Date of last teaching')
     slug = models.SlugField(unique=True, max_length=100)
     pub_date = models.DateTimeField('Date published')
 
     def __unicode__(self):
         # Fix for BTEC and IB oddities as the qualification and exam board
         # are the same and read badly
-        if ('BTEC' in str(self.exam_board) or 
-            'Baccalaureate' in str(self.exam_board) or 
-            'National Curriculum' in str(self.exam_board)):
-                first_part = str(self.exam_board) + " " + str(self.subject_name or self.subject)
+        if ('BTEC' in str(self.exam_board) or
+                'Baccalaureate' in str(self.exam_board) or
+                'National Curriculum' in str(self.exam_board)):
+            first_part = str(self.exam_board) + " " + \
+                str(self.subject_name or self.subject)
         else:
-            first_part = str(self.exam_board) + " " + str(self.subject_name or 
-                self.subject) + " " + str(self.exam_level)
-                
+            first_part = str(self.exam_board) + " " + str(self.subject_name or
+                                                          self.subject) + " " + str(self.exam_level)
+
         if self.teach_from is not None:
             return str(first_part) + " (" + str(
-                    self.teach_from.strftime("%Y")) + ")"
+                self.teach_from.strftime("%Y")) + ")"
         else:
             return str(first_part)
-        
+
     class Meta:
         ordering = ('exam_board', 'exam_level', 'subject')
         verbose_name_plural = "Syllabuses"
@@ -136,7 +143,7 @@ class SyllabusAdmin(admin.ModelAdmin):
 class Unit(models.Model):
     title = models.CharField(max_length=200)
     order = models.IntegerField(null=True, blank=True,
-        help_text='Use to correctly order units')
+                                help_text='Use to correctly order units')
     syllabus = models.ForeignKey(Syllabus)
     description = models.TextField(
         blank=True,
@@ -178,10 +185,10 @@ class UnitTopic(models.Model):
     unit = models.ForeignKey(Unit)
     topic = models.ManyToManyField(Topic, blank=True, null=True)
     section = models.CharField(max_length=100, blank=True, null=True,
-            help_text='Use this to group topics by section')
-    section_description = models.TextField(blank=True, null=True, 
-        help_text='A hacky way of showing some guidance for a section as it ' +
-                  'doesn\'t have a page itself')
+                               help_text='Use this to group topics by section')
+    section_description = models.TextField(blank=True, null=True,
+                                           help_text='A hacky way of showing some guidance for a section as it ' +
+                                           'doesn\'t have a page itself')
     description = models.TextField(
         blank=True,
         null=True,
@@ -201,12 +208,14 @@ class UnitTopicAdmin(admin.ModelAdmin):
     list_display = ('title', 'unit', 'description', 'pub_date')
     list_filter = ('unit__syllabus__subject', 'unit__syllabus', 'unit')
     prepopulated_fields = {"slug": ("section", "title",)}
-    
-    
+
+
 class Note(models.Model):
     unit_topic = models.OneToOneField(UnitTopic)
     content = models.TextField()
-    slug = models.SlugField(unique=True, max_length=100) # don't use this yet but may in future
+    slug = models.SlugField(
+        unique=True,
+        max_length=100)  # don't use this yet but may in future
 
 
 class NoteAdmin(admin.ModelAdmin):
@@ -253,15 +262,18 @@ class File(models.Model):
     filesize = models.IntegerField()
     description = models.TextField('Description', null=True)
     type = models.IntegerField(max_length=2, default=1, choices=FILE_TYPES)
-    uploader = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
+    uploader = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True)
     uploader_is_author = models.BooleanField('Uploader is author?', default=True,
-        help_text='Check if you are the author of the file')
+                                             help_text='Check if you are the author of the file')
     author = models.CharField(
         max_length=200,
         blank=True,
         null=True,
-        help_text='If you are not the author, please give credit where ' + 
-            'possible, some licences require it' 
+        help_text='If you are not the author, please give credit where ' +
+        'possible, some licences require it'
     )
     author_link = models.URLField(
         max_length=200,
@@ -287,13 +299,12 @@ class File(models.Model):
         auto_now_add=True,
         blank=True
     )
-    
+
     def __unicode__(self):
         return self.filename
 
     class Meta:
         ordering = ('-pub_date',)
-
 
 
 class FileAdmin(admin.ModelAdmin):
@@ -318,13 +329,22 @@ class Bookmark(models.Model):
         (BLOG, 'A blog'),
         (IMAGE, 'An image')
     )
-    
+
     title = models.CharField(max_length=200)
     link = models.URLField(max_length=400)
     description = models.TextField(null=True)
-    type = models.CharField(max_length=7, choices=BOOKMARK_TYPES, default='general')
-    uploader = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
-    screenshot = models.ImageField(upload_to='screenshots/%Y/%m', null=True, blank=True)
+    type = models.CharField(
+        max_length=7,
+        choices=BOOKMARK_TYPES,
+        default='general')
+    uploader = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True)
+    screenshot = models.ImageField(
+        upload_to='screenshots/%Y/%m',
+        null=True,
+        blank=True)
     slug = models.SlugField(unique=True, max_length=100)
     pub_date = models.DateTimeField(
         'Date published',
@@ -347,7 +367,10 @@ class BookmarkAdmin(admin.ModelAdmin):
 class Resource(models.Model):
     file = models.ForeignKey(File, blank=True, null=True)
     bookmark = models.ForeignKey(Bookmark, blank=True, null=True)
-    uploader = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
+    uploader = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=True,
+        null=True)
     # Don't really need but its for the forms, FIXME?
     subject = models.ForeignKey(Subject)
     # TODO do we really need a syllabus?
@@ -376,7 +399,7 @@ class Resource(models.Model):
 
     class Meta:
         ordering = ('-pub_date',)
-        
+
     def get_title(self):
         return self.file.title if self.file else self.bookmark.title
 
@@ -400,7 +423,9 @@ class ResourceAdmin(admin.ModelAdmin):
 class Rating(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
     resource = models.ForeignKey(Resource)
-    rating = models.IntegerField(max_length=1, choices=((0, "0"), (1, "1"), (2, "2"), (3, "3"), (4, "4"), (5, '5')))
+    rating = models.IntegerField(
+        max_length=1, choices=(
+            (0, "0"), (1, "1"), (2, "2"), (3, "3"), (4, "4"), (5, '5')))
     pub_date = models.DateTimeField(auto_now_add=True, blank=True)
 
     def __unicode__(self):
@@ -414,7 +439,7 @@ class Rating(models.Model):
 class RatingAdmin(admin.ModelAdmin):
     list_display = ('resource', 'rating', 'user', 'pub_date')
 
-        
+
 class TeacherProfile(models.Model):
     TITLES = (
         ('Mr', 'Mr'),
@@ -430,11 +455,11 @@ class TeacherProfile(models.Model):
     subjects = models.ManyToManyField(Subject, null=True, blank=True)
     score = models.IntegerField(default=0)
     profile_setup = models.BooleanField(default=False)
-    
+
     def __unicode__(self):
         return unicode(self.title + ' ' + self.surname)
 
-    
+
 class StudentProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, parent_link=True)
     forename = models.CharField(max_length=100)
@@ -472,7 +497,7 @@ class Message(models.Model):
         related_name='message_user_from'
     )
     user_to = models.ForeignKey(
-        settings.AUTH_USER_MODEL, 
+        settings.AUTH_USER_MODEL,
         related_name='message_user_to',
         null=True,
         blank=True
@@ -484,26 +509,26 @@ class Message(models.Model):
     pub_date = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
-       return str(self.message)
+        return str(self.message)
 
     class Meta:
         ordering = ('-pub_date',)
 
 
 class MessageAdmin(admin.ModelAdmin):
-    list_display = ('message', 'user_from', 'user_to', 'type', 'read', 
-        'read_date', 'sticky_date', 'pub_date')
-        
+    list_display = ('message', 'user_from', 'user_to', 'type', 'read',
+                    'read_date', 'sticky_date', 'pub_date')
+
 
 class Image(models.Model):
     image = models.ImageField(upload_to='images/%Y/%m')
     uploader = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True)
     credit = models.CharField(max_length=300, blank=True, null=True,
-        help_text='Give credit if required')
+                              help_text='Give credit if required')
     licence = models.ForeignKey(Licence)
     pub_date = models.DateTimeField(auto_now_add=True)
- 
-   
+
+
 class Question(models.Model):
     unit_topic = models.ForeignKey(UnitTopic)
     text = models.TextField()
@@ -515,11 +540,15 @@ class Question(models.Model):
 
 
 class MultipleChoiceQuestion(Question):
-    number_of_options = models.IntegerField(choices=((2, "2"), (3, "3"), (4, "4")))
-    answer = models.IntegerField(choices=((1, "1"), (2, "2"), (3, "3"), (4, "4")))
+    number_of_options = models.IntegerField(
+        choices=(
+            (2, "2"), (3, "3"), (4, "4")))
+    answer = models.IntegerField(
+        choices=(
+            (1, "1"), (2, "2"), (3, "3"), (4, "4")))
 
     def __unicode__(self):
-       return str(self.text)
+        return str(self.text)
 
 
 class Answer(models.Model):
@@ -532,41 +561,44 @@ class MultipleChoiceAnswer(Answer):
     question = models.ForeignKey(MultipleChoiceQuestion)
     text = models.CharField(max_length=300)
     number = models.IntegerField()
-    
+
     def __unicode__(self):
         return self.text
-        
-        
+
+
 class Group(models.Model):
     name = models.CharField(max_length='100')
     teacher = models.ForeignKey(settings.AUTH_USER_MODEL)
     slug = models.SlugField(unique=True, max_length='100')
     code = models.CharField(max_length='4', unique=True)
     pub_date = models.DateTimeField(auto_now_add=True)
-    
+
     class Meta:
         unique_together = ["name", "teacher"]
-    
+
     def __unicode__(self):
         return self.name
-        
-        
+
+
 class Test(models.Model):
     subject = models.ForeignKey(Subject)
     syllabus = models.ForeignKey(Syllabus, blank=True, null=True)
     unit = models.ForeignKey(Unit, blank=True, null=True)
     unit_topic = models.ForeignKey(UnitTopic, blank=True, null=True)
     public = models.BooleanField(default=False)
-    use_own_questions = models.BooleanField(default=False, 
-        help_text='Coming soon')
-    teacher = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
+    use_own_questions = models.BooleanField(default=False,
+                                            help_text='Coming soon')
+    teacher = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=True,
+        null=True)
     group = models.ForeignKey(Group)
     code = models.CharField(max_length='5', unique=True)
     pub_date = models.DateTimeField(auto_now_add=True)
     deadline = models.DateTimeField(blank=True, null=True)
-    total = models.IntegerField(default=10, help_text='If the total is ' + 
-        ' greater than the number of available questions, it will be changed')
-    
+    total = models.IntegerField(default=10, help_text='If the total is ' +
+                                ' greater than the number of available questions, it will be changed')
+
     def __unicode__(self):
         rep = None
         if self.unit_topic:
@@ -575,13 +607,13 @@ class Test(models.Model):
             rep = self.unit
         elif self.syllabus:
             rep = self.syllabus
-            
+
         return unicode(rep)
-        
+
     class Meta:
-        ordering = ('-deadline','-pub_date')
-        
-        
+        ordering = ('-deadline', '-pub_date')
+
+
 class UserAnswer(models.Model):
     test = models.ForeignKey(Test)
     question = models.ForeignKey(MultipleChoiceQuestion)
@@ -592,33 +624,31 @@ class UserAnswer(models.Model):
     class Meta:
         abstract = True
         unique_together = (("user", "question"),)
-        
+
 
 class MultipleChoiceUserAnswer(UserAnswer):
     answer_chosen = models.ForeignKey(MultipleChoiceAnswer)
-    
+
     def question(self):
         return super.question
     question.short_name = "Question"
-    
+
     def user(self):
         return super.user
     user.short_name = "User"
-    
+
     def answered(self):
         return super.answered
     answered.short_name = "Answered"
-    
+
     def correct(self):
         return super.correct
     correct.short_name = "Correct"
-    
+
 
 class MultipleChoiceUserAnswerAdmin(admin.ModelAdmin):
     list_display = ('question', 'user', 'correct', 'answered',
-        'answer_chosen')
-
-
+                    'answer_chosen')
 
 
 class StudentGroup(models.Model):
@@ -630,14 +660,13 @@ class StudentGroup(models.Model):
         unique_together = ["group", "student"]
 
 
-
 class TestResult(models.Model):
     test = models.ForeignKey(Test, blank=True, null=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
     taken = models.DateTimeField(auto_now_add=True)
     score = models.IntegerField()
 
-        
+
 class Lesson(models.Model):
     title = models.CharField(max_length=200)
     slug = models.SlugField(unique=True, max_length=100)
@@ -649,42 +678,44 @@ class Lesson(models.Model):
     show_presentation_to_students = models.BooleanField(default=False)
     unit_topic = models.ForeignKey(UnitTopic, null=True, blank=True)
     pub_date = models.DateTimeField(auto_now_add=True)
-    
+
     def __unicode__(self):
-        return self.title    
-    
+        return self.title
+
+
 class LessonItem(models.Model):
     lesson = models.ForeignKey(Lesson)
     type = models.CharField(max_length=50)
     slug = models.SlugField(max_length=100, blank=True, null=True)
     order = models.IntegerField()
     instructions = models.TextField(blank=True, null=True)
-    
+
+
 class Favourite(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
     pub_date = models.DateTimeField(auto_now_add=True)
-    
+
     class Meta:
         abstract = True
-    
+
 
 class SyllabusFavourite(Favourite):
     syllabus = models.ForeignKey(Syllabus)
-    
+
     class Meta:
         unique_together = ["user", "syllabus"]
-    
-    
+
+
 class UnitFavourite(Favourite):
     unit = models.ForeignKey(Unit)
-    
+
     class Meta:
         unique_together = ["user", "unit"]
-    
+
 
 class UnitTopicFavourite(Favourite):
     unit_topic = models.ForeignKey(UnitTopic)
-    
+
     class Meta:
         unique_together = ["user", "unit_topic"]
 
@@ -694,28 +725,15 @@ class UnitTopicLink(models.Model):
     unit_topic_1 = models.ForeignKey(UnitTopic)
     unit_topic_2 = models.ForeignKey(UnitTopic, related_name='unit_topic_2')
     pub_date = models.DateTimeField(auto_now_add=True)
-    
+
     class Meta:
         unique_together = ["unit_topic_1", "unit_topic_2"]
-        
+
 ######## signals TODO move to own file #########
 
 # cleans up files from AWS when resource is deleted from DB
+
+
 @receiver(pre_delete, sender=File)
 def mymodel_delete(sender, instance, **kwargs):
-    # Pass false so FileField doesn't save the model.
     instance.file.delete(False)
-
-# Creates user profile
-# @receiver(post_save, sender=User)
-# def user_post_save(sender, instance, **kwargs):
-#     # only fire if it's a new user not if we're saving an edit
-#     logging.error(sender)
-#     logging.error(instance['_user_type'])
-#     logging.error(**kwargs or None)
-#     if kwargs['created']:
-#         profile = UserProfile()
-#         profile.user=instance
-#         profile.save()
-
-#dispatcher.connect(user_post_save, signal=signals.post_save, sender=User)
