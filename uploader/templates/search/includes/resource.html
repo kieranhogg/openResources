@@ -1,10 +1,28 @@
 <div class="post_result">
     <tr>
         <td>
-        <h3><a href="{{ result.object.get_absolute_url }}">{{ result.object.get_title }}</a></h3>
+        {% if result.object.file %}
+            <span style="font-size: 2.0em;" class="glyphicon glyphicon-paperclip" aria-hidden="true"></span>
+        {% else %}
+            {% if result.object.bookmark.type == 'video' %}
+            <span style="font-size: 2.0em;" class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span>
+            {% elif result.object.bookmark.type == 'news' %}
+            <span style="font-size: 2.0em;" class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
+            {% elif result.object.bookmark.type == 'image' %}
+            <span style="font-size: 2.0em;" class="glyphicon glyphicon-image" aria-hidden="true"></span>
+            {% elif result.object.bookmark.type == 'info' %}
+            <span style="font-size: 2.0em;" class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+            {% elif result.object.bookmark.type == 'blog' %}
+            <span style="font-size: 2.0em;" class="glyphicon glyphicon-comment" aria-hidden="true"></span>
+            {% else %}
+            <span style="font-size: 2.0em;" class="glyphicon glyphicon-bookmark" aria-hidden="true"></span>
+            {% endif %}
+        {% endif %}
+        
+        </td>
+        <td>
+        <h4><a href="{{ result.object.get_absolute_url }}">{{ result.object.get_title }}</a></h4>
         <p>{{ result.object.get_description }}</p>
-    
-        <p>{{ result.object.tease }}</p>
         </td>
     </tr>
 </div>
