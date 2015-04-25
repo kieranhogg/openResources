@@ -1,5 +1,6 @@
 .header {
     visibility: hidden;
+    display: none;
 }
 #menu_submit {
     display: none;
@@ -61,4 +62,8 @@
 
 .small_form {
     width: 100%;
+}
+.navbar-brand img {
+    float: left;
+    margin-right: 5px;
 }
