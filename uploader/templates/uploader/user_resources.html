@@ -3,10 +3,10 @@
 {% load static %}
 <script type="text/javascript">
 $(document).ready(function(){
-        $('#resources').dataTable({
+    $.fn.dataTable.moment( 'D M y' );
+    $('#resources').dataTable({
         "order": [[ 7, "desc" ]],
     });
-    new $.fn.dataTable.FixedColumns(table);
 });
 </script>
 <h2>{% block head_title %}My Resources{% endblock %}</h2>
@@ -89,7 +89,7 @@ their own page.</p>
             {% endif %}
         </td>
         <td>
-            {{ resource.pub_date }}
+            {{ resource.pub_date|date:"d M y"  }}
         </td>
         <td>
             <div class="btn-group">
@@ -120,24 +120,7 @@ their own page.</p>
     {% endfor %}
     </tbody>
 </table>
-<!--</div>-->
-<div class="row">
-    <div class="col-md-12 text-center">
-    <ul class="pagination pagination-centered">
-        {% if resources.has_previous %}
-                <li><a href="?page=1"><<</a></li>
-                <li><a href="?page={{ resources.previous_page_number }}"><</a></li>
-        {% endif %}
-        
-        {% for i in resources.paginator.page_range %}
-            <li {% if resources.number == i %} class="active" {% endif %}><a href="?page={{i}}">{{i}}</a></li>
-        {% endfor %}
-
-        {% if resources.has_next %}
-                <li><a href="?page={{ resources.next_page_number }}">></a></li>
-                <li><a href="?page={{ resources.paginator.num_pages }}">>></a></li>{% endif %}
-    </div>
-</div>
-
-<!--{% endif %}-->
+{% else %}
+<p>No results</p>
+{% endif %}
 {% endblock %}

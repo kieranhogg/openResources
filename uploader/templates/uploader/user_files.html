@@ -3,6 +3,7 @@
 {% load static %}
 <script type="text/javascript">
 $(document).ready(function(){
+        $.fn.dataTable.moment( 'D M y' );
         $('#files').dataTable({
         "order": [[ 4, "desc" ]],
     });
