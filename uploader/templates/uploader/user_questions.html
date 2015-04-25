@@ -1,20 +1,31 @@
 {% extends 'uploader/base.html' %}
 {% block body_block %}
 {% load static %}
+<script type="text/javascript">
+$(document).ready(function(){
+    $.fn.dataTable.moment( 'DD MMM YY' );
+        $('#questions').dataTable({
+        "order": [[ 2, "desc" ]],
+    });
+});
+</script>
 <h2>{% block head_title %}My Questions{% endblock %}</h2>
 
 {% if questions %}
-<table class="table">
+<table class="table table-striped" id="questions" style="font-size:0.9em">
+    <thead>
     <tr>
         <th>Question</th>
         <th>Unit Topic</th>
         <!--<th>Rating</th>-->
         <th>Uploaded</th>
-        <th width="5%">Actions</th>
+        <th class='no-sort'>Actions</th>
     </tr>
+    </thead>
+    <tbody>
     {% for question in questions %}
     <tr> 
-        <td>{{ question.text|truncatechars:100 }}</td></t>
+        <td><span title="{{ question.text }}">{{ question.text|truncatechars:140 }}</td>
         <td>{{ question.unit_topic }}</td>
         <!--<td></td>-->
         <td style='text-align: center'>{{ question.pub_date|date:"d M Y" }}</td>
@@ -45,23 +56,7 @@
         </td>
     </tr>
     {% endfor %}
+    </tbody>
 </table>
-<div class="row">
-    <div class="col-md-12 text-center">
-    <ul class="pagination pagination-centered">
-        {% if questions.has_previous %}
-                <li><a href="?page=1"><<</a></li>
-                <li><a href="?page={{ questions.previous_page_number }}"><</a></li>
-        {% endif %}
-        
-        {% for i in questions.paginator.page_range %}
-            <li {% if questions.number == i %} class="active" {% endif %}><a href="?page={{i}}">{{i}}</a></li>
-        {% endfor %}
-
-        {% if questions.has_next %}
-                <li><a href="?page={{ questions.next_page_number }}">></a></li>
-                <li><a href="?page={{ questions.paginator.num_pages }}">>></a></li>{% endif %}
-    </div>
-</div>
 {% endif %}
 {% endblock %}
