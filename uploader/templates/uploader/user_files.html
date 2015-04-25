@@ -1,18 +1,28 @@
 {% extends 'uploader/base.html' %}
 {% block body_block %}
 {% load static %}
+<script type="text/javascript">
+$(document).ready(function(){
+        $('#files').dataTable({
+        "order": [[ 4, "desc" ]],
+    });
+    new $.fn.dataTable.FixedColumns(table);
+});
+</script>
 <h2>{% block head_title %}My Files{% endblock %}</h2>
 
 {% if files %}
-<table class="table">
+<table class="table table-striped" id="files" style="font-size: 0.9em">
+    <thead>
     <tr>
         <th>Title</th>
         <th>Filename</th>
-        <th># of Resources using</th>
+        <th>Links</th>
         <th>Filesize</th>
         <th>Uploaded</th>
-        <th></th>
+        <th class='no-sort'></th>
     </tr>
+    </thead>
     <tbody>
     {% for file in files %}
     <tr> 

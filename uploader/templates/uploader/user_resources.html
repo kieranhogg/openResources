@@ -1,6 +1,17 @@
 {% extends 'uploader/base.html' %}
 {% block body_block %}
 {% load static %}
+<script type="text/javascript">
+$(document).ready(function(){
+        $('#resources').dataTable({
+        "order": [[ 7, "desc" ]],
+        "scrollY": "600px",
+        "scrollX": "100%",
+        "scrollCollapse": true,
+    });
+    new $.fn.dataTable.FixedColumns(table);
+});
+</script>
 <h2>{% block head_title %}My Resources{% endblock %}</h2>
 {% if resources %}
 <h3>Resource</h3>
@@ -9,33 +20,55 @@ topic. Below is the list of of resources you have added.</p>
 <h3>Linking/Unlinking</h3>
 <p>Linking makes another copy of a resource and adds it to another syllabus, unit
 or unit topic. Unlinking removes the copy but will keep the original file or bookmark.</p>
-<p>If you are looking to edit or delete a file or bookmark, you can do so on 
+<p style='margin-bottom: 30px'>If you are looking to edit or delete a file or bookmark, you can do so on 
 their own page.</p>
-<hr />
-<!--<div class="table-responsive">-->
-<table class='table'>
+
+<table class="table table-striped" id='resources' style='font-size: 0.9em'>
+    <thead>
     <tr>
         <th></th>
-        <th width="16%">Title</th>
+        <th>Title</th>
         <th>Rating</th>
         <th>Subject</th>
         <th>Syllabus</th>
         <th>Unit</th>
         <th>Unit Topic</th>
-        <th></th>
+        <th>Added</th>
+        <th class="no-sort"></th>
     </tr>
+    </thead>
     <tbody>
 
     {% for resource in resources %}
     <tr> 
-        {% if resource.file %}
-        <td><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></td>
-        {% else %}
         <td>
-            <span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span></td>
+        {% if resource.file %}
+            <span class="glyphicon glyphicon-paperclip" aria-hidden="true" title=""></span>
+            <div style='display: none;'>file</div>
+        {% else %}
+            {% if resource.bookmark.type == 'video' %}
+            <span class="glyphicon glyphicon-facetime-video" aria-hidden="true" title="video"></span>
+            <div style='display: none;'>video</div>
+            {% elif resource.bookmark.type == 'news' %}
+            <span class="glyphicon glyphicon-list-alt" aria-hidden="true" title="news"></span>
+            <div style='display: none;'>news</div>
+            {% elif resource.bookmark.type == 'image' %}
+            <span class="glyphicon glyphicon-image" aria-hidden="true" title="image"></span>
+            <div style='display: none;'>image</div>
+            {% elif resource.bookmark.type == 'info' %}
+            <span class="glyphicon glyphicon-info-sign" aria-hidden="true" title="info"></span>
+            <div style='display: none;'>info</div>
+            {% elif resource.bookmark.type == 'blog' %}
+            <span class="glyphicon glyphicon-comment" aria-hidden="true" title="blog"></span>
+            <div style='display: none;'>blog</div>
+            {% else %}
+            <span class="glyphicon glyphicon-bookmark" aria-hidden="true" title="bookmark"></span>
+            <div style='display: none;'>bookmark</div>
+            {% endif %}
         {% endif %}
+        </td>
         <td><a href="{% url 'uploader:view_resource' resource.slug %}">{{ resource }}</a></td>
-        <td style='text-align: center'>{{ resource.rating }}</td></t>
+        <td style='text-align: center'>{{ resource.avg_rating }}</td></t>
         <td>{{ resource.subject }}</td>
         <td>
             <a href="{% url 'uploader:syllabus' resource.syllabus.subject.slug resource.syllabus.exam_level.slug resource.syllabus.slug %}">
@@ -59,13 +92,16 @@ their own page.</p>
             {% endif %}
         </td>
         <td>
+            {{ resource.pub_date }}
+        </td>
+        <td>
             <div class="btn-group">
               <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                 Actions <span class="caret"></span>
               </button>
               <ul class="dropdown-menu" role="menu">
                 <li><a href="{% url 'uploader:add_item_to_lesson' resource.slug 'resource' %}">
-                    <span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span>
+                    <span class="glyphicon glyphicon-blackboard" aria-hidden="true" title=""></span>
                     Add to lesson
                     </a></li>
                 <li>
@@ -74,11 +110,11 @@ their own page.</p>
                 {% elif resource.bookmark %}
                     <a href="{% url 'uploader:link_bookmark' resource.bookmark.slug %}">
                 {% endif %}
-                    <span class="glyphicon glyphicon-link" aria-hidden="true"></span>
+                    <span class="glyphicon glyphicon-link" aria-hidden="true" title=""></span>
                     Add another link</a>
                 </li>
                 <li><a href="{% url 'uploader:delete_resource' resource.slug %}" onclick="javascript:return confirm('UNLINK this resource? To delete the bookmark, delete it from the files tab')">
-                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true" title=""></span>
                     Unlink</a></li>
               </ul>
             </div>

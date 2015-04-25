@@ -671,19 +671,8 @@ def profile(request, username=None):
 def user_resources(request, user_id=None):
     if not user_id:
         user_id = request.user
-    resources = Resource.objects.filter(uploader=user_id)
-    # paginator = Paginator(resources, 15)
-
-    # page = request.GET.get('page')
-    # try:
-    #     resources = paginator.page(page)
-    # except PageNotAnInteger:
-    #     resources = paginator.page(1)
-    # except EmptyPage:
-    #     resources = paginator.page(paginator.num_pages)
-
-    # for resource in resources:
-    #     resource.rating = get_resource_rating(resource.id)
+    resources = Resource.objects.filter(uploader=user_id).annotate(
+        avg_rating=Avg('rating__rating')).order_by('-avg_rating')
 
     return render(request, 'uploader/user_resources.html',
                   {'resources': resources})
@@ -694,34 +683,19 @@ def user_files(request, user_id=None):
     if not user_id:
         user_id = request.user
     files = File.objects.filter(uploader=user_id)
-    paginator = Paginator(files, 15)
-
-    page = request.GET.get('page')
-    try:
-        files = paginator.page(page)
-    except PageNotAnInteger:
-        files = paginator.page(1)
-    except EmptyPage:
-        files = paginator.page(paginator.num_pages)
-
+    
+    #FIXME add into query
     for file in files:
         file.link_count = Resource.objects.filter(file=file).count()
+        
     return render(request, 'uploader/user_files.html', {'files': files})
 
 
 @login_required
 def user_bookmarks(request, user_id=None):
     bookmarks = Bookmark.objects.filter(uploader=request.user)
-    paginator = Paginator(bookmarks, 15)
 
-    page = request.GET.get('page')
-    try:
-        bookmarks = paginator.page(page)
-    except PageNotAnInteger:
-        bookmarks = paginator.page(1)
-    except EmptyPage:
-        bookmarks = paginator.page(paginator.num_pages)
-
+    #FIXME add into query
     for bookmark in bookmarks:
         bookmark.link_count = Resource.objects.filter(
             bookmark=bookmark).count()

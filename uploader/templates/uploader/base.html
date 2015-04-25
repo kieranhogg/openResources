@@ -23,19 +23,12 @@
 <script type="text/javascript" src="//cdn.datatables.net/plug-ins/1.10.6/integration/bootstrap/3/dataTables.bootstrap.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 <script>
-$(document).ready(function(){
-    // Fix partially hidden dropdowns in tables
-    $('.table-responsive tbody tr').slice(-2).find('#dropdown-toggle').addClass('dropup');
-    $('.dropdown-toggle').dropdown();
-    }
-);
 </script>
 
 <title>{{ SITE_NAME }} {% if not homepage %} | {% block head_title %}{% endblock %}{% endif %}</title>
 <link rel="shortcut icon" type="image/png" href="{{STATIC_URL}}/favicon.ico" />
 </head>
 <body>
-<!--<div class="container">-->
     <div class="header">
         <div class="logo">
             <a href="{% url 'uploader:index' %}">
@@ -44,42 +37,21 @@ $(document).ready(function(){
             </a>
         </div>
         {% try_to_include "uploader/top_banner.html" %}
-        <div class="login">
-            {% if user.is_authenticated %}
-                <span id='user_icon'>
-                <a href="{% url 'uploader:profile' %}">
-                    <img src="{% gravatar_url user.email 24 %}" />
-                </span>
-                    <span id='username'>{{ user.get_username }}</span>
-                </a>
-                <span id="score">
-                {% if user.teacherprofile %}
-                ({{ user.teacherprofile.score }})
-                {% elif user.studentprofile %}
-                ({{ user.studentprofile.score }})
-                {% endif %}
-                </span>
-                | <a href="{% url 'account_logout' %}">Sign Out</a>
-                </p>
-            {% else %}
-                <a href="{% url 'account_login' %}">Sign In</a> or 
-                <a href="{% url 'uploader:signup' %}">Sign Up</a>
-            {% endif %}
-            </div>
     </div>
     
     <nav class="navbar navbar-default">
       <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <!--<div class="navbar-header">-->
-        <!--  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">-->
-        <!--    <span class="sr-only">Toggle navigation</span>-->
-        <!--    <span class="icon-bar"></span>-->
-        <!--    <span class="icon-bar"></span>-->
-        <!--    <span class="icon-bar"></span>-->
-        <!--  </button>-->
-        <!--  <a class="navbar-brand" href="#">Brand</a>-->
-        <!--</div>-->
+        <div class="navbar-header  hidden-lg">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">
+            <img src="{% static 'uploader/logo_s.png' %}" alt="logo" width="24" height="24" />
+          </a>
+        </div>
     
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -135,60 +107,52 @@ $(document).ready(function(){
 
           <form class="navbar-form navbar-left" role="search" method="GET" action="/search/">
             <div class="form-group">
-              <input type="text" name="q" class="form-control" placeholder="Search">
+              <input type="text" name="q" class="form-control input-xs" placeholder="Search">
             </div>
-            <button type="submit" class="btn btn-default">Submit</button>
           </form>
           
-          {% if user.is_superuser or user.is_staff %}
           <ul class="nav navbar-nav navbar-right">
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Admin <span class="caret"></span></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                
+                {% if user.is_authenticated %}
+                    <img src="{% gravatar_url user.email 22 %}" />
+                    {% if user.teacherprofile %}
+                    {{ user.teacherprofile }}
+                    {% elif user.studentprofile %}
+                      {{ user.studentprofile }}
+                    {% endif %}
+                  <span id="score">
+                  {% if user.teacherprofile %}
+                    ({{ user.teacherprofile.score }})
+                  {% elif user.studentprofile %}
+                    ({{ user.studentprofile.score }})
+                  {% endif %}
+                  </span>
+              {% else %}
+                <img src="{% gravatar_url "" 18 %}" /> Guest
+              {% endif %}
+                
+                <span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
-                <li><a href="/admin/">Admin interface</a></li>
+                {% if user.is_authenticated %}
+                  {% if user.is_superuser or user.is_staff %}
+                  <li><a href="/admin/">Admin interface</a></li>
+                  <li class="divider"></li>
+                {% endif %}
+                <li><a href="{% url 'uploader:profile' %}">Profile</a></li>
+                <li><a href="{% url 'account_logout' %}">Sign Out</a></li>
+                {% else %}
+                <li><a href="{% url 'account_login' %}">Sign In</a></li>
+                <li><a href="{% url 'uploader:signup' %}">Sign Up</a></li>
+                {% endif %}
               </ul>
             </li>
           </ul>
-          {% endif %}
         </div><!-- /.navbar-collapse -->
       </div><!-- /.container-fluid -->
     </nav>
-    
-    
 
-            <!--<li id="menu_leaderboards"><a href="{% url 'uploader:leaderboard' %}">-->
-            <!--    <img class="menu_icon" src="{% static 'uploader/img/18x18/stats.png' %}" height="18" width="18"/>-->
-            <!--    <span class="menu_text">Leaderboards</span>-->
-            <!--    </a>-->
-            <!--</li>-->
-    <!--            <li id="menu_about">-->
-    <!--                <a href="{% url 'uploader:about' %}">-->
-    <!--                <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>-->
-    <!--                <span class="menu_text">About</span>-->
-    <!--                </a>-->
-    <!--            </li>-->
-    <!--        {% if user.is_superuser or user.is_staff %}-->
-    <!--        <li id="admin_button">-->
-    <!--        <a href="/admin/">-->
-    <!--        <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>-->
-    <!--        <span class="menu_text">Admin</span>-->
-    <!--        </a>-->
-    <!--        </li>-->
-    <!--        {% endif %}-->
-    <!--        <li id="menu_twitter">-->
-    <!--        <a href="https://twitter.com/eduresourc_es">-->
-    <!--        <img class="menu_icon" src="{% static 'uploader/img/18x18/twitter.png' %}" alt='twitter' height="18" width="18"/>-->
-    <!--        </a>-->
-    <!--        </li>-->
-    <!--        <li id="menu_email">-->
-    <!--            <a href="mailto:contact@eduresourc.es">-->
-    <!--         <img class="menu_icon" src="{% static 'uploader/img/18x18/email.png' %}" alt='email' height="18" width="18"/>-->
-    <!--        </a>-->
-    <!--        </li>-->
-    <!--    </ul>-->
-    <!--</div>-->
-    
-    
     {% if homepage %}
     <div id="splash">
         <span id="source"><a href="https://www.flickr.com/photos/wackystuff/5355788728/in/photolist-9agPoY-dtroJc-59THhy-7BAEiV-5RzRtp-7JKRHh-bF51FS-hVQBKP-6iUdMZ-2bUDT-988BVE-89pQhQ-9k6cM-6YTcyf-9q7jAU-dQugec-8s4PDi-8pvSWc-6YTeg5-dynb6k-2JNeAw-2TcoEu-mpgrkA-bsSo3-zV2x5-EykCH-7G9fHf-4xWMzG-6m1PW8-5v4A14-6HLhYf-9ezxNp-6CK1od-7Cby3b-8MF9B5-9t3zWm-38hJJt-9ezxHt-bsSoM-dsxGqc-b4jsc2-6ch2aS-8YyqSQ-ayP4oL-4Kp7mS-9K29J9-6YFiWi-7ruPJx-M4Xwq-6FQEh7">
@@ -197,22 +161,6 @@ $(document).ready(function(){
     </div>
     {% endif %}
     <div class="container">
-        {% if user_messages %}
-            {% for message in user_messages %}
-                <!--<div class="{{ message.get_type_display }}">-->
-                <!--{% if message.get_type_display == "Sticky" %}-->
-                <!--    {{ message|safe }}-->
-                <!--{% elif message.get_type_display == "Announcement" %}-->
-                <!--    {{ message|safe }}-->
-                <!--    <div class="message_dismiss">[X]</div>-->
-                <!--{% else %}-->
-                <!--    {{ message }}-->
-                <!--    <div class="message_dismiss">[X]</div>-->
-                <!--{% endif %}-->
-                <!--</div>-->
-            {% endfor %}
-        {% endif %}
-        
         {% if messages %}
             {% for message in messages %}
                 <div class="alert alert-{{ message.tags }}">{{ message }}</div>

@@ -22,11 +22,10 @@ h3, h4, h5, h6 {
 
 h2 {
     font-size: 1.9em;
+    margin-top: 0;
     text-align: center;
     font-weight: 300;
     font-family: helvetica,arial,freesans,clean,sans-serif;
-    margin-top: 0.7em;
-    margin-bottom: 0.7em;
 }
 h3 {
     font-size: 1.6em;
@@ -365,76 +364,10 @@ hr {
 .action {
     text-align: center;
 }
-/** FIXME background external url */
-/*.action a{*/
-/*margin-top: 20px;*/
-/*text-decoration: none;*/
-/*font-weight: normal;*/
-/*display:       inline-block;*/
-/*padding:       8px 20px;*/
-/*background:    #c00 url('http://dabuttonfactory.com/button.png?w=1&h=40&bgt=gradient&bgc=ea9999&ebgc=c00') repeat-x;*/
-/*background:    -moz-linear-gradient(#ea9999, #c00);*/
-/*background:    -o-linear-gradient(#ea9999, #c00);*/
-/*background:    -webkit-linear-gradient(#ea9999, #c00);*/
-/*background:    linear-gradient(#ea9999, #c00);*/
-/*border:        1px solid #c00;*/
-/*border-radius: 5px;*/
-/*color:         #fff;*/
-/*font:          normal 700 24px/1 "Calibri", sans-serif;*/
-/*text-align:    center;*/
-/*text-shadow:   none;*/
-/*}*/
 
 .paging {
     font-size: 120%;
 }
-
-/** Tables **/
-
-/*table {*/
-/*    background: #fff;*/
-/*    border-right:0;*/
-/*    clear: both;*/
-/*    color: #333;*/
-/*    margin-bottom: 10px;*/
-/*     width: 100%; */
-/*}*/
-/*th {*/
-/*     border:0; */
-/*    border-bottom:1px solid #bdbdbd;*/
-/*    text-align: center;*/
-/*    padding:4px;*/
-/*}*/
-/*th a {*/
-/*    display: block;*/
-/*    padding: 2px 4px;*/
-/*    text-decoration: none;*/
-/*}*/
-/*th a.asc:after {*/
-/*    content: ' ⇣';*/
-/*}*/
-/*th a.desc:after {*/
-/*    content: ' ⇡';*/
-/*}*/
-/*table {*/
-    /*white-space: nowrap;
-    width: 1%;*/
-/*    border-collapse:collapse;*/
-/*}*/
-
-/*table tr td{*/
-/*    background: #fff;*/
-/*    padding: 6px;*/
-/*    text-align: left;*/
-/*    vertical-align: top;*/
-/*    border:1px solid #ddd;*/
-/*}*/
-/*table tr:nth-child(2n) td {*/
-/*    background: #FCFCFC;*/
-/*}*/
-/*table .altrow td {*/
-/*    background: #FCFCFC;*/
-/*}*/
 
 .small_form {
     width: 50%;
@@ -593,4 +526,39 @@ body {
 }
 .highlighted {
     background-color: yellow;
+    font-weight: bold;
+}
+.nav .navbar-nav {
+    padding: 0px;
+    border: 1px solid black;
+}
+.collapse .navbar-collapse {
+    border: 1px solid black;
+}
+
+.navbar-nav > li > a, .navbar-brand {
+    padding:11px !important;
+    /*height: 34px;*/
+    margin-left: 0 !important;
+}
+.navbar {min-height:42px !important;}
+.input-xs {
+height: 26px;
+padding: 2px 5px;
+font-size: 12px;
+line-height: 1.8;
+border-radius: 3px;
+}
+.no-sort::after { display: none!important; }
+
+.no-sort { pointer-events: none!important; cursor: default!important; }
+
+table .glyphicon {
+    font-size:1.4em
+}
+.dropdown-menu .glyphicon {
+    font-size: 1.0em;
+}
+.dataTables_scrollBody {
+    overflow: visible !important;
 }

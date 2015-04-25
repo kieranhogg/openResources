@@ -2,7 +2,7 @@
 {% block body_block %}
 {% load static %}
 <script>
-jQuery(document).ready(function($) {
+$(document).ready(function($) {
     $('select').on('change', function (e) {
         // get action
         var valueSelected = this.value;
@@ -17,6 +17,13 @@ jQuery(document).ready(function($) {
             xmlHttp.send( null );
             window.location.reload()
         }
+    });
+
+        $('#bookmarks').dataTable({
+        "order": [[ 5, "desc" ]],
+        "scrollY": "600px",
+        "scrollX": "100%",
+        "scrollCollapse": true,
     });
 });
 </script>
@@ -35,16 +42,20 @@ jQuery(document).ready(function($) {
         <option value='delete'>DELETE</option>
     </select>
 </p>
-<table width='100%' class='table'>
+<table class='table table-striped' id='bookmarks' style="font-size: 0.9em">
+    <thead>
     <tr>
-        <th></th>
+        <th class='no-sort'></th>
         <th>Type</th>
         <th>Title</th>
+        <th>Description</th>
         <th>URL</th>
-        <th># of Resources using</th>
+        <th>Links</th>
         <th>Uploaded</th>
-        <th></th>
+        <th class='no-sort'></th>
     </tr>
+    </thead>
+    <tbody>
     {% for bookmark in bookmarks %}
     <tr>
         <td>
@@ -52,21 +63,28 @@ jQuery(document).ready(function($) {
         </td>
         <td>
             {% if bookmark.type == 'video' %}
-            <span class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span>
+            <span class="glyphicon glyphicon-facetime-video" aria-hidden="true" title="video"></span>
+            <div style="display: none">video</div>
             {% elif bookmark.type == 'news' %}
-            <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
+            <span class="glyphicon glyphicon-list-alt" aria-hidden="true" title="news"></span>
+            <div style="display: none">news</div>
             {% elif bookmark.type == 'image' %}
-            <span class="glyphicon glyphicon-image" aria-hidden="true"></span>
+            <span class="glyphicon glyphicon-image" aria-hidden="true" title="image"></span>
+            <div style="display: none">image</div>
             {% elif bookmark.type == 'info' %}
-            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+            <span class="glyphicon glyphicon-info-sign" aria-hidden="true" title="info"></span>
+            <div style="display: none">info</div>
             {% elif bookmark.type == 'blog' %}
-            <span class="glyphicon glyphicon-comment" aria-hidden="true"></span>
+            <span class="glyphicon glyphicon-comment" aria-hidden="true" title="blog"></span>
+            <div style="display: none">blog</div>
             {% else %}
-            <span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span>
+            <span class="glyphicon glyphicon-bookmark" aria-hidden="true" title="bookmark"></span>
+            <div style="display: none">bookmark</div>
             {% endif %}
         </td>
-        <td>{{ bookmark.title }}</td></t>
-        <td><a href="{{ bookmark.link }}">{{ bookmark.link|truncatechars:60 }}</a></td>
+        <td>{{ bookmark.title }}</td>
+        <td>{{ bookmark.description|truncatechars:80 }}</td>
+        <td><a href="{{ bookmark.link }}">{{ bookmark.link|truncatechars:80 }}</a></td>
         <td style='text-align: center'>{{ bookmark.link_count }}</td>
         <td style='text-align: center'>{{ bookmark.pub_date|date:"d M Y" }}</td>
         <td style='text-align: center'>
@@ -76,28 +94,23 @@ jQuery(document).ready(function($) {
               </button>
               <ul class="dropdown-menu" role="menu">
                 <li><a href="{% url 'uploader:link_bookmark' bookmark.slug %}">
-                    <span class="glyphicon glyphicon-link" aria-hidden="true"></span>
+                    <span class="glyphicon glyphicon-link" aria-hidden="true" title=""></span>
                     Link
                     </a></li>
                 <li>
                     <a href="{% url 'uploader:bookmark' bookmark.slug %}">
-                    <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                    <span class="glyphicon glyphicon-edit" aria-hidden="true" title=""></span>
                     Edit</a>
                 </li>
                 <li><a href="{% url 'uploader:delete_bookmark' bookmark.slug %}" onclick="javascript:return confirm('DELETE this bookmark?')">
-                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                    <span class="glyphicon glyphicon-trash" aria-hidden="true" title=""></span>
                     Delete</a></li>
               </ul>
             </div>
         </td>
     </tr>
-    <tr>
-        <td colspan='5'>
-            <strong>Description: </strong>
-            {{ bookmark.description|truncatechars:250 }}
-        </td>
-    </tr>
     {% endfor %}
+    </tbody>
 </table>
 <div class="row">
     <div class="col-md-12 text-center">
