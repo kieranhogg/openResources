@@ -74,7 +74,7 @@ def index(request):
                         try:
                             result = TestResult.objects.get(
                                 test=test,
-                                student=request.user)
+                                user=request.user)
                             test.result = result
                         except TestResult.DoesNotExist:
                             pass
@@ -672,18 +672,18 @@ def user_resources(request, user_id=None):
     if not user_id:
         user_id = request.user
     resources = Resource.objects.filter(uploader=user_id)
-    paginator = Paginator(resources, 15)
+    # paginator = Paginator(resources, 15)
 
-    page = request.GET.get('page')
-    try:
-        resources = paginator.page(page)
-    except PageNotAnInteger:
-        resources = paginator.page(1)
-    except EmptyPage:
-        resources = paginator.page(paginator.num_pages)
+    # page = request.GET.get('page')
+    # try:
+    #     resources = paginator.page(page)
+    # except PageNotAnInteger:
+    #     resources = paginator.page(1)
+    # except EmptyPage:
+    #     resources = paginator.page(paginator.num_pages)
 
-    for resource in resources:
-        resource.rating = get_resource_rating(resource.id)
+    # for resource in resources:
+    #     resource.rating = get_resource_rating(resource.id)
 
     return render(request, 'uploader/user_resources.html',
                   {'resources': resources})
