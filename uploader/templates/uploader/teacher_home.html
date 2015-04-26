@@ -7,11 +7,11 @@
 <h2>{% block head_title %}{{ user.teacherprofile }}{% endblock %}'s Home</h2>
 <h3>Groups</h3>
 {% if groups %}
+<ul class="list-group" style="width:30%">
     {% for group in groups %}
-        <p>
-            <a href="{% url 'uploader:group' group.slug %}">{{ group }}</a>
-        </p>
+      <li class="list-group-item"><a style="display:block" href="{% url 'uploader:group' group.slug %}">{{ group }}</a></li>
     {% endfor %}
+    </ul>
     <!--<h3>Recent Assignments</h3>-->
     <!-- assignment_table "teacher" assignments -->
 
