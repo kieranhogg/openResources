@@ -1,5 +1,7 @@
 from django import template
 
+from uploader.models import Subject
+
 register = template.Library()
 
 
@@ -36,6 +38,11 @@ def test_table(teacher_or_student, tests):
     return {'teacher_or_student': teacher_or_student, 'tests': tests}
     
 
+@register.inclusion_tag('uploader/snippets/assignment_table.html')
+def assignment_table(teacher_or_student, assignments):
+    return {'teacher_or_student': teacher_or_student, 'assignments': assignments}
+    
+
 @register.tag
 def resource_icon(resource):
     if resource.type == 'bookmark':
@@ -58,3 +65,8 @@ def resource_icon(resource):
         html = '<span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span>'
     
     return html
+
+@register.inclusion_tag('uploader/snippets/linking_embed.html')
+def link_embed():
+    subjects = Subject.objects.all()
+    return {'subjects': subjects}

@@ -1,0 +1,42 @@
+{% extends 'uploader/base.html' %}
+{% load bootstrap %}
+{% load tags %}
+{% block body_block %}
+{{ form.media }}
+<h2>{% block head_title %}
+{% if form.instance.id %}
+    Edit
+{% else %}
+    Add
+{% endif %} Assignment{% endblock %}</h2>
+
+{% if form.non_field_errors %}
+    {% for error in form.non_field_errors %}
+    <div class="alert alert-danger" role="alert">
+      <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+      <span class="sr-only">Error:</span>
+        {{error}}
+    </div>
+    {% endfor %}
+{% endif %}
+    <form role="form" enctype="multipart/form-data" action method="post">
+    
+    {% include "uploader/linking_embed.html" %}
+    
+    {% csrf_token %}
+    {% for field in form %}
+    <div>
+        {% if field.field.required %}<span class="label label-danger">required</span>{% endif %}
+        {{ field|bootstrap }}
+    </div>
+    {% endfor %}
+    <!--{% link_embed %}-->
+    <div class="form-group text-center">
+    {% if form.instance.id %}
+        <button type="submit" class="btn btn-success">Update</button>
+    {% else %}
+        <button type="submit" class="btn btn-success">Save</button>
+    {% endif %}
+    </div>
+</form>
+{% endblock %}

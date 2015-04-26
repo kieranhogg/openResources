@@ -1,0 +1,39 @@
+<div id="link_form">
+<div class="subject">
+        
+        <label for="id_subject">Subject</label>
+            <span class="label label-danger">required</span>
+        <select class=" form-control" id="id_subject" name="subject">
+            <option>---------</option>
+            {% for subject in subjects %}
+            <option value="{{ subject.id}}">{{ subject }}</option>
+            {% endfor %}
+</select>
+    </div>
+    
+    <div class="syllabus">
+        
+        <label for="id_syllabus">Syllabus</label>
+            <span class="label label-danger">required</span>
+        <select class=" form-control" id="id_syllabus" name="syllabus">
+
+</select>
+    </div>
+    
+    <div class="unit">
+        
+        <label for="id_unit">Unit</label>
+        
+        <select class=" form-control" id="id_unit" name="unit">
+    </select>
+    </div>
+
+    <div class="unit_topic">
+        
+        <label for="id_unit_topic">Unit Topic</label>
+        
+        <select class=" form-control" id="id_unit_topic" name="unit_topic">
+        </select>
+    </div>
+</div>
+</div>

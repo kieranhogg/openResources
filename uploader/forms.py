@@ -278,3 +278,11 @@ class TestForm(forms.ModelForm):
             return instance.use_own_questions
         else:
             return self.cleaned_data['use_own_questions']
+            
+class AssignmentForm(forms.ModelForm):
+    deadline = forms.DateTimeField(widget=DateTimePicker(options={"format": "YYYY-MM-DD HH:mm",
+                                       "pickSeconds": False}))
+    
+    class Meta:
+        model = Assignment
+        fields = ('title', 'description', 'deadline')

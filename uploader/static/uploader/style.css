@@ -474,6 +474,3 @@ table .glyphicon {
     overflow: visible !important;
 }
 th, td { white-space: nowrap; }
-table tbody td {
-    min-width: 100px;
-}

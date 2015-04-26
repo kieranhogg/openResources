@@ -200,7 +200,7 @@ class UnitTopic(models.Model):
     pub_date = models.DateTimeField('Date published')
 
     def __unicode__(self):
-        return str(self.title)
+        return self.title
 
     class Meta:
         ordering = ('title',)
@@ -739,6 +739,33 @@ class UnitTopicLink(models.Model):
 
     class Meta:
         unique_together = ["unit_topic_1", "unit_topic_2"]
+
+class Assignment(models.Model):
+    title = models.CharField(max_length=255)
+    code = models.SlugField(unique=True)
+    group = models.ForeignKey(Group)
+    teacher = models.ForeignKey(settings.AUTH_USER_MODEL)
+    deadline = models.DateTimeField()
+    description = models.TextField()
+    unit_topic = models.ForeignKey(UnitTopic, blank=True, null=True)
+    pub_date = models.DateTimeField(auto_now_add=True)
+
+class Feedback(models.Model):
+    pass
+    
+class GradeSystem(models.Model):
+    pass
+    
+class AssignmentSubmission(models.Model):
+    pass
+    
+class GradeOptions(models.Model):
+    pass
+    
+class NumericalGrade(models.Model):
+    pass
+
+
 
 ######## signals TODO move to own file #########
 

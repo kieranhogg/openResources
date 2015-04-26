@@ -1468,6 +1468,21 @@ def denied(request):
     msg = request.GET['msg']
     return render(request, 'uploader/permission_denied.html', {'msg': msg})
 
+
+def add_assignment(request):
+    form = AssignmentForm(request.POST or None)
+    if request.POST and form.is_valid():
+        rp = request.POST
+        Assignment(title=rp.get('title'),
+                   code=random_key(5, 'Assignment'),
+                   group=1,
+                   teacher=request.user,
+                   description=rp.get('description'),
+                   deadline=rp.deadline).save()
+        return HttpResponseRedirect(reverse('uploader:group', args=['y9-ict']))
+        
+    return render(request, 'uploader/assignment.html', {'form': form})
+
 """
 ajax views
 """

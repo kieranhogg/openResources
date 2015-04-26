@@ -9,6 +9,9 @@ urlpatterns = patterns('',
     url(r'^$', views.index, name='index'),
     url(r'^denied/$', views.denied, name='denied'),
     
+    url(r'^assignment/add/$', views.add_assignment, name='add_assignment'),
+
+    
     url(r'^lookup/syllabus/(?P<subject_id>\d+)/$', views.get_syllabuses, name='get_syllabuses'),
     url(r'^lookup/unit/(?P<syllabus_id>\d+)/$', views.get_units, name='get_units'),
     url(r'^lookup/unit_topic/(?P<unit_id>\d+)/$', views.get_unit_topics, name='get_unit_topics'),
