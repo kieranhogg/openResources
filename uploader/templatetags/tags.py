@@ -34,3 +34,27 @@ def try_to_include(parser, token):
 @register.inclusion_tag('uploader/snippets/test_table.html')
 def test_table(teacher_or_student, tests):
     return {'teacher_or_student': teacher_or_student, 'tests': tests}
+    
+
+@register.tag
+def resource_icon(resource):
+    if resource.type == 'bookmark':
+        mapping = {
+            'video': 'facetime-video',
+            'news': 'list-alt',
+            'image': 'image',
+            'info': 'info-sign',
+            'blog': 'comment',
+            
+        }
+    
+        icon = 'bookmark'
+        if type in mapping:
+            icon = mapping[type]
+    
+        html = '<span class="glyphicon glyphicon-{}" aria-hidden="true"></span>'
+        html.format(icon)
+    else:
+        html = '<span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span>'
+    
+    return html

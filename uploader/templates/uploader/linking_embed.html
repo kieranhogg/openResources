@@ -1,0 +1,79 @@
+{% load static %}
+<script>
+$(function() {
+    $('select[name=syllabus]')
+                .empty().append($('<option>---------</option>'))
+    $('select[name=unit]')
+                .empty().append($('<option></option>'))
+    $('select[name=unit_topic]')
+                .empty().append($('<option></option>'))
+                
+});
+// FIXME move this and functionise
+// get syllabuses for subject
+$(document).ready(function(){
+    $('select[name=subject]').change(function(){
+            subject_id = $(this).val();
+            $.getJSON("/lookup/syllabus/" + subject_id, null, function(data) {
+            $.each(data, function(key, value) {   
+             $('select[name=syllabus]')
+                .append($('<option>', { value : key })
+                .text(value)); 
+            });
+        });
+    });
+});
+
+// get units for syllabus
+$(document).ready(function(){
+    $('select[name=syllabus]').change(function(){
+            syllabus_id = $(this).val();
+            $.getJSON("/lookup/unit/" + syllabus_id, null, function(data) {
+            $('select[name=unit]')
+                .empty().append($('<option></option>'))
+            $.each(data, function(key, value) {   
+             $('select[name=unit]')
+                .append($('<option>', { value : key })
+                .text(value)); 
+            });
+        });
+    });
+});
+
+// get unit topics for unit
+$(document).ready(function(){
+    $('select[name=unit]').change(function(){
+            unit_id = $(this).val();
+            $.getJSON("/lookup/unit_topic/" + unit_id, null, function(data) {
+            $('select[name=unit_topic]')
+                .empty().append($('<option><option>'))
+            $.each(data, function(key, value) {   
+             $('select[name=unit_topic]')
+                .append($('<option>', { value : key })
+                .text(value)); 
+            });
+        });
+    });
+});
+</script>
+
+{% for field in link_form %}
+    <div class="field_content">
+        <label>
+        {% if field.field.required %}
+            <span class="required">{{ field.label_tag }}</span>
+        {% else %}
+            {{ field.label_tag }}
+        {% endif %}
+        </label>  
+    <div class="field">
+        {% if field.help_text %}
+        <div class = "help_text">
+            {{ field.help_text }}
+        </div>
+        {% endif %}
+        {{ field }}
+        <span class="field_error">{{ field.errors }}</span>
+    </div> 
+    </div>
+    {% endfor %}

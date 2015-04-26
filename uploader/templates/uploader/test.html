@@ -2,7 +2,7 @@
 {% block head_title %}{{ unit_topic }} Notes{% endblock %}
 {% block body_block %}
 {% load static %}
-<h2>{{ unit_topic }} Test</h2>
+<h2>{% block head_title %}{{ unit_topic }} Test{% endblock %}</h2>
 <p>
 <a class='btn btn-default' href="{% url 'uploader:test_feedback' unit_topic.slug %}">
     <span class="glyphicon glyphicon-ok" aria-hidden="true" title='Preview'></span>

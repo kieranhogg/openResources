@@ -3,3 +3,4 @@ local_settings.py
 *.json
 .c9/
 uploader/templates/uploader/top_banner.html
+migrations/

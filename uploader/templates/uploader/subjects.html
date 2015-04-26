@@ -2,7 +2,7 @@
 {% block body_block %}
 {% load static %}
 {% get_static_prefix as STATIC_PREFIX %}
-<h2>Subjects</h2>
+<h2>{% block head_title %}Subjects{% endblock %}</h2>
     {% if subjects %}
     <div class="row">
         {% for subject in subjects %}

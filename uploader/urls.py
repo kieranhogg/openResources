@@ -7,6 +7,8 @@ from uploader import views
 
 urlpatterns = patterns('',
     url(r'^$', views.index, name='index'),
+    url(r'^denied/$', views.denied, name='denied'),
+    
     url(r'^lookup/syllabus/(?P<subject_id>\d+)/$', views.get_syllabuses, name='get_syllabuses'),
     url(r'^lookup/unit/(?P<syllabus_id>\d+)/$', views.get_units, name='get_units'),
     url(r'^lookup/unit_topic/(?P<unit_id>\d+)/$', views.get_unit_topics, name='get_unit_topics'),
@@ -100,7 +102,5 @@ urlpatterns = patterns('',
     url(r'^signup',
     TemplateView.as_view(template_name='uploader/signup.html'),
     name='signup'),
-    url(r'^denied',
-    TemplateView.as_view(template_name='uploader/permission_denied.html'),
-    name='denied'),
+
 ) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

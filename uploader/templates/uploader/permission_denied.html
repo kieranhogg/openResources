@@ -1,6 +1,9 @@
 {% extends 'uploader/base.html' %}
 {% block body_block %}
 {% load static %}
-<h2>Oops</h2>
+<h2>{% block head_title %}Oops{% endblock %}</h2>
 <p>You're not meant to be doing that!</p>
+{% if msg %}
+{{ msg }}
+{% endif %}
 {% endblock %}
