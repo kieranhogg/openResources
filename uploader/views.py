@@ -707,15 +707,6 @@ def user_bookmarks(request, user_id=None):
 @login_required
 def user_questions(request, user_id=None):
     questions = MultipleChoiceQuestion.objects.filter(uploader=request.user)
-    paginator = Paginator(questions, 15)
-
-    page = request.GET.get('page')
-    try:
-        questions = paginator.page(page)
-    except PageNotAnInteger:
-        questions = paginator.page(1)
-    except EmptyPage:
-        questions = paginator.page(paginator.num_pages)
 
     return render(request, 'uploader/user_questions.html',
                   {'questions': questions})
