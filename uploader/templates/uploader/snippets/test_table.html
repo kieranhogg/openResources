@@ -6,7 +6,7 @@
         <!--<th>Status</th>-->
         <th>Set</th>
         <th>Deadline</th>
-        <th></th>
+        <!--<th></th>-->
         {% for test in tests %}
         <tr>
             <td>{{ test }}</td>
@@ -14,11 +14,11 @@
             <!--<td></td>-->
             <td>{{ test.pub_date }}</td>
             <td>{{ test.deadline }}</td>
-            {% if teacher_or_student == 'teacher' %}
-            <td><a href="" class='btn btn-default'>View Test</a></td>
-            {% else %}
-            <td>student</td>
-            {% endif %}
+            <!--{% if teacher_or_student == 'teacher' %}-->
+            <!--<td><a href="" class='btn btn-default'>View Test</a></td>-->
+            <!--{% else %}-->
+            <!--<td>student</td>-->
+            <!--{% endif %}-->
         </tr>
         {% endfor %}
     </tr>
