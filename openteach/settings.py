@@ -154,6 +154,6 @@ except ImportError:
     pass
 
 if not DEBUG:
-    INSTALLED_APPS += ('haystack')
+    INSTALLED_APPS += ('haystack',)
     
 assert len(SECRET_KEY) > 20, 'Please set SECRET_KEY in local_settings.py'
