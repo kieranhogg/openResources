@@ -2,7 +2,7 @@
 openTeach related settings
 """
 SITE_NAME = 'openTeach'
-APP_VERSION = "0.3"
+APP_VERSION = "0.5"
 
 """
 Django settings
@@ -28,7 +28,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 
-
 AUTHENTICATION_BACKENDS = (
     # Needed to login by username in Django admin, regardless of `allauth`
     "django.contrib.auth.backends.ModelBackend",
@@ -36,19 +35,11 @@ AUTHENTICATION_BACKENDS = (
     "allauth.account.auth_backends.AuthenticationBackend",
 )
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
-
 ALLOWED_HOSTS = []
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-# Application definition
-
 INSTALLED_APPS = (
-    #'suit',
-    'grappelli',
-    #'taggit',
-    #'taggit_autosuggest',
+    # 'grappelli',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -62,24 +53,12 @@ INSTALLED_APPS = (
     'django_gravatar',
     'allauth',
     'allauth.account',
-    #'allauth.socialaccount',
     'jquery',
-    #', #... include the providers you want to enable:
-    #'allauth.socialaccount.providers.facebook',
-    #'allauth.socialaccount.providers.github',
-    #'allauth.socialaccount.providers.google',
-    #'allauth.socialaccount.providers.stackexchange',
-    #'allauth.socialaccount.providers.twitter',
-    #'allauth.socialaccount.providers.openid',
     'micawber.contrib.mcdjango',
     'bootstrapform',
     'bootstrap3_datetime',
-    'haystack'
+    # haystack called at the bottom of the file
 )
-
-AJAXLOOKUPCHANNELS = {
-    'topics' : dict(model='uploader.topic',searchfield='topic'),
-}
 
 MICAWBER_PROVIDERS = 'micawber.contrib.mcdjango.providers.bootstrap_embedly'
 
@@ -91,9 +70,9 @@ ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
 REGISTRATION_OPEN = True
 ACCOUNT_ACTIVATION_DAYS = 7
 REGISTRATION_AUTO_LOGIN = True
-LOGIN_REDIRECT_URL = '/favourites/'
+LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/accounts/login/'
-ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URLL = '/favourites/'
+ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = '/'
 
 CONTENT_TYPES = ['application/pdf', 
                 'vnd.oasis.opendocument.text',
@@ -157,14 +136,10 @@ WSGI_APPLICATION = 'openteach.wsgi.application'
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
-
+LANGUAGE_CODE = 'en-gb'
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
 
 
@@ -178,4 +153,7 @@ try:
 except ImportError:
     pass
 
+if not DEBUG:
+    INSTALLED_APPS += ('haystack')
+    
 assert len(SECRET_KEY) > 20, 'Please set SECRET_KEY in local_settings.py'
