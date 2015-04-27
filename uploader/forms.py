@@ -286,3 +286,10 @@ class AssignmentForm(forms.ModelForm):
     class Meta:
         model = Assignment
         fields = ('title', 'description', 'deadline')
+        
+
+class FeedbackForm(forms.ModelForm):
+
+    class Meta:
+        model = Feedback
+        fields = ('feedback', 'result', 'status')

@@ -1,5 +1,6 @@
 {% extends 'uploader/base.html' %}
 {% load static %}
+{% load tags %}
 {% block body_block %}
 
 <script type="text/javascript">
@@ -24,6 +25,34 @@ $(function () {
 <p>{{ group.code }}</p>
 
 {% if students %}
+<h3>Assignments</h3>
+<table id='assignments' class='table table-striped'>
+    <thead>
+    <tr>
+        <th nowrap>Student Name</th>
+        {% for assignment in assignments %}
+        <th nowrap>
+            {{ assignment.title }}
+        </th>
+        {% endfor %}
+    </tr>
+    </thead>
+    <tbody>
+    {% for student in students %}
+    <tr>
+        <td>{{ student.student.studentprofile.forename }} {{ student.student.studentprofile.surname }}</td>
+            {% for result in student.student.results %}
+                <td style='text-align: center'>
+                    {{ result.score }}
+                </td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<a href="{% url 'uploader:add_test' %}">
+    <button class='btn btn-success'>New Test</button>
+</a>
 <h3>Tests</h3>
 <table id='tests' class='table table-striped'>
     <thead>

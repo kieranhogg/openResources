@@ -1,0 +1,91 @@
+{% extends 'uploader/base.html' %}
+{% block body_block %}
+{% load static %}
+<h2>{% block head_title %}{{assignment.title}}{% endblock %}</h2>
+<p><strong>Deadline:</strong> {{ assignment.deadline }}</p>
+<p class='well'>{{ assignment.description }}</p>
+<div class="progress">
+    <div class="progress-bar progress-bar-success progress-bar-striped" style="width: {{assignment.on_time_percentage }}%">
+    On time ({{assignment.on_time}})
+  </div>
+  <div class="progress-bar progress-bar-warning progress-bar-striped" style="width: {{assignment.late_percentage }}%">
+    Late ({{assignment.late}})
+  </div>
+  <div class="progress-bar progress-bar-danger progress-bar-striped" style="width: {{assignment.not_submitted_percentage }}%">
+    Not submitted ({{assignment.not_submitted}})
+  </div>
+  <div class="progress" style="width: {{assignment.absent_percentage }}%">
+    <div style="text-align: center; font-size:12px; line-height: 20px">Absent ({{assignment.absent}})</div>
+  </div>
+</div>
+<table class='table'>
+    <thead>
+        <tr>
+            <th>Student</th>
+            <th>Submission</th>
+            <th>Marking</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+{% for student in students %}
+
+{% if student.student.feedback.status == 5 %}
+<tr>
+{% elif student.student.submission and student.student.submission.pub_date > assignment.deadline %}
+<tr class='warning'>
+{% elif student.student.submission %}
+<tr class='success'>
+{% else %}
+<tr class="danger">
+{% endif %}
+    <td>
+         {{ student.student.studentprofile }}   
+    </td>
+    <td>
+        {% if student.student.submission %}
+            {% if student.student.feedback.status == 5 %}
+            {% elif student.student.submission and student.student.submission.pub_date > assignment.deadline %}
+                <span class="glyphicon glyphicon-time" aria-hidden="true" style='font-size: 1.0em'></span>
+                Submitted {{ assignment.deadline|timesince:student.student.submission.pub_date }} late
+            {% else %}
+               <span class="glyphicon glyphicon-ok" aria-hidden="true" style='font-size: 1.0em'></span> Submitted on time
+            {% endif %}
+        {%endif%}
+    </td>
+    <td>
+        {% if student.student.feedback.get_status_display == 'Marked' %}
+            <span class="glyphicon glyphicon-ok" aria-hidden="true" style='font-size:1.0em'></span>
+        {% elif student.student.feedback.get_status_display == 'Needs improvement' %}
+            <span class="glyphicon glyphicon-repeat" aria-hidden="true" style='font-size:1.0em'></span>
+        {% elif student.student.feedback.get_status_display == 'Incomplete' %}
+        <span class="glyphicon glyphicon-remove" aria-hidden="true" style='font-size:1.0em'></span>
+        {% elif student.student.feedback.get_status_display == 'Absent' %}
+        <span class="glyphicon glyphicon-minus" aria-hidden="true" style='font-size:1.0em'></span>
+        {% elif student.student.submission %}
+        <span class="glyphicon glyphicon-question-sign" aria-hidden="true" style='font-size:1.0em'></span>
+        Unmarked
+        {% endif %}
+        {{ student.student.feedback.get_status_display }}
+    </td>
+    <td>
+        {% if student.student.feedback.status == 5 %}
+        {% elif student.student.submission %}
+        <a href="{% url 'uploader:mark_assignment' assignment.code student.student.submission.id %}" class='btn btn-sm btn-default'>Mark</a>
+        {% else %}
+        <a href="{% url 'uploader:mark_assignment' assignment.code 'absent' student.student.id %}" class='btn btn-sm btn-default'>Absent</a>
+        {% endif %}
+    </td>
+</tr>
+{% endfor %}
+    </tbody>  
+</table>
+
+<!--<table class='table' style="width:50px; font-size: 0.8em">-->
+<!--    <tr><th>Key</th></tr>-->
+<!--    <tr class='success'><td>On time</td></tr>-->
+<!--    <tr class='warning'><td>Late</td></tr>-->
+<!--    <tr class='danger'><td>No submission</td></tr>-->
+<!--</table>-->
+
+{% endblock %}

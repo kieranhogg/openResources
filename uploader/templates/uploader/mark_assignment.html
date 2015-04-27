@@ -1,0 +1,57 @@
+{% extends 'uploader/base.html' %}
+{% block body_block %}
+{% load bootstrap %}
+
+<script>
+  $(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+  $('[rel=tooltip]').tooltip({container: 'body'});
+})
+</script>
+<h2>{% block head_title %}Mark {{ submission.assignment.title }}{% endblock %}</h2>
+
+<p><strong>Student</strong>: {{ submission.student.studentprofile }}</p>
+<p><strong>Submitted</strong>: {{ submission.pub_date }}</p>
+<p><strong>Deadline</strong>: {{ submission.assignment.deadline }}</p>
+{% if submission.comment %}
+<p class='well'>{{ submission.comment }}</p>
+{% endif %}
+
+<h3>Feedback</h3>
+<form action method='POST'>
+{% csrf_token %}
+{{ form|bootstrap }}
+<div class="form-group text-center">
+    <button type="submit" class="btn btn-success">Update</button>
+</div>  
+</form>
+<a class='btn btn-default disabled'>
+<span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span> Leave verbal feedback
+</a>
+
+{% if files %}
+<h3>Attachments</h3>
+{% for file in files %}
+<p> 
+<div class="btn-group" role="group" aria-label="...">
+  <button type="button" class="btn btn-default disabled" >
+       {{ file.filename }} 
+  </button>
+  <button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Download" data-container="body">
+      <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+  </button>
+  <button type="button" class="btn btn-default disabled" data-toggle="tooltip" data-placement="top" title="Preview" data-container="body">
+      <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+  </button>
+  <button type="button" class="btn btn-default disabled" data-toggle="tooltip" data-placement="top" title="Annotate" data-container="body">
+      <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+  </button>
+  <button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Delete" data-container="body">
+      <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+  </button>
+</div>
+</p>
+{% endfor %}
+{% endif %}
+{% endblock %}
+

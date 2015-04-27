@@ -1,3 +1,5 @@
+from __future__ import division
+
 import re
 import requests
 import logging
@@ -5,6 +7,7 @@ import json
 import time
 import urllib2
 import mimetypes
+import datetime
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
@@ -58,9 +61,10 @@ def index(request):
     else:
         if hasattr(request.user, 'teacherprofile'):
             groups = Group.objects.filter(teacher=request.user)
-            tests = Test.objects.filter(group__in=groups)[:5]
+            tests = Test.objects.filter(teacher=request.user)[:5]
+            assignments = Assignment.objects.filter(teacher=request.user).order_by('-deadline')[:5]
 
-            context = {'groups': groups, 'tests': tests}
+            context = {'groups': groups, 'tests': tests, 'assignments': assignments}
             return render(request, 'uploader/teacher_home.html', context)
         else:
             # FIXME use a filter
@@ -1413,7 +1417,8 @@ def groups(request, slug=None):
 def group(request, slug):
     group = get_object_or_404(Group, slug=slug)
     student_group = StudentGroup.objects.filter(group=group)
-    tests = Test.objects.filter(teacher=request.user).order_by('-pub_date')
+    tests = Test.objects.filter(group=group, teacher=request.user).order_by('-pub_date')
+    assignments = Assignment.objects.filter(group=group, teacher=request.user).order_by('-deadline')
 
     for student_group_object in student_group:
         student = student_group_object.student
@@ -1431,7 +1436,7 @@ def group(request, slug):
             else:
                 student.results.append({'total': test.total})
     # return HttpResponse(tests_taken)
-    context = {'group': group, 'students': student_group, 'tests': tests}
+    context = {'group': group, 'students': student_group, 'tests': tests, 'assignments': assignments}
 
     return render(request, 'uploader/group.html', context)
 
@@ -1469,19 +1474,138 @@ def denied(request):
     return render(request, 'uploader/permission_denied.html', {'msg': msg})
 
 
-def add_assignment(request):
+def assignment(request):
     form = AssignmentForm(request.POST or None)
+    logging.error("0")
+
     if request.POST and form.is_valid():
         rp = request.POST
-        Assignment(title=rp.get('title'),
+
+        Assignment(title=title,
                    code=random_key(5, 'Assignment'),
-                   group=1,
+                   group=Group.objects.get(pk=1),
                    teacher=request.user,
                    description=rp.get('description'),
-                   deadline=rp.deadline).save()
+                   deadline=rp.get('deadline')).save()
+
         return HttpResponseRedirect(reverse('uploader:group', args=['y9-ict']))
         
     return render(request, 'uploader/assignment.html', {'form': form})
+    
+    
+def view_assignment(request, code):
+    assignment = get_object_or_404(Assignment, code=code)
+    students = StudentGroup.objects.filter(group=assignment.group)
+    student_ids = students.values('student_id')
+    
+    submissions = AssignmentSubmission.objects.filter(student_id__in=student_ids,
+                                                      assignment=assignment)
+                                                     
+    
+    #FIXME can we do this in one query?
+    submission_count = 0
+    late_count = 0
+    absent_count = 0
+    for student in students:
+        student = student.student
+        try:
+            student.submission = submissions.get(student=student)
+            student.submission.diff = assignment.deadline - student.submission.pub_date
+            student.submission.late = False
+            
+            # FIXME only currently one, might be multiple 
+            student.feedback = Feedback.objects.get(assignment_submission=student.submission)
+
+            if student.feedback.status == 5:
+                absent_count += 1
+                logger.error("absent")
+            else:
+                submission_count += 1
+
+                if student.submission.diff < datetime.timedelta(minutes=0):
+                    student.submission.late = True
+                    late_count += 1
+                    submission_count += 1
+                    logger.error("late")
+
+
+        except AssignmentSubmission.DoesNotExist:
+            pass
+        except Feedback.DoesNotExist:
+            submission_count += 1
+
+        
+    assignment.total = students.count()
+    logger.error(assignment.total)
+
+    assignment.submissions = submission_count
+    logger.error(assignment.submissions)
+
+    assignment.submissions_percentage = int(submission_count / assignment.total * 100)
+    logger.error(assignment.submissions_percentage)
+    assignment.late = late_count
+    assignment.late_percentage = int(late_count / assignment.total * 100)
+    logger.error(assignment.late_percentage)
+    assignment.absent = absent_count
+    assignment.absent_percentage = int(absent_count / assignment.total * 100)
+    logger.error(assignment.absent_percentage)
+
+    assignment.on_time = submission_count - assignment.late
+    assignment.on_time_percentage = int((assignment.submissions - assignment.late) / assignment.total * 100)
+    logger.error(assignment.on_time_percentage)
+
+    assignment.not_submitted = assignment.total - assignment.on_time - assignment.late - assignment.absent
+    assignment.not_submitted_percentage = int(assignment.not_submitted / assignment.total * 100)
+    logger.error(assignment.not_submitted_percentage)
+
+    
+    
+    template = 'uploader/student_assignment.html'
+    
+    if request.user.teacherprofile:
+        template = 'uploader/teacher_assignment.html'
+
+
+    context = {'assignment': assignment, 'students': students}
+    return render(request, template, context)
+    
+
+def mark_assignment(request, assignment_code, submission_id=None, absent=None, student_id=None):
+    assignment = get_object_or_404(Assignment, code=assignment_code)
+
+    if absent == 'absent':
+        student = get_object_or_404(User, pk=student_id)
+        sub = AssignmentSubmission(student=student, assignment=assignment)
+        sub.save()
+        Feedback(feedback='Student absent', status=5, assignment_submission=sub).save()
+                 
+        return HttpResponseRedirect(reverse('uploader:view_assignment', args=[assignment.code]))
+
+    else:
+        submission = get_object_or_404(AssignmentSubmission, pk=submission_id)
+        files = AssignmentSubmissionFile.objects.filter(assignment_submission=submission)
+        try:
+            feedback = Feedback.objects.get(assignment_submission=submission)
+        except Feedback.DoesNotExist:
+            feedback = None
+        
+        form = FeedbackForm(request.POST or None, instance=feedback)
+        if request.POST and form.is_valid():
+            rp = request.POST
+            if not feedback:
+                form = Feedback(assignment_submission=submission,
+                         feedback=rp.get('feedback'),
+                         result=rp.get('result'),
+                        #  feedback_file=request.FILES['file'] or None,
+                         status=rp.get('status'))
+                         
+            form.save()
+        
+            return HttpResponseRedirect(reverse('uploader:view_assignment', args=[submission.assignment.code]))
+    
+        context = {'submission': submission, 'files': files, 'form': form}
+        
+        return render(request, 'uploader/mark_assignment.html', context)
 
 """
 ajax views

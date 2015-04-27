@@ -1,4 +1,5 @@
 import logging
+import os
 
 from django.core.urlresolvers import reverse
 from django.conf import settings
@@ -688,6 +689,9 @@ class Lesson(models.Model):
     presentation = models.FileField(upload_to='%Y/%m', null=True, blank=True)
     show_presentation_to_students = models.BooleanField(default=False)
     unit_topic = models.ForeignKey(UnitTopic, null=True, blank=True)
+    date_for = models.DateField()
+    lesson = models.IntegerField(null=True, blank=True, choices=(
+            (1, "P1"), (2, "P2"), (3, "P3"), (4, "P4"), (5, "P5"), (6, "P6")))
     pub_date = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
@@ -740,6 +744,11 @@ class UnitTopicLink(models.Model):
     class Meta:
         unique_together = ["unit_topic_1", "unit_topic_2"]
 
+
+class GradeSystem(models.Model):
+    pass
+
+
 class Assignment(models.Model):
     title = models.CharField(max_length=255)
     code = models.SlugField(unique=True)
@@ -748,16 +757,52 @@ class Assignment(models.Model):
     deadline = models.DateTimeField()
     description = models.TextField()
     unit_topic = models.ForeignKey(UnitTopic, blank=True, null=True)
+    grade_system = models.ForeignKey(GradeSystem, blank=True, null=True)
     pub_date = models.DateTimeField(auto_now_add=True)
 
-class Feedback(models.Model):
-    pass
+def assignment_location(instance, filename):
+        code = instance.assignment_submission.assignment.code
+        
+        return '/'.join(['assignments', code, filename])
+
+class AssignmentSubmissionFile(models.Model):
+    assignment_submission = models.ForeignKey('AssignmentSubmission')
+    comments = models.TextField(null=True, blank=True)
+    file = models.FileField(upload_to=assignment_location)
+    pub_date = models.DateTimeField(auto_now_add=True)
     
-class GradeSystem(models.Model):
-    pass
+    def filename(self):
+        return os.path.basename(self.file.name)
+    
     
 class AssignmentSubmission(models.Model):
-    pass
+    student = models.ForeignKey(settings.AUTH_USER_MODEL)
+    assignment = models.ForeignKey(Assignment)
+    pub_date = models.DateTimeField(auto_now_add=True)
+    
+    
+class Feedback(models.Model):
+    UNMARKED = 1
+    MARKED = 2
+    NEEDSIMP = 3
+    INCOMP = 4
+    ABSENT = 5
+
+    FEEDBACK_STATUS = (
+        (UNMARKED, 'Unmarked'),
+        (MARKED, 'Marked'),
+        (NEEDSIMP, 'Needs improvement'),
+        (INCOMP, 'Incomplete'),
+        (ABSENT, 'Absent')
+    )
+    assignment_submission = models.OneToOneField(AssignmentSubmission, null=True)
+    feedback = models.TextField(blank=True, null=True)
+    result = models.IntegerField(blank=True, null=True)
+    feedback_file = models.FileField(upload_to=assignment_location, blank=True, null=True)
+    status = models.IntegerField(choices=FEEDBACK_STATUS, default=UNMARKED)
+    audio_feedback = models.FileField(upload_to=assignment_location, blank=True, null=True)
+    pub_date = models.DateTimeField(auto_now_add=True)
+    
     
 class GradeOptions(models.Model):
     pass

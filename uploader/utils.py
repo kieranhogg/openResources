@@ -102,6 +102,11 @@ def random_key(length, item=None):
             if item == 'Test':
                 if Test.objects.filter(code=key).count() == 0:
                     unique = True
+            elif item == 'Assignment':
+                if Assignment.objects.filter(code=key).count() == 0:
+                    unique = True
+            else:
+                raise Exception('Type not implemented')
                     
     return key
     

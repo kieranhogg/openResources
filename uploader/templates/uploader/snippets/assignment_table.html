@@ -9,8 +9,10 @@
         <!--<th></th>-->
         {% for assignment in assignments %}
         <tr>
-            <td>{{ assignment }}</td>
-            <td>{{ test.group }}</td>
+            <td>
+                <a href="{% url 'uploader:view_assignment' assignment.code %}">{{ assignment.title }}</a>
+            </td>
+            <td>{{ assignment.group }}</td>
             <!--<td></td>-->
             <td>{{ assignment.pub_date }}</td>
             <td>{{ assignment.deadline }}</td>
@@ -24,6 +26,3 @@
     </tr>
 </table>
 </div>
-<a href="{% url 'uploader:add_assignment' %}">
-    <button class='btn btn-success'>New assignment</button>
-</a>
