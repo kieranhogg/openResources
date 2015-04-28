@@ -1,8 +1,11 @@
 {% extends 'uploader/base.html' %}
 {% block body_block %}
 {% load static %}
+{% load tags %}
 {% get_static_prefix as STATIC_PREFIX %}
 <h2>{{ user.studentprofile }}'s Home</h2>
+<h3>Assignments</h3>
+    {% assignment_table "student" assignments %}
 <h3>Tests</h3>
 <table class='table'>
 {% for group, tests in tests.iteritems %}

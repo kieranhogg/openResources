@@ -21,9 +21,9 @@
 <table class='table'>
     <thead>
         <tr>
-            <th>Student</th>
-            <th>Submission</th>
-            <th>Marking</th>
+            <th style='text-align:center'>Student</th>
+            <th style='text-align:center'>Submission</th>
+            <th style='text-align:center'>Marking</th>
             <th></th>
         </tr>
     </thead>
@@ -68,7 +68,7 @@
         {% endif %}
         {{ student.student.feedback.get_status_display }}
     </td>
-    <td>
+    <td style='text-align:right'>
         {% if student.student.feedback.status == 5 %}
         {% elif student.student.submission %}
         <a href="{% url 'uploader:mark_assignment' assignment.code student.student.submission.id %}" class='btn btn-sm btn-default'>Mark</a>

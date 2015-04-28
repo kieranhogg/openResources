@@ -293,3 +293,10 @@ class FeedbackForm(forms.ModelForm):
     class Meta:
         model = Feedback
         fields = ('feedback', 'result', 'status')
+        
+
+class AssignmentSubmissionFileForm(forms.ModelForm):
+    
+    class Meta:
+        model = AssignmentSubmissionFile
+        fields = ('file', 'comments')

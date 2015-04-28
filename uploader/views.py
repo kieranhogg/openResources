@@ -69,6 +69,9 @@ def index(request):
         else:
             # FIXME use a filter
             groups = StudentGroup.objects.filter(student=request.user)
+            group_ids = (1,)
+            assignments = Assignment.objects.filter(group_id__in=group_ids)
+
             test_list = {}
             for group in groups:
                 tests = Test.objects.filter(group=group.group)
@@ -84,7 +87,7 @@ def index(request):
                             pass
 
             return render(
-                request, 'uploader/student_home.html', {'tests': test_list})
+                request, 'uploader/student_home.html', {'tests': test_list, 'assignments': assignments})
 
 
 def subjects(request):
@@ -1494,79 +1497,93 @@ def assignment(request):
     
     
 def view_assignment(request, code):
+    """Shows an assignment view, for teacher this is a list of submissions,
+    for students it allows them to submit an assignment and see previous 
+    submissions
+    """
     assignment = get_object_or_404(Assignment, code=code)
-    students = StudentGroup.objects.filter(group=assignment.group)
-    student_ids = students.values('student_id')
-    
-    submissions = AssignmentSubmission.objects.filter(student_id__in=student_ids,
-                                                      assignment=assignment)
-                                                     
-    
-    #FIXME can we do this in one query?
-    submission_count = 0
-    late_count = 0
-    absent_count = 0
-    for student in students:
-        student = student.student
-        try:
-            student.submission = submissions.get(student=student)
-            student.submission.diff = assignment.deadline - student.submission.pub_date
-            student.submission.late = False
-            
-            # FIXME only currently one, might be multiple 
-            student.feedback = Feedback.objects.get(assignment_submission=student.submission)
 
-            if student.feedback.status == 5:
-                absent_count += 1
-                logger.error("absent")
-            else:
-                submission_count += 1
-
-                if student.submission.diff < datetime.timedelta(minutes=0):
-                    student.submission.late = True
-                    late_count += 1
-                    submission_count += 1
-                    logger.error("late")
-
-
-        except AssignmentSubmission.DoesNotExist:
-            pass
-        except Feedback.DoesNotExist:
-            submission_count += 1
-
-        
-    assignment.total = students.count()
-    logger.error(assignment.total)
-
-    assignment.submissions = submission_count
-    logger.error(assignment.submissions)
-
-    assignment.submissions_percentage = int(submission_count / assignment.total * 100)
-    logger.error(assignment.submissions_percentage)
-    assignment.late = late_count
-    assignment.late_percentage = int(late_count / assignment.total * 100)
-    logger.error(assignment.late_percentage)
-    assignment.absent = absent_count
-    assignment.absent_percentage = int(absent_count / assignment.total * 100)
-    logger.error(assignment.absent_percentage)
-
-    assignment.on_time = submission_count - assignment.late
-    assignment.on_time_percentage = int((assignment.submissions - assignment.late) / assignment.total * 100)
-    logger.error(assignment.on_time_percentage)
-
-    assignment.not_submitted = assignment.total - assignment.on_time - assignment.late - assignment.absent
-    assignment.not_submitted_percentage = int(assignment.not_submitted / assignment.total * 100)
-    logger.error(assignment.not_submitted_percentage)
-
-    
+    context = {'assignment': assignment}
     
     template = 'uploader/student_assignment.html'
     
-    if request.user.teacherprofile:
+    if hasattr(request.user, 'teacherprofile'):
+        students = StudentGroup.objects.filter(group=assignment.group)
+        student_ids = students.values('student_id')
+        
+        submissions = AssignmentSubmission.objects.filter(student_id__in=student_ids,
+                                                              assignment=assignment)
+    
+        #FIXME can we do this in one query?
+        submission_count = 0
+        late_count = 0
+        absent_count = 0
+        for student in students:
+            student = student.student
+            try:
+                student.submission = submissions.get(student=student)
+                student.submission.diff = assignment.deadline - student.submission.pub_date
+                student.submission.late = False
+                
+                # FIXME only currently one, might be multiple 
+                student.feedback = Feedback.objects.get(assignment_submission=student.submission)
+    
+                if student.feedback.status == 5:
+                    absent_count += 1
+                    logger.error("absent")
+                else:
+                    submission_count += 1
+    
+                    if student.submission.diff < datetime.timedelta(minutes=0):
+                        student.submission.late = True
+                        late_count += 1
+                        submission_count += 1
+                        logger.error("late")
+    
+    
+            except AssignmentSubmission.DoesNotExist:
+                pass
+            except Feedback.DoesNotExist:
+                submission_count += 1
+    
+        # get values for submission status bar
+        assignment.total = students.count()
+
+        assignment.submissions = submission_count
+        assignment.submissions_percentage = int(submission_count / assignment.total * 100)
+        
+        assignment.late = late_count
+        assignment.late_percentage = int(late_count / assignment.total * 100)
+        
+        assignment.absent = absent_count
+        assignment.absent_percentage = int(absent_count / assignment.total * 100)
+
+        assignment.on_time = submission_count - assignment.late
+        assignment.on_time_percentage = int((assignment.submissions - assignment.late) / assignment.total * 100)
+
+        assignment.not_submitted = assignment.total - assignment.on_time - assignment.late - assignment.absent
+        assignment.not_submitted_percentage = int(assignment.not_submitted / assignment.total * 100)
+
         template = 'uploader/teacher_assignment.html'
+        context['students'] = students
+    else:
+        if request.POST:
+            a_s = AssignmentSubmissionFile(student=request.user, assignment=assignment)
+            a_s.save()
+            AssignmentSubmissionFile(assignment_submission=a_s,
+                                     file=request.FILES.get('file'),
+                                     comments=request.POST.get('comments')).save()
+            return HttpResponseRedirect(reverse('uploader:index'))
+        else:
+            template = 'uploader/student_assignment.html'
+            form = AssignmentSubmissionFileForm(request.POST or None)
+            previous_submissions = AssignmentSubmissionFile.objects.filter(
+                assignment_submission__student=request.user, assignment_submission__assignment=assignment)
+            context['form'] = form
+            context['previous_submissions'] = previous_submissions
 
 
-    context = {'assignment': assignment, 'students': students}
+    
     return render(request, template, context)
     
 
