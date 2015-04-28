@@ -1348,7 +1348,7 @@ def student_signup(request):
                 "Thanks for registering. You are now logged in.")
             new_user = authenticate(username=request.POST['username'],
                                     password=request.POST['password'])
-            new_user.groups.add(Group.objects.get(name='student'))
+            #new_user.groups.add(Group.objects.get(name='student'))
             login(request, new_user)
             return HttpResponseRedirect('/')
         except ObjectDoesNotExist:
@@ -1369,7 +1369,7 @@ def teacher_signup(request):
             "Thanks for registering. You are now logged in.")
         new_user = authenticate(username=request.POST['username'],
                                 password=request.POST['password'])
-        new_user.groups.add(Group.objects.get(name='teacher'))
+        # new_user.groups.add(Group.objects.get(name='teacher'))
         login(request, new_user)
         return HttpResponseRedirect('/')
 
