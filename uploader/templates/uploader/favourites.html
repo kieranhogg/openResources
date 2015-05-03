@@ -27,11 +27,12 @@
             <ul>
                 {% for syllabus in syllabuses %}
                 {% with syllabus=syllabus.syllabus %}
-                    <a href="{% url 'uploader:syllabus' syllabus.subject.slug syllabus.exam_level.slug syllabus.slug %}">
-                        <li>
+                    <li>
+                        <a href="{% url 'uploader:syllabus' syllabus.subject.slug syllabus.exam_level.slug syllabus.slug %}">
+                        
                             {{ syllabus }}
-                        </li>
-                    </a>
+                        </a>
+                    </li>
                 {% endwith %}
                 {% endfor %}
             </ul>
@@ -47,11 +48,13 @@
             <ul>
                 {% for unit in units %}
                 {% with unit=unit.unit %}
-                    <a href="{% url 'uploader:unit' unit.syllabus.subject.slug unit.syllabus.exam_level.slug unit.syllabus.slug unit.slug %}">
-                        <li>
-                            {{ unit }}
-                        </li>
-                    </a>
+                    <li>
+                        <a href="{% url 'uploader:unit' unit.syllabus.subject.slug unit.syllabus.exam_level.slug unit.syllabus.slug unit.slug %}">
+                        
+                           {{ unit.syllabus }} > {{ unit }}
+                        
+                        </a>
+                    </li>
                     {% endwith %}
                 {% endfor %}
             </ul>
@@ -66,9 +69,9 @@
             <ul>
                 {% for unit_topic in unit_topics %}
                 {% with unit_topic=unit_topic.unit_topic %}
+                <li>
                     <a href="{% url 'uploader:unit_topic' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
-                        <li>
-                            {{ unit_topic }}
+                     {{ unit_topic.unit.syllabus }} > {{ unit_topic.unit }} > {{ unit_topic }}
                         </li>
                     </a>
                 {% endwith %}
