@@ -21,7 +21,7 @@
         </div>
     {% endif %}
     
-    <h3>Syllabus</h3>
+    <h3>Syllabuses</h3>
     {% if syllabuses %}
         <div>
             <ul>
@@ -42,7 +42,7 @@
         syllabus page to add them to this page.</p>
     {% endif %}
     
-    <h3>Unit</h3>
+    <h3>Units</h3>
     {% if units %}
         <div>
             <ul>
@@ -51,7 +51,7 @@
                     <li>
                         <a href="{% url 'uploader:unit' unit.syllabus.subject.slug unit.syllabus.exam_level.slug unit.syllabus.slug unit.slug %}">
                         
-                           {{ unit.syllabus }} > {{ unit }}
+                           {{ unit.syllabus }} > <strong>{{ unit }}</strong>
                         
                         </a>
                     </li>
@@ -63,7 +63,7 @@
         <p>Click the favourite icon on any unit page to add them to this page.</p>
     {% endif %}
     
-    <h3>Unit Topic</h3>
+    <h3>Unit Topics</h3>
     {% if unit_topics %}
         <div>
             <ul>
@@ -71,7 +71,7 @@
                 {% with unit_topic=unit_topic.unit_topic %}
                 <li>
                     <a href="{% url 'uploader:unit_topic' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
-                     {{ unit_topic.unit.syllabus }} > {{ unit_topic.unit }} > {{ unit_topic }}
+                     {{ unit_topic.unit.syllabus }} > {{ unit_topic.unit }} > <strong>{{ unit_topic }}</strong>
                         </li>
                     </a>
                 {% endwith %}
