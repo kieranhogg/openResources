@@ -55,7 +55,7 @@ h6 {
     color: #fff;
 }
 
-/* menu */
+ menu 
 #menu .glyphicon {
     color: #666;
 }
@@ -76,21 +76,21 @@ h6 {
     font-weight: bold;
 }
 
-/*.highlight {*/
-/*    overflow: auto;*/
-/*    word-wrap: normal;*/
-/*    border: 1px solid #ccc;*/
-/*    border-radius: 2px;*/
-/*    box-shadow: inset 0 0 .5em #ccc;*/
-/*    padding: .7em 1em;*/
-/*    font-family: Consolas,"Andale Mono WT","Andale Mono","Bitstream Vera Sans Mono","Nimbus Mono L",Monaco,"Courier New",monospace;*/
-/*    font-size: 1.25em;*/
-/*    background-color: #fbfaf9;*/
-/*}*/
+.highlight {
+    overflow: auto;
+    word-wrap: normal;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    box-shadow: inset 0 0 .5em #ccc;
+    padding: .7em 1em;
+    font-family: Consolas,"Andale Mono WT","Andale Mono","Bitstream Vera Sans Mono","Nimbus Mono L",Monaco,"Courier New",monospace;
+    font-size: 1.25em;
+    background-color: #fbfaf9;
+}
 
 .header{
     padding: 10px 0px;
-    /*background: #f5f5f5;*/
+    background: #f5f5f5;
     background: #fff;
 }
 .header h1 {
@@ -113,7 +113,7 @@ h6 {
     clear: both;
     color: #333;
     padding: 20px 20px 40px 20px;
-    /*overflow: auto;*/
+    overflow: auto;
     width: 80%;
     margin: 0 auto;
     min-height: 500px;
@@ -142,7 +142,7 @@ h6 {
     display:block;
     margin: 0 auto;
 }
-/* tiles */
+ tiles 
 #lesson_items {
     width: 93%;
     margin: 0 auto;
@@ -174,7 +174,7 @@ h6 {
     float: right;
     font-size: 300%;
 }
-/* download page */
+ download page 
 #resource_details {
     overflow: hidden;
 }
@@ -219,7 +219,7 @@ h6 {
     margin: 15px 0;
 }
 
-/** rating */
+* rating 
 
 #rating {
     float: left;
@@ -242,7 +242,7 @@ h6 {
     color: black;
 }
 
-/** extra stuff */
+* extra stuff 
 blockquote {
   background: #f9f9f9;
   border-left: 10px solid #ccc;
@@ -271,7 +271,7 @@ hr {
 }
 
 
-/** containers **/
+* containers *
 .action {
     text-align: center;
 }
@@ -305,49 +305,41 @@ hr {
     float: right;
 }
 
-/*.link_or_oembed {*/
-/*    overflow-y: scroll; /* has to be scroll, not auto or hidden
-/*    -webkit-overflow-scrolling: touch;*/
-/*    position: relative;*/
-/*    padding-bottom: 90%; // (450 ÷ 500 = 0.9 = 90%)*/
-/*    height: 0;*/
-/*    overflow: hidden;*/
-/*}*/
-/*.link_or_oembed iframe {*/
-/*    position: absolute;*/
-/*    top: 0;*/
-/*    left: 0;*/
-/*    width: 100%;*/
-/*    height: 100%;*/
-/*}*/
+.link_or_oembed {
+    overflow-y: scroll; /* has to be scroll, not auto or hidden */
+    -webkit-overflow-scrolling: touch;
+    position: relative;
+    padding-bottom: 90%; // (450 ÷ 500 = 0.9 = 90%)
+    height: 0;
+    overflow: hidden;
+}
+.link_or_oembed iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
 
-/*#notes li {*/
-/*    font-family: "freight-text-pro",Georgia,Cambria,"Times New Roman",Times,serif;*/
-/*    letter-spacing: .01rem;*/
-/*    font-weight: 400;*/
-/*    font-style: normal;*/
-/*    font-size: 1.1em;*/
-/*}*/
-/*#notes p {*/
-/*    line-height: 1.8;*/
-/*}*/
+#notes li {
+    font-family: "freight-text-pro",Georgia,Cambria,"Times New Roman",Times,serif;
+    letter-spacing: .01rem;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 1.1em;
+}
+#notes p {
+    line-height: 1.8;
+}
+    
 
-/* bootstrap overrides */
-/*.pagination>li>a, .pagination>li>span {*/
-/*    color: #cc0000 !important;*/
-/*}*/
-/*.pagination>.active>a, .pagination>.active>a:focus, .pagination>.active>a:hover, .pagination>.active>span, .pagination>.active>span:focus, .pagination>.active>span:hover {*/
-/*    background-color: #cc0000 !important;*/
-/*    border: 1px solid #cc0000 !important;*/
-/*    color: white !important;*/
-/*}*/
 #menu_home {
     margin-left: -35px;
 }
 
 form .label-danger {
     float: right
-    /*margin-top: -40px;*/
+    margin-top: -40px;
 } 
 a.btn-primary {
     color: white !important;
@@ -365,15 +357,15 @@ a.btn-primary {
     color: white !important;
 }
 .panel-heading .toggle-button:after {
-    /* symbol for "opening" panels */
-    font-family: 'Glyphicons Halflings';  /* essential for enabling glyphicon */
-    content: "\e114";    /* adjust as needed, taken from bootstrap.css */
-    float: right;        /* adjust as needed */
-    color: grey;         /* adjust as needed */
+     symbol for "opening" panels 
+    font-family: 'Glyphicons Halflings'; 
+    content: "\e114";    
+    float: right;   
+    color: grey;
 }
 .panel-heading .toggle-button.collapsed:after {
-    /* symbol for "collapsed" panels */
-    content: "\e080";    /* adjust as needed, taken from bootstrap.css */
+     symbol for "collapsed" panels 
+    content: "\e080"; 
 }
 #link_form {
     margin-top: 2em;
@@ -385,56 +377,10 @@ a.btn-primary {
 }
 #link_submit {
     padding-top: 25px;
-    /*margin-top: 2.1%;*/
-    /*clear: left;*/
+    margin-top: 2.1%;
+    clear: left;
 }
 
-/* search */
-$tl: 0.6s; // transition length
-
-
-body {
-  margin: 5%;
-}
-
-.search-box {
-  transition: width $tl, border-radius $tl, background $tl, box-shadow $tl;
-  width: 40px;height: 40px;
-  border-radius: 20px;border: none;
-  cursor: pointer;
-  background: rgb(235, 235, 235);
-  & + label .search-icon {    color: black    }
-  &:hover {
-    color: white;
-    background: rgb(200, 200, 200);
-    box-shadow: 0 0 0 5px rgb(61, 71, 82);
-    & + label .search-icon {    color: white    }
-  }
-  &:focus {
-    transition: width $tl cubic-bezier(0,1.22,.66,1.39), border-radius $tl, background $tl;
-    border: none;outline: none;
-    box-shadow: none;
-    padding-left: 15px;
-    cursor: text;
-    width: 300px;
-    border-radius: auto;
-    background: rgb(235, 235, 235);
-    color: black;
-    & + label .search-icon {    color: black;    }
-  }
-  &:not(:focus) {    text-indent:-5000px;    } // for more-graceful falling back (:not browsers likely support indent)
-}
-
-#search-submit {
-  position: relative;left: -5000px;
-}
-
-.search-icon {
-  position: relative;
-  left: -30px;
-  color: white;
-  cursor: pointer;
-}
 .highlighted {
     background-color: yellow;
     font-weight: bold;
@@ -449,7 +395,7 @@ body {
 
 .navbar-nav > li > a, .navbar-brand {
     padding:11px !important;
-    /*height: 34px;*/
+    height: 34px;
     margin-left: 0 !important;
 }
 .navbar {min-height:42px !important;}
@@ -473,7 +419,8 @@ table .glyphicon {
 .dataTables_scrollBody {
     overflow: visible !important;
 }
-th, td { white-space: nowrap; }
-table tbody td {
-    min-width: 100px;
+th { white-space: nowrap; }
+
+.btn-default .glyphicon {
+    color: black;
 }
