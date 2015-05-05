@@ -1540,7 +1540,7 @@ def group(request, slug):
         lessons = GroupLesson.objects.filter(group=group).order_by('-date', '-pub_date')
         for lesson in lessons:
             lesson.link = shorten_lesson_url(request, group.code, lesson.lesson.code)
-            lesson.feedback = LessonPrePostResponse.objects.filter(type='post',pre_post__lesson=lesson).aggregate(Avg('score'))['score__avg']
+            lesson.feedback = LessonPrePostResponse.objects.filter(type='post', pre_post__lesson=lesson).aggregate(Avg('score'))['score__avg']
 
         for student_group_object in student_group:
             student = student_group_object.student

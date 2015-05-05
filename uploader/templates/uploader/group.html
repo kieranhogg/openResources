@@ -77,7 +77,15 @@ $(function () {
             {% if group_lesson.period %}P{{ group_lesson.period }}{% endif %}
         {% endif %}
         </td>
-    <td>
+    {% if lesson.feedback and lesson.feedback < 4 %}
+      <td class="danger">{{ lesson.feedback }}
+    {% elif lesson.feedback and lesson.feedback >= 3 and lesson.feedback < 4 %}
+      <td class="warning">{{ lesson.feedback }}
+    {% elif lesson.feedback and lesson.feedback >= 4 %}
+        <td class="success">{{ lesson.feedback }}
+    {% else %}
+        <td>
+    {% endif %}
         
     </td>
     <td>
