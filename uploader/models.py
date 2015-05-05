@@ -712,6 +712,8 @@ class LessonItem(models.Model):
     slug = models.SlugField(max_length=100, blank=True, null=True)
 
 
+class LessonItemAdmin(admin.ModelAdmin):
+    list_display = ('lesson', 'content_type', 'object_id', 'order', 'type', 'slug')
 
 
 class LessonPrePost(models.Model):
