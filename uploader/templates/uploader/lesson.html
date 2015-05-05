@@ -210,8 +210,11 @@ $(function () {
             Take test
         </a>
         </p>
-        {% else %}
-        couldn't work out type
+        {% elif item.type == 'task' %}
+        <h4><span style="margin-top: -5px;" class="glyphicon glyphicon-th-list" aria-hidden="true"></span> Task</h4>
+        {% if item.instructions %}
+          <p>{{ item.instructions|safe }}</p>
+          {% endif %}
         {% endif %}
         
       <!--</div>-->
