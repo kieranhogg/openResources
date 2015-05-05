@@ -975,10 +975,13 @@ def lesson(request, slug, code=None):
 
     lis = LessonItem.objects.filter(lesson=l).order_by('order')
     for li in lis:
-        type = ContentType.objects.get(app_label="uploader", model=li.content_type)
-        li.content = ContentType.get_object_for_this_type(type, pk=li.object_id)
-        logger.error(li.content)
-        li.type = str(type)
+        if li.content_type and li.object_id:
+            type = ContentType.objects.get(app_label="uploader", model=li.content_type)
+            li.content = ContentType.get_object_for_this_type(type, pk=li.object_id)
+            logger.error(li.content)
+            li.type = str(type)
+        else:
+            li.type = 'task'
 
     # if this lesson has specified a pre/post be done
     if l.pre_post:
