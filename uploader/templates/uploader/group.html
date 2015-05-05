@@ -78,9 +78,9 @@ $(function () {
         {% endif %}
         </td>
     {% if group_lesson.feedback and group_lesson.feedback < 4 %}
-      <td class="danger text-center">{{ group_lesson.feedback }}
+      <td class="danger text-center">{{ group_lesson.feedback|floatformat:"1" }}
     {% elif group_lesson.feedback and group_lesson.feedback >= 3 and group_lesson.feedback < 4 %}
-      <td class="warning text-center">{{ group_lesson.feedback }}
+      <td class="warning text-center">{{ group_lesson.feedback|floatformat:"1" }}
     {% elif group_lesson.feedback and group_lesson.feedback >= 4 %}
         <td class="success text-center">{{ group_lesson.feedback|floatformat:"1" }}
     {% else %}
