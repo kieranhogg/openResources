@@ -1537,10 +1537,10 @@ def group(request, slug):
         form.fields['lesson'].queryset = Lesson.objects.filter(uploader=request.user).order_by('-pub_date')[:10]
         student_group = StudentGroup.objects.filter(group=group)
         tests = Test.objects.filter(teacher=request.user).order_by('-pub_date')
-        lessons = GroupLesson.objects.filter(group=group)
+        lessons = GroupLesson.objects.filter(group=group).order_by('-date', '-pub_date')
         for lesson in lessons:
-            lesson.link = shorten_url(request.build_absolute_uri(reverse('uploader:lesson', args=[group.code, lesson.lesson.code])))
-    
+            lesson.link = shorten_lesson_url(request, group.code, lesson.lesson.code)
+
         for student_group_object in student_group:
             student = student_group_object.student
             student.results = []
