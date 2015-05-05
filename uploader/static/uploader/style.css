@@ -435,3 +435,6 @@ a.btn.btn-default {
 .label-danger {
     float: right;
 }
+.table > tbody > tr > td {
+     vertical-align: middle;
+}

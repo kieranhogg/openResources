@@ -17,28 +17,35 @@ function add_lesson_item(count) {
 $(function() {
 
 $('#pre_post').change(function () {
-    var lines = $('textarea[name=objectives]').val().split('\n');
-    var html = '<div class="form-group"><input name="pre_post_vals[]" class="form-control" placeholder="e.g. You are able to recite pi to 100 places" /></div>';
-    if (lines.length == 0) {
-        $('#pre_post_content').append(html);
-    }
-    else {
-        for(var i = 0;i < lines.length;i++){
-            var content = lines[i].replace('* ', ''); 
-            var html = '<div class="form-group"><input name="pre_post_vals[]" class="form-control" value="' + content + '" /></div>';
-
-            content = content.replace('To be able to', 'You can');
+    var len = $("select[name='groups'] option:selected").length;
+    if (len > 0) {
+        var lines = $('textarea[name=objectives]').val().split('\n');
+        var html = '<div class="form-group"><input name="pre_post_vals[]" class="form-control" placeholder="e.g. You are able to recite pi to 100 places" /></div>';
+        if (lines.length == 0) {
             $('#pre_post_content').append(html);
         }
-    }
-    if (this.checked) {
-        $('#hidden_pre_post').show();
-        $('#pre_post_content').show();
+        else {
+            for(var i = 0;i < lines.length;i++){
+                var content = lines[i].replace('* ', ''); 
+                var html = '<div class="form-group"><input name="pre_post_vals[]" class="form-control" value="' + content + '" /></div>';
+    
+                content = content.replace('To be able to', 'You can');
+                $('#pre_post_content').append(html);
+            }
+        }
+        if (this.checked) {
+            $('#hidden_pre_post').show();
+            $('#pre_post_content').show();
+        }
+        else {
+            $('#hidden_pre_post').hide();
+            $('#pre_post_content').hide();
+            $('#pre_post_content').empty();
+        }
     }
     else {
-        $('#hidden_pre_post').hide();
-        $('#pre_post_content').hide();
-        $('#pre_post_content').empty();
+        alert("Please select at least one group first");
+        $('#pre_post').attr('checked', false);
     }
 });
 });
@@ -191,7 +198,7 @@ new lessons with those items.</p>
 <div class="checkbox">
     <label>
     <input id="pre_post" type="checkbox" name="pre_post" value="{{ form_data.pre_post }}">
-    Include a pre/post check of student understanding?</label>
+    Include a pre/post check of student understanding? (At least one group must be selected)</label>
 </div>
 <div id="hidden_pre_post" style="display:none">
     <h4>Pre/post assessment points</h4>
@@ -261,6 +268,11 @@ the lesson you can display on your board.</p>
                 <li><a href="{% url 'uploader:edit_lesson' lesson.code %}">
                     <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                     Edit</a></li>
+                    
+                <li><a href="{% url 'uploader:delete_lesson' lesson.code %}" onclick="javascript:return confirm('DELETE this lesson? Your resources won\'t be affected')">
+                    <span class="glyphicon glyphicon-trash" aria-hidden="true" title=""></span>
+                    Delete</a></li>
+                    
               </ul>
             </div>
     </td>

@@ -760,8 +760,13 @@ def user_lessons(request, user_id=None):
                 if form_data.get('show_presentation_to_students') == 'on':
                     show_to_students = True
                     
-                pre_posts = form_data.getlist('pre_post_vals[]', None)
-                pre_post = True if pre_posts else None
+                # only only pre_posts if we've got a group to assign them to
+                groups = form_data.getlist('groups')
+                if len(groups) > 0:
+                    pre_posts = form_data.getlist('pre_post_vals[]', None)
+                    pre_post = True if pre_posts else None
+                else:
+                    pre_post = False
 
                 l = Lesson(title=form_data.get('title'),
                            slug=slug,
@@ -780,12 +785,6 @@ def user_lessons(request, user_id=None):
 
                 l.url = shorten_url(url)
                 l.save()
-                
-                if form_data.get('group', None):
-                    group = Group.objects.filter(pk=form_data.get('group'))
-                    if group.count() > 0:
-                        group = group[0]
-                        GroupLesson(group=group, lesson=l, set_by=request.user).save()
 
                 if check_lesson_items(request, num_items):
                     for i in range(1, num_items + 1):
@@ -822,10 +821,17 @@ def user_lessons(request, user_id=None):
                             )
 
                             li.save()
-                            
-                if pre_posts:
-                    for pre_post in pre_posts:
-                        LessonPrePost(text=pre_post, lesson=l).save()
+                
+                # assign lessons to those groups and deal with pre/posts
+                if len(groups) > 0:
+                    for group_id in groups:
+                        group = get_object_or_404(Group, pk=group_id)
+                        gl = GroupLesson(group=group, lesson=l, set_by=request.user)
+                        gl.save()
+                
+                        if pre_posts:
+                            for pre_post in pre_posts:
+                                LessonPrePost(text=pre_post, group_lesson=gl).save()
                 
                 request.session['resources'] = None
                 request.session['notes'] = None
@@ -985,7 +991,7 @@ def lesson(request, slug, code=None):
     if l.pre_post:
         
         #if we're a student, check if we've already done this
-        pre_posts = LessonPrePost.objects.filter(lesson=l)
+        pre_posts = LessonPrePost.objects.filter(group_lesson=group_lesson)
         
         existing_pre = LessonPrePostResponse.objects.filter(
             pre_post__in=pre_posts,
@@ -1540,7 +1546,7 @@ def group(request, slug):
         lessons = GroupLesson.objects.filter(group=group).order_by('-date', '-pub_date')
         for lesson in lessons:
             lesson.link = shorten_lesson_url(request, group.code, lesson.lesson.code)
-            lesson.feedback = LessonPrePostResponse.objects.filter(type='post', pre_post__lesson=lesson.lesson).aggregate(Avg('score'))['score__avg']
+            lesson.feedback = LessonPrePostResponse.objects.filter(type='post', pre_post__group_lesson=lesson).aggregate(Avg('score'))['score__avg']
 
         for student_group_object in student_group:
             student = student_group_object.student
@@ -1603,6 +1609,17 @@ def lesson_present(request, group_code, code):
 def denied(request):
     msg = request.GET['msg']
     return render(request, 'uploader/permission_denied.html', {'msg': msg})
+    
+    
+def delete_lesson(request, code):
+    lesson = get_object_or_404(Lesson, code=code)
+    if lesson.uploader == request.user:
+        messages.success(request,"Lesson %s deleted", lesson.title)
+        lesson.delete()
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER',
+                                                             '/'))
+    else:
+        return render(request, 'uploader/permission_denied.html')
 
 """
 ajax views

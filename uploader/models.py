@@ -712,7 +712,7 @@ class LessonItemAdmin(admin.ModelAdmin):
 
 
 class LessonPrePost(models.Model):
-    lesson = models.ForeignKey(Lesson)
+    group_lesson = models.ForeignKey('GroupLesson')
     text = models.CharField(max_length=255)
     
     def __unicode__(self):
