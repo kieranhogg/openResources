@@ -780,9 +780,9 @@ class GroupLesson(models.Model):
     lesson = models.ForeignKey(Lesson)
     set_by = models.ForeignKey(settings.AUTH_USER_MODEL)
     pub_date = models.DateTimeField(auto_now_add=True)
-    # date = models.DateField(null=True, blank=True)
-    # period = models.IntegerField(null=True, blank=True, choices=(
-    #      (1, "P1"), (2, "P2"), (3, "P3"), (4, "P4"), (5, "P5"), (6, "P6")))
+    date = models.DateField(null=True, blank=True)
+    period = models.IntegerField(null=True, blank=True, choices=(
+         (1, "P1"), (2, "P2"), (3, "P3"), (4, "P4"), (5, "P5"), (6, "P6")))
     
 
 ######## signals TODO move to own file #########

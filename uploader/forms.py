@@ -244,15 +244,11 @@ class LessonForm(forms.ModelForm):
     objectives = forms.CharField(widget=forms.Textarea(
         attrs={'placeholder': 'For bullet points, use *. Markdown supported'}),
         label='Learning Objectives/outcomes')
-    date_for = forms.DateTimeField(label='Lesson date', required=False,
-        widget=DateTimePicker(options={"format": "YYYY-MM-DD HH:mm",
-                                       "pickSeconds": False}))
-    group = forms.ModelChoiceField(Group.objects.all(), required=False)
-
+    groups = forms.ModelMultipleChoiceField(required=False, queryset=Group.objects.all())
+    
     class Meta:
         model = Lesson
-        exclude = ('slug', 'uploader', 'url', 'pre_post', 'public', 'unit_topic',
-                   'presentation', 'show_presentation_to_students', 'code', 'date_for')
+        fields = ('title', 'objectives',)
  
         
 class LessonItemForm(forms.ModelForm):
@@ -290,3 +286,12 @@ class TestForm(forms.ModelForm):
             return instance.use_own_questions
         else:
             return self.cleaned_data['use_own_questions']
+            
+            
+class GroupLessonForm(forms.ModelForm):
+    date = forms.DateTimeField(required=False,
+    widget=DateTimePicker(options={"format": "YYYY-MM-DD",
+                                       "pickTime": False}))
+    class Meta:
+        model = GroupLesson
+        fields = ('lesson', 'date', 'period')

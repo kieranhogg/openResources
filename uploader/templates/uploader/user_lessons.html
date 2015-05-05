@@ -225,20 +225,23 @@ new lessons with those items.</p>
 <h3>Existing lessons</h3>
 <p>Clicking <strong>present</strong> will show you a large screen version of 
 the lesson you can display on your board.</p>
-<table class="table" style="margin: 0 auto;">
+<table class="table table-striped" >
     <th>Lesson</th>
+    <th>Groups</th>
     <th>Visibility</th>
-    <th>Short link</th>
     <th>Date</th>
     <th></th>
     
 {% for lesson in lessons %}
 <tr>
     <td>{{ lesson.title }}</td>
+    <td>{% for group in lessons.groups %}
+        {{ group }}
+        {% endfor %}
+    </td>
     <td>
         {% if lesson.public %}Public{% else %}Private{% endif %}
     </td>
-    <td>{{ lesson.url|urlize }}</td>
     <td>{{ lesson.pub_date|date:"d M y" }}</td>
     <td>
         <div class="btn-group">
@@ -246,16 +249,16 @@ the lesson you can display on your board.</p>
                 Actions <span class="caret"></span>
               </button>
               <ul class="dropdown-menu" role="menu">
-                <li><a href="{% url 'uploader:lesson' lesson.slug %}">
+                <li><a href="{% url 'uploader:lesson' lesson.code %}">
                     <span class="glyphicon glyphicon-modal-window" aria-hidden="true"></span>
                     View
                     </a></li>
-                <li>
-                    <a href="{% url 'uploader:lesson_show' lesson.slug %}">
-                    <span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span>
-                    Present</a>
-                </li>
-                <li><a href="{% url 'uploader:edit_lesson' lesson.slug %}">
+                <!--<li>-->
+                <!--    <a href="% url 'uploader:lesson_show' lesson.code %">-->
+                <!--    <span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span>-->
+                <!--    Present</a>-->
+                <!--</li>-->
+                <li><a href="{% url 'uploader:edit_lesson' lesson.code %}">
                     <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                     Edit</a></li>
               </ul>
@@ -264,23 +267,6 @@ the lesson you can display on your board.</p>
 </tr>
 {% endfor %}
 </table>
-<div class="row">
-    <div class="col-md-12 text-center">
-    <ul class="pagination pagination-centered">
-        {% if lessons.has_previous %}
-                <li><a href="?page=1"><<</a></li>
-                <li><a href="?page={{ lessons.previous_page_number }}"><</a></li>
-        {% endif %}
-        
-        {% for i in lessons.paginator.page_range %}
-            <li {% if lessons.number == i %} class="active" {% endif %}><a href="?page={{i}}">{{i}}</a></li>
-        {% endfor %}
-
-        {% if lessons.has_next %}
-                <li><a href="?page={{ lessons.next_page_number }}">></a></li>
-                <li><a href="?page={{ lessons.paginator.num_pages }}">>></a></li>{% endif %}
-    </div>
-</div>
 {% endif %}
 
 

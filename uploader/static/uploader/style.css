@@ -432,3 +432,6 @@ th { white-space: nowrap; }
 a.btn.btn-default {
     color: black;
 }
+.label-danger {
+    float: right;
+}

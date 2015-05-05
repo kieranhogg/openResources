@@ -34,6 +34,8 @@ urlpatterns = patterns('',
     url(r'^groups/(?P<slug>[\w\d-]+)/edit/$', views.groups, name='groups'),
     url(r'^group/(?P<slug>[\w\d-]+)/lesson/(?P<code>[\w\d-]+)/$', views.lesson, name='lesson'),
     url(r'^group/(?P<slug>[\w\d-]+)/$', views.group, name='group'),
+    url(r'^group/(?P<group_code>[\w\d-]+)/lesson/(?P<code>[\w\d-]+)/show/$', views.lesson_show, name='lesson_show'),
+    url(r'^group/(?P<group_code>[\w\d-]+)/lesson/(?P<code>[\w\d-]+)/present/$', views.lesson_present, name='lesson_present'),
     
     url(r'^bookmark/add/$', views.bookmark, name='bookmark'),
     url(r'^bookmark/link/(?P<slug>[\w\d-]+)/$', views.link_bookmark, name='link_bookmark'),
@@ -55,8 +57,6 @@ urlpatterns = patterns('',
     url(r'^profile/lessons', views.user_lessons, name='user_lessons'),
     url(r'^profile/(?P<username>[\w\d-]+)/$', views.profile, name='profile'),
     
-    url(r'lesson/(?P<slug>[\w\d-]+)/show/$', views.lesson_show, name='lesson_show'),
-    url(r'lesson/(?P<slug>[\w\d-]+)/present/$', views.lesson_present, name='lesson_present'),
     url(r'lesson/(?P<slug>[\w\d-]+)/$', views.lesson, name='lesson'),
 
     

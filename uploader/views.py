@@ -727,7 +727,9 @@ def check_lesson_items(request, num_items):
 @login_required
 def user_lessons(request, user_id=None):
     form = LessonForm(request.POST or None, request.FILES or None)
-    
+    # form.fields['groups'].queryset = Group.objects.filter(teacher=request.user)
+    form.fields['groups'].queryset = Group.objects.filter(teacher=request.user)
+
     form_errors = []
     form_data = None
 
@@ -740,11 +742,6 @@ def user_lessons(request, user_id=None):
             request.session['notes'] = None
             request.session['tests'] = None
             request.session['tasks'] = None
-
-        elif form_data.get('add_task'):
-            add_item_to_lesson(request, int(time.time()), 'task')
-        elif not form_data.get('title'):
-            form_errors.append('Please enter a lesson title')
         else:
             num_items = 0
             rs = request.session
@@ -908,15 +905,16 @@ def edit_lesson(request, slug):
     if l.uploader != request.user:
         return HttpResponseForbidden("permission denied")
 
-    form = LessonForm(request.POST or None, instance=l, user=request.user)
-    form.group.queryset = Group.objects.filter(teacher=request.user)
+    form = LessonForm(request.POST or None, instance=l)
+    form.fields['groups'].widget = widgets = forms.HiddenInput()
 
+    # FIXME 
     lis = LessonItem.objects.filter(lesson=l)
 
-    for li in lis:
-        if li.type == 'resources':
-            item = Resource.objects.get(slug=li.slug)
-            li.display = item.get_title()
+    # for li in lis:
+    #     if hasattr(li, 'type') and li.type == 'resources':
+    #         item = Resource.objects.get(slug=li.slug)
+    #         li.display = item.get_title()
 
     if request.POST and form.is_valid():
         lesson = form.save(commit=False)
@@ -1051,8 +1049,11 @@ def lesson(request, slug, code=None):
     return render(request, 'uploader/lesson.html', context)
 
 
-def lesson_show(request, slug):
-    l = get_object_or_404(Lesson, slug=slug)
+def lesson_show(request, group_code, code):
+    l = get_object_or_404(Lesson, code=code)
+    group = get_object_or_404(Group, code=group_code)
+    group_lesson = get_object_or_404(lesson=l, group=group)
+    
     l.url = string.replace(l.url, "http://", "")
     l.objectives = render_markdown(l.objectives)
 
@@ -1507,6 +1508,7 @@ def groups(request, slug=None):
     else:
         group = Group(teacher=request.user)
 
+
     if request.POST:
         form = GroupForm(request.POST, instance=group)
 
@@ -1525,28 +1527,36 @@ def groups(request, slug=None):
 @login_required
 def group(request, slug):
     group = get_object_or_404(Group, slug=slug)
-    student_group = StudentGroup.objects.filter(group=group)
-    tests = Test.objects.filter(teacher=request.user).order_by('-pub_date')
-    lessons = GroupLesson.objects.filter(group=group)
-
-    for student_group_object in student_group:
-        student = student_group_object.student
-        student.results = []
-        tests_taken = 0
-        for test in tests:
-            test_result = TestResult.objects.filter(
-                user=student,
-                test=test).order_by('-score')
-
-            tests_taken += test_result.count()
-            if test_result.count() > 0:
-                student.results.append(
-                    {'score': test_result[0].score, 'total': test.total})
-            else:
-                student.results.append({'total': test.total})
-    # return HttpResponse(tests_taken)
-    context = {'group': group, 'students': student_group, 'tests': tests,
-               'lessons': lessons}
+    
+    if request.POST:
+        lesson = Lesson.objects.get(pk=request.POST['lesson'])
+        GroupLesson(group=group, lesson=lesson, set_by=request.user).save()
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+    else:
+        form = GroupLessonForm()
+        form.fields['lesson'].queryset = Lesson.objects.filter(uploader=request.user).order_by('-pub_date')[:10]
+        student_group = StudentGroup.objects.filter(group=group)
+        tests = Test.objects.filter(teacher=request.user).order_by('-pub_date')
+        lessons = GroupLesson.objects.filter(group=group)
+    
+        for student_group_object in student_group:
+            student = student_group_object.student
+            student.results = []
+            tests_taken = 0
+            for test in tests:
+                test_result = TestResult.objects.filter(
+                    user=student,
+                    test=test).order_by('-score')
+    
+                tests_taken += test_result.count()
+                if test_result.count() > 0:
+                    student.results.append(
+                        {'score': test_result[0].score, 'total': test.total})
+                else:
+                    student.results.append({'total': test.total})
+        # return HttpResponse(tests_taken)
+        context = {'group': group, 'students': student_group, 'tests': tests,
+                   'lessons': lessons, 'form': form}
 
     return render(request, 'uploader/group.html', context)
 
