@@ -688,7 +688,6 @@ class Lesson(models.Model):
     uploader = models.ForeignKey(settings.AUTH_USER_MODEL)
     objectives = models.TextField(blank=True, null=True)
     pre_post = models.BooleanField(default=False)
-    url = models.URLField()
     public = models.BooleanField(default=True, blank=True)
     presentation = models.FileField(upload_to='%Y/%m', null=True, blank=True)
     show_presentation_to_students = models.BooleanField(default=False)

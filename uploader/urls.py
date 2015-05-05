@@ -25,7 +25,7 @@ urlpatterns = patterns('',
     url(r'^resource/(?P<slug>[\w\d-]+)/embed/$', views.view_resource_embed, name='view_resource_embed'),
     url(r'^resource/(?P<slug>[\w\d-]+)/delete$', views.delete_resource, name='delete_resource'),
     url(r'^lesson/(?P<slug>[\w\d-]+)/add-(?P<type>[\w]+)', views.add_item_to_lesson, name='add_item_to_lesson'),
-    url(r'^lesson/(?P<slug>[\w\d-]+)/edit', views.edit_lesson, name='edit_lesson'),
+    url(r'^lesson/(?P<code>[\w\d-]+)/edit', views.edit_lesson, name='edit_lesson'),
     url(r'^lesson_item/(?P<id>[\d-]+)/edit', views.edit_lesson_item, name='edit_lesson_item'),
     #url(r'^resource/(?P<slug>[\w\d-]+)/edit$', views.resource, name='resource'),
     

@@ -900,8 +900,8 @@ def user_lessons(request, user_id=None):
 
 
 @login_required
-def edit_lesson(request, slug):
-    l = get_object_or_404(Lesson, slug=slug)
+def edit_lesson(request, code):
+    l = get_object_or_404(Lesson, code=code)
     if l.uploader != request.user:
         return HttpResponseForbidden("permission denied")
 
@@ -1052,7 +1052,7 @@ def lesson(request, slug, code=None):
 def lesson_show(request, group_code, code):
     l = get_object_or_404(Lesson, code=code)
     group = get_object_or_404(Group, code=group_code)
-    group_lesson = get_object_or_404(lesson=l, group=group)
+    group_lesson = get_object_or_404(GroupLesson, lesson=l, group=group)
     
     l.url = string.replace(l.url, "http://", "")
     l.objectives = render_markdown(l.objectives)
@@ -1538,6 +1538,8 @@ def group(request, slug):
         student_group = StudentGroup.objects.filter(group=group)
         tests = Test.objects.filter(teacher=request.user).order_by('-pub_date')
         lessons = GroupLesson.objects.filter(group=group)
+        for lesson in lessons:
+            lesson.link = shorten_url(request.build_absolute_uri(reverse('uploader:lesson', args=[group.code, lesson.lesson.code])))
     
         for student_group_object in student_group:
             student = student_group_object.student
@@ -1588,8 +1590,10 @@ def link_test(request, code):
     return link_resource(request, 'test', code)
     
     
-def lesson_present(request, slug):
-    lesson = get_object_or_404(Lesson, slug=slug)
+def lesson_present(request, group_code, code):
+    lesson = get_object_or_404(Lesson, code=code)
+    group = get_object_or_404(Group, code=group_code)
+    group_lesson = get_object_or_404(GroupLesson, group=group, lesson=lesson)
     lis = LessonItem.objects.filter(lesson=lesson)
     context = {'lesson': lesson, 'lis': lis}
     return render(request, 'uploader/lesson_present.html', context)

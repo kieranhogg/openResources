@@ -72,6 +72,11 @@ def shorten_url(url):
     r = requests.get(get_url)
     return r.text
     
+def shorten_lesson_url(group_code, lesson_code):
+    local_url = request.build_absolute_uri(
+        reverse('uploader:lesson', args=[group_code, lesson_code]))
+
+    return shorten_url(local_url)
     
 def get_resource_rating(resource_id, use='display'):
     """Calculate a resource's rating

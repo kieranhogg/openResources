@@ -57,6 +57,7 @@ $(function () {
 <table class="table table-striped">
     <th>Lesson</th>
     <th>Unit Topic</th>
+    <th>Short link</th>
     <th>Date</th>
     <th>Feedback <span class="glyphicon glyphicon-question-sign" style="font-size: 0.9em" aria-hidden="true" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Average post lesson understanding (of out 5)"></span></th>
     <th></th>
@@ -66,6 +67,9 @@ $(function () {
     <td>{{ group_lesson.lesson.title }}</td>
     <td>
         {{ group_lesson.lesson.unit_topic }}
+    </td>
+    <td>
+        {{ group_lesson.link|urlize }}
     </td>
     <td>
         {% if group_lesson.date %}
@@ -97,7 +101,8 @@ $(function () {
 </tr>
 {% endfor %}
 </table>
-<p>No lessons</p>
+{% else %}
+<p>No lessons assigned to this group</p>
 {% endif %}
 <h3>Tests</h3>
 <div class="table-responsive">
