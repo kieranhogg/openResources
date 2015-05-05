@@ -2,8 +2,49 @@
 {% block body_block %}
 {% load bootstrap %}
 {% load static %}
+<script>
+var taskCount;
+function add_lesson_item(count) {
+    if (isNaN(taskCount)) {
+        taskCount = count + 1;
+    }
+    else {
+        taskCount++
+    }
+    var html = '<div class="col-xs-6 col-md-3"><div class=" thumbnail"><h4>Task</h4><input type="hidden" name="type' + taskCount + '" value="task" /><div class="order"><p><label for="order' + taskCount + '">Order</label> <input name="order' + taskCount + '" style="width: 20px" value="' + taskCount + '" /></div><div class="instructions"><p><label for="instructions' + taskCount + '">Instructions</label><textarea name="instructions' + taskCount + '" class="form-control"></textarea></p></div></div>';
+    $('.row').append(html);
+}
+$(function() {
+
+$('#pre_post').change(function () {
+    var lines = $('textarea[name=objectives]').val().split('\n');
+    var html = '<div class="form-group"><input name="pre_post_vals[]" class="form-control" placeholder="e.g. You are able to recite pi to 100 places" /></div>';
+    if (lines.length == 0) {
+        $('#pre_post_content').append(html);
+    }
+    else {
+        for(var i = 0;i < lines.length;i++){
+            var content = lines[i].replace('* ', ''); 
+            var html = '<div class="form-group"><input name="pre_post_vals[]" class="form-control" value="' + content + '" /></div>';
+
+            content = content.replace('To be able to', 'You can');
+            $('#pre_post_content').append(html);
+        }
+    }
+    if (this.checked) {
+        $('#hidden_pre_post').show();
+        $('#pre_post_content').show();
+    }
+    else {
+        $('#hidden_pre_post').hide();
+        $('#pre_post_content').hide();
+        $('#pre_post_content').empty();
+    }
+});
+});
+</script>
 <h2>{% block head_title %}My Lessons{% endblock %}</h2>
-{% if resources or notes or questions or tasks %}
+{% if resources or notes or tests or tasks %}
 <p>Below are the list of items you have added so far to your lesson.
 If you are happy with the list, you can create it. If you want to add some more,
 you can leave, add some more items and come back.</p>
@@ -15,91 +56,110 @@ you can leave, add some more items and come back.</p>
     {% endfor %}
     <form role="form" action method="post">
         {% csrf_token %}
-        <span class="label label-danger">required</span>
-        <div class="form-group">
-            <label for="title">Lesson title</label>
-            <input name="title" class="form-control" value="{{ form_data.title }}" placeholder="A short but descriptive title for your lesson" />
+
+        {% for field in form %}
+        <div>
+            {% if field.field.required %}<span class="label label-danger">required</span>{% endif %}
+            {{ field|bootstrap }}
         </div>
-        <div class="form-group">
-            <label for="objectives">Learning Objectives/outcomes</label>
-            <textarea name="objectives" class="form-control" value="{{ form_data.objectives }}" placeholder="For bullet points, use * other markdown supported"></textarea>
-        </div>
-        <div class="form-group">
-            <label for="objectives">Lesson Presentation</label>
-            <input type="file" name="presentation" />
-            Upload an optional lesson presentation
-        </div>
-        <div class="checkbox">
-        <label>
-        <input type="checkbox" name="show_presentation_to_students">
-        Show lesson presentation to students?</label>
-</div>
+        {% endfor %}
+<h3>Lesson items</h3>
+<div>
+<div class="row">
 {% else %}
 <p>If you add items (resources, notes or questions) to a lesson, they will show up on this page and you can create
 new lessons with those items.</p>
 {% endif %}
+
+
 {% if resources %}
-    <h3>Lesson items</h3>
+
     {% for resource in resources %}
-        <div class="lesson-resource">
-        <h4>Resource: {{ resource }}</h4>
-        <span class="label label-danger">required</span>
-        <input type="hidden" name="slug{{ resource.count }}" value="{{ resource.slug }}" />
-        <input type="hidden" name="type{{ resource.count }}" value="resources" />
-        <div class='order'>
-            <p>
-                <label for="order{{ resource.count }}">Order</label>
-                <input name="order{{ resource.count }}" style="width: 20px" value="{{ resource.count }}" />
-            </p>
-        </div>
-        <div class="instructions">
-            <p><label for="instructions{{resource.count}}">Instructions</label>
-                <textarea name="instructions{{resource.count}}" class="form-control" value="{{ form_data.val }}"></textarea>
-            </p>
-        </div>
+          <div class="col-xs-6 col-md-3">
+              <div class="thumbnail">
+            <h4>Resource: {{ resource }}
+                <a href="javascript:void(0);" onclick="$(this).closest('div').remove();">
+                <span style="color: #999; font-size:0.8em" class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                </a>
+            </h4>
+            <input type="hidden" name="slug{{ resource.count }}" value="{{ resource.slug }}" />
+            <input type="hidden" name="type{{ resource.count }}" value="resources" />
+            <div class='order'>
+                <p>
+                    <span class="label label-danger">required</span>
+                    <label for="order{{ resource.count }}">Order</label>
+                    <input name="order{{ resource.count }}" style="width: 40px" value="{{ resource.count }}" />
+                    
+                </p>
+            </div>
+            <div class="instructions">
+                <p><label for="instructions{{resource.count}}">Instructions</label>
+                    <textarea name="instructions{{resource.count}}" class="form-control" value="{{ form_data.val }}"></textarea>
+                </p>
+            </div>
+            </div>
         </div>
     {% endfor %}
+    
+
 {% endif %}
         
 {% if notes %}
     {% for note in notes %}
-        <h4>Notes: {{ note.unit_topic }}</h4>
+    <div class="col-xs-6 col-md-3">
+              <div class="thumbnail">
+        <h4>Notes: {{ note.content.unit_topic }} <a href="javascript:void(0);" onclick="$(this).closest('div').remove();">
+            <span style="color: #999; font-size:0.8em" class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+        </a></h4>
+        
         <input type="hidden" name="slug{{ note.count }}" value="{{ note.slug }}" />
         <input type="hidden" name="type{{ note.count }}" value="notes" />
         <div class='order'>
             <p><label for="order{{ note.count }}">Order</label>
-            <input name="order{{ note.count }}" style="width: 20px" value="{{ note.count }}" />
+            <input name="order{{ note.count }}" style="width: 20px" value="{{ note.count }}" /></p>
         </div>
         <div class="instructions">
             <p><label for="instructions{{note.count}}">Instructions</label>
                 <textarea name="instructions{{note.count}}" class="form-control"></textarea>
             </p>
         </div>
-        </p>
+                </div>
+        </div>
     {% endfor %}
 {% endif %}
 
 {% if tests %}
     {% for test in tests %}
-        <h4>Test: {{ test }}</h4>
+    <div class="col-xs-6 col-md-3">
+              <div class="thumbnail">
+        <h4>Test: {{ test }} <a href="javascript:void(0);" onclick="$(this).closest('div').remove();">
+        <span style="color: #999; font-size:0.8em" class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+        </a></h4>
+        
         <input type="hidden" name="slug{{ test.count }}" value="{{ test.slug }}" />
         <input type="hidden" name="type{{ test.count }}" value="test" />
         <div class='order'>
             <p><label for="order{{ test.count }}">Order</label>
-            <input name="order{{ test.count }}" style="width: 20px" value="{{ test.count }}" />
+            <input name="order{{ test.count }}" style="width: 20px" value="{{ test.count }}" /></p>
         </div>
         <div class="instructions">
             <p><label for="instructions{{test.count}}">Instructions</label>
                 <textarea name="instructions{{test.count}}" class="form-control"></textarea>
             </p>
         </div>
-        </p>
+                </div>
+        </div>
     {% endfor %}
 {% endif %}
 
 {% if tasks %}
     {% for task in tasks %}
-        <h4>Task</h4>
+    <div class="col-xs-6 col-md-3">
+              <div class="thumbnail">
+        <h4>Task <a href="javascript:void(0);" onclick="$(this).closest('div').remove();"> 
+        <span style="color: #999; font-size:0.8em" class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+        </a></h4>
+        
         <input type="hidden" name="type{{ task }}" value="task" />
         <div class='order'>
             <p><label for="order{{ task }}">Order</label>
@@ -110,11 +170,17 @@ new lessons with those items.</p>
                 <textarea name="instructions{{ task }}" class="form-control"></textarea>
             </p>
         </div>
+        </div>
+        </div>
     {% endfor %}
 {% endif %}
 
-{% if resources or notes or questions or tasks %}
-<h4>Visibility</h4>
+{% if resources or notes or test or tasks %}
+</div>
+<a href="javascript:void(0);" onclick="javascript:add_lesson_item({{resources|length}});"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add New Task</a>
+
+<hr />
+<h4>Extras</h4>
 <div class="checkbox">
     <label>
     <input type="checkbox" name="public" checked="checked" />
@@ -122,22 +188,35 @@ new lessons with those items.</p>
     (Recommended unless there are school-specific instructions in the lesson)
     </label>
 </div>
-<h4>Actions</h4>
-<p>To add another task or to clear all items, choose an option and click submit.</p>
 <div class="checkbox">
     <label>
-    <input type="checkbox" name="add_task" />
-        Add empty task?
-    </label>
+    <input id="pre_post" type="checkbox" name="pre_post" value="{{ form_data.pre_post }}">
+    Include a pre/post check of student understanding?</label>
 </div>
-
+<div id="hidden_pre_post" style="display:none">
+    <h4>Pre/post assessment points</h4>
+    <p>To be be phrased: e.g. "You can...", "You are able to..."</p>
+    <div id="pre_post_content" style="display:none"></div>
+    <p><a href="javascript:void(0);" onclick="add_pre_post();"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add another</a></p>
+</div>
+<div class="form-group">
+    <p>
+    <label for="objectives"><h5>Lesson Presentation</h5></label>
+    <input type="file" name="presentation" />
+    Upload an optional lesson presentation</p>  
+</div>
 <div class="checkbox">
-<label>
-    <input type="checkbox" name="clear">
-    Clear current lesson items?</label>
+    <p>
+        <label>
+        <input type="checkbox" name="show_presentation_to_students">
+        Show lesson presentation to students?</label>
+    </p>
 </div>
     <div class="form-group text-center">
-        <button type="submit" value="submit" class="btn btn-success">Submit</button>
+        <button type="submit" name="submit" value="delete" class="btn btn-danger">
+            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+            Clear Lesson</button>
+        <button type="submit" name="submit" value="submit" class="btn btn-success">Create Lesson</button>
 </div>
     </form>
 {% endif %}

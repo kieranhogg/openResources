@@ -239,12 +239,24 @@ class StudentProfileForm(forms.ModelForm):
 
 
 class LessonForm(forms.ModelForm):
+    title = forms.CharField(widget=forms.TextInput(
+        attrs={'placeholder': 'A short but descriptive title for your lesson'}))
+    objectives = forms.CharField(widget=forms.Textarea(
+        attrs={'placeholder': 'For bullet points, use *. Markdown supported'}),
+        label='Learning Objectives/outcomes')
+    date_for = forms.DateTimeField(label='Lesson date', required=False,
+        widget=DateTimePicker(options={"format": "YYYY-MM-DD HH:mm",
+                                       "pickSeconds": False}))
+    group = forms.ModelChoiceField(Group.objects.all(), required=False)
+
     class Meta:
         model = Lesson
-        exclude = ('slug', 'uploader', 'url')
+        exclude = ('slug', 'uploader', 'url', 'pre_post', 'public', 'unit_topic',
+                   'presentation', 'show_presentation_to_students', 'code', 'date_for')
  
         
 class LessonItemForm(forms.ModelForm):
+
     class Meta:
         model = LessonItem
         exclude = ('lesson', 'slug', 'type')

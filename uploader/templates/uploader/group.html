@@ -6,14 +6,11 @@
 $(document).ready(function(){
         var table = $('#tests').dataTable({
         "order": [[ 7, "desc" ]],
-        "scrollY": "600px",
-        "scrollX": "100%",
-        "scrollCollapse": true,
     });
-    new FixedColumns(table, {
-                left:   true,
-                right:  true
-            });
+    // new FixedColumns(table, {
+    //             left:   true,
+    //             right:  true
+    //         });
 });
 $(function () {
   $('[data-toggle="tooltip"]').tooltip()
@@ -24,7 +21,12 @@ $(function () {
 <p>{{ group.code }}</p>
 
 {% if students %}
+<h3>Lessons</h3>
+{% for group_lesson in lessons %}
+<p><a href="{% url 'uploader:lesson' group.code group_lesson.lesson.code %}">{{ group_lesson.lesson.title }}</a></p>
+{% endfor %}
 <h3>Tests</h3>
+<div class="table-responsive">
 <table id='tests' class='table table-striped'>
     <thead>
     <tr style="height:100%">
@@ -52,6 +54,7 @@ $(function () {
     {% endfor %}
     </tbody>
 </table>
+</div>
 <a href="{% url 'uploader:add_test' %}">
     <button class='btn btn-success'>New Test</button>
 </a>

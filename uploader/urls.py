@@ -14,6 +14,7 @@ urlpatterns = patterns('',
     url(r'^lookup/unit_topic/(?P<unit_id>\d+)/$', views.get_unit_topics, name='get_unit_topics'),
     url(r'^lookup/url_description/(?P<url>.+)$', views.get_url_description, name='get_url_description'),
     url(r'^bulk/bookmark/(?P<action>.+)/(?P<ids>.+)/$', views.bulk_bookmark_update, name='bulk_bookmark_update'),
+    url(r'^pre-post/(?P<action>.+)/(?P<id>.+)/$', views.pre_post, name='pre_post'),
     
     url(r'^subjects/$', views.subjects, name='subjects'),
     url(r'^favourites/$', views.favourites, name='favourites'),
@@ -30,8 +31,9 @@ urlpatterns = patterns('',
     
     url(r'^groups/$', views.groups_list, name='groups_list'),
     url(r'^groups/add/$', views.groups, name='groups'),
-    url(r'^groups/(?P<slug>[\w\d-]+)/edit$', views.groups, name='groups'),
-    url(r'^group/(?P<slug>[\w\d-]+)', views.group, name='group'),
+    url(r'^groups/(?P<slug>[\w\d-]+)/edit/$', views.groups, name='groups'),
+    url(r'^group/(?P<slug>[\w\d-]+)/lesson/(?P<code>[\w\d-]+)/$', views.lesson, name='lesson'),
+    url(r'^group/(?P<slug>[\w\d-]+)/$', views.group, name='group'),
     
     url(r'^bookmark/add/$', views.bookmark, name='bookmark'),
     url(r'^bookmark/link/(?P<slug>[\w\d-]+)/$', views.link_bookmark, name='link_bookmark'),
@@ -53,8 +55,10 @@ urlpatterns = patterns('',
     url(r'^profile/lessons', views.user_lessons, name='user_lessons'),
     url(r'^profile/(?P<username>[\w\d-]+)/$', views.profile, name='profile'),
     
-    url(r'lesson/(?P<slug>[\w\d-]+)/$', views.lesson, name='lesson'),
     url(r'lesson/(?P<slug>[\w\d-]+)/show/$', views.lesson_show, name='lesson_show'),
+    url(r'lesson/(?P<slug>[\w\d-]+)/present/$', views.lesson_present, name='lesson_present'),
+    url(r'lesson/(?P<slug>[\w\d-]+)/$', views.lesson, name='lesson'),
+
     
     url(r'^notes/(?P<slug>[\w\d-]+)/$', views.view_notes_d, name='view_notes_d'),
     url(r'^notes/(?P<slug>[\w\d-]+)/edit/$', views.notes_d, name='notes_d'),

@@ -338,8 +338,7 @@ hr {
 }
 
 form .label-danger {
-    float: right
-    margin-top: -40px;
+    float: right;
 } 
 a.btn-primary {
     color: white !important;
@@ -422,5 +421,14 @@ table .glyphicon {
 th { white-space: nowrap; }
 
 .btn-default .glyphicon {
+    color: black;
+}
+.order {
+
+}
+.instructions {
+    width: 60%;
+}
+a.btn.btn-default {
     color: black;
 }

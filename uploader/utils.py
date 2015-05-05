@@ -95,12 +95,15 @@ def random_key(length, item=None):
     while not unique:
         key = ''
         for i in range(length):
-            key += random.choice(string.lowercase + string.uppercase + string.digits)
+            key += random.choice(string.lowercase + string.digits)
         if not item:
             unique = True
         else:
             if item == 'Test':
                 if Test.objects.filter(code=key).count() == 0:
+                    unique = True
+            elif item == 'Lesson':
+                if Lesson.objects.filter(code=key).count() == 0:
                     unique = True
                     
     return key

@@ -1,7 +1,6 @@
 {% extends 'uploader/base.html' %}
 {% block body_block %}
 {% load static %}
-{{ public }}
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script>
       google.load("visualization", "1.1", {packages:["bar"]});
@@ -123,19 +122,19 @@ $(function () {
 {% endif %}
 
 <h3>Lesson Tasks</h3>
-
 <div class="row">
   {% for item in lesson_items %}
-     {% if item.type == 'resources' %}
+
+     {% if item.type == 'resource' %}
            <div class="modal fade bs-example-modal-lg" id="myModal{{ forloop.counter }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel{{ forloop.counter }}" aria-hidden="true">
             <div class="modal-dialog modal-lg">
               <div class="modal-content">
                 <div class="modal-header">
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                  <h4 class="modal-title" id="myModalLabel{{ forloop.counter }}">{{ item.title }}</h4>
+                  <h4 class="modal-title" id="myModalLabel{{ forloop.counter }}">{{ item.content }}</h4>
                 </div>
                 <div class="modal-body">
-                  <iframe src="{% url 'uploader:view_resource_embed' item.slug %}" width="100%" height="600" frameborder="0" /></iframe>
+                  <iframe src="{% url 'uploader:view_resource_embed' item.content.slug %}" width="100%" height="600" frameborder="0" /></iframe>
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -149,54 +148,70 @@ $(function () {
       <!--<div class="caption">-->
         <h4 class="task_num">{{ forloop.counter }}</h4>
         
-        {% if item.instructions %}
-        <p>{{ item.instructions|safe }}</p>
-        {% endif %}
-        
-        {% if item.type == 'resources' %}
-        <p style="font-size: 1.2em">
-          {% if resource.file %}
+        {% if item.type == 'resource' %}
+        <h4>
+          {% if item.content.file %}
               <span class="glyphicon glyphicon-paperclip" aria-hidden="true" title=""></span>
+               {{ item.content.file.title }}
           {% else %}
-              {% if resource.bookmark.type == 'video' %}
+              {% if item.content.bookmark.type == 'video' %}
               <span class="glyphicon glyphicon-facetime-video" aria-hidden="true" title="video"></span>
-              {% elif resource.bookmark.type == 'news' %}
+              {% elif item.content.bookmark.type == 'news' %}
               <span class="glyphicon glyphicon-list-alt" aria-hidden="true" title="news"></span>
-              {% elif resource.bookmark.type == 'image' %}
+              {% elif item.content.bookmark.type == 'image' %}
               <span class="glyphicon glyphicon-image" aria-hidden="true" title="image"></span>
-              {% elif resource.bookmark.type == 'info' %}
+              {% elif item.content.bookmark.type == 'info' %}
               <span class="glyphicon glyphicon-info-sign" aria-hidden="true" title="info"></span>
-              {% elif resource.bookmark.type == 'blog' %}
+              {% elif item.content.bookmark.type == 'blog' %}
               <span class="glyphicon glyphicon-comment" aria-hidden="true" title="blog"></span>
               {% else %}
               <span class="glyphicon glyphicon-bookmark" aria-hidden="true" title="bookmark"></span>
               {% endif %}
+               {{ item.content.bookmark.title }}
           {% endif %}
-          {{ item.title }} resource </p>
+          </h4>
+          {% if item.instructions %}
+          <p>{{ item.instructions|safe }}</p>
+          {% endif %}
+           <div class="text-center">
         <div class="btn-group" role="group" aria-label="actions">
           <div class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Preview" data-container="body">
             <a href="javascript:void(0)" data-toggle="modal" data-target="#myModal{{ forloop.counter }}">
               <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
             </a>
           </div>
-          <div class="btn btn-default" data-toggle="tooltip" data-placement="top" title="View resource" data-container="body">
-            <a href="{% url 'uploader:view_resource' item.slug %}">
+          <div class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Open" data-container="body">
+            <a href="{% url 'uploader:view_resource' item.content.slug %}">
               <span class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span>
             </a>
           </div>
         </div>
+        </div>
        
-        {% elif item.type == 'notes' %}
-        <p><a href="{% url 'uploader:view_notes_d' item.slug %}">
-            <span class="glyphicon glyphicon-book" aria-hidden="true" title='Notes'></span>
-            {{ item.title }} notes
+        {% elif item.type == 'note' %}
+        <h4><span class="glyphicon glyphicon-book" aria-hidden="true" title='Notes'></span>
+        {{ item.content.unit_topic.title }}</h4>
+        
+          {% if item.instructions %}
+          <p>{{ item.instructions|safe }}</p>
+          {% endif %}
+          
+        <p class='text-center'><a class='btn btn-default' href="{% url 'uploader:view_notes_d' item.content.slug %}">
+            View notes
         </a>
         </p>
+        
         {% elif item.type == 'test' %}
-        <p><a href="{% url 'uploader:test' item.slug %}">
-            Take {{ item.title }} test
+        <h4><span style="margin-top: -5px;" class="glyphicon glyphicon-check" aria-hidden="true"></span> {{ item.content.unit_topic.title }}</h4>
+        {% if item.instructions %}
+          <p>{{ item.instructions|safe }}</p>
+          {% endif %}
+        <p class='text-center'><a class='btn btn-default' href="{% url 'uploader:test' item.content.code %}">
+            Take test
         </a>
         </p>
+        {% else %}
+        couldn't work out type
         {% endif %}
         
       <!--</div>-->
@@ -204,10 +219,6 @@ $(function () {
   </div>
   {% endfor %}
 </div>
-
-{% for item in lesson_items %}
-
-{% endfor %}
 
 {% if pre_posts and user.studentprofile and not existing_post %}
 <div id="post_questions" style="display:none">
