@@ -158,7 +158,7 @@ class StudentForm(forms.Form):
                             surname=self.cleaned_data['last_name'])
         up.save()
         
-        new_user.groups.add(Group.objects.get(name='student'))
+        #new_user.groups.add(Group.objects.get(name='student'))
         
         return new_user
         
