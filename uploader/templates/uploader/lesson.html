@@ -10,7 +10,7 @@
         var data = google.visualization.arrayToDataTable([
           ['Topic', 'Before', 'After'],
           {% for item in pre_posts %}
-           ['{{item.text|truncatechars:20}}', {{item.pre}}, {{item.post}}],
+           ['{{item.text|truncatechars:60}}', {{item.pre}}, {{item.post}}],
           {% endfor %}
          
         ]);
@@ -21,11 +21,11 @@
             // height: 400,
             vAxis: {
                 title: "Average rating",
-                min: 5,
+                min: 0,
                 max: 5
             },
             hAxis: {
-                title: "Topic"
+                title: "Topic",
             },
             seriesType: "bars",
         };
@@ -115,8 +115,10 @@ $(function () {
 </form>
 </div>
 <div id="lesson_tasks" style="display:none">
+
 {% elif pre_posts and lesson.uploader == user %}
-  <div id="columnchart_material" style="width: 80%; height: 300px; margin: 0 auto">Loading chart...</div>
+<h4>Pre and Post assessment</h4>
+  <div id="columnchart_material" style="width: 80%; height: 400px; margin: 0 auto">Loading chart...</div>
 {% else %}
 <div id="lesson_tasks">
 {% endif %}
