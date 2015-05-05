@@ -10,7 +10,7 @@
         var data = google.visualization.arrayToDataTable([
           ['Topic', 'Before', 'After'],
           {% for item in pre_posts %}
-           ['{{item.text}}', {{item.pre}}, {{item.post}}],
+           ['{{item.text|truncatechars:20}}', {{item.pre}}, {{item.post}}],
           {% endfor %}
          
         ]);
@@ -143,7 +143,7 @@ $(function () {
             </div>
           </div>
   {% endif %}
-  <div class="col-sm-6 col-md-3">
+  <div class="col-sm-6 col-md-2">
     <div class="thumbnail">
       <!--<div class="caption">-->
         <h4 class="task_num">{{ forloop.counter }}</h4>
