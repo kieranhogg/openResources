@@ -706,14 +706,10 @@ class LessonItem(models.Model):
     content_object = GenericForeignKey('content_type', 'object_id')
     order = models.PositiveIntegerField()
     instructions = models.TextField(blank=True, null=True)
-    
-    
-    type = models.CharField(max_length=50, blank=True, null=True)
-    slug = models.SlugField(max_length=100, blank=True, null=True)
 
 
 class LessonItemAdmin(admin.ModelAdmin):
-    list_display = ('lesson', 'content_type', 'object_id', 'order', 'type', 'slug')
+    list_display = ('lesson', 'content_type', 'object_id', 'order')
 
 
 class LessonPrePost(models.Model):

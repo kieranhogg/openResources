@@ -116,7 +116,7 @@ $(function () {
 </div>
 <div id="lesson_tasks" style="display:none">
 {% elif pre_posts and lesson.uploader == user %}
-  <div id="columnchart_material" style="width: 500px; height: 300px; margin: 0 auto">Loading chart...</div>
+  <div id="columnchart_material" style="width: 80%; height: 300px; margin: 0 auto">Loading chart...</div>
 {% else %}
 <div id="lesson_tasks">
 {% endif %}
@@ -143,7 +143,11 @@ $(function () {
             </div>
           </div>
   {% endif %}
+  {% if lesson_items|length > 3 %}
   <div class="col-sm-6 col-md-2">
+  {% else %}
+  <div class="col-sm-6 col-md-3">
+  {% endif %}
     <div class="thumbnail">
       <!--<div class="caption">-->
         <h4 class="task_num">{{ forloop.counter }}</h4>
