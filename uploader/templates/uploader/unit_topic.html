@@ -54,6 +54,14 @@
 </p>
 {% if user.teacherprofile %}
 <p>
+    <a href="{% url 'uploader:unit_lessons' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
+        <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
+        <span class="menu_text">Questions 
+        {% if questions %}<span class="badge">{{ questions }}</span>
+        {% else %}<span class="badge">0</span>{% endif %}</span>
+    </a>
+</p>
+<p>
     <a href="{% url 'uploader:questions' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
         <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
         <span class="menu_text">Questions 

@@ -1065,6 +1065,7 @@ def lesson_show(request, group_code, code):
     l = get_object_or_404(Lesson, code=code)
     group = get_object_or_404(Group, code=group_code)
     group_lesson = get_object_or_404(GroupLesson, lesson=l, group=group)
+    l.url = shorten_lesson_url(request, group.code, l.code)
     
     l.url = string.replace(l.url, "http://", "")
     l.objectives = render_markdown(l.objectives)
