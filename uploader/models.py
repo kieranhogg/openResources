@@ -782,6 +782,9 @@ class GroupLesson(models.Model):
     date = models.DateField(null=True, blank=True)
     period = models.IntegerField(null=True, blank=True, choices=(
          (1, "P1"), (2, "P2"), (3, "P3"), (4, "P4"), (5, "P5"), (6, "P6")))
+         
+    def __unicode__(self):
+        return str(self.group) + " | " + str(self.lesson)
     
 
 ######## signals TODO move to own file #########
