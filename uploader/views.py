@@ -64,13 +64,14 @@ def index(request):
 
             tests = Test.objects.filter(group__in=groups)[:5]
             lessons = GroupLesson.objects.filter(set_by=request.user).order_by('-date', '-pub_date')[:5]
+            assignments = Assignment.objects.filter(group__in=groups).order_by('-deadline', '-pub_date')[:5]
             
             #FIXME templatetag these
             for lesson in lessons:
                 lesson.link = shorten_lesson_url(request, lesson.group.code, lesson.lesson.code)
                 lesson.feedback = LessonPrePostResponse.objects.filter(type='post', pre_post__group_lesson=lesson).aggregate(Avg('score'))['score__avg']
 
-            context = {'groups': groups, 'tests': tests, 'lessons': lessons}
+            context = {'groups': groups, 'tests': tests, 'lessons': lessons, 'assignments': assignments}
             return render(request, 'uploader/teacher_home.html', context)
         else:
             # FIXME use a filter
@@ -1569,6 +1570,7 @@ def group(request, slug):
         student_group = StudentGroup.objects.filter(group=group)
         tests = Test.objects.filter(teacher=request.user).order_by('-pub_date')
         lessons = GroupLesson.objects.filter(group=group).order_by('-date', '-pub_date')
+
         for lesson in lessons:
             lesson.link = shorten_lesson_url(request, group.code, lesson.lesson.code)
             lesson.feedback = LessonPrePostResponse.objects.filter(type='post', pre_post__group_lesson=lesson).aggregate(Avg('score'))['score__avg']
@@ -1652,14 +1654,13 @@ def delete_lesson(request, code):
 
 def assignment(request):
     form = AssignmentForm(request.POST or None)
-    logging.error("0")
-
+    form.fields['group'].queryset = Group.objects.filter(teacher=request.user)
     if request.POST and form.is_valid():
         rp = request.POST
-
-        Assignment(title=title,
-                   code=random_key(5, 'Assignment'),
-                   group=Group.objects.get(pk=1),
+        group = get_object_or_404(Group, pk=rp.get('group'))
+        Assignment(title=rp.get('title'),
+                   code=random_key(3, 'Assignment'),
+                   group=group,
                    teacher=request.user,
                    description=rp.get('description'),
                    deadline=rp.get('deadline')).save()
