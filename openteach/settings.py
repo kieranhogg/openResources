@@ -2,7 +2,7 @@
 openTeach related settings
 """
 SITE_NAME = 'openTeach'
-APP_VERSION = "0.5"
+APP_VERSION = "0.7"
 
 """
 Django settings
