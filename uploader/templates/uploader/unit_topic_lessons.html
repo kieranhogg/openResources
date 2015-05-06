@@ -1,0 +1,26 @@
+{% extends 'uploader/base.html' %}
+{% block body_block %}
+<ol class="breadcrumb">
+    <li><a href="{% url 'uploader:subjects' %}">Home</a></li>
+    <li><a href="{% url 'uploader:subject' unit_topic.unit.syllabus.subject.slug %}">
+        {{ unit_topic.unit.syllabus.subject.subject_name|truncatechars:25 }}</a></li>
+    <li><a href="{% url 'uploader:syllabuses' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug %}">
+     {{ unit_topic.unit.syllabus.exam_level.level_name|truncatechars:25 }}</a></li>
+    <li><a href="{% url 'uploader:syllabus' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug %}"> 
+     {{ unit_topic.unit.syllabus|truncatechars:25 }}</a></li>
+    <li><a href="{% url 'uploader:unit' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug %}">
+     {{ unit_topic.unit.title|truncatechars:25 }}</a></li>
+    <li><a href="{% url 'uploader:unit_topic' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug  %}">
+     {{ unit_topic.title|truncatechars:25 }}</a></li>
+    <li class='active'>Lessons</li>
+</ol>
+<h2>{% block head_title %}{{ unit_topic.title }} Lessons{% endblock %}</h2>
+{% include 'uploader/unit_topic_tabs.html' %}
+{% if lessons %}
+<ul>
+    {% for lesson in lessons %}
+    <li><a href="{% url 'uploader:lesson' lesson.slug %}">{{ lesson }}</a></li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% endblock %}
