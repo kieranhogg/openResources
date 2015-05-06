@@ -438,7 +438,7 @@ a.btn.btn-default {
 .table > tbody > tr > td {
      vertical-align: middle;
 }
-.small-alignment th, td {
+.small-alignment th, .small-alignment td {
     font-size: 1.2em;
     padding: 10px;
     vertical-align: middle;
