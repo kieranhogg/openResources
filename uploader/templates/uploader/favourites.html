@@ -21,17 +21,18 @@
         </div>
     {% endif %}
     
-    <h3>Syllabus</h3>
+    <h3>Syllabuses</h3>
     {% if syllabuses %}
         <div>
             <ul>
                 {% for syllabus in syllabuses %}
                 {% with syllabus=syllabus.syllabus %}
-                    <a href="{% url 'uploader:syllabus' syllabus.subject.slug syllabus.exam_level.slug syllabus.slug %}">
-                        <li>
+                    <li>
+                        <a href="{% url 'uploader:syllabus' syllabus.subject.slug syllabus.exam_level.slug syllabus.slug %}">
+                        
                             {{ syllabus }}
-                        </li>
-                    </a>
+                        </a>
+                    </li>
                 {% endwith %}
                 {% endfor %}
             </ul>
@@ -41,17 +42,19 @@
         syllabus page to add them to this page.</p>
     {% endif %}
     
-    <h3>Unit</h3>
+    <h3>Units</h3>
     {% if units %}
         <div>
             <ul>
                 {% for unit in units %}
                 {% with unit=unit.unit %}
-                    <a href="{% url 'uploader:unit' unit.syllabus.subject.slug unit.syllabus.exam_level.slug unit.syllabus.slug unit.slug %}">
-                        <li>
-                            {{ unit }}
-                        </li>
-                    </a>
+                    <li>
+                        <a href="{% url 'uploader:unit' unit.syllabus.subject.slug unit.syllabus.exam_level.slug unit.syllabus.slug unit.slug %}">
+                        
+                           {{ unit.syllabus }} > <strong>{{ unit }}</strong>
+                        
+                        </a>
+                    </li>
                     {% endwith %}
                 {% endfor %}
             </ul>
@@ -60,15 +63,15 @@
         <p>Click the favourite icon on any unit page to add them to this page.</p>
     {% endif %}
     
-    <h3>Unit Topic</h3>
+    <h3>Unit Topics</h3>
     {% if unit_topics %}
         <div>
             <ul>
                 {% for unit_topic in unit_topics %}
                 {% with unit_topic=unit_topic.unit_topic %}
+                <li>
                     <a href="{% url 'uploader:unit_topic' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
-                        <li>
-                            {{ unit_topic }}
+                     {{ unit_topic.unit.syllabus }} > {{ unit_topic.unit }} > <strong>{{ unit_topic }}</strong>
                         </li>
                     </a>
                 {% endwith %}

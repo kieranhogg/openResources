@@ -79,7 +79,7 @@
                 <span class="glyphicon glyphicon-briefcase" aria-hidden="true"></span>
                 My Folder <span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
-                <li><a href="{% url 'uploader:groups' %}"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> My Groups</a></li>
+                <li><a href="{% url 'uploader:groups_list' %}"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> My Groups</a></li>
                 <li class="divider"></li>
                 <li><a href="{% url 'uploader:user_lessons' %}"><span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span> Lessons</a></li>
                 <li><a href="{% url 'uploader:user_resources' %}"><span class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span> Resources</a></li>
@@ -87,7 +87,7 @@
                 <li><a href="{% url 'uploader:user_files' %}"><span class="glyphicon glyphicon-file" aria-hidden="true"></span> Files</a></li>
                 <li class="divider"></li>
                 <li><a href="{% url 'uploader:user_questions' %}"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> Questions</a></li>
-                <li><a href="#"><span class="glyphicon glyphicon-check" aria-hidden="true"></span> Tests</a></li>
+                <li class='disabled'><a href="#"><span class="glyphicon glyphicon-check" aria-hidden="true"></span> Tests</a></li>
               </ul>
             </li>
             {% endif %}
@@ -108,7 +108,12 @@
 
           <form class="navbar-form navbar-left" role="search" method="GET" action="/search/">
             <div class="form-group">
-              <input type="text" name="q" class="form-control input-xs" placeholder="Search">
+              <div class="input-group">
+                <input type="text" name="q" class="form-control input-xs" placeholder="Search...">
+                <span class="input-group-btn">
+                  <button class="btn btn-default input-xs" type="submit">Go!</button>
+                </span>
+              </div><!-- /input-group -->
             </div>
           </form>
           

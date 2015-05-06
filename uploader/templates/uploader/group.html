@@ -1,28 +1,30 @@
 {% extends 'uploader/base.html' %}
 {% load static %}
+<<<<<<< HEAD
 {% load tags %}
+=======
+{% load bootstrap %}
+>>>>>>> master
 {% block body_block %}
+{{ form.media }}
 
 <script type="text/javascript">
 $(document).ready(function(){
         var table = $('#tests').dataTable({
         "order": [[ 7, "desc" ]],
-        "scrollY": "600px",
-        "scrollX": "100%",
-        "scrollCollapse": true,
     });
-    new FixedColumns(table, {
-                left:   true,
-                right:  true
-            });
+    // new FixedColumns(table, {
+    //             left:   true,
+    //             right:  true
+    //         });
 });
 $(function () {
   $('[data-toggle="tooltip"]').tooltip()
 })
 </script>
 <h2>{% block head_title %}{{ group.name }} {% endblock %}</h2>
-<h3>Invite code</h3>
-<p>{{ group.code }}</p>
+<p><strong>Number of students:</strong> {{ students|length }}</p>
+<p><strong>Invite code:</strong> {{ group.code }}</p>
 
 {% if students %}
 <h3>Assignments</h3>
@@ -53,7 +55,97 @@ $(function () {
 <a href="{% url 'uploader:add_test' %}">
     <button class='btn btn-success'>New Test</button>
 </a>
+<h3>Lessons</h3>
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingOne">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+          <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
+          Assign Lesson to Group
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+      <div class="panel-body">
+        <form class='form' action method="POST">
+            {% csrf_token %}
+                {% for field in form %}
+                <div>
+                    {% if field.field.required %}<span class="label label-danger">required</span>{% endif %}
+                    {{ field|bootstrap }}
+                </div>
+                {% endfor %}
+            <div class='text-center'>
+                <button class="btn btn-success">Assign to Group</button>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if lessons %}
+<table class="table table-striped">
+    <th>Lesson</th>
+    <th>Unit Topic</th>
+    <th>Short link</th>
+    <th>Date</th>
+    <th>Feedback <span class="glyphicon glyphicon-question-sign" style="font-size: 0.9em" aria-hidden="true" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Average post lesson understanding (of out 5)"></span></th>
+    <th></th>
+    
+{% for group_lesson in lessons %}
+<tr>
+    <td>{{ group_lesson.lesson.title }}</td>
+    <td>
+        {{ group_lesson.lesson.unit_topic }}
+    </td>
+    <td>
+        {{ group_lesson.link|urlize }}
+    </td>
+    <td>
+        {% if group_lesson.date %}
+        {{ group_lesson.date|date:"D dS M" }} 
+            {% if group_lesson.period %}P{{ group_lesson.period }}{% endif %}
+        {% endif %}
+        </td>
+    {% if group_lesson.feedback and group_lesson.feedback < 4 %}
+      <td class="danger text-center">{{ group_lesson.feedback|floatformat:"1" }}
+    {% elif group_lesson.feedback and group_lesson.feedback >= 3 and group_lesson.feedback < 4 %}
+      <td class="warning text-center">{{ group_lesson.feedback|floatformat:"1" }}
+    {% elif group_lesson.feedback and group_lesson.feedback >= 4 %}
+        <td class="success text-center">{{ group_lesson.feedback|floatformat:"1" }}
+    {% else %}
+        <td>
+    {% endif %}
+    </td>
+    <td class='text-center'>
+        <div class="btn-group">
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                Actions <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="{% url 'uploader:lesson' group.code group_lesson.lesson.code %}">
+                    <span class="glyphicon glyphicon-modal-window" aria-hidden="true"></span>
+                    View
+                    </a></li>
+                <li>
+                    <a href="{% url 'uploader:lesson_show' group.code group_lesson.lesson.code %}">
+                    <span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span>
+                    Present</a>
+                </li>
+              </ul>
+            </div>
+    </td>
+</tr>
+{% endfor %}
+</table>
+{% else %}
+<p>No lessons assigned to this group</p>
+{% endif %}
+>>>>>>> master
 <h3>Tests</h3>
+<div class="table-responsive">
 <table id='tests' class='table table-striped'>
     <thead>
     <tr style="height:100%">
@@ -81,6 +173,7 @@ $(function () {
     {% endfor %}
     </tbody>
 </table>
+</div>
 <a href="{% url 'uploader:add_test' %}">
     <button class='btn btn-success'>New Test</button>
 </a>

@@ -1,10 +1,81 @@
 {% extends 'uploader/base.html' %}
 {% block body_block %}
 {% load static %}
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script>
+      google.load("visualization", "1.1", {packages:["bar"]});
+      google.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var arr = $.map('{{list}}', function(el) { return el; });
+        var data = google.visualization.arrayToDataTable([
+          ['Topic', 'Before', 'After'],
+          {% for item in pre_posts %}
+           ['{{item.text|truncatechars:60}}', {{item.pre}}, {{item.post}}],
+          {% endfor %}
+         
+        ]);
+
+        var options = {
+            title: '{{lesson.title}} understanding {{ item|length }}',
+            // width: 600,
+            // height: 400,
+            vAxis: {
+                title: "Average rating",
+                min: 0,
+                max: 5
+            },
+            hAxis: {
+                title: "Topic",
+            },
+            seriesType: "bars",
+        };
+
+        var chart = new google.charts.Bar(document.getElementById('columnchart_material'));
+        chart.draw(data, options);
+      }
+
 $(function () {
   $('[data-toggle="tooltip"]').tooltip()
-})
+  $.ajaxSetup({ 
+     beforeSend: function(xhr, settings) {
+         function getCookie(name) {
+             var cookieValue = null;
+             if (document.cookie && document.cookie != '') {
+                 var cookies = document.cookie.split(';');
+                 for (var i = 0; i < cookies.length; i++) {
+                     var cookie = jQuery.trim(cookies[i]);
+                     // Does this cookie string begin with the name we want?
+                 if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                     cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                     break;
+                 }
+             }
+         }
+         return cookieValue;
+         }
+         if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+             // Only send the token to relative URLs i.e. locally.
+             xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+         }
+     } 
+  });
+  $("#pre_form").submit(function(e) {
+      e.preventDefault();
+      $.post( '/pre-post/pre/{{lesson.id}}/', $('#pre_form').serialize(), function(data) {},
+         'json' 
+      );
+      $('#pre_questions').fadeOut();
+      $('#post_questions').fadeIn();
+      $('#lesson_tasks').fadeIn();
+  });
+  $("#post_form").submit(function(e) {
+      e.preventDefault();
+      $.post( '/pre-post/post/{{lesson.id}}/', $('#post_form').serialize(), function(data) {},
+         'json' 
+      );
+      $('#post_questions').fadeOut();
+  });
+});
 </script>
 <h2>{% block head_title %}{{ lesson.title }}{% endblock %}</h2>
 {% if lesson.objectives %}
@@ -22,58 +93,50 @@ $(function () {
     <a href="{{MEDIA_URL}}{{ lesson.presentation.file }}">Click to view</a>
   {% endif %}
 {% endif %}
-<h3>Lesson Tasks</h3>
+{% if pre_posts and user.studentprofile and not existing_pre %}
+<div id="pre_questions">
+<h4>Before</h4>
+<form id='pre_form'>
+  {% csrf_token %}
+  <p>Rate your confidence, 1 is low, 5 is high</p>
+  {% for pre_post in pre_posts %}
+    <p><strong>{{ pre_post.text }}</strong></p>
+    <p>
+      <input type="radio" name="pre[{{forloop.counter}}]" value="1"> 1
+      <input type="radio" name="pre[{{forloop.counter}}]" value="2"> 2
+      <input type="radio" name="pre[{{forloop.counter}}]" value="3"> 3
+      <input type="radio" name="pre[{{forloop.counter}}]" value="4"> 4
+      <input type="radio" name="pre[{{forloop.counter}}]" value="5"> 5
+    </p>
+  {% endfor %}
+  <div class="form-group">
+        <button type="submit" id="submit" name="Save" class="btn btn-success">Save</button>
+  </div>
+</form>
+</div>
+<div id="lesson_tasks" style="display:none">
 
+{% elif pre_posts and lesson.uploader == user %}
+<h4>Pre and Post assessment</h4>
+  <div id="columnchart_material" style="width: 80%; height: 400px; margin: 0 auto">Loading chart...</div>
+{% else %}
+<div id="lesson_tasks">
+{% endif %}
+
+<h3>Lesson Tasks</h3>
 <div class="row">
   {% for item in lesson_items %}
-  <div class="col-sm-6 col-md-3">
-    <div class="thumbnail">
-      <!--<div class="caption">-->
-        <h4 class="task_num">{{ forloop.counter }}</h4>
-        
-        {% if item.instructions %}
-        <p>{{ item.instructions|safe }}</p>
-        {% endif %}
-        
-        {% if item.type == 'resources' %}
-        <p>
-        <a href="javascript:void(0)" data-toggle="modal" data-target="#myModal{{ forloop.counter }}">
-            <span class="glyphicon glyphicon-eye-open" aria-hidden="true" title='Preview'></span>
-        </a>
-        <a href="{% url 'uploader:view_resource' item.slug %}">
-            {{ item.title }} resource
-        </a>
-        </p>
-        {% elif item.type == 'notes' %}
-        <p><a href="{% url 'uploader:view_notes_d' item.slug %}">
-            <span class="glyphicon glyphicon-book" aria-hidden="true" title='Notes'></span>
-            {{ item.title }} notes
-        </a>
-        </p>
-        {% elif item.type == 'test' %}
-        <p><a href="{% url 'uploader:test' item.slug %}">
-            Take {{ item.title }} test
-        </a>
-        </p>
-        {% endif %}
-        
-      <!--</div>-->
-    </div>
-  </div>
-  {% endfor %}
-</div>
 
-{% for item in lesson_items %}
-   {% if item.type == 'resources' %}
+     {% if item.type == 'resource' %}
            <div class="modal fade bs-example-modal-lg" id="myModal{{ forloop.counter }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel{{ forloop.counter }}" aria-hidden="true">
             <div class="modal-dialog modal-lg">
               <div class="modal-content">
                 <div class="modal-header">
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                  <h4 class="modal-title" id="myModalLabel{{ forloop.counter }}">{{ item.title }}</h4>
+                  <h4 class="modal-title" id="myModalLabel{{ forloop.counter }}">{{ item.content }}</h4>
                 </div>
                 <div class="modal-body">
-                  <iframe src="{% url 'uploader:view_resource_embed' item.slug %}" width="100%" height="600" frameborder="0" />
+                  <iframe src="{% url 'uploader:view_resource_embed' item.content.slug %}" width="100%" height="600" frameborder="0" /></iframe>
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -82,5 +145,109 @@ $(function () {
             </div>
           </div>
   {% endif %}
-{% endfor %}
+  {% if lesson_items|length > 3 %}
+  <div class="col-sm-6 col-md-2">
+  {% else %}
+  <div class="col-sm-6 col-md-3">
+  {% endif %}
+    <div class="thumbnail">
+      <!--<div class="caption">-->
+        <h4 class="task_num">{{ forloop.counter }}</h4>
+        
+        {% if item.type == 'resource' %}
+        <h4>
+          {% if item.content.file %}
+              <span class="glyphicon glyphicon-paperclip" aria-hidden="true" title=""></span>
+               {{ item.content.file.title }}
+          {% else %}
+              {% if item.content.bookmark.type == 'video' %}
+              <span class="glyphicon glyphicon-facetime-video" aria-hidden="true" title="video"></span>
+              {% elif item.content.bookmark.type == 'news' %}
+              <span class="glyphicon glyphicon-list-alt" aria-hidden="true" title="news"></span>
+              {% elif item.content.bookmark.type == 'image' %}
+              <span class="glyphicon glyphicon-image" aria-hidden="true" title="image"></span>
+              {% elif item.content.bookmark.type == 'info' %}
+              <span class="glyphicon glyphicon-info-sign" aria-hidden="true" title="info"></span>
+              {% elif item.content.bookmark.type == 'blog' %}
+              <span class="glyphicon glyphicon-comment" aria-hidden="true" title="blog"></span>
+              {% else %}
+              <span class="glyphicon glyphicon-bookmark" aria-hidden="true" title="bookmark"></span>
+              {% endif %}
+               {{ item.content.bookmark.title }}
+          {% endif %}
+          </h4>
+          {% if item.instructions %}
+          <p>{{ item.instructions|safe }}</p>
+          {% endif %}
+      <div class="text-center">
+        <div class="btn-group" role="group" aria-label="actions">
+            <a class="btn btn-default" href="javascript:void(0)" data-toggle="modal" data-target="#myModal{{ forloop.counter }}">
+              <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Preview
+            </a>
+            <a class="btn btn-default" href="{% url 'uploader:view_resource' item.content.slug %}">
+              <span class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span> Open
+            </a>
+        </div>
+        </div>
+       
+        {% elif item.type == 'note' %}
+        <h4><span class="glyphicon glyphicon-book" aria-hidden="true" title='Notes'></span>
+        {{ item.content.unit_topic.title }}</h4>
+        
+          {% if item.instructions %}
+          <p>{{ item.instructions|safe }}</p>
+          {% endif %}
+          
+        <p class='text-center'><a class='btn btn-default' href="{% url 'uploader:view_notes_d' item.content.slug %}">
+            View notes
+        </a>
+        </p>
+        
+        {% elif item.type == 'test' %}
+        <h4><span style="margin-top: -5px;" class="glyphicon glyphicon-check" aria-hidden="true"></span> {{ item.content.unit_topic.title }}</h4>
+        {% if item.instructions %}
+          <p>{{ item.instructions|safe }}</p>
+          {% endif %}
+        <p class='text-center'><a class='btn btn-default' href="{% url 'uploader:test' item.content.code %}">
+            Take test
+        </a>
+        </p>
+        {% elif item.type == 'task' %}
+        <h4><span style="margin-top: -5px;" class="glyphicon glyphicon-th-list" aria-hidden="true"></span> Task</h4>
+        {% if item.instructions %}
+          <p>{{ item.instructions|safe }}</p>
+          {% endif %}
+        {% endif %}
+        
+      <!--</div>-->
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% if pre_posts and user.studentprofile and not existing_post %}
+<div id="post_questions" style="display:none">
+{% elif pre_posts and user.studentprofile and existing_pre %}
+<div id="post_questions">
+<h4>After</h4>
+<form id='post_form'>
+  {% csrf_token %}
+  <p>Rate your confidence, 1 is low, 5 is high</p>
+  {% for pre_post in pre_posts %}
+    <p><strong>{{ pre_post.text }}</strong></p>
+    <p>
+      <input type="radio" name="post[{{forloop.counter}}]" value="1"> 1
+      <input type="radio" name="post[{{forloop.counter}}]" value="2"> 2
+      <input type="radio" name="post[{{forloop.counter}}]" value="3"> 3
+      <input type="radio" name="post[{{forloop.counter}}]" value="4"> 4
+      <input type="radio" name="post[{{forloop.counter}}]" value="5"> 5
+    </p>
+  {% endfor %}
+  <div class="form-group">
+        <button type="submit" id="submit" name="Save" class="btn btn-success">Save</button>
+  </div>
+</form>
+</div>
+{% endif %}
+
 {% endblock %}

@@ -158,7 +158,7 @@ class StudentForm(forms.Form):
                             surname=self.cleaned_data['last_name'])
         up.save()
         
-        new_user.groups.add(Group.objects.get(name='student'))
+        #new_user.groups.add(Group.objects.get(name='student'))
         
         return new_user
         
@@ -210,7 +210,7 @@ class TeacherForm(forms.Form):
                             forename=self.cleaned_data['first_name'],
                             surname=self.cleaned_data['last_name'])
         up.save()
-        new_user.groups.add(Group.objects.get(name='teacher'))
+        # new_user.groups.add(Group.objects.get(name='teacher'))
         
         try:
             to = settings.NEW_ACCOUNT_EMAIL
@@ -239,12 +239,20 @@ class StudentProfileForm(forms.ModelForm):
 
 
 class LessonForm(forms.ModelForm):
+    title = forms.CharField(widget=forms.TextInput(
+        attrs={'placeholder': 'A short but descriptive title for your lesson'}))
+    objectives = forms.CharField(widget=forms.Textarea(
+        attrs={'placeholder': 'For bullet points, use *. Markdown supported'}),
+        label='Learning Objectives/outcomes')
+    groups = forms.ModelMultipleChoiceField(required=False, queryset=Group.objects.all())
+    
     class Meta:
         model = Lesson
-        exclude = ('slug', 'uploader', 'url')
+        fields = ('title', 'objectives',)
  
         
 class LessonItemForm(forms.ModelForm):
+
     class Meta:
         model = LessonItem
         exclude = ('lesson', 'slug', 'type')
@@ -300,3 +308,11 @@ class AssignmentSubmissionFileForm(forms.ModelForm):
     class Meta:
         model = AssignmentSubmissionFile
         fields = ('file', 'comments')
+
+class GroupLessonForm(forms.ModelForm):
+    date = forms.DateTimeField(required=False,
+    widget=DateTimePicker(options={"format": "YYYY-MM-DD",
+                                       "pickTime": False}))
+    class Meta:
+        model = GroupLesson
+        fields = ('lesson', 'date', 'period')

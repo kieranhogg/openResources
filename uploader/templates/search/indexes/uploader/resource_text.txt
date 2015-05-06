@@ -1,2 +1,8 @@
 {{ object.get_title }}
 {{ object.get_description }}
+{{ object.file }}
+{{ object.bookmark }}
+{{ object.unit_topic }}
+{{ object.unit }}
+{{ object.syllabus }}
+{{ object.subject }}

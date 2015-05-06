@@ -61,10 +61,16 @@ def index(request):
     else:
         if hasattr(request.user, 'teacherprofile'):
             groups = Group.objects.filter(teacher=request.user)
-            tests = Test.objects.filter(teacher=request.user)[:5]
-            assignments = Assignment.objects.filter(teacher=request.user).order_by('-deadline')[:5]
 
-            context = {'groups': groups, 'tests': tests, 'assignments': assignments}
+            tests = Test.objects.filter(group__in=groups)[:5]
+            lessons = GroupLesson.objects.filter(set_by=request.user).order_by('-date', '-pub_date')[:5]
+            
+            #FIXME templatetag these
+            for lesson in lessons:
+                lesson.link = shorten_lesson_url(request, lesson.group.code, lesson.lesson.code)
+                lesson.feedback = LessonPrePostResponse.objects.filter(type='post', pre_post__group_lesson=lesson).aggregate(Avg('score'))['score__avg']
+
+            context = {'groups': groups, 'tests': tests, 'lessons': lessons}
             return render(request, 'uploader/teacher_home.html', context)
         else:
             # FIXME use a filter
@@ -204,6 +210,9 @@ def unit_topic(
     notes = Note.objects.filter(unit_topic=unit_topic).count()
     question = MultipleChoiceQuestion.objects.filter(unit_topic=unit_topic)
     questions = question.count()
+    lessons = Lesson.objects.filter(unit_topic=unit_topic, public=True)
+    logger.error(lessons.query)
+    lessons = lessons.count()
     related = (UnitTopicLink.objects.filter(unit_topic_1=unit_topic) |
                UnitTopicLink.objects.filter(unit_topic_2=unit_topic))
 
@@ -218,7 +227,8 @@ def unit_topic(
 
     context = {'unit_topic': unit_topic, 'resources': resources,
                'questions': questions, 'notes': notes,
-               'related_topics': related, 'favourite': favourite}
+               'related_topics': related, 'favourite': favourite,
+               'lessons': lessons}
     return render(request, 'uploader/unit_topic.html', context)
 
 
@@ -237,7 +247,14 @@ def unit_topic_resources(
 
     context = {'unit_topic': unit_topic, 'resources': resources}
     return render(request, 'uploader/unit_topic_resources.html', context)
-
+    
+    
+def unit_topic_lessons(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
+    unit_topic = get_object_or_404(UnitTopic, slug=slug)
+    lessons = Lesson.objects.filter(unit_topic=unit_topic, public=True)
+    
+    return render(request, 'uploader/unit_topic_lessons.html', 
+        {'lessons': lessons, 'unit_topic': unit_topic})
 
 def unit_resources(request, subject_slug, exam_slug, syllabus_slug, unit_slug):
     unit = get_object_or_404(Unit, slug=unit_slug)
@@ -733,21 +750,22 @@ def check_lesson_items(request, num_items):
 # FIXME this is too hacky
 @login_required
 def user_lessons(request, user_id=None):
+    form = LessonForm(request.POST or None, request.FILES or None)
+    # form.fields['groups'].queryset = Group.objects.filter(teacher=request.user)
+    form.fields['groups'].queryset = Group.objects.filter(teacher=request.user)
+
     form_errors = []
     form_data = None
 
     if request.POST:
+        
         form_data = request.POST
-        if request.POST.get('clear', False) == 'on':
+        
+        if form_data.get('submit', False) == 'delete':
             request.session['resources'] = None
             request.session['notes'] = None
             request.session['tests'] = None
             request.session['tasks'] = None
-
-        elif request.POST.get('add_task'):
-            add_item_to_lesson(request, int(time.time()), 'task')
-        elif not request.POST['title']:
-            form_errors.append('Please enter a lesson title')
         else:
             num_items = 0
             rs = request.session
@@ -759,20 +777,32 @@ def user_lessons(request, user_id=None):
             items_okay = check_lesson_items(request, num_items)
 
             if num_items > 0 and items_okay:
-                public = True if request.POST.get('public') else False
-                slug = safe_slugify(request.POST['title'], Lesson)
+                public = True if form_data.get('public') else False
+                slug = safe_slugify(form_data.get('title'), Lesson)
 
                 show_to_students = False
-                if request.POST.get('show_presentation_to_students') == 'on':
+                if form_data.get('show_presentation_to_students') == 'on':
                     show_to_students = True
+                    
+                # only only pre_posts if we've got a group to assign them to
+                groups = form_data.getlist('groups')
+                if len(groups) > 0:
+                    pre_posts = form_data.getlist('pre_post_vals[]', None)
+                    pre_post = True if pre_posts else None
+                else:
+                    pre_post = False
 
-                l = Lesson(title=request.POST['title'],
+                l = Lesson(title=form_data.get('title'),
                            slug=slug,
-                           objectives=request.POST.get('objectives', None),
+                           objectives=form_data.get('objectives', None),
                            uploader=request.user,
-                           presentation=request.POST.get('presentation', None),
+                           presentation=form_data.get('presentation', None),
                            show_presentation_to_students=show_to_students,
-                           public=public
+                           public=public,
+                           pre_post=pre_post or False,
+                           code=random_key(3, 'Lesson')
+                        #   date_for=form_data.get('date_for') or None,
+                        #   lesson=form_data.get('lesson') or None
                            )
                 url = request.build_absolute_uri(reverse('uploader:lesson',
                                                          args=[slug]))
@@ -780,25 +810,53 @@ def user_lessons(request, user_id=None):
                 l.url = shorten_url(url)
                 l.save()
 
-                rp = request.POST
                 if check_lesson_items(request, num_items):
                     for i in range(1, num_items + 1):
                         _i = str(i)
                         # don't save blank tasks
-                        if (len(rp.get('instructions' + _i)) == 0 and
-                                rp.get('type' + _i) == 'task'):
+                        if (len(form_data.get('instructions' + _i)) == 0 and
+                                form_data.get('type' + _i) == 'task'):
                             pass
                         else:
+                            type = form_data.get('type' + _i, None)
+                            if type == 'resources':
+                                resource = Resource.objects.get(slug=form_data.get('slug' + _i, None))
+                                id = resource.id
+                                content_type = ContentType.objects.get_for_model(resource)
+                            elif type == 'notes':
+                                note = Note.objects.get(slug=form_data.get('slug' + _i, None))
+                                id = note.id
+                                content_type = ContentType.objects.get_for_model(note)
+                            elif type == 'test':
+                                test = Test.objects.get(slug=form_data.get('slug' + _i, None))
+                                id = test.id
+                                content_type = ContentType.objects.get_for_model(test)
+                            elif type == 'tasks':
+                                content_type = None
+                                id = None
+
+
                             li = LessonItem(
                                 lesson=l,
-                                type=rp.get('type' + _i, None),
-                                slug=rp.get('slug' + _i, None),
-                                order=rp.get('order' + _i, None),
-                                instructions=rp.get('instructions' + _i, None),
+                                content_type=content_type,
+                                object_id=id,
+                                order=form_data.get('order' + _i, None),
+                                instructions=form_data.get('instructions' + _i, None),
                             )
 
                             li.save()
-
+                
+                # assign lessons to those groups and deal with pre/posts
+                if len(groups) > 0:
+                    for group_id in groups:
+                        group = get_object_or_404(Group, pk=group_id)
+                        gl = GroupLesson(group=group, lesson=l, set_by=request.user)
+                        gl.save()
+                
+                        if pre_posts:
+                            for pre_post in pre_posts:
+                                LessonPrePost(text=pre_post, group_lesson=gl).save()
+                
                 request.session['resources'] = None
                 request.session['notes'] = None
                 request.session['tests'] = None
@@ -867,23 +925,26 @@ def user_lessons(request, user_id=None):
     return render(request, 'uploader/user_lessons.html',
                   {'resources': resource_list, 'notes': notes_list,
                    'tests': tests_list, 'lessons': lessons, 'tasks': tasks_list,
-                   'time': now, 'form_errors': form_errors, 'form_data': form_data})
+                   'time': now, 'form_errors': form_errors, 
+                   'form_data': form_data, 'form': form})
 
 
 @login_required
-def edit_lesson(request, slug):
-    l = get_object_or_404(Lesson, slug=slug)
+def edit_lesson(request, code):
+    l = get_object_or_404(Lesson, code=code)
     if l.uploader != request.user:
         return HttpResponseForbidden("permission denied")
 
     form = LessonForm(request.POST or None, instance=l)
+    form.fields['groups'].widget = widgets = forms.HiddenInput()
 
+    # FIXME 
     lis = LessonItem.objects.filter(lesson=l)
 
-    for li in lis:
-        if li.type == 'resources':
-            item = Resource.objects.get(slug=li.slug)
-            li.display = item.get_title()
+    # for li in lis:
+    #     if hasattr(li, 'type') and li.type == 'resources':
+    #         item = Resource.objects.get(slug=li.slug)
+    #         li.display = item.get_title()
 
     if request.POST and form.is_valid():
         lesson = form.save(commit=False)
@@ -915,38 +976,115 @@ def edit_lesson_item(request, id):
     return render(request, 'uploader/edit_lesson_item.html', {'form': form})
 
 
-def lesson(request, slug):
-    l = get_object_or_404(Lesson, slug=slug)
+def lesson(request, slug, code=None):
+    # whether or not we are viewing this lesson publically or from a group
+    public = False
+    
+    if not code:
+        l = get_object_or_404(Lesson, slug=slug)
+        public = True
+    else:
+        l = get_object_or_404(Lesson, code=code)
+        group = Group.objects.filter(code=slug)
+        group_lesson = GroupLesson.objects.filter(lesson=l, group=group)
+        logger.error(group_lesson.count())
+        if group_lesson.count() == 0 and not l.public:
+           return HttpResponseForbidden("You do not have access to view this lesson")
+        elif group_lesson.count() > 0:
+            pass # viewing group lesson
+        elif l.public:
+            public = True
 
-    if not l.public and l.uploader != request.user:
-        return HttpResponseForbidden("permission denied")
+    # if not l.public and l.uploader != request.user:
+    #     return HttpResponseForbidden("permission denied")
 
     if l.objectives:
         l.objectives = render_markdown(l.objectives)
 
     lis = LessonItem.objects.filter(lesson=l).order_by('order')
+    for li in lis:
+        if li.content_type and li.object_id:
+            type = ContentType.objects.get(app_label="uploader", model=li.content_type)
+            li.content = ContentType.get_object_for_this_type(type, pk=li.object_id)
+            logger.error(li.content)
+            li.type = str(type)
+        else:
+            li.type = 'task'
 
+    # if this lesson has specified a pre/post be done
+    if not public and l.pre_post:
+        
+        #if we're a student, check if we've already done this
+        pre_posts = LessonPrePost.objects.filter(group_lesson=group_lesson)
+        
+        existing_pre = LessonPrePostResponse.objects.filter(
+            pre_post__in=pre_posts,
+            student=request.user,
+            type='pre')
+        if existing_pre.count() > 0:
+            existing_pre = True
+         
+        existing_post = LessonPrePostResponse.objects.filter(
+            pre_post__in=pre_posts,
+            student=request.user,
+            type='post')
+        if existing_post.count() > 0:
+            existing_post = True   
+    
+        # get data for graph
+        for pre_post in pre_posts:
+            pre_responses = LessonPrePostResponse.objects.filter(
+                pre_post=pre_post,
+                type='pre').aggregate(Avg('score'))
+            
+            if pre_responses['score__avg']:
+                pre_post.pre = pre_responses['score__avg']
+            else:
+                pre_post.pre = 0
+            
+            post_responses = LessonPrePostResponse.objects.filter(
+                pre_post=pre_post,
+                type='post').aggregate(Avg('score'))
+            
+            if post_responses['score__avg']:
+                pre_post.post = post_responses['score__avg']
+            else:
+                pre_post.post = 0
+    else:
+        pre_posts = None
+
+
+    # gather lesson items
     for li in lis:
         li.instructions = render_markdown(li.instructions)
         if li.type == 'resources':
-            r = get_object_or_404(Resource, slug=li.slug)
+            r = get_object_or_404(Resource, pk=object_id)
             if r.file:
                 li.title = r.file.title
             else:
                 li.title = r.bookmark.title
         elif li.type == 'notes':
-            li.title = get_object_or_404(UnitTopic, slug=li.slug).title
+            li.title = get_object_or_404(UnitTopic, pk=object_id).title
         elif li.type == 'test':
-            li.title = get_object_or_404(Test, code=li.slug)
+            li.title = get_object_or_404(Test, pk=li.object_id)
         elif li.type == 'task':
             pass
+        
+    context = {'lesson': l, 'lesson_items': lis, 'public': public}
+    if pre_posts:
+        context['pre_posts'] = pre_posts
+        context['existing_post'] = existing_post
+        context['existing_pre'] = existing_pre
 
-    return render(request, 'uploader/lesson.html',
-                  {'lesson': l, 'lesson_items': lis})
+    return render(request, 'uploader/lesson.html', context)
 
 
-def lesson_show(request, slug):
-    l = get_object_or_404(Lesson, slug=slug)
+def lesson_show(request, group_code, code):
+    l = get_object_or_404(Lesson, code=code)
+    group = get_object_or_404(Group, code=group_code)
+    group_lesson = get_object_or_404(GroupLesson, lesson=l, group=group)
+    l.url = shorten_lesson_url(request, group.code, l.code)
+    
     l.url = string.replace(l.url, "http://", "")
     l.objectives = render_markdown(l.objectives)
 
@@ -1355,7 +1493,7 @@ def student_signup(request):
                 "Thanks for registering. You are now logged in.")
             new_user = authenticate(username=request.POST['username'],
                                     password=request.POST['password'])
-            new_user.groups.add(Group.objects.get(name='student'))
+            #new_user.groups.add(Group.objects.get(name='student'))
             login(request, new_user)
             return HttpResponseRedirect('/')
         except ObjectDoesNotExist:
@@ -1376,7 +1514,7 @@ def teacher_signup(request):
             "Thanks for registering. You are now logged in.")
         new_user = authenticate(username=request.POST['username'],
                                 password=request.POST['password'])
-        new_user.groups.add(Group.objects.get(name='teacher'))
+        # new_user.groups.add(Group.objects.get(name='teacher'))
         login(request, new_user)
         return HttpResponseRedirect('/')
 
@@ -1401,6 +1539,7 @@ def groups(request, slug=None):
     else:
         group = Group(teacher=request.user)
 
+
     if request.POST:
         form = GroupForm(request.POST, instance=group)
 
@@ -1419,27 +1558,39 @@ def groups(request, slug=None):
 @login_required
 def group(request, slug):
     group = get_object_or_404(Group, slug=slug)
-    student_group = StudentGroup.objects.filter(group=group)
-    tests = Test.objects.filter(group=group, teacher=request.user).order_by('-pub_date')
-    assignments = Assignment.objects.filter(group=group, teacher=request.user).order_by('-deadline')
 
-    for student_group_object in student_group:
-        student = student_group_object.student
-        student.results = []
-        tests_taken = 0
-        for test in tests:
-            test_result = TestResult.objects.filter(
-                user=student,
-                test=test).order_by('-score')
+    if request.POST:
+        lesson = Lesson.objects.get(pk=request.POST['lesson'])
+        GroupLesson(group=group, lesson=lesson, set_by=request.user).save()
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+    else:
+        form = GroupLessonForm()
+        form.fields['lesson'].queryset = Lesson.objects.filter(uploader=request.user).order_by('-pub_date')[:10]
+        student_group = StudentGroup.objects.filter(group=group)
+        tests = Test.objects.filter(teacher=request.user).order_by('-pub_date')
+        lessons = GroupLesson.objects.filter(group=group).order_by('-date', '-pub_date')
+        for lesson in lessons:
+            lesson.link = shorten_lesson_url(request, group.code, lesson.lesson.code)
+            lesson.feedback = LessonPrePostResponse.objects.filter(type='post', pre_post__group_lesson=lesson).aggregate(Avg('score'))['score__avg']
 
-            tests_taken += test_result.count()
-            if test_result.count() > 0:
-                student.results.append(
-                    {'score': test_result[0].score, 'total': test.total})
-            else:
-                student.results.append({'total': test.total})
-    # return HttpResponse(tests_taken)
-    context = {'group': group, 'students': student_group, 'tests': tests, 'assignments': assignments}
+        for student_group_object in student_group:
+            student = student_group_object.student
+            student.results = []
+            tests_taken = 0
+            for test in tests:
+                test_result = TestResult.objects.filter(
+                    user=student,
+                    test=test).order_by('-score')
+    
+                tests_taken += test_result.count()
+                if test_result.count() > 0:
+                    student.results.append(
+                        {'score': test_result[0].score, 'total': test.total})
+                else:
+                    student.results.append({'total': test.total})
+        # return HttpResponse(tests_taken)
+        context = {'group': group, 'students': student_group, 'tests': tests,
+                   'lessons': lessons, 'form': form}
 
     return render(request, 'uploader/group.html', context)
 
@@ -1451,7 +1602,6 @@ def add_test(request):
 
     if request.POST:
         if form.is_valid():
-            # FIXME I'm sure I don't normally have to do this?
             subject = get_object_or_404(Subject, pk=request.POST['subject'])
             group = get_object_or_404(Group, pk=request.POST['group'])
             code = random_key(4, 'Test')
@@ -1470,11 +1620,34 @@ def add_test(request):
 @login_required
 def link_test(request, code):
     return link_resource(request, 'test', code)
+    
+    
+def lesson_present(request, group_code, code):
+    lesson = get_object_or_404(Lesson, code=code)
+    group = get_object_or_404(Group, code=group_code)
+    group_lesson = get_object_or_404(GroupLesson, group=group, lesson=lesson)
+    lis = LessonItem.objects.filter(lesson=lesson)
+    context = {'lesson': lesson, 'lis': lis}
+    return render(request, 'uploader/lesson_present.html', context)
 
 
 def denied(request):
-    msg = request.GET['msg']
+    if hasattr(request.GET, 'msg'):
+        msg = request.GET['msg']
+    else:
+        msg = ""
     return render(request, 'uploader/permission_denied.html', {'msg': msg})
+    
+    
+def delete_lesson(request, code):
+    lesson = get_object_or_404(Lesson, code=code)
+    if lesson.uploader == request.user:
+        messages.success(request,"Lesson %s deleted", lesson.title)
+        lesson.delete()
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER',
+                                                             '/'))
+    else:
+        return render(request, 'uploader/permission_denied.html')
 
 
 def assignment(request):
@@ -1715,3 +1888,31 @@ def bulk_bookmark_update(request, action, ids):
         logger.error(e)
 
     return HttpResponse()
+
+def pre_post(request, action, id):
+    lesson = get_object_or_404(Lesson, pk=id)
+    pre_posts = LessonPrePost.objects.filter(lesson=lesson)
+    if action == 'pre':
+        for i in range(0, pre_posts.count()):
+            pre = request.POST.get('pre[' + str(i + 1) + ']')
+            if pre:
+                try:
+                    LessonPrePostResponse(pre_post=pre_posts[i],
+                                          student=request.user,
+                                          type='pre',
+                                          score=pre).save()
+                except IntegrityError as e:
+                    pass
+    elif action == 'post':
+        for i in range(0, pre_posts.count()):
+            pre = request.POST.get('post[' + str(i + 1) + ']')
+            if pre:
+                try:
+                    LessonPrePostResponse(pre_post=pre_posts[i],
+                                          student=request.user,
+                                          type='post',
+                                          score=pre).save()
+                except IntegrityError as e:
+                    pass
+
+    return HttpResponse("")

@@ -1,0 +1,60 @@
+{% if lessons %}
+<p>Clicking <strong>present</strong> will show you a large screen version of 
+the lesson you can display on your board.</p>
+<table class="table table-striped">
+    <th>Lesson</th>
+    <th>Group</th>
+    <th>Unit Topic</th>
+    <th>Short link</th>
+    <th>Date</th>
+    <th>Feedback <span class="glyphicon glyphicon-question-sign" style="font-size: 0.9em" aria-hidden="true" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Average post lesson understanding (of out 5)"></span></th>
+    <th></th>
+    
+{% for lesson in lessons %}
+<tr>
+    <td>{{ lesson.lesson.title }}</td>
+    <td>{{ lesson.group }}</td>
+    <td>
+        {{ lesson.lesson.unit_topic }}
+    </td>
+    <td>
+        {{ lesson.link|urlize }}
+    </td>
+    <td>
+        {% if lesson.date %}
+        {{ lesson.date|date:"D dS M" }} 
+            {% if lesson.period %}P{{ lesson.period }}{% endif %}
+        {% endif %}
+        </td>
+    {% if lesson.feedback and lesson.feedback < 4 %}
+      <td class="danger text-center">{{ lesson.feedback|floatformat:"1" }}
+    {% elif lesson.feedback and lesson.feedback >= 3 and lesson.feedback < 4 %}
+      <td class="warning text-center">{{ lesson.feedback|floatformat:"1" }}
+    {% elif lesson.feedback and lesson.feedback >= 4 %}
+        <td class="success text-center">{{ lesson.feedback|floatformat:"1" }}
+    {% else %}
+        <td>
+    {% endif %}
+    </td>
+    <td class='text-center'>
+        <div class="btn-group">
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                Actions <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="{% url 'uploader:lesson' lesson.group.code lesson.lesson.code %}">
+                    <span class="glyphicon glyphicon-modal-window" aria-hidden="true"></span>
+                    View
+                    </a></li>
+                <li>
+                    <a href="{% url 'uploader:lesson_show' lesson.group.code lesson.lesson.code %}">
+                    <span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span>
+                    Present</a>
+                </li>
+              </ul>
+            </div>
+    </td>
+</tr>
+{% endfor %}
+</table>
+{% endif %}

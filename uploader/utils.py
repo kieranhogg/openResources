@@ -72,6 +72,11 @@ def shorten_url(url):
     r = requests.get(get_url)
     return r.text
     
+def shorten_lesson_url(request, group_code, lesson_code):
+    local_url = request.build_absolute_uri(
+        reverse('uploader:lesson', args=[group_code, lesson_code]))
+
+    return shorten_url(local_url)
     
 def get_resource_rating(resource_id, use='display'):
     """Calculate a resource's rating
@@ -95,7 +100,7 @@ def random_key(length, item=None):
     while not unique:
         key = ''
         for i in range(length):
-            key += random.choice(string.lowercase + string.uppercase + string.digits)
+            key += random.choice(string.lowercase + string.digits)
         if not item:
             unique = True
         else:
@@ -105,9 +110,13 @@ def random_key(length, item=None):
             elif item == 'Assignment':
                 if Assignment.objects.filter(code=key).count() == 0:
                     unique = True
+            elif item == 'Lesson':
+                if Lesson.objects.filter(code=key).count() == 0:
+                    unique = True
+                    
             else:
                 raise Exception('Type not implemented')
-                    
+
     return key
     
     

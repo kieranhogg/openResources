@@ -5,10 +5,13 @@ from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models.signals import pre_delete, post_save
 from django.dispatch.dispatcher import receiver
 from django.utils.safestring import mark_safe
+
 
 #from taggit_autosuggest.managers import TaggableManager
 
@@ -605,7 +608,7 @@ class Test(models.Model):
         blank=True,
         null=True)
     group = models.ForeignKey(Group)
-    code = models.CharField(max_length='5', unique=True)
+    code = models.SlugField(max_length='5', unique=True)
     pub_date = models.DateTimeField(auto_now_add=True)
     deadline = models.DateTimeField(blank=True, null=True)
     total = models.IntegerField(default=10, help_text='If the total is ' +
@@ -682,9 +685,10 @@ class TestResult(models.Model):
 class Lesson(models.Model):
     title = models.CharField(max_length=200)
     slug = models.SlugField(unique=True, max_length=100)
+    code = models.SlugField(unique=True, max_length=3, null=True, blank=True)
     uploader = models.ForeignKey(settings.AUTH_USER_MODEL)
     objectives = models.TextField(blank=True, null=True)
-    url = models.URLField()
+    pre_post = models.BooleanField(default=False)
     public = models.BooleanField(default=True, blank=True)
     presentation = models.FileField(upload_to='%Y/%m', null=True, blank=True)
     show_presentation_to_students = models.BooleanField(default=False)
@@ -700,11 +704,40 @@ class Lesson(models.Model):
 
 class LessonItem(models.Model):
     lesson = models.ForeignKey(Lesson)
-    type = models.CharField(max_length=50)
-    slug = models.SlugField(max_length=100, blank=True, null=True)
-    order = models.IntegerField()
+    content_type = models.ForeignKey(ContentType, blank=True, null=True)
+    object_id = models.PositiveIntegerField(blank=True, null=True)
+    content_object = GenericForeignKey('content_type', 'object_id')
+    order = models.PositiveIntegerField()
     instructions = models.TextField(blank=True, null=True)
 
+
+class LessonItemAdmin(admin.ModelAdmin):
+    list_display = ('lesson', 'content_type', 'object_id', 'order')
+
+
+class LessonPrePost(models.Model):
+    group_lesson = models.ForeignKey('GroupLesson')
+    text = models.CharField(max_length=255)
+    
+    def __unicode__(self):
+        return self.text
+
+
+class LessonPrePostResponse(models.Model):
+    pre_post = models.ForeignKey(LessonPrePost)
+    type = models.CharField(max_length=4)
+    student = models.ForeignKey(settings.AUTH_USER_MODEL)
+    score = models.IntegerField(choices=((1, "1"), (2, "2"), (3, "3"), 
+                                         (4, "4"), (5, "5")))
+    pub_date = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ('pre_post', 'type', 'student')
+
+
+class LessonPrePostResponseAdmin(admin.ModelAdmin):
+    list_display = ('pre_post', 'type', 'student', 'score')
+    
 
 class Favourite(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
@@ -743,6 +776,20 @@ class UnitTopicLink(models.Model):
 
     class Meta:
         unique_together = ["unit_topic_1", "unit_topic_2"]
+        
+        
+class GroupLesson(models.Model):
+    group = models.ForeignKey(Group)
+    lesson = models.ForeignKey(Lesson)
+    set_by = models.ForeignKey(settings.AUTH_USER_MODEL)
+    pub_date = models.DateTimeField(auto_now_add=True)
+    date = models.DateField(null=True, blank=True)
+    period = models.IntegerField(null=True, blank=True, choices=(
+         (1, "P1"), (2, "P2"), (3, "P3"), (4, "P4"), (5, "P5"), (6, "P6")))
+         
+    def __unicode__(self):
+        return str(self.group) + " | " + str(self.lesson)
+    
 
 
 class GradeSystem(models.Model):
