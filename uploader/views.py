@@ -59,7 +59,7 @@ def index(request):
         if hasattr(request.user, 'teacherprofile'):
             groups = Group.objects.filter(teacher=request.user)
             tests = Test.objects.filter(group__in=groups)[:5]
-            lessons = GroupLesson.objects.filter(set_by=request.user)[:5]
+            lessons = GroupLesson.objects.filter(set_by=request.user).order_by('-date', 'pub_date')[:5]
             
             #FIXME templatetag these
             for lesson in lessons:
