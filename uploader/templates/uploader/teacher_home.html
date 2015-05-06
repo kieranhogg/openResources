@@ -15,7 +15,10 @@
     <!--<h3>Recent Assignments</h3>-->
     <!-- assignment_table "teacher" assignments -->
 
-    <h3>Recent Tests</h3>
+    <h3>Lessons</h3>
+    {% lesson_table "teacher" lessons %}
+    
+    <h3>Tests</h3>
     {% test_table "teacher" tests %}
 
 {% else %}

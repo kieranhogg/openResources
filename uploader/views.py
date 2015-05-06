@@ -59,8 +59,14 @@ def index(request):
         if hasattr(request.user, 'teacherprofile'):
             groups = Group.objects.filter(teacher=request.user)
             tests = Test.objects.filter(group__in=groups)[:5]
+            lessons = GroupLesson.objects.filter(set_by=request.user)[:5]
+            
+            #FIXME templatetag these
+            for lesson in lessons:
+                lesson.link = shorten_lesson_url(request, lesson.group.code, lesson.lesson.code)
+                lesson.feedback = LessonPrePostResponse.objects.filter(type='post', pre_post__group_lesson=lesson).aggregate(Avg('score'))['score__avg']
 
-            context = {'groups': groups, 'tests': tests}
+            context = {'groups': groups, 'tests': tests, 'lessons': lessons}
             return render(request, 'uploader/teacher_home.html', context)
         else:
             # FIXME use a filter

@@ -35,6 +35,11 @@ def try_to_include(parser, token):
 def test_table(teacher_or_student, tests):
     return {'teacher_or_student': teacher_or_student, 'tests': tests}
     
+    
+@register.inclusion_tag('uploader/snippets/lesson_table.html')
+def lesson_table(teacher_or_student, lessons):
+    return {'teacher_or_student': teacher_or_student, 'lessons': lessons}
+    
 
 @register.tag
 def resource_icon(resource):
