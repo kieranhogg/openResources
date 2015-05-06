@@ -1005,7 +1005,7 @@ def lesson(request, slug, code=None):
             li.type = 'task'
 
     # if this lesson has specified a pre/post be done
-    if l.pre_post:
+    if not public and l.pre_post:
         
         #if we're a student, check if we've already done this
         pre_posts = LessonPrePost.objects.filter(group_lesson=group_lesson)
