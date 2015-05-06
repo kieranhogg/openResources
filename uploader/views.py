@@ -1625,7 +1625,7 @@ def lesson_present(request, group_code, code):
 
 
 def denied(request):
-    if hasattr('msg', request.GET):
+    if hasattr(request.GET, 'msg'):
         msg = request.GET['msg']
     else:
         msg = ""
