@@ -438,3 +438,12 @@ a.btn.btn-default {
 .table > tbody > tr > td {
      vertical-align: middle;
 }
+.small-alignment th, td {
+    font-size: 1.2em;
+    padding: 10px;
+    vertical-align: middle;
+}
+.small-alignment .glyphicon {
+    color: black !important;
+    /*font-size: 1.0em;*/
+}

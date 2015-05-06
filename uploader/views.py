@@ -203,6 +203,9 @@ def unit_topic(
     notes = Note.objects.filter(unit_topic=unit_topic).count()
     question = MultipleChoiceQuestion.objects.filter(unit_topic=unit_topic)
     questions = question.count()
+    lessons = Lesson.objects.filter(unit_topic=unit_topic, public=True)
+    logger.error(lessons.query)
+    lessons = lessons.count()
     related = (UnitTopicLink.objects.filter(unit_topic_1=unit_topic) |
                UnitTopicLink.objects.filter(unit_topic_2=unit_topic))
 
@@ -217,7 +220,8 @@ def unit_topic(
 
     context = {'unit_topic': unit_topic, 'resources': resources,
                'questions': questions, 'notes': notes,
-               'related_topics': related, 'favourite': favourite}
+               'related_topics': related, 'favourite': favourite,
+               'lessons': lessons}
     return render(request, 'uploader/unit_topic.html', context)
 
 
@@ -236,7 +240,14 @@ def unit_topic_resources(
 
     context = {'unit_topic': unit_topic, 'resources': resources}
     return render(request, 'uploader/unit_topic_resources.html', context)
-
+    
+    
+def unit_topic_lessons(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
+    unit_topic = get_object_or_404(UnitTopic, slug=slug)
+    lessons = Lesson.objects.filter(unit_topic=unit_topic, public=True)
+    
+    return render(request, 'uploader/unit_topic_lessons.html', 
+        {'lessons': lessons, 'unit_topic': unit_topic})
 
 def unit_resources(request, subject_slug, exam_slug, syllabus_slug, unit_slug):
     unit = get_object_or_404(Unit, slug=unit_slug)

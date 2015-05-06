@@ -4,30 +4,22 @@ $(function () {
   $('[data-toggle="tooltip"]').tooltip()
 })
 </script>
-<div class="shortcuts">
-  <p>
-    <a href="{% url 'uploader:unit_topic_resources' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
-       <button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="left" title="Resources"> 
+<div class="shortcuts btn-group-vertical">
+    <a class="btn btn-default" data-container="body" data-toggle="tooltip" data-placement="left" title="Resources" href="{% url 'uploader:unit_topic_resources' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
         <span class="glyphicon glyphicon-cloud-download" aria-hidden="true" title="Resources"></span>
-        </button>
     </a>
-    </p>
-<p>
-    <a href="{% url 'uploader:view_notes' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
-        <button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="left" title="Notes"> 
+    
+    <a class="btn btn-default" data-container="body" data-toggle="tooltip" data-placement="left" title="Notes" href="{% url 'uploader:view_notes' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
         <span class="glyphicon glyphicon-book" aria-hidden="true" title="Notes"></span>
-        </button>
     </a>
-</p>
+    
+    <a class="btn btn-default" data-container="body" data-toggle="tooltip" data-placement="left" title="Lessons" href="{% url 'uploader:unit_topic_lessons' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
+        <span class="glyphicon glyphicon-blackboard" aria-hidden="true" title="Lessons"></span>
+    </a>
+    
 {% if user.teacherprofile %}
-<p>
-    <a href="{% url 'uploader:questions' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
-        <button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="left" title="Questions"> 
+    <a class="btn btn-default" data-container="body" data-toggle="tooltip" data-placement="left" title="Questions" href="{% url 'uploader:questions' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
         <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="Questions"></span>
-        </button>
-        
     </a>
-</p>
 {% endif %}
 </div>
-

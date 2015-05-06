@@ -37,38 +37,61 @@
 {% endif %}
 <h3>Information</h3>
 <p>For this unit topic, we have the following:</p>
-<p>
-    <a href="{% url 'uploader:unit_topic_resources' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
-        <span class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span>
-        <span class="menu_text">Resources 
-        {% if resources %}<span class="badge">{{ resources }}</span>
-        {% else %}<span class="badge">0</span>{% endif %}
-        </span>
-    </a>
-    </p>
-<p>
-    <a href="{% url 'uploader:view_notes' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
+<table class="small-alignment">
+<tbody>
+<tr>
+    <td>
+            
+                <span class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span>
+                </td>
+    <td>
+        <a href="{% url 'uploader:unit_topic_resources' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
+                Resources</a>
+    </td>
+    <td>
+                {% if resources %}<span class="badge">{{ resources }}</span>
+                {% else %}<span class="badge">0</span>{% endif %}
+                
+            
+</td></tr>
+<tr><td>
         <span class="glyphicon glyphicon-book" aria-hidden="true"></span>
-        <span class="menu_text">Notes {% if notes %}<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>{% else %}<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>{% endif %}</span>
-    </a>
-</p>
+        </td>
+    <td>
+        <a href="{% url 'uploader:view_notes' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
+        Notes
+        </a>
+        </td>
+    <td>
+        {% if notes %}<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>{% else %}<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>{% endif %}
+</td></tr>
 {% if user.teacherprofile %}
-<p>
+<tr><td>
+        <span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span>
+        </td>
+    <td>
     <a href="{% url 'uploader:unit_lessons' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
-        <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
-        <span class="menu_text">Questions 
+        Lessons
+        </td>
+    <td>
+        {% if lessons %}<span class="badge">{{ lessons }}</span>
+        {% else %}<span class="badge">0</span>{% endif %}
+</td></tr>
+<tr><td>
+        <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>  
+        </td>
+    <td>
+        <a href="{% url 'uploader:questions' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
+        Questions
+        </a>
+        </td>
+    <td>
         {% if questions %}<span class="badge">{{ questions }}</span>
-        {% else %}<span class="badge">0</span>{% endif %}</span>
+        {% else %}<span class="badge">0</span>{% endif %}
     </a>
-</p>
-<p>
-    <a href="{% url 'uploader:questions' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
-        <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
-        <span class="menu_text">Questions 
-        {% if questions %}<span class="badge">{{ questions }}</span>
-        {% else %}<span class="badge">0</span>{% endif %}</span>
-    </a>
-</p>
+</td></tr>
+</tbody>
+</table>
 {% endif %}
 {% if related_topics %}
     <h3>Related Unit Topics</h3>
