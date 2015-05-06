@@ -1625,7 +1625,10 @@ def lesson_present(request, group_code, code):
 
 
 def denied(request):
-    msg = request.GET['msg']
+    if hasattr('msg', request.GET):
+        msg = request.GET['msg']
+    else:
+        msg = ""
     return render(request, 'uploader/permission_denied.html', {'msg': msg})
     
     
