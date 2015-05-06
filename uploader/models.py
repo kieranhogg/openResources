@@ -693,7 +693,6 @@ class Lesson(models.Model):
     presentation = models.FileField(upload_to='%Y/%m', null=True, blank=True)
     show_presentation_to_students = models.BooleanField(default=False)
     unit_topic = models.ForeignKey(UnitTopic, null=True, blank=True)
-    date_for = models.DateField()
     lesson = models.IntegerField(null=True, blank=True, choices=(
             (1, "P1"), (2, "P2"), (3, "P3"), (4, "P4"), (5, "P5"), (6, "P6")))
     pub_date = models.DateTimeField(auto_now_add=True)
