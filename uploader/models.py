@@ -408,6 +408,7 @@ class Resource(models.Model):
 
     class Meta:
         ordering = ('-pub_date',)
+        unique_together = ('file', 'bookmark', 'subject', 'syllabus', 'unit', 'unit_topic')
 
     def get_title(self):
         return self.file.title if self.file else self.bookmark.title
