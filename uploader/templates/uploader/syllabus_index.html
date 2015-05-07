@@ -5,7 +5,7 @@
     <li><a href="{% url 'uploader:subject' subject.slug %}">{{ subject.subject_name }}</a></li>
     <li class="active">{{ level.level_name }}</li>
 </ol>
-<h2>{% block head_title %}{{ subject.subject_name }} Syllabuses{% endblock %}</h2>
+<h1>{% block head_title %}{{ subject.subject_name }} Syllabuses{% endblock %}</h1>
 <p>I found the following syllabuses:</p>
 {% if syllabus_list %}
     <ul>

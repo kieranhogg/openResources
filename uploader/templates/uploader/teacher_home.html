@@ -4,21 +4,21 @@
 {% get_static_prefix as STATIC_PREFIX %}
 {% load tags %}
 
-<h2>{% block head_title %}{{ user.teacherprofile }}{% endblock %}'s Home</h2>
-<h3>Groups</h3>
+<h1>{% block head_title %}{{ user.teacherprofile }}{% endblock %}'s Home</h1>
+<h2>Groups</h2>
 {% if groups %}
 <ul class="list-group" style="width:30%">
     {% for group in groups %}
       <li class="list-group-item"><a style="display:block" href="{% url 'uploader:group' group.slug %}">{{ group }}</a></li>
     {% endfor %}
     </ul>
-    <h3>Recent Assignments</h3>
+    <h2>Recent Assignments</h2>
     {% assignment_table "teacher" assignments %}
 
-    <h3>Lessons</h3>
+    <h2>Lessons</h2>
     {% lesson_table "teacher" lessons %}
     
-    <h3>Tests</h3>
+    <h2>Tests</h2>
     {% test_table "teacher" tests %}
 
 {% else %}

@@ -2,7 +2,7 @@
 {% block body_block %}
 {% load static %}
 {% get_static_prefix as STATIC_PREFIX %}
-<h2>{% block head_title %}Subjects{% endblock %}</h2>
+<h1>{% block head_title %}Subjects{% endblock %}</h1>
     {% if subjects %}
     <div class="row">
         {% for subject in subjects %}
@@ -10,7 +10,7 @@
             <a href="{% url 'uploader:subject' subject.slug %}" class="thumbnail">
               <img src="{{ STATIC_PREFIX }}uploader/img/subjects/{{ subject.slug }}.jpg" alt="{{ subject.slug }}">
             </a>
-            <h4 class="text-center">{{ subject.subject_name }}</h4>
+            <h4 class="text-center">{{ subject.subject_name }}</h3>
           </div>
         {% endfor %}
         </div>

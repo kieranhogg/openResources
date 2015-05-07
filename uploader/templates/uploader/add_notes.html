@@ -7,7 +7,7 @@
 /* Place both meltdowns at the top for easier testings (in a large enough window): */
 .meltdown_wrap { display: inline-block; vertical-align: top; }
 </style>
-<h2>{% block head_title %}{{ unit_topic.title }} Notes{% endblock %}</h2>
+<h1>{% block head_title %}{{ unit_topic.title }} Notes{% endblock %}</h1>
 <p>Notes are written in Markdown format. A full list of the syntax can be found
 <a href="https://help.github.com/articles/markdown-basics/">here</a> and a full
 list of available HTML tags are
@@ -38,7 +38,7 @@ list of available HTML tags are
 <div class="form-group text-center">
     <button type="submit" class="btn btn-success">Update</button>
 </div>    
-<h3>Upload Image</h3>
+<h2>Upload Image</h2>
 <p>Use this form to upload an image to our servers to use in the notes.</p>
 <iframe src="/upload_image" width="100%" height="300" frameborder="0"></iframe>
 

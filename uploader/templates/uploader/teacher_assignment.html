@@ -1,7 +1,7 @@
 {% extends 'uploader/base.html' %}
 {% block body_block %}
 {% load static %}
-<h2>{% block head_title %}{{assignment.title}}{% endblock %}</h2>
+<h1>{% block head_title %}{{assignment.title}}{% endblock %}</h1>
 <p><strong>Deadline:</strong> {{ assignment.deadline }}</p>
 <p class='well'>{{ assignment.description }}</p>
 <div class="progress">

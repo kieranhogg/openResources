@@ -14,7 +14,7 @@
      {{ unit_topic.title|truncatechars:25 }}</a></li>
     <li class='active'>Resources</li>
 </ol>
-<h2>{% block head_title %}{{ unit_topic.title }} Resources{% endblock %}</h2>
+<h1>{% block head_title %}{{ unit_topic.title }} Resources{% endblock %}</h1>
 {% include 'uploader/unit_topic_tabs.html' %}
 {% if resources %}
 {% for resource in resources %}

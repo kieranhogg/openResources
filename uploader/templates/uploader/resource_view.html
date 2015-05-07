@@ -21,7 +21,7 @@ function vote(resourceID, rating)
 }
 </script>
 <div class="">
-<h2>
+<h1>
     {% block head_title %}
     {% if resource.file %}
         {{ resource.file.title }}
@@ -29,7 +29,7 @@ function vote(resourceID, rating)
         {{ resource.bookmark.title }}
         {% endif %}
     {% endblock %}
-</h2>
+</h1>
 
 <div id="resource_details">
     {% if user.teacherprofile %}

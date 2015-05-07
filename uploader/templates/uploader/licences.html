@@ -1,12 +1,12 @@
 {% extends 'uploader/base.html' %}
 {% block body_block %}
-<h2>{% block head_title %}Licences{% endblock %}</h2>
+<h1>{% block head_title %}Licences{% endblock %}</h1>
 {% for licence in licences %}
-<h3>{{ licence }}</h3>
+<h2>{{ licence }}</h2>
 <p>{{ licence.description}}</p>
 <p><a href="{{ licence.link }}">More information</a></p>
 {% endfor %}
-<h3>Licence missing?</h3>
+<h2>Licence missing?</h2>
 <p>If you need a licence adding, get in touch using the twitter or email buttons in the menu.</p>
 {% endblock %}
 

@@ -4,18 +4,18 @@
 {% get_static_prefix as STATIC_PREFIX %}
     <div class="jumbotron">
         <h1>Resources done right</h1>
-        <h3>Teachers</h3>
+        <h2>Teachers</h2>
         <p>We are a learning platform centered around courses and sharing. You and your classes
         can share and reuse lessons, resources and tests.</p>
         <a href="{% url 'uploader:signup' %}" role='button' class="btn btn-lg btn-success">
                 Sign up
         </a>
-        <h3>Students</h3>
+        <h2>Students</h2>
         <p>For your specific course, we have materials such as notes and resources to help you revise.</p>
         <a href="{% url 'uploader:subjects' %}" role='button' class="btn btn-lg btn-success">
             View Resources
         </a>
-        <h3>Still not sure?</h3>
+        <h2>Still not sure?</h2>
             <a href="{% url 'uploader:about' %}" role='button' class="btn btn-lg btn-info">
                 Learn more
             </a>

@@ -1,7 +1,7 @@
 {% extends 'uploader/base.html' %}
 {% load static %}
 {% block body_block %}
-<h2>{% block head_title %}My Groups{% endblock %}</h2>
+<h1>{% block head_title %}My Groups{% endblock %}</h1>
 {% for group in groups %}
 <p>
     <a href="{% url 'uploader:group' group.slug %}">

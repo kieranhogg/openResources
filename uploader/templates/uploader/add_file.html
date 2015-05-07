@@ -2,13 +2,13 @@
 {% load bootstrap %}
 {% block body_block %}
 {{ media }}
-<h2>{% block head_title %}
+<h1>{% block head_title %}
 {% if form.instance.id %}
     Edit
 {% else %}
     Add
 {% endif %}
-File{% endblock %}</h2>
+File{% endblock %}</h1>
 {% if not user.is_authenticated %}
 <p>If you are not logged in, your resource will wait to be approved. To skip 
 this in future, please register and log in first.</p>

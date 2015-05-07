@@ -802,8 +802,6 @@ def user_lessons(request, user_id=None):
                            public=public,
                            pre_post=pre_post or False,
                            code=random_key(3, 'Lesson')
-                        #   date_for=form_data.get('date_for') or None,
-                        #   lesson=form_data.get('lesson') or None
                            )
                 url = request.build_absolute_uri(reverse('uploader:lesson',
                                                          args=[slug]))

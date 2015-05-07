@@ -77,25 +77,25 @@ $(function () {
   });
 });
 </script>
-<h2>{% block head_title %}{{ lesson.title }}{% endblock %}</h2>
+<h1>{% block head_title %}{{ lesson.title }}{% endblock %}</h1>
 {% if lesson.objectives %}
-<h3>Lesson Objectives</h3>
+<h2>Lesson Objectives</h2>
 {% autoescape off %}
 {{ lesson.objectives }}
 {% endautoescape %}
 {% endif %}
 {% if lesson.presentation %}
   {% if lesson.show_presentation_to_students %}
-    <h3>Lesson Presentation</h3>
+    <h2>Lesson Presentation</h2>
     <a href="{{MEDIA_URL}}{{ lesson.presentation.file }}">Click to view</a>
   {% elif user.teacherprofile %}
-    <h3>Lesson Presentation</h3>
+    <h2>Lesson Presentation</h2>
     <a href="{{MEDIA_URL}}{{ lesson.presentation.file }}">Click to view</a>
   {% endif %}
 {% endif %}
 {% if pre_posts and user.studentprofile and not existing_pre %}
 <div id="pre_questions">
-<h4>Before</h4>
+<h3>Before</h3>
 <form id='pre_form'>
   {% csrf_token %}
   <p>Rate your confidence, 1 is low, 5 is high</p>
@@ -117,13 +117,13 @@ $(function () {
 <div id="lesson_tasks" style="display:none">
 
 {% elif pre_posts and lesson.uploader == user %}
-<h4>Pre and Post assessment</h4>
+<h3>Pre and Post assessment</h3>
   <div id="columnchart_material" style="width: 80%; height: 400px; margin: 0 auto">Loading chart...</div>
 {% else %}
 <div id="lesson_tasks">
 {% endif %}
 
-<h3>Lesson Tasks</h3>
+<h2>Lesson Tasks</h2>
 <div class="row">
   {% for item in lesson_items %}
 
@@ -133,7 +133,7 @@ $(function () {
               <div class="modal-content">
                 <div class="modal-header">
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                  <h4 class="modal-title" id="myModalLabel{{ forloop.counter }}">{{ item.content }}</h4>
+                  <h4 class="modal-title" id="myModalLabel{{ forloop.counter }}">{{ item.content }}</h3>
                 </div>
                 <div class="modal-body">
                   <iframe src="{% url 'uploader:view_resource_embed' item.content.slug %}" width="100%" height="600" frameborder="0" /></iframe>
@@ -152,10 +152,10 @@ $(function () {
   {% endif %}
     <div class="thumbnail">
       <!--<div class="caption">-->
-        <h4 class="task_num">{{ forloop.counter }}</h4>
+        <h4 class="task_num">{{ forloop.counter }}</h3>
         
         {% if item.type == 'resource' %}
-        <h4>
+        <h3>
           {% if item.content.file %}
               <span class="glyphicon glyphicon-paperclip" aria-hidden="true" title=""></span>
                {{ item.content.file.title }}
@@ -175,7 +175,7 @@ $(function () {
               {% endif %}
                {{ item.content.bookmark.title }}
           {% endif %}
-          </h4>
+          </h3>
           {% if item.instructions %}
           <p>{{ item.instructions|safe }}</p>
           {% endif %}
@@ -191,8 +191,8 @@ $(function () {
         </div>
        
         {% elif item.type == 'note' %}
-        <h4><span class="glyphicon glyphicon-book" aria-hidden="true" title='Notes'></span>
-        {{ item.content.unit_topic.title }}</h4>
+        <h3><span class="glyphicon glyphicon-book" aria-hidden="true" title='Notes'></span>
+        {{ item.content.unit_topic.title }}</h3>
         
           {% if item.instructions %}
           <p>{{ item.instructions|safe }}</p>
@@ -204,7 +204,7 @@ $(function () {
         </p>
         
         {% elif item.type == 'test' %}
-        <h4><span style="margin-top: -5px;" class="glyphicon glyphicon-check" aria-hidden="true"></span> {{ item.content.unit_topic.title }}</h4>
+        <h3><span style="margin-top: -5px;" class="glyphicon glyphicon-check" aria-hidden="true"></span> {{ item.content.unit_topic.title }}</h3>
         {% if item.instructions %}
           <p>{{ item.instructions|safe }}</p>
           {% endif %}
@@ -213,7 +213,7 @@ $(function () {
         </a>
         </p>
         {% elif item.type == 'task' %}
-        <h4><span style="margin-top: -5px;" class="glyphicon glyphicon-th-list" aria-hidden="true"></span> Task</h4>
+        <h3><span style="margin-top: -5px;" class="glyphicon glyphicon-th-list" aria-hidden="true"></span> Task</h3>
         {% if item.instructions %}
           <p>{{ item.instructions|safe }}</p>
           {% endif %}
@@ -229,7 +229,7 @@ $(function () {
 <div id="post_questions" style="display:none">
 {% elif pre_posts and user.studentprofile and existing_pre %}
 <div id="post_questions">
-<h4>After</h4>
+<h3>After</h3>
 <form id='post_form'>
   {% csrf_token %}
   <p>Rate your confidence, 1 is low, 5 is high</p>

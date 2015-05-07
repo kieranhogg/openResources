@@ -8,7 +8,7 @@
   $('[rel=tooltip]').tooltip({container: 'body'});
 })
 </script>
-<h2>{% block head_title %}Mark {{ submission.assignment.title }}{% endblock %}</h2>
+<h1>{% block head_title %}Mark {{ submission.assignment.title }}{% endblock %}</h1>
 
 <p><strong>Student</strong>: {{ submission.student.studentprofile }}</p>
 <p><strong>Submitted</strong>: {{ submission.pub_date }}</p>
@@ -17,7 +17,7 @@
 <p class='well'>{{ submission.comment }}</p>
 {% endif %}
 
-<h3>Feedback</h3>
+<h2>Feedback</h2>
 <form action method='POST'>
 {% csrf_token %}
 {{ form|bootstrap }}
@@ -30,7 +30,7 @@
 </a>
 
 {% if files %}
-<h3>Attachments</h3>
+<h2>Attachments</h2>
 {% for file in files %}
 <p> 
 <div class="btn-group" role="group" aria-label="...">

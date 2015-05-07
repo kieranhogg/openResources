@@ -13,7 +13,7 @@
      {{ unit_topic.unit.title|truncatechars:30 }}</a></li>
      <li class="active">{{ unit_topic.title|truncatechars:30 }}</li>
 </ol>
-<h2>{% block head_title %}{{ unit_topic.title }}{% endblock %}</h2>
+<h1>{% block head_title %}{{ unit_topic.title }}{% endblock %}</h1>
 {% if user.is_authenticated %}
 <div class="favourite">
     {% if favourite %}
@@ -30,12 +30,12 @@
 </div>
 {% endif %}
 {% if unit_topic.description and unit_topic.description != "" %}
-<h3>Description</h3>
+<h2>Description</h2>
 <div class="well">
     {{ unit_topic.description|safe }}
 </div>
 {% endif %}
-<h3>Information</h3>
+<h2>Information</h2>
 <p>For this unit topic, we have the following:</p>
 <table class="small-alignment">
 <tbody>
@@ -94,7 +94,7 @@
 </table>
 {% endif %}
 {% if related_topics %}
-    <h3>Related Unit Topics</h3>
+    <h2>Related Unit Topics</h2>
     <p>You might also want to check other similar unit topics for resources.</p>
     <ul>
     {% for related in related_topics %}

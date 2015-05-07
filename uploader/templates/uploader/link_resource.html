@@ -72,14 +72,14 @@
 //     });
 // });
 </script>
-<h2>{% block head_title %}
+<h1>{% block head_title %}
 {% if type == 'test' %}
     Choose Test Topic
 {% else %}
     Link Resource
 {% endif %}
 
-{% endblock %}</h2>
+{% endblock %}</h1>
 
 {% if type == 'test' %}
 <script>
@@ -102,7 +102,7 @@
         Pick which unit topic your questions will be drawn from.
     </p>
 {% else %}
-<h3>Important!</h3>
+<h2>Important!</h2>
 <div class="important">
 <p>You now need to put this resource where it belongs:
 <ul>

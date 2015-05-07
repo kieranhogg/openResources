@@ -9,7 +9,7 @@
      {{ syllabus.exam_level.level_name|truncatechars:45 }}</a></li>
     <li class="active">{{ syllabus|truncatechars:45 }}</li>
 </ol>
-<h2>{% block head_title %}{{ syllabus }}{% endblock %}</h2>
+<h1>{% block head_title %}{{ syllabus }}{% endblock %}</h1>
 {% if user.is_authenticated %}
 <div class="favourite">
     {% if favourite %}
@@ -55,7 +55,7 @@
     </a>
 </p>
 {% endif %}
-<h3>Syllabus Resources</h3>
+<h2>Syllabus Resources</h2>
 <p>E.g. syllabus schemes of work.</p>
 <p>
     <a href="{% url 'uploader:syllabus_resources' syllabus.subject.slug syllabus.exam_level.slug syllabus.slug %}">
@@ -63,9 +63,9 @@
     </a>
 </p>
 {% if syllabus.exam_board.board_name == "National Curriculum" %}
-<h3>Years</h3>
+<h2>Years</h2>
 {% else %}
-<h3>Units</h3>
+<h2>Units</h2>
 {% endif %}
 
 {% if units %}

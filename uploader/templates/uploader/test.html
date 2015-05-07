@@ -2,7 +2,7 @@
 {% block head_title %}{{ unit_topic }} Notes{% endblock %}
 {% block body_block %}
 {% load static %}
-<h2>{% block head_title %}{{ unit_topic }} Test{% endblock %}</h2>
+<h1>{% block head_title %}{{ unit_topic }} Test{% endblock %}</h1>
 <p>
 <a class='btn btn-default' href="{% url 'uploader:test_feedback' unit_topic.slug %}">
     <span class="glyphicon glyphicon-ok" aria-hidden="true" title='Preview'></span>
@@ -15,7 +15,7 @@
         {% csrf_token %}
         {% for question in questions %}
             <div class='question'>
-                <h4>Question {{ forloop.counter }}</h4>
+                <h3>Question {{ forloop.counter }}</h3>
                 {{ question.text|linebreaks }}</div>
             <p>
                 {% for answer in question.answers %}

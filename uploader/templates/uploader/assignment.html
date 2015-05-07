@@ -3,12 +3,12 @@
 {% load tags %}
 {% block body_block %}
 {{ form.media }}
-<h2>{% block head_title %}
+<h1>{% block head_title %}
 {% if form.instance.id %}
     Edit
 {% else %}
     Add
-{% endif %} Assignment{% endblock %}</h2>
+{% endif %} Assignment{% endblock %}</h1>
 
 {% if form.non_field_errors %}
     {% for error in form.non_field_errors %}

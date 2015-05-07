@@ -33,7 +33,7 @@
         <div class="logo">
             <a href="{% url 'uploader:index' %}">
             <img src="{% static 'uploader/logo_s.png' %}" alt="logo" width="64" height="64" />
-            <h1>{{ SITE_NAME }}</h1>
+            <span id="site-name">{{ SITE_NAME }}</span>
             </a>
         </div>
         {% try_to_include "uploader/top_banner.html" %}

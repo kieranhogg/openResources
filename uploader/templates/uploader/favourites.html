@@ -2,9 +2,9 @@
 {% block body_block %}
 {% load static %}
 {% get_static_prefix as STATIC_PREFIX %}
-<h2>{% block head_title %}My Favourites{% endblock %}</h2>
+<h1>{% block head_title %}My Favourites{% endblock %}</h1>
 {% if user.is_authenticated %}
-    <h3>Subjects</h3>
+    <h2>Subjects</h2>
     <p>To change your subjects, you can do so in your 
         <a href="{% url 'uploader:profile' %}">profile</a>.
     </p>
@@ -15,13 +15,13 @@
             <a href="{% url 'uploader:subject' subject.slug %}" class="thumbnail">
               <img src="{{ STATIC_PREFIX }}uploader/img/subjects/{{ subject.slug }}.jpg" alt="{{ subject.slug }}">
             </a>
-            <h4 class="text-center">{{ subject.subject_name }}</h4>
+            <h4 class="text-center">{{ subject.subject_name }}</h3>
           </div>
         {% endfor %}
         </div>
     {% endif %}
     
-    <h3>Syllabuses</h3>
+    <h2>Syllabuses</h2>
     {% if syllabuses %}
         <div>
             <ul>
@@ -42,7 +42,7 @@
         syllabus page to add them to this page.</p>
     {% endif %}
     
-    <h3>Units</h3>
+    <h2>Units</h2>
     {% if units %}
         <div>
             <ul>
@@ -63,7 +63,7 @@
         <p>Click the favourite icon on any unit page to add them to this page.</p>
     {% endif %}
     
-    <h3>Unit Topics</h3>
+    <h2>Unit Topics</h2>
     {% if unit_topics %}
         <div>
             <ul>

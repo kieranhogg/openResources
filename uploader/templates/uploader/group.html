@@ -19,11 +19,11 @@ $(function () {
   $('[data-toggle="tooltip"]').tooltip()
 })
 </script>
-<h2>{% block head_title %}{{ group.name }} {% endblock %}</h2>
+<h1>{% block head_title %}{{ group.name }} {% endblock %}</h1>
 <p><strong>Number of students:</strong> {{ students|length }}</p>
 <p><strong>Invite code:</strong> {{ group.code }}</p>
 
-<h3>Assignments</h3>
+<h2>Assignments</h2>
 <table id='assignments' class='table table-striped'>
     <thead>
     <tr>
@@ -51,7 +51,7 @@ $(function () {
 <a href="{% url 'uploader:add_test' %}">
     <button class='btn btn-success'>New Test</button>
 </a>
-<h3>Lessons</h3>
+<h2>Lessons</h2>
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
   <div class="panel panel-default">
     <div class="panel-heading" role="tab" id="headingOne">
@@ -60,7 +60,7 @@ $(function () {
           <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
           Assign Lesson to Group
         </a>
-      </h4>
+      </h3>
     </div>
     <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
       <div class="panel-body">
@@ -140,7 +140,7 @@ $(function () {
 <p>No lessons assigned to this group</p>
 {% endif %}
 >>>>>>> master
-<h3>Tests</h3>
+<h2>Tests</h2>
 <div class="table-responsive">
 <table id='tests' class='table table-striped'>
     <thead>
