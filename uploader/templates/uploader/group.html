@@ -1,10 +1,7 @@
 {% extends 'uploader/base.html' %}
 {% load static %}
-<<<<<<< HEAD
 {% load tags %}
-=======
 {% load bootstrap %}
->>>>>>> master
 {% block body_block %}
 {{ form.media }}
 
@@ -26,7 +23,6 @@ $(function () {
 <p><strong>Number of students:</strong> {{ students|length }}</p>
 <p><strong>Invite code:</strong> {{ group.code }}</p>
 
-{% if students %}
 <h3>Assignments</h3>
 <table id='assignments' class='table table-striped'>
     <thead>
@@ -177,7 +173,4 @@ $(function () {
 <a href="{% url 'uploader:add_test' %}">
     <button class='btn btn-success'>New Test</button>
 </a>
-{% else %}
-<p>No students in group.</p>
-{% endif %}
 {% endblock %}
