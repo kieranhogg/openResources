@@ -324,17 +324,15 @@ hr {
     height: 100%;
 }
 
-#notes li {
+#notes li, #notes p {
     font-family: "freight-text-pro",Georgia,Cambria,"Times New Roman",Times,serif;
     letter-spacing: .01rem;
     font-weight: 400;
     font-style: normal;
-    font-size: 1.1em;
-}
-#notes p {
+    font-size: 12pt;
     line-height: 1.8;
 }
-    
+
 
 #menu_home {
     margin-left: -35px;
@@ -441,12 +439,16 @@ a.btn.btn-default {
 .table > tbody > tr > td {
      vertical-align: middle;
 }
-.small-alignment th, .small-alignment td {
-    font-size: 1.2em;
-    padding: 10px;
+.small-alignment-small th, .small-alignment-small td  {
+    padding: 5px;
     vertical-align: middle;
 }
-.small-alignment .glyphicon {
+.small-alignment-small .glyphicon {
     color: black !important;
     /*font-size: 1.0em;*/
 }
+.small-alignment th, .small-alignment td {
+    font-size: 1.2em;
+    padding: 10px;
+}
+
