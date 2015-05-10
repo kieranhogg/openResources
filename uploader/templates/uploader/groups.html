@@ -4,7 +4,7 @@
 <h1>{% block head_title %}My Groups{% endblock %}</h1>
 {% for group in groups %}
 <p>
-    <a href="{% url 'uploader:group' group.slug %}">
+    <a href="{% url 'uploader:group' group.code %}">
     {{ group.name }} 
     </a>
     

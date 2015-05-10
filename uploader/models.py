@@ -489,7 +489,7 @@ class StudentProfile(models.Model):
 
 
 class TeacherProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'score')
+    list_display = ('user', 'score', 'user')
 
 
 class StudentProfileAdmin(admin.ModelAdmin):
@@ -585,8 +585,9 @@ class MultipleChoiceAnswer(Answer):
 class Group(models.Model):
     name = models.CharField(max_length='100')
     teacher = models.ForeignKey(settings.AUTH_USER_MODEL)
-    slug = models.SlugField(unique=True, max_length='100')
-    code = models.CharField(max_length='4', unique=True)
+    year = models.CharField(max_length='3', help_text='E.g. 7, 12, FS1', null=True, blank=True)
+    subject = models.ForeignKey(Subject, null=True, blank=True)
+    code = models.SlugField(max_length='4', unique=True)
     pub_date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -802,13 +803,17 @@ class Assignment(models.Model):
     deadline = models.DateTimeField()
     description = models.TextField()
     unit_topic = models.ForeignKey(UnitTopic, blank=True, null=True)
-    grade_system = models.ForeignKey(GradeSystem, blank=True, null=True)
+    total = models.PositiveIntegerField(blank=True, null=True)
+    comments_only = models.BooleanField(default=False)
+    grading = models.ForeignKey('Grading', blank=True, null=True)
     pub_date = models.DateTimeField(auto_now_add=True)
+
 
 def assignment_location(instance, filename):
         code = instance.assignment_submission.assignment.code
         
         return '/'.join(['assignments', code, filename])
+
 
 class AssignmentSubmissionFile(models.Model):
     assignment_submission = models.ForeignKey('AssignmentSubmission')
@@ -818,15 +823,9 @@ class AssignmentSubmissionFile(models.Model):
     
     def filename(self):
         return os.path.basename(self.file.name)
-    
+
     
 class AssignmentSubmission(models.Model):
-    student = models.ForeignKey(settings.AUTH_USER_MODEL)
-    assignment = models.ForeignKey(Assignment)
-    pub_date = models.DateTimeField(auto_now_add=True)
-    
-    
-class Feedback(models.Model):
     UNMARKED = 1
     MARKED = 2
     NEEDSIMP = 3
@@ -840,21 +839,72 @@ class Feedback(models.Model):
         (INCOMP, 'Incomplete'),
         (ABSENT, 'Absent')
     )
-    assignment_submission = models.OneToOneField(AssignmentSubmission, null=True)
+    assignment = models.ForeignKey(Assignment)
+    student = models.ForeignKey(settings.AUTH_USER_MODEL)
+
     feedback = models.TextField(blank=True, null=True)
     result = models.IntegerField(blank=True, null=True)
+    
     feedback_file = models.FileField(upload_to=assignment_location, blank=True, null=True)
     status = models.IntegerField(choices=FEEDBACK_STATUS, default=UNMARKED)
     audio_feedback = models.FileField(upload_to=assignment_location, blank=True, null=True)
+    submitted = models.DateTimeField(auto_now_add=True)
+    marked = models.DateTimeField(auto_now=True, null=True, blank=True)
+    
+    def grade(self):
+        if self.assignment.grading.type == 2:
+            return GradeOptions.objects.get(
+                grading=self.assignment.grading,
+                value=self.result).representation
+        else:
+            return "Not implemented"
+            
+    def grade_type(self):
+        if self.assignment.grading.type == 2:
+            return GradeOptions.objects.get(
+                grading=self.assignment.grading,
+                value=self.result).hi_med_lo
+        else:
+            return "Not implemented"                                   
+    
+class Grading(models.Model):
+    NUMERICAL = 1
+    OPTIONS  = 2
+    
+    GRADING_TYPES = (
+        (NUMERICAL, 'Numerical grade scale'),
+        (OPTIONS, 'A preset set of grade options'))
+    
+    title = models.CharField(max_length=200)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    description = models.TextField(null=True, blank=True)
+    type = models.PositiveIntegerField(max_length=1, choices=GRADING_TYPES, default=0)
+    public = models.BooleanField(default=False)
     pub_date = models.DateTimeField(auto_now_add=True)
+    
+    def __unicode__(self):
+        return str(self.title) + str(': ') + str(self.get_type_display())
     
     
 class GradeOptions(models.Model):
-    pass
+    grading = models.ForeignKey(Grading, null=True, blank=True)
+    value = models.PositiveIntegerField()
+    hi_med_lo = models.CharField(max_length=4, choices=(
+        ('hi', 'High'), ('med', 'Medium'), ('lo', 'Low'), ('fail', 'Fail')), 
+        help_text='What level grade is this classified as? Used to colour code the grades, not displayed.',
+        blank=True, null=True)
+    grade = models.CharField(max_length=50)
+    grade_long = models.TextField(null=True, blank=True)
+    order = models.PositiveIntegerField()
+    pub_date = models.DateTimeField(auto_now_add=True)
+ 
     
 class NumericalGrade(models.Model):
-    pass
-
+    grading = models.ForeignKey(Grading, null=True, blank=True)
+    upper_bound = models.PositiveIntegerField(help_text='As a percentage')
+    grade = models.CharField(max_length=10)
+    grade_long = models.TextField(null=True, blank=True)
+    pub_date = models.DateTimeField(auto_now_add=True)
 
 
 ######## signals TODO move to own file #########

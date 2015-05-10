@@ -2,6 +2,11 @@
 {% block body_block %}
 {% load static %}
 <h1>{% block head_title %}{{assignment.title}}{% endblock %}</h1>
+<p>
+    <a class='btn btn-info' href="{% url 'uploader:assignment' assignment.code %}">
+    <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Edit
+    </a>
+</p>
 <p><strong>Deadline:</strong> {{ assignment.deadline }}</p>
 <p class='well'>{{ assignment.description }}</p>
 <div class="progress">
@@ -14,8 +19,8 @@
   <div class="progress-bar progress-bar-danger progress-bar-striped" style="width: {{assignment.not_submitted_percentage }}%">
     Not submitted ({{assignment.not_submitted}})
   </div>
-  <div class="progress" style="width: {{assignment.absent_percentage }}%">
-    <div style="text-align: center; font-size:12px; line-height: 20px">Absent ({{assignment.absent}})</div>
+  <div class="progress-bar progress-bar-info progress-bar-striped" style="width: {{assignment.absent_percentage }}%">
+    Absent ({{assignment.absent}})
   </div>
 </div>
 <table class='table'>
@@ -24,13 +29,14 @@
             <th style='text-align:center'>Student</th>
             <th style='text-align:center'>Submission</th>
             <th style='text-align:center'>Marking</th>
+            <th style='text-align:center'>Grade</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
 {% for student in students %}
 
-{% if student.student.feedback.status == 5 %}
+{% if student.student.submission.status == 5 %}
 <tr>
 {% elif student.student.submission and student.student.submission.pub_date > assignment.deadline %}
 <tr class='warning'>
@@ -44,7 +50,7 @@
     </td>
     <td>
         {% if student.student.submission %}
-            {% if student.student.feedback.status == 5 %}
+            {% if student.student.submission.status == 5 %}
             {% elif student.student.submission and student.student.submission.pub_date > assignment.deadline %}
                 <span class="glyphicon glyphicon-time" aria-hidden="true" style='font-size: 1.0em'></span>
                 Submitted {{ assignment.deadline|timesince:student.student.submission.pub_date }} late
@@ -54,22 +60,34 @@
         {%endif%}
     </td>
     <td>
-        {% if student.student.feedback.get_status_display == 'Marked' %}
+        {% if student.student.submission.get_status_display == 'Marked' %}
             <span class="glyphicon glyphicon-ok" aria-hidden="true" style='font-size:1.0em'></span>
-        {% elif student.student.feedback.get_status_display == 'Needs improvement' %}
+        {% elif student.student.submission.get_status_display == 'Needs improvement' %}
             <span class="glyphicon glyphicon-repeat" aria-hidden="true" style='font-size:1.0em'></span>
-        {% elif student.student.feedback.get_status_display == 'Incomplete' %}
+        {% elif student.student.submission.get_status_display == 'Incomplete' %}
         <span class="glyphicon glyphicon-remove" aria-hidden="true" style='font-size:1.0em'></span>
-        {% elif student.student.feedback.get_status_display == 'Absent' %}
+        {% elif student.student.submission.get_status_display == 'Absent' %}
         <span class="glyphicon glyphicon-minus" aria-hidden="true" style='font-size:1.0em'></span>
         {% elif student.student.submission %}
         <span class="glyphicon glyphicon-question-sign" aria-hidden="true" style='font-size:1.0em'></span>
-        Unmarked
         {% endif %}
-        {{ student.student.feedback.get_status_display }}
+        {{ student.student.submission.get_status_display }}
+    </td>
+    {% if student.student.submission.grade_type == 'hi' %}
+    <td class='info text-center'>
+    {% elif student.student.submission.grade_type == 'med' %}
+    <td class='success text-center'>
+    {% elif student.student.submission.grade_type == 'lo' %}
+    <td class='warning text-center'>
+    {% elif student.student.submission.grade_type == 'fail' %}
+    <td class="danger text-center">
+    {% else %}
+    <td>
+    {% endif %}
+        {{ student.student.submission.grade }}
     </td>
     <td style='text-align:right'>
-        {% if student.student.feedback.status == 5 %}
+        {% if student.student.submission.status == 5 %}
         {% elif student.student.submission %}
         <a href="{% url 'uploader:mark_assignment' assignment.code student.student.submission.id %}" class='btn btn-sm btn-default'>Mark</a>
         {% else %}

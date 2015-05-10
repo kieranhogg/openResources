@@ -3,6 +3,20 @@
 {% load tags %}
 {% block body_block %}
 {{ form.media }}
+<script>
+$(function() {
+    var frameSrc = "/";
+
+$('#openBtn').click(function(){
+    $('#myModal').on('show', function () {
+
+        $('iframe').attr("src",frameSrc);
+      
+	});
+    $('#myModal').modal({show:true})
+});
+});
+</script>
 <h1>{% block head_title %}
 {% if form.instance.id %}
     Edit
@@ -30,7 +44,11 @@
         {{ field|bootstrap }}
     </div>
     {% endfor %}
-    <!--{% link_embed %}-->
+    <a href="{% url 'uploader:user_grading' %}" target="_blank" class='btn btn-default' id="openBtn">
+        <span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
+        Configure grading
+    </a>
+    
     <div class="form-group text-center">
     {% if form.instance.id %}
         <button type="submit" class="btn btn-success">Update</button>

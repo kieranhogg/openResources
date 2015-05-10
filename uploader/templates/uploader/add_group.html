@@ -1,10 +1,18 @@
 {% extends 'uploader/base.html' %}
 {% block body_block %}
-<h1>{% block head_title %}My Profile{% endblock %}</h1>
-<h2>Add Group</h2>
+{% load bootstrap %}
+<h1>{% block head_title %}
+{% if instance.id %}
+    Edit
+{% else %}
+    Add 
+{% endif %}
+Group{% endblock %}</h1>
+<div class='small_form'>
 <form action method='post'>
 	{% csrf_token %}
-{{ form.as_p }}
-<input type="submit" name="Save" />
+    {{ form|bootstrap }}
+<div class='form-input text-center'><button type="submit" class="btn btn-success">Save</button></div>
 </form>
+</div>
 {% endblock %}

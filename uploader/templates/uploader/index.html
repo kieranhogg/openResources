@@ -3,22 +3,28 @@
 {% load static %}
 {% get_static_prefix as STATIC_PREFIX %}
     <div class="jumbotron">
-        <h1>Resources done right</h1>
+        <h1>Stop Re-inventing the Wheel!</h1>
         <h2>Teachers</h2>
         <p>We are a learning platform centered around courses and sharing. You and your classes
-        can share and reuse lessons, resources and tests.</p>
-        <a href="{% url 'uploader:signup' %}" role='button' class="btn btn-lg btn-success">
-                Sign up
-        </a>
+        can share and reuse lessons, resources and tests. You can also set and mark assignments, no fuss!</p>
+        <div class="text-center" style="width: 20%; margin: 0 auto">
+            <a href="{% url 'uploader:signup' %}" role='button' class="btn btn-block btn-lg btn-success">
+                    Sign up
+            </a>
+        </div>
         <h2>Students</h2>
         <p>For your specific course, we have materials such as notes and resources to help you revise.</p>
-        <a href="{% url 'uploader:subjects' %}" role='button' class="btn btn-lg btn-success">
-            View Resources
-        </a>
+        <div class="text-center" style="width: 20%; margin: 0 auto">
+            <a href="{% url 'uploader:subjects' %}" role='button' class="btn btn-block btn-lg btn-success">
+                View Resources
+            </a>
+        </div>
         <h2>Still not sure?</h2>
-            <a href="{% url 'uploader:about' %}" role='button' class="btn btn-lg btn-info">
+        <p>That's okay, feel free to have a look around before jumping in, it'll be worth it though!</p>
+        <div class="text-center" style="width: 20%; margin: 0 auto">
+            <a href="{% url 'uploader:about' %}" role='button' class="btn btn-block btn-lg btn-info">
                 Learn more
             </a>
-        <br />
+        </div>
      </div>
 {% endblock %}

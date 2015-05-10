@@ -1,6 +1,7 @@
 import mimetypes
 from django import forms
 from django.conf import settings
+from django.contrib.auth.models import Group as DjangoGroup
 from django.template.defaultfilters import filesizeformat
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import slugify
@@ -158,7 +159,7 @@ class StudentForm(forms.Form):
                             surname=self.cleaned_data['last_name'])
         up.save()
         
-        #new_user.groups.add(Group.objects.get(name='student'))
+        new_user.groups.add(DjangoGroup.objects.get(name='students'))
         
         return new_user
         
@@ -210,7 +211,7 @@ class TeacherForm(forms.Form):
                             forename=self.cleaned_data['first_name'],
                             surname=self.cleaned_data['last_name'])
         up.save()
-        # new_user.groups.add(Group.objects.get(name='teacher'))
+        new_user.groups.add(DjangoGroup.objects.get(name='teachers'))
         
         try:
             to = settings.NEW_ACCOUNT_EMAIL
@@ -293,14 +294,15 @@ class AssignmentForm(forms.ModelForm):
     
     class Meta:
         model = Assignment
-        fields = ('title', 'description', 'deadline', 'group')
+        fields = ('title', 'description', 'deadline', 'group', 'total', 'comments_only', 'grading')
         
 
-class FeedbackForm(forms.ModelForm):
-
+class MarkAssignmentForm(forms.ModelForm):
+    grade_options = forms.ModelChoiceField(GradeOptions.objects.all().values('value'), label='Grade', required=False)
+    
     class Meta:
-        model = Feedback
-        fields = ('feedback', 'result', 'status')
+        model = AssignmentSubmission
+        fields = ('feedback', 'result', 'feedback_file', 'status')
         
 
 class AssignmentSubmissionFileForm(forms.ModelForm):
@@ -309,6 +311,7 @@ class AssignmentSubmissionFileForm(forms.ModelForm):
         model = AssignmentSubmissionFile
         fields = ('file', 'comments')
 
+
 class GroupLessonForm(forms.ModelForm):
     date = forms.DateTimeField(required=False,
     widget=DateTimePicker(options={"format": "YYYY-MM-DD",
@@ -316,3 +319,10 @@ class GroupLessonForm(forms.ModelForm):
     class Meta:
         model = GroupLesson
         fields = ('lesson', 'date', 'period')
+
+
+class GradingForm(forms.ModelForm):
+    
+    class Meta:
+        model = Grading
+        fields = ('title',)

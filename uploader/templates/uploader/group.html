@@ -48,8 +48,8 @@ $(function () {
     {% endfor %}
     </tbody>
 </table>
-<a href="{% url 'uploader:add_test' %}">
-    <button class='btn btn-success'>New Test</button>
+<a href="{% url 'uploader:assignment' %}">
+    <button class='btn btn-success'>Create Assignment</button>
 </a>
 <h2>Lessons</h2>
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
@@ -139,7 +139,6 @@ $(function () {
 {% else %}
 <p>No lessons assigned to this group</p>
 {% endif %}
->>>>>>> master
 <h2>Tests</h2>
 <div class="table-responsive">
 <table id='tests' class='table table-striped'>

@@ -3,14 +3,14 @@
 {% load static %}
 <div class="jumbotron">
 <h1>{% block head_title %}Features{% endblock %}</h1>
-<h1>Lessons</h1>
+<h2>Lessons</h2>
 <p>You can combine resources to create a lesson. This will give you both a version to use on the big screen and a 
 version for students to access the resources.</p>
 <div class="text-center">
     <img src="{% static 'uploader/img/features/1.png'%}" class="img-thumbnail" alt="IWB Lesson" height="70%" width="70%"><br /><br />
     <img src="{% static 'uploader/img/features/2.png'%}" class="img-thumbnail" alt="Student Lesson" height="70%" width="70%">
 </div>
-<h1>Resources</h1>
+<h2>Resources</h2>
 <p>The site can host different types of resources, files, bookmarks, notes (wiki-style pages) and questions. Everything you might
 need for a lesson or revision.</p>
 <div class="text-center">
@@ -18,10 +18,9 @@ need for a lesson or revision.</p>
     <img src="{% static 'uploader/img/features/7.png'%}" class="img-thumbnail" alt="File"><br /><br />
     <img src="{% static 'uploader/img/features/8.png'%}" class="img-thumbnail" alt="Bookmark"><br /><br />
     <img src="{% static 'uploader/img/features/3.png'%}" class="img-thumbnail" alt="Resource types">
-
 </div>
 
-<h1>Tests</h1>
+<h2>Tests</h2>
 <p>You can assign a set of questions to a lesson task to assess student understanding of the topics you have taught.
 Students can get feedback instantly.</p>
 <div class="text-center">
@@ -29,7 +28,7 @@ Students can get feedback instantly.</p>
     <img src="{% static 'uploader/img/features/5.png'%}" class="img-thumbnail" alt="Feedback" height="70%" width="70%">
 </div>
 </div>
-<h1>About</h1>
+<h2>About</h2>
 <p>
     eduResourc.es was created in February 2015 to try to prevent teachers from 
     re-making resources all the time.
@@ -46,9 +45,6 @@ Students can get feedback instantly.</p>
 </p>
 <h2>Technical</h2>
 <p>
-    eduResourc.es is written in Python using the Django framework. The source code
-    is available at <a href="https://github.com/xerosis/openResources">Github</a>, bug reports and pull requests are welcome. 
-    I am good and neither Django or Web design, so any improvements in those
-    areas are very welcome.
+    eduResourc.es is written in Python using the Django framework. Bug reports and feature <requests></requests> are welcome.
 </p>
 {% endblock %}

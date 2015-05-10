@@ -1,0 +1,98 @@
+{% extends 'uploader/base.html' %}
+{% block body_block %}
+{% load bootstrap %}
+<script>
+    var html = '<div class="col-sm-6 col-md-2"><div class="thumbnail"><div class="input-group"><label for="option_grade[]">Grade</label><input name="option_grade[]" class="form-control" /></div><div class="input-group"><label for="description[]">Longer Description</label><textarea name="description[]" class="form-control" placeholder="Optional" rows="3"></textarea></div></div></div>';
+    var html2 = '<div class="col-sm-6 col-md-2"><div class="thumbnail"><div class="input-group"><label for="grade[]">Grade</label><input name="grade[]" class="form-control" /></div><div class="input-group"><label for="boundary[]">Max %</label><input name="boundary[]" class="form-control"></div></div></div>';
+    function add_new_option() {
+        $('#add_option').before(html);
+    }
+    function add_new_numerical_option() {
+        $('#add_option_numerical').before(html2);
+    }
+
+</script>
+<h1>{% block head_title %}Add Grading Scheme{% endblock %}</h1>
+<p>A grading scheme calculates the result shown to you and the students once work is marked.
+There are two types of grading schemes:</p>
+<ol>
+    <li><strong>Numerical System</strong> - a grade is given based on numerical parameters, e.g if the score is between 50% and 60%, the grade is a C</li>
+    <li><strong>Choices System</strong> - a grade is selected from a pre-defined list, e.g. A-F, 1-7, Pass-Distinction</li> 
+</ol>
+<form action method="post" class="form">
+    {% csrf_token %}
+    {{ form|bootstrap }}
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h2 class="panel-title">Add Grade Boundaries</h2>
+  </div>
+  <div class="panel-body">
+    <div class="row">
+          <div class="col-sm-6 col-md-2">
+            <div class="thumbnail">
+                <div class="input-group">
+                  <label for="grade[]">Grade</label>
+                    <input name="grade[]" id="id_grade[]" class="form-control" />
+                </div>
+                
+                <div class="input-group">
+                    <label for="boundary[]">Max %</label>
+                  <input name="boundary[]" id="id_boundary[]"  class="form-control" value="100" readOnly="true">
+                </div>
+
+              
+              </div>
+              </div>
+
+            <div id="add_option_numerical" class="col-sm-6 col-md-2">
+            <div class="text-center">
+                <a style="display:block" href="javascript:void(0);" onclick="javascript:add_new_numerical_option();">
+                   <span class="glyphicon glyphicon-plus-sign" aria-hidden="true" style="margin-top: 0.4em; font-size:5.5em; color: #999"></span>
+               </a>
+              </div>
+            </div>
+          </div>
+
+    <div class="text-center">
+        <input type="submit" name="numerical" class="btn btn-success" value="Save" />
+    </div>
+  </div>
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h2 class="panel-title"><strong>OR</strong> Add Choices</h2>
+  </div>
+  <div class="panel-body">
+    <div class="row">
+          <div class="col-sm-6 col-md-2">
+            <div class="thumbnail">
+                <div class="input-group">
+                  <label for="option_grade[]">Grade</label>
+                    
+                    <input name="option_grade[]" class="form-control" />
+                </div>
+                <div class="input-group">
+                <label for="description[]">Longer Description</label>
+                    <textarea rows="3" name="description[]" class="form-control" placeholder="Optional"></textarea>
+                </div>
+              </div>
+              </div>
+
+            <div id="add_option" class="col-sm-6 col-md-2">
+            <div class="text-center">
+                <a style="display:block" href="javascript:void(0);" onclick="javascript:add_new_option();">
+                   <span class="glyphicon glyphicon-plus-sign" aria-hidden="true" style="margin-top: 0.7em; font-size:5.5em; color: #999"></span>
+               </a>
+              </div>
+            </div>
+          </div>
+
+    <div class="text-center">
+        <input type="submit" name="options" class="btn btn-success" value="Save" />
+    </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

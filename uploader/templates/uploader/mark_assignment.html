@@ -6,6 +6,9 @@
   $(function () {
   $('[data-toggle="tooltip"]').tooltip()
   $('[rel=tooltip]').tooltip({container: 'body'});
+  if ($("select[name=status]").val() == 1) {
+      $("select[name=status]").val(2);
+  }
 })
 </script>
 <h1>{% block head_title %}Mark {{ submission.assignment.title }}{% endblock %}</h1>
@@ -20,9 +23,14 @@
 <h2>Feedback</h2>
 <form action method='POST'>
 {% csrf_token %}
-{{ form|bootstrap }}
+{% for field in form.visible_fields %}
+    <div class="form-group">
+        {% if field.field.required %}<span class="label label-danger">required</span>{% endif %}
+        {{ field|bootstrap }}
+    </div>
+    {% endfor %}
 <div class="form-group text-center">
-    <button type="submit" class="btn btn-success">Update</button>
+    <button type="submit" class="btn btn-success">Save</button>
 </div>  
 </form>
 <a class='btn btn-default disabled'>

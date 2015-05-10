@@ -1,0 +1,57 @@
+{% extends 'uploader/base.html' %}
+{% block body_block %}
+{% load bootstrap %}
+    <h1>{% block head_title %}{{assignment.title}}{% endblock %}</h1>
+    <p><strong>Group:</strong> {{ assignment.group }}</p>
+    <p><strong>Deadline:</strong> {{ assignment.deadline }}</p>
+    <p class='well'>{{ assignment.description }}</p>
+    
+    {% if previous_submissions %}
+    <h2>Previous Submissions</h2>
+
+        {% for previous_submission in previous_submissions %}
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Submission #{{ forloop.counter }}</h2>
+          </div>
+          <div class="panel-body">
+            <p>{{ previous_submission.comments }}</p>
+            <p>{{ previous_submission.pub_date }} </p>
+            
+            <div class="btn-group" role="group" aria-label="...">
+              <button type="button" class="btn btn-default disabled" data-toggle="tooltip" data-placement="top" data-container="body">
+                {{previous_submission.filename|truncatechars:40}}
+              </button>
+              <button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Download" data-container="body">
+                  <a href="{{MEDIA_URL}}{{ previous_submission.file.file}}"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></a>
+              </button>
+              <button type="button" class="btn btn-default disabled" data-toggle="tooltip" data-placement="top" title="Preview" data-container="body">
+                  <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+              </button>
+              <button type="button" class="btn btn-default disabled" data-toggle="tooltip" data-placement="top" title="View Annotations" data-container="body">
+                  <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+              </button>
+              <button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Delete" data-container="body">
+                  <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+              </button>
+              </div>
+              <h3>Feedback</h3>
+              <p class='well'>
+                  {{ previous_submission.feedback }}
+              </p>
+          </div>
+
+        {% endfor %}
+        </div>
+
+    {% endif %}
+    <h2>New Submission</h2>
+    <form role="form" enctype="multipart/form-data" action method='POST'>
+        {% csrf_token %}
+        {{ form|bootstrap }}
+        <div class="form-group text-center">
+            <button type="submit" class="btn btn-success">Submit Assignment</button>
+        </div>
+    </form>
+
+{% endblock %}

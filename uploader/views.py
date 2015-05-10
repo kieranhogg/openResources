@@ -61,6 +61,11 @@ def index(request):
     else:
         if hasattr(request.user, 'teacherprofile'):
             groups = Group.objects.filter(teacher=request.user)
+            
+            # to mark
+            for group in groups:
+                students = StudentGroup.objects.filter(group=group)
+                # group.assignments_to_mark = AssignmentSubmission.objects.filter(student__in=students, status='Unmarked').count()
 
             tests = Test.objects.filter(group__in=groups)[:5]
             lessons = GroupLesson.objects.filter(set_by=request.user).order_by('-date', '-pub_date')[:5]
@@ -697,7 +702,7 @@ def user_resources(request, user_id=None):
     if not user_id:
         user_id = request.user
     resources = Resource.objects.filter(uploader=user_id).annotate(
-        avg_rating=Avg('rating__rating')).order_by('-avg_rating')
+        avg_rating=Avg('rating__rating')).order_by('-pub_date')
 
     return render(request, 'uploader/user_resources.html',
                   {'resources': resources})
@@ -1483,10 +1488,10 @@ def student_signup(request):
 
     form = StudentForm(request.POST or None)
     if request.POST and form.is_valid():
-        try:
-            g = Group.objects.get(code=request.POST['group_code'])
+        g = Group.objects.filter(code=request.POST['group_code'])
+        if g.count() == 1:
             s = form.save()
-            StudentGroup(group=g, student=s.studentprofile).save()
+            StudentGroup(group=g[0], student=s).save()
             messages.success(
                 request,
                 "Thanks for registering. You are now logged in.")
@@ -1494,8 +1499,8 @@ def student_signup(request):
                                     password=request.POST['password'])
             #new_user.groups.add(Group.objects.get(name='student'))
             login(request, new_user)
-            return HttpResponseRedirect('/')
-        except ObjectDoesNotExist:
+            return HttpResponseRedirect(reverse('uploader:index'))
+        else:
             form.add_error('group_code', "Invalid group code")
 
     return render(request, 'uploader/student_signup.html', {'form': form})
@@ -1555,8 +1560,8 @@ def groups(request, slug=None):
 
 
 @login_required
-def group(request, slug):
-    group = get_object_or_404(Group, slug=slug)
+def group(request, code):
+    group = get_object_or_404(Group, code=code)
 
     if request.POST:
         lesson = Lesson.objects.get(pk=request.POST['lesson'])
@@ -1650,23 +1655,40 @@ def delete_lesson(request, code):
         return render(request, 'uploader/permission_denied.html')
 
 
-def assignment(request):
-    form = AssignmentForm(request.POST or None)
+def assignment(request, code=None):
+    if code:
+        assignment = get_object_or_404(Assignment, code=code)
+    else:
+        assignment = None
+
+    form = AssignmentForm(request.POST or None, instance=assignment)
     form.fields['group'].queryset = Group.objects.filter(teacher=request.user)
     if request.POST and form.is_valid():
-        rp = request.POST
-        group = get_object_or_404(Group, pk=rp.get('group'))
-        Assignment(title=rp.get('title'),
-                   code=random_key(3, 'Assignment'),
-                   group=group,
-                   teacher=request.user,
-                   description=rp.get('description'),
-                   deadline=rp.get('deadline')).save()
+        if code:
+            form.save()
+        else:
+            rp = request.POST
+            group = get_object_or_404(Group, pk=rp.get('group'))
+            Assignment(title=rp.get('title'),
+                       code=random_key(3, 'Assignment'),
+                       group=group,
+                       teacher=request.user,
+                       description=rp.get('description'),
+                       deadline=rp.get('deadline')).save()
 
-        return HttpResponseRedirect(reverse('uploader:group', args=['y9-ict']))
+        return HttpResponseRedirect(reverse('uploader:index'))
         
     return render(request, 'uploader/assignment.html', {'form': form})
     
+
+def delete_assignment(request, code):
+    assignment = get_object_or_404(Assignment, code=code)
+    
+    if assignment.teacher == request.user:
+        assignment.delete()
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', reverse('uploader:index')))
+    else:
+        return render(request, 'uploader/permission_denied.html', {})
     
 def view_assignment(request, code):
     """Shows an assignment view, for teacher this is a list of submissions,
@@ -1694,57 +1716,60 @@ def view_assignment(request, code):
             student = student.student
             try:
                 student.submission = submissions.get(student=student)
-                student.submission.diff = assignment.deadline - student.submission.pub_date
+                student.submission.diff = assignment.deadline - student.submission.submitted
                 student.submission.late = False
                 
-                # FIXME only currently one, might be multiple 
-                student.feedback = Feedback.objects.get(assignment_submission=student.submission)
+                # # FIXME only currently one, might be multiple 
+                # student.feedback = Feedback.objects.get(assignment_submission=student.submission)
     
-                if student.feedback.status == 5:
+                if student.submission.get_status_display() == 'Absent': 
                     absent_count += 1
-                    logger.error("absent")
                 else:
                     submission_count += 1
     
-                    if student.submission.diff < datetime.timedelta(minutes=0):
-                        student.submission.late = True
-                        late_count += 1
-                        submission_count += 1
-                        logger.error("late")
-    
+                if student.submission.diff < datetime.timedelta(minutes=0):
+                    student.submission.late = True
+                    late_count += 1
+                    submission_count += 1
+
     
             except AssignmentSubmission.DoesNotExist:
                 pass
-            except Feedback.DoesNotExist:
-                submission_count += 1
-    
+
         # get values for submission status bar
         assignment.total = students.count()
-
-        assignment.submissions = submission_count
-        assignment.submissions_percentage = int(submission_count / assignment.total * 100)
         
-        assignment.late = late_count
-        assignment.late_percentage = int(late_count / assignment.total * 100)
+        try:
+            assignment.submissions = submission_count
+            assignment.late = late_count
+            assignment.absent = absent_count
+            assignment.on_time = submission_count - assignment.late
+            assignment.not_submitted = assignment.total - assignment.on_time - assignment.late - assignment.absent
+            
+            assignment.submissions_percentage = int(submission_count / assignment.total * 100)
+            assignment.late_percentage = int(late_count / assignment.total * 100)
+            assignment.absent_percentage = int(absent_count / assignment.total * 100)
+            assignment.on_time_percentage = int((assignment.submissions - assignment.late) / assignment.total * 100)
+            assignment.not_submitted_percentage = int(assignment.not_submitted / assignment.total * 100)
         
-        assignment.absent = absent_count
-        assignment.absent_percentage = int(absent_count / assignment.total * 100)
-
-        assignment.on_time = submission_count - assignment.late
-        assignment.on_time_percentage = int((assignment.submissions - assignment.late) / assignment.total * 100)
-
-        assignment.not_submitted = assignment.total - assignment.on_time - assignment.late - assignment.absent
-        assignment.not_submitted_percentage = int(assignment.not_submitted / assignment.total * 100)
+        except ZeroDivisionError:
+            assignment.submissions_percentage = 0
+            assignment.late_percentage = 0
+            assignment.absent_percentage = 0
+            assignment.not_submitted_percentage = 100
+            
 
         template = 'uploader/teacher_assignment.html'
         context['students'] = students
-    else:
+    else: # student
         if request.POST:
-            a_s = AssignmentSubmissionFile(student=request.user, assignment=assignment)
+            a_s = AssignmentSubmission(student=request.user, assignment=assignment)
             a_s.save()
+            Feedback(assignment_submission=a_s).save()
             AssignmentSubmissionFile(assignment_submission=a_s,
                                      file=request.FILES.get('file'),
                                      comments=request.POST.get('comments')).save()
+                                     
             return HttpResponseRedirect(reverse('uploader:index'))
         else:
             template = 'uploader/student_assignment.html'
@@ -1761,40 +1786,127 @@ def view_assignment(request, code):
 
 def mark_assignment(request, assignment_code, submission_id=None, absent=None, student_id=None):
     assignment = get_object_or_404(Assignment, code=assignment_code)
+    submission = get_object_or_404(AssignmentSubmission, pk=submission_id)
 
     if absent == 'absent':
         student = get_object_or_404(User, pk=student_id)
         sub = AssignmentSubmission(student=student, assignment=assignment)
+        sub.status == 5
         sub.save()
-        Feedback(feedback='Student absent', status=5, assignment_submission=sub).save()
-                 
+
         return HttpResponseRedirect(reverse('uploader:view_assignment', args=[assignment.code]))
 
     else:
-        submission = get_object_or_404(AssignmentSubmission, pk=submission_id)
-        files = AssignmentSubmissionFile.objects.filter(assignment_submission=submission)
-        try:
-            feedback = Feedback.objects.get(assignment_submission=submission)
-        except Feedback.DoesNotExist:
-            feedback = None
-        
-        form = FeedbackForm(request.POST or None, instance=feedback)
+        form = MarkAssignmentForm(request.POST or None, instance=submission)
+
         if request.POST and form.is_valid():
-            rp = request.POST
-            if not feedback:
-                form = Feedback(assignment_submission=submission,
-                         feedback=rp.get('feedback'),
-                         result=rp.get('result'),
-                        #  feedback_file=request.FILES['file'] or None,
-                         status=rp.get('status'))
-                         
-            form.save()
+            new_assignment = form.save(commit=False)
+            if assignment.grading.type == 1: #numerical
+                pass
+            elif assignment.grading.type == 2: #options
+                new_assignment.result = request.POST.get('grade_options') or None
+                
+            new_assignment.save()
         
             return HttpResponseRedirect(reverse('uploader:view_assignment', args=[submission.assignment.code]))
+            
+        else:
+            files = AssignmentSubmissionFile.objects.filter(assignment_submission=submission)
+            form.fields['result'].widget.attrs.update({
+                'placeholder': 'out of ' + str(submission.assignment.total)
+            })
+            
+            if assignment.grading.type == 1: #numerical
+                pass
+            elif assignment.grading.type == 2: #options
+                fields =[('', '---------')]
+                # fields = []
+                grade_fields = GradeOptions.objects.filter(grading=assignment.grading).order_by('order')
+                for field in grade_fields:
+                    fields.append((field.value, field.representation))
+                form.fields['grade_options'].choices = fields
+                form.fields['grade_options'].queryset = fields
+
+                if submission:
+                    form.fields["grade_options"].initial = submission.result
+                form.fields['result'].widget = forms.HiddenInput()
     
         context = {'submission': submission, 'files': files, 'form': form}
         
         return render(request, 'uploader/mark_assignment.html', context)
+
+
+def user_grading(request):
+    public_grading = Grading.objects.filter(public=True)
+    for grading in public_grading:
+        if grading.type == 2:
+            grading.options = GradeOptions.objects.filter(grading=grading)
+        elif grading.type == 1:
+            grading.options = NumericalGrade.objects.filter(grading=grading)
+        
+    user_grading = Grading.objects.filter(user=request.user).order_by('type').exclude(pk__in=public_grading)
+    # FIXME
+    for grading in user_grading:
+        if grading.type == 2:
+            grading.options = GradeOptions.objects.filter(grading=grading)
+        elif grading.type == 1:
+            grading.options = NumericalGrade.objects.filter(grading=grading)
+    
+    context = {'public_grading': public_grading, 'user_grading': user_grading}
+    
+    return render(request, 'uploader/grading.html', context)
+
+
+def grading(request, id=None):
+    form = GradingForm(request.POST or None)
+    if request.POST:
+        form_data = request.POST
+        title = form_data.get('title')
+        grades = form_data.getlist('grade[]')
+        
+        if form_data.get('numerical'):
+            
+            boundaries = form_data.getlist('boundary[]')
+
+            grading = Grading(
+                title=form_data.get('title'),
+                user=request.user,
+                type=1)
+            grading.save()
+            
+            for grade, boundary in zip(grades, boundaries):
+                if grade and boundary:
+                    ng = NumericalGrade(
+                        grading=grading, 
+                        grade=grade, 
+                        upper_bound=boundary)
+                    ng.save()
+
+        elif form_data.get('options'):
+            grading = Grading(
+                title=form_data.get('title'),
+                user=request.user,
+                type=2)
+            grading.save()
+            
+            grades = form_data.getlist('option_grade[]')
+            descriptions = form_data.getlist('description[]')
+
+            i = 1
+            for grade, description in zip(grades, descriptions):
+                if grade:
+                    ng = GradeOptions(
+                        grading=grading,
+                        value=i,
+                        grade_long=description,
+                        grade=grade, 
+                        order=i)
+                    ng.save()
+                    i += 1
+
+
+            return HttpResponseRedirect(reverse('uploader:user_grading'))
+    return render(request, 'uploader/add_grading.html', {'form': form})
 
 """
 ajax views

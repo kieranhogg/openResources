@@ -6,7 +6,7 @@
         <!--<th>Status</th>-->
         <th>Set</th>
         <th>Deadline</th>
-        <!--<th></th>-->
+        <th></th>
         {% for assignment in assignments %}
         <tr>
             <td>
@@ -16,11 +16,20 @@
             <!--<td></td>-->
             <td>{{ assignment.pub_date }}</td>
             <td>{{ assignment.deadline }}</td>
-            <!--{% if teacher_or_student == 'teacher' %}-->
-            <!--<td><a href="" class='btn btn-default'>View Test</a></td>-->
-            <!--{% else %}-->
-            <!--<td>student</td>-->
-            <!--{% endif %}-->
+            {% if teacher_or_student == 'teacher' %}
+            <td>
+                <a href="{% url 'uploader:assignment' assignment.code %}" class='btn btn-sm btn-info'>
+                    <span style="font-size: 0.9em" class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                    Edit
+                </a>
+                <a href="{% url 'uploader:delete_assignment' assignment.code %}" class='btn btn-sm btn-danger' onclick="javascript:return confirm('DELETE this assignment? All student work will be deleted too')">
+                    <span style="font-size: 0.9em" class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                    Delete
+                </a>
+            </td>
+            {% else %}
+            <td>student</td>
+            {% endif %}
         </tr>
         {% endfor %}
     </tr>
