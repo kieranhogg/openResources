@@ -324,7 +324,7 @@ hr {
     height: 100%;
 }
 
-#notes li, #notes p {
+#notes li, #notes p, #notes table {
     font-family: "freight-text-pro",Georgia,Cambria,"Times New Roman",Times,serif;
     letter-spacing: .01rem;
     font-weight: 400;
