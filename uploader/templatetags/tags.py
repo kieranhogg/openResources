@@ -46,8 +46,8 @@ def lesson_table(teacher_or_student, lessons):
     
 
 @register.inclusion_tag('uploader/snippets/assignment_table.html')
-def assignment_table(teacher_or_student, assignments):
-    return {'teacher_or_student': teacher_or_student, 'assignments': assignments}
+def assignment_table(teacher_or_student, assignments, group=None):
+    return {'teacher_or_student': teacher_or_student, 'assignments': assignments, 'group': group}
     
 
 @register.tag

@@ -92,9 +92,10 @@
     <td style='text-align:right'>
         {% if student.student.submission.status == 5 %}
         {% elif student.student.submission %}
-        <a href="{% url 'uploader:mark_assignment' assignment.code student.student.submission.id %}" class='btn btn-sm btn-default'>Mark</a>
+            <a href="{% url 'uploader:mark_assignment' assignment.code student.student.submission.id %}" class='btn btn-sm btn-default'>Mark</a>
         {% else %}
-        <a href="{% url 'uploader:mark_assignment' assignment.code 'absent' student.student.id %}" class='btn btn-sm btn-default'>Absent</a>
+            <!--<a href="{% url 'uploader:mark_assignment' assignment.code student.student.submission.id %}" class='btn btn-sm btn-default'>Mark without submission</a>-->
+            <a href="{% url 'uploader:mark_assignment' assignment.code 'absent' student.student.id %}" class='btn btn-sm btn-default'>Absent</a>
         {% endif %}
     </td>
 </tr>

@@ -1,37 +1,39 @@
+{% if assignments %}
 <div class='table-responsive' style='width: 100%; overflow: auto;'>
 <table class='table' style=" display: table; table-layout: fixed; width: 100%;">
     <tr>
         <th>Assignment</th>
-        <th>Group</th>
-        <!--<th>Status</th>-->
+        {% if not group %}<th>Group</th>{% endif %}
         <th>Set</th>
         <th>Deadline</th>
         <th></th>
         {% for assignment in assignments %}
-        <tr>
-            <td>
-                <a href="{% url 'uploader:view_assignment' assignment.code %}">{{ assignment.title }}</a>
-            </td>
-            <td>{{ assignment.group }}</td>
-            <!--<td></td>-->
-            <td>{{ assignment.pub_date }}</td>
-            <td>{{ assignment.deadline }}</td>
-            {% if teacher_or_student == 'teacher' %}
-            <td>
-                <a href="{% url 'uploader:assignment' assignment.code %}" class='btn btn-sm btn-info'>
-                    <span style="font-size: 0.9em" class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-                    Edit
-                </a>
-                <a href="{% url 'uploader:delete_assignment' assignment.code %}" class='btn btn-sm btn-danger' onclick="javascript:return confirm('DELETE this assignment? All student work will be deleted too')">
-                    <span style="font-size: 0.9em" class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                    Delete
-                </a>
-            </td>
-            {% else %}
-            <td>student</td>
-            {% endif %}
-        </tr>
+            <tr>
+                <td>
+                    <a href="{% url 'uploader:view_assignment' assignment.code %}">{{ assignment.title }}</a>
+                </td>
+                {% if not group %}<td>{{ assignment.group }}</td>{% endif %}
+                <td>{{ assignment.pub_date }}</td>
+                <td>{{ assignment.deadline }}</td>
+                {% if teacher_or_student == 'teacher' %}
+                    <td>
+                        <a href="{% url 'uploader:assignment' assignment.code %}" class='btn btn-sm btn-info'>
+                            <span style="font-size: 0.9em" class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                            Edit
+                        </a>
+                        <a href="{% url 'uploader:delete_assignment' assignment.code %}" class='btn btn-sm btn-danger' onclick="javascript:return confirm('DELETE this assignment? All student work will be deleted too')">
+                            <span style="font-size: 0.9em" class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                            Delete
+                        </a>
+                    </td>
+                {% else %}
+                    <td>student</td>
+                {% endif %}
+            </tr>
         {% endfor %}
     </tr>
 </table>
 </div>
+{% else %}
+<p>No assignments.</p>
+{% endif %}
