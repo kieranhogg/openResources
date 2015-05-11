@@ -14,8 +14,11 @@
 <h1>{% block head_title %}Mark {{ submission.assignment.title }}{% endblock %}</h1>
 
 <p><strong>Student</strong>: {{ submission.student.studentprofile }}</p>
-<p><strong>Submitted</strong>: {{ submission.pub_date }}</p>
-<p><strong>Deadline</strong>: {{ submission.assignment.deadline }}</p>
+{% if submission.pub_date %}
+    <p><strong>Submitted</strong>: {{ submission.pub_date }}</p>
+    <p><strong>Deadline</strong>: {{ submission.assignment.deadline }}</p>
+{% endif %}
+
 {% if submission.comment %}
 <p class='well'>{{ submission.comment }}</p>
 {% endif %}

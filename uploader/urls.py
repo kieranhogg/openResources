@@ -15,6 +15,7 @@ urlpatterns = patterns('',
     url(r'^assignment/(?P<code>[\w\d]+)/delete/$', views.delete_assignment, name='delete_assignment'),
     url(r'^assignment/(?P<assignment_code>[\w\d-]+)/mark/(?P<submission_id>[\d]+)/$', views.mark_assignment, name='mark_assignment'),
     url(r'^assignment/(?P<assignment_code>[\w\d-]+)/mark/(?P<absent>[\w]+)/(?P<student_id>[\d]+)', views.mark_assignment, name='mark_assignment'),
+    url(r'^assignment/(?P<assignment_code>[\w\d-]+)/mark/no-sub/(?P<student_id>[\d]+)', views.mark_assignment_no_submission, name='mark_assignment_no_submission'),
     
     url(r'^lookup/syllabus/(?P<subject_id>\d+)/$', views.get_syllabuses, name='get_syllabuses'),
     url(r'^lookup/unit/(?P<syllabus_id>\d+)/$', views.get_units, name='get_units'),

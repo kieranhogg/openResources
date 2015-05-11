@@ -27,6 +27,7 @@ from django.http import (HttpResponse, HttpResponseRedirect, JsonResponse,
 from django.shortcuts import (render, get_object_or_404, get_list_or_404,
                               render_to_response, redirect)
 from django.template import Context, loader, RequestContext
+from django.utils import timezone
 
 from boxview import boxview
 
@@ -1784,9 +1785,19 @@ def view_assignment(request, code):
     return render(request, template, context)
     
 
-def mark_assignment(request, assignment_code, submission_id=None, absent=None, student_id=None):
+def mark_assignment_no_submission(request, assignment_code, student_id):
+    return mark_assignment(request, assignment_code, None, None, student_id, True)
+    
+
+def mark_assignment(request, assignment_code, submission_id=None, absent=None, student_id=None, no_sub=False):
     assignment = get_object_or_404(Assignment, code=assignment_code)
-    submission = get_object_or_404(AssignmentSubmission, pk=submission_id)
+    if not no_sub:
+        submission = get_object_or_404(AssignmentSubmission, pk=submission_id)
+    else:
+        submission = AssignmentSubmission()
+        student = get_object_or_404(User, pk=student_id)
+        submission.student = student
+
 
     if absent == 'absent':
         student = get_object_or_404(User, pk=student_id)
@@ -1795,7 +1806,6 @@ def mark_assignment(request, assignment_code, submission_id=None, absent=None, s
         sub.save()
 
         return HttpResponseRedirect(reverse('uploader:view_assignment', args=[assignment.code]))
-
     else:
         form = MarkAssignmentForm(request.POST or None, instance=submission)
 
@@ -1806,15 +1816,22 @@ def mark_assignment(request, assignment_code, submission_id=None, absent=None, s
             elif assignment.grading.type == 2: #options
                 new_assignment.result = request.POST.get('grade_options') or None
                 
+            if no_sub:
+                new_assignment.assignment = assignment
+                new_assignment.student = student
+                new_assignment.submitted = timezone.now()
             new_assignment.save()
         
-            return HttpResponseRedirect(reverse('uploader:view_assignment', args=[submission.assignment.code]))
+            return HttpResponseRedirect(reverse('uploader:view_assignment', args=[assignment.code]))
             
         else:
-            files = AssignmentSubmissionFile.objects.filter(assignment_submission=submission)
-            form.fields['result'].widget.attrs.update({
-                'placeholder': 'out of ' + str(submission.assignment.total)
-            })
+            context = {}
+            if not no_sub:
+                files = AssignmentSubmissionFile.objects.filter(assignment_submission=submission)
+                form.fields['result'].widget.attrs.update({
+                    'placeholder': 'out of ' + str(submission.assignment.total)
+                })
+                context['files'] = files
             
             if assignment.grading.type == 1: #numerical
                 form.fields['result'].visible = True
@@ -1824,15 +1841,17 @@ def mark_assignment(request, assignment_code, submission_id=None, absent=None, s
                 # fields = []
                 grade_fields = GradeOptions.objects.filter(grading=assignment.grading).order_by('order')
                 for field in grade_fields:
-                    fields.append((field.value, field.representation))
+                    fields.append((field.value, field.grade))
                 form.fields['grade_options'].choices = fields
                 form.fields['grade_options'].queryset = fields
 
                 if submission:
                     form.fields["grade_options"].initial = submission.result
                 form.fields['result'].widget = forms.HiddenInput()
+                
     
-        context = {'submission': submission, 'files': files, 'form': form}
+        context['submission'] = submission
+        context['form'] = form
         
         return render(request, 'uploader/mark_assignment.html', context)
 

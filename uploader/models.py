@@ -14,9 +14,6 @@ from django.db.models.signals import pre_delete, post_save
 from django.dispatch.dispatcher import receiver
 from django.utils.safestring import mark_safe
 
-
-#from taggit_autosuggest.managers import TaggableManager
-
 logging.basicConfig()
 logger = logging.getLogger(__name__)
 
@@ -472,7 +469,6 @@ class TeacherProfile(models.Model):
     surname = models.CharField(max_length=100)
     subjects = models.ManyToManyField(Subject, null=True, blank=True)
     score = models.IntegerField(default=0)
-    profile_setup = models.BooleanField(default=False)
 
     def __unicode__(self):
         return unicode(self.title + ' ' + self.surname)
@@ -484,7 +480,6 @@ class StudentProfile(models.Model):
     surname = models.CharField(max_length=100)
     subjects = models.ManyToManyField(Subject, null=True, blank=True)
     score = models.IntegerField(default=0)
-    profile_setup = models.BooleanField(default=False)
 
     def __unicode__(self):
         return unicode(self.forename + ' ' + self.surname)
