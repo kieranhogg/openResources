@@ -24,17 +24,23 @@
             <strong>Assignments</strong>
         </td>
         <td>
-            <span class='badge'>{{ group.assignments_to_mark }}</span>
+            <span class='badge'>
+                {% if group.unmarked_assignments %}
+                    {{ group.unmarked_assignments }}
+                {% else %}
+                    0
+                {% endif %}
+            </span>
         </td>
     </tr>
-    <tr>
-        <td>
-            <strong>Tests</strong>
-        </td>
-        <td>
-            <span class='badge'>0</span>
-        </td>
-    </tr>
+    <!--<tr>-->
+    <!--    <td>-->
+    <!--        <strong>Tests</strong>-->
+    <!--    </td>-->
+    <!--    <td>-->
+    <!--        <span class='badge'>0</span>-->
+    <!--    </td>-->
+    <!--</tr>-->
     </table>
     </div>
   </div>

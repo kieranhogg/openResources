@@ -586,6 +586,9 @@ class Group(models.Model):
     subject = models.ForeignKey(Subject, null=True, blank=True)
     code = models.SlugField(max_length='4', unique=True)
     pub_date = models.DateTimeField(auto_now_add=True)
+    
+    def unmarked_assignments(self):
+        return AssignmentSubmission.objects.filter(status=1, assignment__group=self).count()
 
     class Meta:
         unique_together = ["name", "teacher"]
@@ -806,6 +809,8 @@ class Assignment(models.Model):
     grading = models.ForeignKey('Grading', blank=True, null=True)
     pub_date = models.DateTimeField(auto_now_add=True)
 
+    def unmarked(self):
+        return AssignmentSubmission.objects.filter(status=1, assignment=self).count()
 
 def assignment_location(instance, filename):
         code = instance.assignment_submission.assignment.code
