@@ -16,7 +16,7 @@
                 <td>{{ assignment.pub_date }}</td>
                 <td>{{ assignment.deadline }}</td>
                 {% if teacher_or_student == 'teacher' %}
-                    <td>
+                    <td align='right'>
                         <a href="{% url 'uploader:assignment' assignment.code %}" class='btn btn-sm btn-info'>
                             <span style="font-size: 0.9em" class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                             Edit
