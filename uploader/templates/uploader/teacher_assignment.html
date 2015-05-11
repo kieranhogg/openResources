@@ -7,8 +7,13 @@
     <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Edit
     </a>
 </p>
+{% if not assignment.offline %}
 <p><strong>Deadline:</strong> {{ assignment.deadline }}</p>
+{% else %}
+<p><strong>Assessment date:</strong> {{ assignment.deadline }}</p>
+{% endif %}
 <p class='well'>{{ assignment.description }}</p>
+{% if not assignment.offline %}
 <div class="progress">
     <div class="progress-bar progress-bar-success progress-bar-striped" style="width: {{assignment.on_time_percentage }}%">
     On time ({{assignment.on_time}})
@@ -23,11 +28,14 @@
     Absent ({{assignment.absent}})
   </div>
 </div>
+{% endif %}
 <table class='table'>
     <thead>
         <tr>
             <th style='text-align:center'>Student</th>
+            {% if not assignment.offline %}
             <th style='text-align:center'>Submission</th>
+            {% endif %}
             <th style='text-align:center'>Marking</th>
             <th style='text-align:center'>Grade</th>
             <th></th>
@@ -36,7 +44,7 @@
     <tbody>
 {% for student in students %}
 
-{% if student.student.submission.status == 5 %}
+{% if student.student.submission.status == 5 or assignment.offline %}
 <tr>
 {% elif student.student.submission and student.student.submission.pub_date > assignment.deadline %}
 <tr class='warning'>
@@ -48,6 +56,7 @@
     <td>
          {{ student.student.studentprofile }}   
     </td>
+    {% if not assignment.offline %}
     <td>
         {% if student.student.submission %}
             {% if student.student.submission.status == 5 %}
@@ -59,6 +68,7 @@
             {% endif %}
         {%endif%}
     </td>
+    {% endif %}
     <td>
         {% if student.student.submission.get_status_display == 'Marked' %}
             <span class="glyphicon glyphicon-ok" aria-hidden="true" style='font-size:1.0em'></span>
@@ -93,8 +103,9 @@
         {% if student.student.submission.status == 5 %}
         {% elif student.student.submission %}
             <a href="{% url 'uploader:mark_assignment' assignment.code student.student.submission.id %}" class='btn btn-sm btn-default'>Mark</a>
+        {% elif assignment.offline %}
+            <a href="{% url 'uploader:mark_assignment_no_submission' assignment.code student.student.id %}" class='btn btn-sm btn-default'>Mark</a>
         {% else %}
-            <a href="{% url 'uploader:mark_assignment_no_submission' assignment.code student.student.id %}" class='btn btn-sm btn-default'>Mark without submission</a>
             <a href="{% url 'uploader:mark_assignment' assignment.code 'absent' student.student.id %}" class='btn btn-sm btn-default'>Absent</a>
         {% endif %}
     </td>

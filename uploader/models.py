@@ -802,6 +802,7 @@ class Assignment(models.Model):
     unit_topic = models.ForeignKey(UnitTopic, blank=True, null=True)
     total = models.PositiveIntegerField(blank=True, null=True)
     comments_only = models.BooleanField(default=False)
+    offline = models.BooleanField(default=False, help_text='Students will not submit anything before entering marks, e.g. paper-based activity or test')
     grading = models.ForeignKey('Grading', blank=True, null=True)
     pub_date = models.DateTimeField(auto_now_add=True)
 

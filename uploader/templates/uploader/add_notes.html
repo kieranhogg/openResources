@@ -8,28 +8,26 @@
 .meltdown_wrap { display: inline-block; vertical-align: top; }
 </style>
 <h1>{% block head_title %}{{ unit_topic.title }} Notes{% endblock %}</h1>
-<p>Notes are written in Markdown format. A full list of the syntax can be found
-<a href="https://help.github.com/articles/markdown-basics/">here</a> and a full
-list of available HTML tags are
-<a href="https://github.com/github/markup/tree/master#html-sanitization">
-    here</a>, common tags are as follows:
+<p>Notes are written in Markdown format, common tags are as follows:
 </p>
-<!--<p><pre>-->
-<!--    ## title-->
-<!--    ### subtitle-->
-<!--    #### subsubtitle-->
+<p><pre>
+    # title
+    ## subtitle
+    ### subsubtitle
+    .. etc
     
-<!--    *This text will be italic*-->
-<!--    **This text will be bold**-->
+    *This text will be italic*
+    **This text will be bold**
     
-<!--    * Bullet lists-->
-<!--    * start-->
-<!--    * with bullets-->
+    * Bullet lists
+    * start
+    * with bullets
     
-<!--    1. Numbered lists-->
-<!--    2. start -->
-<!--    3. with numbers-->
-<!--</pre></p>-->
+    1. Numbered lists
+    2. start 
+    3. with numbers
+</pre></p>
+<p>Please note the preview does not always display correctly, so check the final saved version to be sure.</p>
 
 <form role="form" action method="post" novalidate>
     {% csrf_token %}

@@ -294,7 +294,7 @@ class AssignmentForm(forms.ModelForm):
     
     class Meta:
         model = Assignment
-        fields = ('title', 'description', 'deadline', 'group', 'total', 'comments_only', 'grading')
+        fields = ('title', 'description', 'deadline', 'group', 'total', 'comments_only', 'offline', 'grading')
         
 
 class MarkAssignmentForm(forms.ModelForm):
