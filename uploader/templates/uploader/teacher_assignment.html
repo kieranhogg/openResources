@@ -85,6 +85,9 @@
     <td>
     {% endif %}
         {{ student.student.submission.grade }}
+        {% if student.student.submission.percentage %}
+        ({{ student.student.submission.percentage_string }})
+        {% endif %}
     </td>
     <td style='text-align:right'>
         {% if student.student.submission.status == 5 %}

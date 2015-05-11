@@ -1817,7 +1817,8 @@ def mark_assignment(request, assignment_code, submission_id=None, absent=None, s
             })
             
             if assignment.grading.type == 1: #numerical
-                pass
+                form.fields['result'].visible = True
+                form.fields['grade_options'].widget = forms.HiddenInput()
             elif assignment.grading.type == 2: #options
                 fields =[('', '---------')]
                 # fields = []

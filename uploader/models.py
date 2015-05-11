@@ -1,3 +1,5 @@
+from __future__ import division
+
 import logging
 import os
 
@@ -851,13 +853,48 @@ class AssignmentSubmission(models.Model):
     submitted = models.DateTimeField(auto_now_add=True)
     marked = models.DateTimeField(auto_now=True, null=True, blank=True)
     
+    def percentage(self):
+        if self.assignment.grading.type == 1:
+            return int(self.result / self.assignment.total * 100)
+        else:
+            return None
+    
+    def percentage_string(self):
+        if self.assignment.grading.type == 1:
+            return str(self.percentage()) + "%"
+        else:
+            return None
+    
+    def numerical_grade_value(self):
+        if self.assignment.grading.type == 1:
+            percentage = self.percentage()
+                
+            boundaries = NumericalGrade.objects.filter(grading=self.assignment.grading)
+            
+            i = 0
+            grade = None
+            for boundary in boundaries:
+                logger.error("Comparing " + str(percentage) + " to " + str(boundary.upper_bound))
+                if percentage >= boundary.upper_bound:
+                    grade = boundaries[i-1].grade
+                    break
+                elif (i + 1) == len(boundaries): # last run, bottom grade
+                    grade = boundaries[i].grade
+                i += 1
+            return grade
+        else:
+            return None
+    
     def grade(self):
         if self.assignment.grading.type == 2:
             return GradeOptions.objects.get(
                 grading=self.assignment.grading,
-                value=self.result).representation
-        else:
-            return "Not implemented"
+                value=self.result).grade
+        elif self.assignment.grading.type == 1:
+            percentage = self.percentage()
+            grade = self.numerical_grade_value()
+                
+            return str(grade)  
             
     def grade_type(self):
         if self.assignment.grading.type == 2:
@@ -865,7 +902,17 @@ class AssignmentSubmission(models.Model):
                 grading=self.assignment.grading,
                 value=self.result).hi_med_lo
         else:
-            return "Not implemented"                                   
+            type = 'fail'
+            percentage = self.percentage()
+            if percentage > 80:
+                type = 'hi'
+            elif percentage > 60:
+                type = 'med'
+            elif percentage > 40:
+                type = 'lo'
+            
+            return type
+                            
     
 class Grading(models.Model):
     NUMERICAL = 1
@@ -873,7 +920,7 @@ class Grading(models.Model):
     
     GRADING_TYPES = (
         (NUMERICAL, 'Numerical grade scale'),
-        (OPTIONS, 'A preset set of grade options'))
+        (OPTIONS, 'Pre-set grade options'))
     
     title = models.CharField(max_length=200)
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
