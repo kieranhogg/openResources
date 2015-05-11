@@ -1564,6 +1564,7 @@ def groups(request, slug=None):
 def group(request, code):
     group = get_object_or_404(Group, code=code)
 
+    # add a lesson to this group
     if request.POST:
         lesson = Lesson.objects.get(pk=request.POST['lesson'])
         GroupLesson(group=group, lesson=lesson, set_by=request.user).save()
@@ -1574,6 +1575,8 @@ def group(request, code):
         student_group = StudentGroup.objects.filter(group=group)
         tests = Test.objects.filter(teacher=request.user).order_by('-pub_date')
         lessons = GroupLesson.objects.filter(group=group).order_by('-date', '-pub_date')
+        assignments = Assignment.objects.filter(group=group).order_by('-deadline', '-pub_date')
+
 
         for lesson in lessons:
             lesson.link = shorten_lesson_url(request, group.code, lesson.lesson.code)
@@ -1596,7 +1599,7 @@ def group(request, code):
                     student.results.append({'total': test.total})
         # return HttpResponse(tests_taken)
         context = {'group': group, 'students': student_group, 'tests': tests,
-                   'lessons': lessons, 'form': form}
+                   'lessons': lessons, 'form': form, 'assignments': assignments}
 
     return render(request, 'uploader/group.html', context)
 
