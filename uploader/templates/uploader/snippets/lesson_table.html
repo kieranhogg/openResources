@@ -3,7 +3,7 @@
 the lesson you can display on your board.</p>
 <table class="table table-striped">
     <th>Lesson</th>
-    <th>Group</th>
+    {% if not group %}<th>Group</th>{% endif %}
     <th>Unit Topic</th>
     <th>Short link</th>
     <th>Date</th>
@@ -13,7 +13,7 @@ the lesson you can display on your board.</p>
 {% for lesson in lessons %}
 <tr>
     <td>{{ lesson.lesson.title }}</td>
-    <td>{{ lesson.group }}</td>
+    {% if not group %}<td>{{ lesson.group }}</td>{% endif %}
     <td>
         {{ lesson.lesson.unit_topic }}
     </td>
@@ -57,4 +57,6 @@ the lesson you can display on your board.</p>
 </tr>
 {% endfor %}
 </table>
+{% else %}
+<p>No lessons</p>
 {% endif %}

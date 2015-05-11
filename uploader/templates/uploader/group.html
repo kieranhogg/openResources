@@ -58,95 +58,11 @@ $(function () {
   </div>
 </div>
 
-{% if lessons %}
-<table class="table table-striped">
-    <th>Lesson</th>
-    <th>Unit Topic</th>
-    <th>Short link</th>
-    <th>Date</th>
-    <th>Feedback <span class="glyphicon glyphicon-question-sign" style="font-size: 0.9em" aria-hidden="true" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Average post lesson understanding (of out 5)"></span></th>
-    <th></th>
-    
-{% for group_lesson in lessons %}
-<tr>
-    <td>{{ group_lesson.lesson.title }}</td>
-    <td>
-        {{ group_lesson.lesson.unit_topic }}
-    </td>
-    <td>
-        {{ group_lesson.link|urlize }}
-    </td>
-    <td>
-        {% if group_lesson.date %}
-        {{ group_lesson.date|date:"D dS M" }} 
-            {% if group_lesson.period %}P{{ group_lesson.period }}{% endif %}
-        {% endif %}
-        </td>
-    {% if group_lesson.feedback and group_lesson.feedback < 4 %}
-      <td class="danger text-center">{{ group_lesson.feedback|floatformat:"1" }}
-    {% elif group_lesson.feedback and group_lesson.feedback >= 3 and group_lesson.feedback < 4 %}
-      <td class="warning text-center">{{ group_lesson.feedback|floatformat:"1" }}
-    {% elif group_lesson.feedback and group_lesson.feedback >= 4 %}
-        <td class="success text-center">{{ group_lesson.feedback|floatformat:"1" }}
-    {% else %}
-        <td>
-    {% endif %}
-    </td>
-    <td class='text-center'>
-        <div class="btn-group">
-              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                Actions <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu" role="menu">
-                <li><a href="{% url 'uploader:lesson' group.code group_lesson.lesson.code %}">
-                    <span class="glyphicon glyphicon-modal-window" aria-hidden="true"></span>
-                    View
-                    </a></li>
-                <li>
-                    <a href="{% url 'uploader:lesson_show' group.code group_lesson.lesson.code %}">
-                    <span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span>
-                    Present</a>
-                </li>
-              </ul>
-            </div>
-    </td>
-</tr>
-{% endfor %}
-</table>
-{% else %}
-<p>No lessons assigned to this group</p>
-{% endif %}
+{% lesson_table "teacher" lessons group %}
+
 <h2>Tests</h2>
-<div class="table-responsive">
-<table id='tests' class='table table-striped'>
-    <thead>
-    <tr style="height:100%">
-        <th nowrap>Student Name</th>
-        {% for test in tests %}
-        <th nowrap>
-            {{ test}} ({{ test.total }})
-            <!--<span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" data-placement="top" data-html="true"-->
-            <!--    title="{{ test }}<br />Total: {{ test.total }}">-->
-            <!--</span>-->
-        </th>
-        {% endfor %}
-    </tr>
-    </thead>
-    <tbody>
-    {% for student in students %}
-    <tr>
-        <td>{{ student.student.studentprofile.forename }} {{ student.student.studentprofile.surname }}</td>
-            {% for result in student.student.results %}
-                <td style='text-align: center'>
-                    {{ result.score }}
-                </td>
-        {% endfor %}
-    </tr>
-    {% endfor %}
-    </tbody>
-</table>
-</div>
+{% test_table "teacher" tests group %}
 <a href="{% url 'uploader:add_test' %}">
-    <button class='btn btn-success'>New Test</button>
+    <button class='btn btn-success'>Create Test</button>
 </a>
 {% endblock %}

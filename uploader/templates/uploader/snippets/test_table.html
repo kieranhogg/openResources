@@ -1,8 +1,9 @@
+{% if tests %}
 <div class='table-responsive' style='width: 100%; overflow: auto;'>
 <table class='table' style=" display: table; table-layout: fixed; width: 100%;">
     <tr>
         <th>Test</th>
-        <th>Group</th>
+        {% if not group %}<th>Group</th>{% endif %}
         <!--<th>Status</th>-->
         <th>Set</th>
         <th>Deadline</th>
@@ -10,7 +11,7 @@
         {% for test in tests %}
         <tr>
             <td>{{ test }}</td>
-            <td>{{ test.group }}</td>
+            {% if not group %}<td>{{ test.group }}</td>{% endif %}
             <!--<td></td>-->
             <td>{{ test.pub_date }}</td>
             <td>{{ test.deadline }}</td>
@@ -24,3 +25,6 @@
     </tr>
 </table>
 </div>
+{% else %}
+    <p>No tests</p>
+{% endif %}
