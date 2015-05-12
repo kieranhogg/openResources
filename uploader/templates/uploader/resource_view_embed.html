@@ -18,7 +18,7 @@ $(document).ready(function () {
     
 {% else %}
     <div id="link_or_oembed">
-    <p><strong>{{ resource.bookmark.link | oembed }}</strong></p>
+    <p><strong>{{ resource.bookmark.link | embed }}</strong></p>
     </div>
 {% endif %}
 <div class="action">
