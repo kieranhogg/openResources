@@ -1270,7 +1270,7 @@ def view_notes_id(request, id):
     syllabus = unit.syllabus
     exam_level = syllabus.exam_level
     subject = syllabus.subject
-    url = reverse('uploader:notes', 
+    url = reverse('uploader:view_notes', 
         args=[subject.slug, exam_level.slug, syllabus.slug, unit.slug, 
               unit_topic.slug])
     return redirect(url, permanent=True)
