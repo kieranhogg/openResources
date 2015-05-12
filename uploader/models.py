@@ -390,6 +390,7 @@ class Resource(models.Model):
         blank=True,
     )
     approved = models.BooleanField(default=False)
+    code = models.SlugField(max_length=4, null=True, blank=True)
     slug = models.SlugField(unique=True, max_length=100)
     pub_date = models.DateTimeField(
         'Date published',
@@ -409,11 +410,14 @@ class Resource(models.Model):
         ordering = ('-pub_date',)
         unique_together = ('file', 'bookmark', 'subject', 'syllabus', 'unit', 'unit_topic')
 
-    def get_title(self):
+    def title(self):
         return self.file.title if self.file else self.bookmark.title
 
-    def get_description(self):
+    def description(self):
         return self.file.description if self.file else self.bookmark.description
+        
+    def url(self):
+        return self.file.filename if self.file else self.bookmark.link
     
     def get_absolute_url(self):
         return reverse('uploader:view_resource', args=[self.slug])

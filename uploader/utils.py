@@ -133,3 +133,15 @@ def extract(url):
     api_url = "http://api.embed.ly/1/extract?key=" + settings.MICAWBER_EMBEDLY_KEY + "&url=" + url + "&maxwidth=500"
     r = requests.get(api_url)
     return json.loads(r.text)
+
+
+def embed_resources(text):
+    import re
+    card_html = '<a class="embedly-card" href="%s">%s</a><script async src="//cdn.embedly.com/widgets/platform.js" charset="UTF-8"></script>'
+    pattern = re.compile(r'\(resource\)\[(\d+?)\]')
+  
+    for match in re.finditer(pattern, text):
+        resource = Resource.objects.get(pk=match.group(1))
+        replace = card_html % (resource.bookmark.link, resource.bookmark.title)
+        text = text.replace(match.group(0), replace)
+    return text

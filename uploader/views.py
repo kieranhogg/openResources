@@ -1263,7 +1263,7 @@ def view_notes(request, subject_slug, exam_slug, syllabus_slug, unit_slug,
     notes = None
     if notes_list.count() > 0:
         notes = notes_list[0]
-        rendered_text = render_markdown(notes.content)
+        rendered_text = embed_resources(render_markdown(notes.content))
         notes.content = rendered_text
     context = {'notes': notes, 'unit_topic': unit_topic}
     return render(request, 'uploader/notes.html', context)
