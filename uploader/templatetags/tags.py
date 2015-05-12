@@ -82,8 +82,14 @@ def link_embed():
 
 @register.filter
 def embed(url):
+    embed_blacklist = ('en.wikipedia.org',)
+    skip_embed = False
+    
+    if any(blacklist in url for blacklist in embed_blacklist):
+        skip_embed = True
+        
     embed = get_embed(url)
-    if embed:
+    if embed and not skip_embed:
         return embed
     else:
         return get_embed_card(url)
