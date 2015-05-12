@@ -54,7 +54,6 @@ INSTALLED_APPS = (
     'allauth',
     'allauth.account',
     'jquery',
-    'micawber.contrib.mcdjango',
     'bootstrapform',
     'bootstrap3_datetime',
     # haystack called at the bottom of the file

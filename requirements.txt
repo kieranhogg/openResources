@@ -9,7 +9,6 @@ django-allauth
 django-gravatar2
 django-jquery
 #django-suit
-micawber
 django-grappelli
 python-boxview
 python-magic
