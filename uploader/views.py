@@ -27,7 +27,6 @@ from django.http import (HttpResponse, HttpResponseRedirect, JsonResponse,
 from django.shortcuts import (render, get_object_or_404, get_list_or_404,
                               render_to_response, redirect)
 from django.template import Context, loader, RequestContext
-from django.utils import timezone
 
 from boxview import boxview
 
@@ -570,25 +569,32 @@ def bookmark(request, slug=None):
 
 def link_file(request, slug):
     file = get_object_or_404(File, slug=slug)
-    return link_resource(request, 'file', slug)
+    return link_resource(request, 'file', file)
 
 
 def link_bookmark(request, slug):
     bookmark = get_object_or_404(Bookmark, slug=slug)
-    return link_resource(request, 'bookmark', slug)
+    return link_resource(request, 'bookmark', bookmark)
 
 
-def link_resource(request, type, slug):
+def link_lesson(request, code):
+    lesson = get_object_or_404(Lesson, code=code)
+    return link_resource(request, 'lesson', lesson)
+
+# FIXME this could do with cleaning up and just using an HTML snippet
+def link_resource(request, type, obj):
     bookmark = None
     file = None
     test = None
 
     if type == 'bookmark':
-        bookmark = get_object_or_404(Bookmark, slug=slug)
+        bookmark = obj
     elif type == 'file':
-        file = get_object_or_404(File, slug=slug)
+        file = obj
     elif type == 'test':
-        test = get_object_or_404(Test, code=slug)
+        test = obj
+    elif type == 'lesson':
+        lesson = obj
 
     if type == 'bookmark' or type == 'file':
         if request.user.is_authenticated():
@@ -598,7 +604,7 @@ def link_resource(request, type, slug):
             resource = Resource(file=file or None,
                                 bookmark=bookmark or None, approved=False)
 
-    if request.method == 'POST':
+    if request.method == 'POST' and 'save' in request.POST:
         if type == 'bookmark' or type == 'file':
             form = LinkResourceForm(request.POST, instance=resource)
             if form.is_valid():
@@ -639,7 +645,26 @@ def link_resource(request, type, slug):
                 pk=request.POST.get('unit_topic'))
             test.save()
             # FIXME my tests
-            return redirect("/")
+            return redirect(reverse('uploader:index'))
+        elif type == 'lesson':
+            lesson.unit_topic = UnitTopic.objects.get(
+                pk=request.POST.get('unit_topic'))
+            lesson.save()
+            return redirect(reverse('uploader:user_lessons'))
+    elif 'skip' in request.POST: 
+       # we've skipped the linking so redirect back to the correct place
+        url = reverse('uploader:index')
+        
+        if type == 'bookmark':
+            url = reverse('uploader:user_bookmarks')
+        elif type == 'file':
+            url = reverse('uploader:user_files')
+        elif type == 'test': # FIXME user_tests
+            url = reverse('uploader:index')
+        elif type == 'lesson':
+            url = reverse('uploader:user_lessons')
+            
+        return HttpResponseRedirect(url)
     else:
         try:
             form = LinkResourceForm(instance=resource)
@@ -815,6 +840,7 @@ def user_lessons(request, user_id=None):
                 l.url = shorten_url(url)
                 l.save()
 
+                # FIXME this is grim, should be using item[] field names
                 if check_lesson_items(request, num_items):
                     for i in range(1, num_items + 1):
                         _i = str(i)
@@ -866,8 +892,8 @@ def user_lessons(request, user_id=None):
                 request.session['notes'] = None
                 request.session['tests'] = None
                 request.session['tasks'] = None
-                return HttpResponseRedirect(request.META.get('HTTP_REFERER',
-                                                             '/'))
+                return HttpResponseRedirect(reverse('uploader:link_lesson', args=[l.code]))
+                
             elif not items_okay:
                 form_errors.append('Please add an order to all items')
 
@@ -1564,7 +1590,6 @@ def groups(request, slug=None):
 def group(request, code):
     group = get_object_or_404(Group, code=code)
 
-    # add a lesson to this group
     if request.POST:
         lesson = Lesson.objects.get(pk=request.POST['lesson'])
         GroupLesson(group=group, lesson=lesson, set_by=request.user).save()
@@ -1575,8 +1600,6 @@ def group(request, code):
         student_group = StudentGroup.objects.filter(group=group)
         tests = Test.objects.filter(teacher=request.user).order_by('-pub_date')
         lessons = GroupLesson.objects.filter(group=group).order_by('-date', '-pub_date')
-        assignments = Assignment.objects.filter(group=group).order_by('-deadline', '-pub_date')
-
 
         for lesson in lessons:
             lesson.link = shorten_lesson_url(request, group.code, lesson.lesson.code)
@@ -1599,7 +1622,7 @@ def group(request, code):
                     student.results.append({'total': test.total})
         # return HttpResponse(tests_taken)
         context = {'group': group, 'students': student_group, 'tests': tests,
-                   'lessons': lessons, 'form': form, 'assignments': assignments}
+                   'lessons': lessons, 'form': form}
 
     return render(request, 'uploader/group.html', context)
 
@@ -1628,7 +1651,8 @@ def add_test(request):
 
 @login_required
 def link_test(request, code):
-    return link_resource(request, 'test', code)
+    test = get_object_or_404(Test, code=code)
+    return link_resource(request, 'test', test)
     
     
 def lesson_present(request, group_code, code):
@@ -1788,19 +1812,9 @@ def view_assignment(request, code):
     return render(request, template, context)
     
 
-def mark_assignment_no_submission(request, assignment_code, student_id):
-    return mark_assignment(request, assignment_code, None, None, student_id, True)
-    
-
-def mark_assignment(request, assignment_code, submission_id=None, absent=None, student_id=None, no_sub=False):
+def mark_assignment(request, assignment_code, submission_id=None, absent=None, student_id=None):
     assignment = get_object_or_404(Assignment, code=assignment_code)
-    if not no_sub:
-        submission = get_object_or_404(AssignmentSubmission, pk=submission_id)
-    else:
-        submission = AssignmentSubmission()
-        student = get_object_or_404(User, pk=student_id)
-        submission.student = student
-
+    submission = get_object_or_404(AssignmentSubmission, pk=submission_id)
 
     if absent == 'absent':
         student = get_object_or_404(User, pk=student_id)
@@ -1809,6 +1823,7 @@ def mark_assignment(request, assignment_code, submission_id=None, absent=None, s
         sub.save()
 
         return HttpResponseRedirect(reverse('uploader:view_assignment', args=[assignment.code]))
+
     else:
         form = MarkAssignmentForm(request.POST or None, instance=submission)
 
@@ -1819,42 +1834,32 @@ def mark_assignment(request, assignment_code, submission_id=None, absent=None, s
             elif assignment.grading.type == 2: #options
                 new_assignment.result = request.POST.get('grade_options') or None
                 
-            if no_sub:
-                new_assignment.assignment = assignment
-                new_assignment.student = student
-                new_assignment.submitted = timezone.now()
             new_assignment.save()
         
-            return HttpResponseRedirect(reverse('uploader:view_assignment', args=[assignment.code]))
+            return HttpResponseRedirect(reverse('uploader:view_assignment', args=[submission.assignment.code]))
             
         else:
-            context = {}
-            if not no_sub:
-                files = AssignmentSubmissionFile.objects.filter(assignment_submission=submission)
-                form.fields['result'].widget.attrs.update({
-                    'placeholder': 'out of ' + str(submission.assignment.total)
-                })
-                context['files'] = files
+            files = AssignmentSubmissionFile.objects.filter(assignment_submission=submission)
+            form.fields['result'].widget.attrs.update({
+                'placeholder': 'out of ' + str(submission.assignment.total)
+            })
             
             if assignment.grading.type == 1: #numerical
-                form.fields['result'].visible = True
-                form.fields['grade_options'].widget = forms.HiddenInput()
+                pass
             elif assignment.grading.type == 2: #options
                 fields =[('', '---------')]
                 # fields = []
                 grade_fields = GradeOptions.objects.filter(grading=assignment.grading).order_by('order')
                 for field in grade_fields:
-                    fields.append((field.value, field.grade))
+                    fields.append((field.value, field.representation))
                 form.fields['grade_options'].choices = fields
                 form.fields['grade_options'].queryset = fields
 
                 if submission:
                     form.fields["grade_options"].initial = submission.result
                 form.fields['result'].widget = forms.HiddenInput()
-                
     
-        context['submission'] = submission
-        context['form'] = form
+        context = {'submission': submission, 'files': files, 'form': form}
         
         return render(request, 'uploader/mark_assignment.html', context)
 

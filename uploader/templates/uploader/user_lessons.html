@@ -235,6 +235,7 @@ the lesson you can display on your board.</p>
 <table class="table table-striped" >
     <th>Lesson</th>
     <th>Groups</th>
+    <th>Unit Topic</th>
     <th>Visibility</th>
     <th>Date</th>
     <th></th>
@@ -245,6 +246,9 @@ the lesson you can display on your board.</p>
     <td>{% for group in lessons.groups %}
         {{ group }}
         {% endfor %}
+    </td>
+    <td>
+        {{ lesson.unit_topic }}
     </td>
     <td>
         {% if lesson.public %}Public{% else %}Private{% endif %}
@@ -268,6 +272,10 @@ the lesson you can display on your board.</p>
                 <li><a href="{% url 'uploader:edit_lesson' lesson.code %}">
                     <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                     Edit</a></li>
+                    
+                <li><a href="{% url 'uploader:link_lesson' lesson.code %}">
+                    <span class="glyphicon glyphicon-link" aria-hidden="true"></span>
+                    Set Unit Topic</a></li>
                     
                 <li><a href="{% url 'uploader:delete_lesson' lesson.code %}" onclick="javascript:return confirm('DELETE this lesson? Your resources won\'t be affected')">
                     <span class="glyphicon glyphicon-trash" aria-hidden="true" title=""></span>

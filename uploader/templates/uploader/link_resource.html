@@ -75,6 +75,8 @@
 <h1>{% block head_title %}
 {% if type == 'test' %}
     Choose Test Topic
+{% elif type == 'lesson' %}
+    Link Lesson
 {% else %}
     Link Resource
 {% endif %}
@@ -101,6 +103,8 @@
     <p>
         Pick which unit topic your questions will be drawn from.
     </p>
+{% elif type == 'lesson' %}
+<p>Choose which unit topic your lesson is dealing with. This will let others find your lesson on the unit topic page.</p>
 {% else %}
 <h2>Important!</h2>
 <div class="important">
@@ -148,7 +152,7 @@ can add more later.</li>
     <div class="unit">
         {{ form.unit.errors }}
         <label for="{{ form.unit.id_for_label }}">Unit</label>
-        {% if type == 'test'  %}
+        {% if type == 'test' or type == 'lesson'  %}
             <span class="label label-danger">required</span>
         {% endif %}
         {{ form.unit }}
@@ -157,15 +161,17 @@ can add more later.</li>
     <div class="unit_topic">
         {{ form.subject.errors }}
         <label for="{{ form.unit_topic.id_for_label }}">Unit Topic</label>
-        {% if type == 'test'  %}
+        {% if type == 'test' or type == 'lesson' %}
             <span class="label label-danger">required</span>
         {% endif %}
         {{ form.unit_topic }}
     </div>
-    
-    <div id="link_submit">
-        <button type="submit" class="btn btn-success">Save</button>
+    </div>
+    <div class="text-center" style="clear:both; margin-top: 10em">
+        <p><button type="submit" name="save" class="btn btn-success"><span class="glyphicon glyphicon-link" aria-hidden="true"></span> Create link</button>
+        <button type="submit" name="skip" class="btn btn-default" /><span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span> Skip (leave private)</button>
+        </p>
     </div>
 </form>
-</div>
+
 {% endblock %}
