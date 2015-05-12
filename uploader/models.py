@@ -226,7 +226,7 @@ class Note(models.Model):
         max_length=100)  # don't use this yet but may in future
         
     def get_absolute_url(self):
-        return reverse('uploader:view_notes_d', args=[self.unit_topic.slug])
+        return reverse('uploader:view_notes_id', args=[self.id])
 
 
 class NoteAdmin(admin.ModelAdmin):
