@@ -155,7 +155,12 @@ def embed_resources(text):
 def get_screenshot(url):
     get_url = 'http://api.embed.ly/1/oembed?url=' + url + '&maxwidth=500&key=' + settings.MICAWBER_EMBEDLY_KEY
     r = requests.get(get_url)
-    return json.loads(r.text)['thumbnail_url'] or None
+    try:
+        thumb = json.loads(r.text)['thumbnail_url']
+    except ValueError:
+        thumb = None
+    
+    return thumb
     
 
 def get_embed(url):
