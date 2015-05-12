@@ -140,7 +140,7 @@ def extract(url):
 def embed_resources(text):
     import re
     card_html = '<a class="embedly-card" href="%s">%s</a><script async src="//cdn.embedly.com/widgets/platform.js" charset="UTF-8"></script>'
-    pattern = re.compile(r'\(resource\)\[(\d+?)\]')
+    pattern = re.compile(r'\(resource\)\[([\da-z]{4}?)\]')
   
     for match in re.finditer(pattern, text):
         try:
