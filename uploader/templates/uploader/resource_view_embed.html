@@ -18,7 +18,7 @@ $(document).ready(function () {
     {% endif %}
     
 {% else %}
-    <div id="link_or_oembed">
+    <div class="link_or_oembed">
     <p><strong>{{ resource.bookmark.link|embed|safe }}</strong></p>
     </div>
 {% endif %}
@@ -33,13 +33,13 @@ $(document).ready(function () {
     </a>
         
     {% else %}
-        <div id="link">
-            <a href='{{ resource.bookmark.link }}' target="_blank">
-                <button class='btn btn-success'> 
-                <span class="glyphicon glyphicon-globe" style="color:white" aria-hidden="true"></span> 
-                Open link</button>
-            </a>
-        </div>
+        <!--<div id="link">-->
+        <!--    <a href='{{ resource.bookmark.link }}' target="_blank">-->
+        <!--        <button class='btn btn-success'> -->
+        <!--        <span class="glyphicon glyphicon-globe" style="color:white" aria-hidden="true"></span> -->
+        <!--        Open link</button>-->
+        <!--    </a>-->
+        <!--</div>-->
     {% endif %}
 </div>
 {% endblock %}
