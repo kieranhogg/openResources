@@ -300,10 +300,10 @@ def syllabuses(request, subject_slug, exam_slug):
 def syllabus(request, subject_slug, exam_slug, slug):
     """Show one syllabuses page, has units on
     """
-    syllabus = get_object_or_404(Syllabus, slug=slug)
+    items = hierachy_from_slugs(subject_slug, exam_slug, slug)
+    syllabus = items['syllabus']
     syllabus.description = render_markdown(syllabus.description)
-    units = Unit.objects.filter(syllabus__id=syllabus.id).order_by('order',
-                                                                   'title')
+    units = Unit.objects.filter(syllabus=syllabus).order_by('order', 'title')
 
     favourite = False
     if request.user.is_authenticated():
