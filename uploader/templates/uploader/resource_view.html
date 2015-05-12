@@ -92,7 +92,7 @@ function vote(resourceID, rating)
     </div>
     {% if resource.file.uploader or resource.bookmark.uploader %}
     <div id="uploader" style="clear:both;">
-        <p>Added by <strong>
+        <p><strong>Added by:</strong>
         {% if resource.file %}
             {% if resource.file.uploader.teacherprofile %}
                 {{ resource.file.uploader.teacherprofile.title }} {{ resource.file.uploader.teacherprofile.surname }}
@@ -106,8 +106,8 @@ function vote(resourceID, rating)
                 {{ resource.bookmark.uploader.studentprofile.forename }} {{ resource.bookmark.uploader.teacherprofile.surname }}
             {% endif %}
         {% endif %}
-        </strong></p>
-        <p>Embed code: {{ resource.code }}</p>
+        </p>
+        <p><strong>Embed code</strong>: {{ resource.code }}</p>
     </div>
     {% endif %}
     <div id="topics">
