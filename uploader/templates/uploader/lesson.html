@@ -79,9 +79,9 @@ $(function () {
 </script>
 <h1>{% block head_title %}{{ lesson.title }}{% endblock %}</h1>
 {% if lesson.public and request.user != lesson.uploader %}
-<div class="alert alert-warning" role="alert">You are viewing a public lesson, not all functionality will work, e.g. tests</div>
+<div class="alert alert-warning" role="alert"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> You are viewing a public lesson, not all functionality will work, e.g. tests</div>
 {% elif lesson.public %}
-<div class="alert alert-warning" role="alert">You are viewing a public lesson, not all functionality will work until it is assigned to a group, e.g. tests</div>
+<div class="alert alert-warning" role="alert"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> You are viewing a public lesson, not all functionality will work until it is assigned to a group, e.g. tests</div>
 {% endif %}
 {% if lesson.objectives %}
 <h2>Lesson Objectives</h2>
