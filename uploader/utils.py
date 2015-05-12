@@ -113,7 +113,9 @@ def random_key(length, item=None):
             elif item == 'Lesson':
                 if Lesson.objects.filter(code=key).count() == 0:
                     unique = True
-                    
+            elif item == 'Resource':
+                if Resource.objects.filter(code=key).count() == 0:
+                    unique = True
             else:
                 raise Exception('Type not implemented')
 
