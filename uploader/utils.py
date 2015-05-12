@@ -157,7 +157,7 @@ def get_screenshot(url):
     r = requests.get(get_url)
     try:
         thumb = json.loads(r.text)['thumbnail_url']
-    except ValueError:
+    except ValueError, KeyError:
         thumb = None
     
     return thumb
