@@ -143,7 +143,10 @@ def embed_resources(text):
     pattern = re.compile(r'\(resource\)\[(\d+?)\]')
   
     for match in re.finditer(pattern, text):
-        resource = Resource.objects.get(pk=match.group(1))
-        replace = card_html % (resource.bookmark.link, resource.bookmark.title)
-        text = text.replace(match.group(0), replace)
+        try:
+            resource = Resource.objects.get(code=match.group(1))
+            replace = card_html % (resource.bookmark.link, resource.bookmark.title)
+            text = text.replace(match.group(0), replace)
+        except Resource.DoesNotExist:
+            pass
     return text

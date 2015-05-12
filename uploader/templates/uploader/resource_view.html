@@ -48,6 +48,7 @@ function vote(resourceID, rating)
     {% if resource.unit_topic %} > {{ resource.unit_topic }}{% endif %}
     </strong>
     </div>
+    
     <div id="rating">
         <a href="javascript:void(0)" onclick="javascript:vote({{ resource.id}}, 5)">
             {% if rating_val > 4.9 %}
@@ -91,7 +92,7 @@ function vote(resourceID, rating)
     </div>
     {% if resource.file.uploader or resource.bookmark.uploader %}
     <div id="uploader" style="clear:both;">
-        Added by <strong>
+        <p>Added by <strong>
         {% if resource.file %}
             {% if resource.file.uploader.teacherprofile %}
                 {{ resource.file.uploader.teacherprofile.title }} {{ resource.file.uploader.teacherprofile.surname }}
@@ -105,7 +106,8 @@ function vote(resourceID, rating)
                 {{ resource.bookmark.uploader.studentprofile.forename }} {{ resource.bookmark.uploader.teacherprofile.surname }}
             {% endif %}
         {% endif %}
-        </strong>
+        </strong></p>
+        <p>Embed code: {{ resource.code }}</p>
     </div>
     {% endif %}
     <div id="topics">

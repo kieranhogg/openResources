@@ -609,6 +609,7 @@ def link_resource(request, type, obj):
             form = LinkResourceForm(request.POST, instance=resource)
             if form.is_valid():
                 resource = form.save(commit=False)
+                resource.code = random_key(4, 'Resource')
                 # work out slug
                 if resource.file is not None:
                     resource.slug = resource.file.slug
