@@ -138,7 +138,7 @@ class Syllabus(models.Model):
     class Meta:
         ordering = ('exam_board', 'exam_level', 'subject')
         verbose_name_plural = "Syllabuses"
-        unique_together = ('exam_board', 'exam_level', 'slug')
+        unique_together = ('subject', 'exam_board', 'exam_level', 'slug')
 
 
 class SyllabusAdmin(admin.ModelAdmin):
