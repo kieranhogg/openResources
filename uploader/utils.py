@@ -150,3 +150,24 @@ def embed_resources(text):
         except Resource.DoesNotExist:
             pass
     return text
+    
+
+def get_screenshot(url):
+    get_url = 'http://api.embed.ly/1/oembed?url=' + url + '&maxwidth=500&key=' + settings.MICAWBER_EMBEDLY_KEY
+    r = requests.get(get_url)
+    return json.loads(r.text)['thumbnail_url'] or None
+    
+
+def get_embed(url):
+    get_url = 'http://api.embed.ly/1/oembed?url=' + url + '&maxwidth=400&key=' + settings.MICAWBER_EMBEDLY_KEY
+    r = requests.get(get_url)
+    json = r.json()
+    if 'html' in json:
+        return json['html']
+    else:
+        return None
+    
+
+def get_embed_card(url):
+    return '<a class="embedly-card" href="%s">Link</a><script async src="//cdn.embedly.com/widgets/platform.js" charset="UTF-8"></script>' % url
+    

@@ -1,6 +1,6 @@
 {% extends 'uploader/base.html' %}
 {% load url from future %}
-{% load micawber_tags %}
+{% load tags %}
 {% load static %}
 {% block body_block %}
 <script>
@@ -164,7 +164,7 @@ function vote(resourceID, rating)
     </div>
 {% else %}
     <div class="link_or_oembed">
-    <p>{{ resource.bookmark.link | oembed }}</p>
+    <p>{{ resource.bookmark.link|embed|safe }}</p>
     </div>
 
 
@@ -182,7 +182,7 @@ function vote(resourceID, rating)
     </a>
         
     {% else %}
-        <div id="link">
+        <div id="link" class="text-center" style="display:none">
             <a href='{{ resource.bookmark.link }}'>
                 <button class='btn btn-success'>
                 <span class="glyphicon glyphicon-globe" style="color:white" aria-hidden="true"></span>

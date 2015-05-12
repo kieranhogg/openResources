@@ -391,8 +391,7 @@ def view_resource(request, slug, embed=False):
                 # can still download the file
                 pass
 
-    return render_to_response(template,
-                              context_instance=RequestContext(request, context))
+    return render(request, template, context)
 
 
 def view_resource_embed(request, slug):
@@ -534,6 +533,7 @@ def bookmark(request, slug=None):
             if not slug:
                 # insert
                 bookmark = form.save(commit=False)
+                bookmark.screenshot = get_screenshot(bookmark.link)
                 bookmark.slug = safe_slugify(bookmark.title, Bookmark)
                 form.save()
 

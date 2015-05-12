@@ -349,8 +349,7 @@ class Bookmark(models.Model):
         settings.AUTH_USER_MODEL,
         null=True,
         blank=True)
-    screenshot = models.ImageField(
-        upload_to='screenshots/%Y/%m',
+    screenshot = models.CharField(max_length=300,
         null=True,
         blank=True)
     slug = models.SlugField(unique=True, max_length=100)
