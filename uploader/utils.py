@@ -6,6 +6,8 @@ from django.core.files.base import File as DjangoFile
 from django.conf import settings
 from django.http import (HttpResponse, HttpResponseRedirect, JsonResponse, 
     Http404, HttpResponseForbidden)
+from django.shortcuts import get_object_or_404
+                              
 import markdown
 from uploader.models import *
 
@@ -175,4 +177,27 @@ def get_embed(url):
 
 def get_embed_card(url):
     return '<a class="embedly-card" href="%s">Link</a><script async src="//cdn.embedly.com/widgets/platform.js" charset="UTF-8"></script>' % url
+    
+    
+def hierachy_from_slugs(subject_slug, exam_slug, syllabus_slug, unit_slug=None, slug=None):
+    items = {}
+    
+    subject = get_object_or_404(Subject, slug=subject_slug)
+    items['subject'] = subject
+    
+    exam_level = get_object_or_404(ExamLevel, slug=exam_slug)
+    items['exam_level'] = exam_level
+    
+    syllabus = get_object_or_404(Syllabus, slug=syllabus_slug, exam_level=exam_level, subject=subject)
+    items['syllabus'] = syllabus
+    
+    if unit_slug:
+        unit = get_object_or_404(Unit, slug=unit_slug, syllabus=syllabus)
+        items['unit'] = unit
+    
+    if slug and unit_slug: 
+        unit_topic = get_object_or_404(UnitTopic, slug=slug, unit=unit)
+        items['unit_topic'] = unit_topic
+        
+    return items
     

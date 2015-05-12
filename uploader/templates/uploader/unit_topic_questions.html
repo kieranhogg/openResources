@@ -19,9 +19,9 @@
     <h1>Questions</h1>
     {% include 'uploader/unit_topic_tabs.html' %}
     <p>
-        <a href="{% url 'uploader:question' unit_topic.slug %}">
+        <a href="{% url 'uploader:question' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
             <button class='btn btn-success'>
-                <span class="glyphicon glyphicon-plus-sign" aria-hidden="true" title='Add to lesson'></span>
+                <span class="glyphicon glyphicon-plus-sign" aria-hidden="true" title='Add question'></span>
                 Add Question</button>
         </a>    
     </p>

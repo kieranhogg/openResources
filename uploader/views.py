@@ -210,8 +210,10 @@ def syllabus_resources(request, subject_slug, exam_slug, slug):
 
 def unit_topic(
         request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
-    unit_topic = get_object_or_404(UnitTopic, slug=slug)
-    unit_topic.description = render_markdown(unit_topic.description)
+    
+    items = hierachy_from_slugs(subject_slug, exam_slug, syllabus_slug, unit_slug, slug)
+    unit_topic = items['unit_topic']
+    
     resources = Resource.objects.filter(unit_topic=unit_topic).count()
     notes = Note.objects.filter(unit_topic=unit_topic).count()
     question = MultipleChoiceQuestion.objects.filter(unit_topic=unit_topic)
@@ -240,7 +242,9 @@ def unit_topic(
 
 def unit_topic_resources(
         request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
-    unit_topic = get_object_or_404(UnitTopic, slug=slug)
+    
+    items = hierachy_from_slugs(subject_slug, exam_slug, syllabus_slug, unit_slug, slug)
+    unit_topic = items['unit_topic']
     # resources = Resource.objects.filter(unit_topic=unit_topic).values()
 
     # FIXME when Django 1.8 gets COALESCE we get set a default
@@ -256,7 +260,8 @@ def unit_topic_resources(
     
     
 def unit_topic_lessons(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
-    unit_topic = get_object_or_404(UnitTopic, slug=slug)
+    items = hierachy_from_slugs(subject_slug, exam_slug, syllabus_slug, unit_slug, slug)
+    unit_topic = items['unit_topic']
     lessons = Lesson.objects.filter(unit_topic=unit_topic, public=True)
     
     return render(request, 'uploader/unit_topic_lessons.html', 
@@ -316,7 +321,8 @@ def syllabus(request, subject_slug, exam_slug, slug):
 def unit(request, subject_slug, exam_slug, syllabus_slug, slug):
     """A single unit view
     """
-    unit = get_object_or_404(Unit, slug=slug)
+    syllabus = get_object_or_404(Syllabus, slug=syllabus_slug)
+    unit = get_object_or_404(Unit, slug=slug, syllabus=syllabus)
     unit_topics = UnitTopic.objects.filter(unit__id=unit.id).order_by(
         'section', 'pub_date')
     for unit_topic in unit_topics:
@@ -856,11 +862,11 @@ def user_lessons(request, user_id=None):
                                 id = resource.id
                                 content_type = ContentType.objects.get_for_model(resource)
                             elif type == 'notes':
-                                note = Note.objects.get(slug=form_data.get('slug' + _i, None))
+                                note = Note.objects.get(pk=form_data.get('slug' + _i, None))
                                 id = note.id
                                 content_type = ContentType.objects.get_for_model(note)
                             elif type == 'test':
-                                test = Test.objects.get(slug=form_data.get('slug' + _i, None))
+                                test = Test.objects.get(code=form_data.get('slug' + _i, None))
                                 id = test.id
                                 content_type = ContentType.objects.get_for_model(test)
                             elif type == 'tasks':
@@ -915,7 +921,7 @@ def user_lessons(request, user_id=None):
     notes_list = []
     if notes:
         for note in notes:
-            unit_topic = get_object_or_404(UnitTopic, slug=note)
+            unit_topic = get_object_or_404(UnitTopic, pk=note)
             _note = get_object_or_404(Note, unit_topic=unit_topic)
             if _note is not None:
                 _note.count = count
@@ -926,7 +932,7 @@ def user_lessons(request, user_id=None):
     tests_list = []
     if tests:
         for test in tests:
-            _test = get_object_or_404(UnitTopic, slug=test)
+            _test = get_object_or_404(Test, code=test)
             if _test is not None:
                 _test.count = count
                 tests_list.append(_test)
@@ -1138,14 +1144,12 @@ def add_item_to_lesson(request, slug, type):
             request.session.modified = True
             messages.success(request, "Added to a new lesson, go to My " +
                                       "Folder > Lessons to view")
-
+    
+    # notes uses ID not slug as it's not unique
     elif type == 'notes':
-        unit_topic = get_object_or_404(UnitTopic, slug=slug)
+        unit_topic = get_object_or_404(UnitTopic, pk=slug)
         notes = get_object_or_404(Note, unit_topic=unit_topic)
         if notes:
-            logger.error("saving: " + slug)
-            logger.error("saving: " + str(notes.slug))
-            logger.error("saving: " + str(unit_topic))
             if ('notes' not in request.session or
                     request.session['notes'] is None):
                 request.session['notes'] = (slug,)
@@ -1154,9 +1158,10 @@ def add_item_to_lesson(request, slug, type):
             request.session.modified = True
             messages.success(request, "Added to a new lesson, go to My " +
                                       "Folder > Lessons to view")
-
+    
+    # tests uses code, they used to be linked to unit_topics but no more
     elif type == 'test':
-        unit_topic = get_object_or_404(UnitTopic, slug=slug)
+        test = get_object_or_404(Test, code=slug)
         if request.session.get('tests', None) is None:
             request.session['tests'] = (slug,)
         elif slug not in request.session['tests']:
@@ -1216,7 +1221,8 @@ def notes_d(request, slug):
 @permission_required(
     'notes.can_edit', '/denied?msg=For editing rights, please email contact@eduresourc.es')
 def notes(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
-    unit_topic = get_object_or_404(UnitTopic, slug=slug)
+    items = hierachy_from_slugs(subject_slug, exam_slug, syllabus_slug, unit_slug, slug)
+    unit_topic = items['unit_topic']
     notes = Note.objects.filter(unit_topic=unit_topic)
 
     if notes.count() > 0:
@@ -1253,13 +1259,27 @@ def notes(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
                       {'form': form, 'unit_topic': unit_topic})
 
 
-def view_notes_d(request, slug):
-    return view_notes(request, None, None, None, None, slug)
+def view_notes_id(request, id):
+    """This is used for linking to notes form the lesson page. It's a bit
+    long winded but makes sense as we need this all to resolve the URL
+    """
+    
+    notes = get_object_or_404(Note, pk=id)
+    unit_topic = notes.unit_topic
+    unit = unit_topic.unit
+    syllabus = unit.syllabus
+    exam_level = syllabus.exam_level
+    subject = syllabus.subject
+    url = reverse('uploader:notes', 
+        args=[subject.slug, exam_level.slug, syllabus.slug, unit.slug, 
+              unit_topic.slug])
+    return redirect(url, permanent=True)
 
 
 def view_notes(request, subject_slug, exam_slug, syllabus_slug, unit_slug,
                slug):
-    unit_topic = get_object_or_404(UnitTopic, slug=slug)
+    items = hierachy_from_slugs(subject_slug, exam_slug, syllabus_slug, unit_slug, slug)
+    unit_topic = items['unit_topic']
     notes_list = Note.objects.filter(unit_topic=unit_topic)
     notes = None
     if notes_list.count() > 0:
@@ -1298,7 +1318,8 @@ def view_image(request, image_id):
 @user_passes_test(is_teacher, login_url='/denied')
 def questions(
         request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
-    unit_topic = get_object_or_404(UnitTopic, slug=slug)
+    items = hierachy_from_slugs(subject_slug, exam_slug, syllabus_slug, unit_slug, slug)
+    unit_topic = items['unit_topic']
     complete_count = 0
     question_count = 0
     questions = None
@@ -1477,8 +1498,9 @@ def test_feedback(request, code):
                   {'questions': question_list, 'unit_topic': unit_topic})
 
 
-def question(request, slug):
-    unit_topic = get_object_or_404(UnitTopic, slug=slug)
+def question(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
+    items = hierachy_from_slugs(subject_slug, exam_slug, syllabus_slug, unit_slug, slug)
+    unit_topic = items['unit_topic']
     form = MultipleChoiceQuestionForm(request.POST or None)
 
     if request.POST and form.is_valid():
@@ -1936,6 +1958,12 @@ def grading(request, id=None):
 
             return HttpResponseRedirect(reverse('uploader:user_grading'))
     return render(request, 'uploader/add_grading.html', {'form': form})
+
+
+def user_tests(request):
+    tests = Test.objects.filter(teacher=request.user)
+    
+    return render(request, 'uploader/user_tests.html', {'tests': tests})
 
 """
 ajax views

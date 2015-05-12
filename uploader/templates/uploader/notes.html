@@ -30,7 +30,7 @@ $(document).ready(function () {
 </a>
 {% if user.teacherprofile %}
 <div id="add-to-lesson">
-<a href="{% url 'uploader:add_item_to_lesson' unit_topic.slug 'notes' %}">
+<a href="{% url 'uploader:add_item_to_lesson' unit_topic.id 'notes' %}">
     <button class='btn btn-default'>
     <span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span>
     Add to lesson

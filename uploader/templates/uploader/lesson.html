@@ -198,8 +198,8 @@ $(function () {
           <p>{{ item.instructions|safe }}</p>
           {% endif %}
           
-        <p class='text-center'><a class='btn btn-default' href="{% url 'uploader:view_notes_d' item.content.slug %}">
-            View notes
+        <p class='text-center'><a class='btn btn-default' href="{% url 'uploader:view_notes_id' item.content.id %}">
+            View notes {{item.content.slug}}
         </a>
         </p>
         

@@ -119,7 +119,7 @@ new lessons with those items.</p>
             <span style="color: #999; font-size:0.8em" class="glyphicon glyphicon-trash" aria-hidden="true"></span>
         </a></h3>
         
-        <input type="hidden" name="slug{{ note.count }}" value="{{ note.slug }}" />
+        <input type="hidden" name="slug{{ note.count }}" value="{{ note.id }}" />
         <input type="hidden" name="type{{ note.count }}" value="notes" />
         <div class='order'>
             <p><label for="order{{ note.count }}">Order</label>
@@ -143,7 +143,7 @@ new lessons with those items.</p>
         <span style="color: #999; font-size:0.8em" class="glyphicon glyphicon-trash" aria-hidden="true"></span>
         </a></h3>
         
-        <input type="hidden" name="slug{{ test.count }}" value="{{ test.slug }}" />
+        <input type="hidden" name="slug{{ test.count }}" value="{{ test.code }}" />
         <input type="hidden" name="type{{ test.count }}" value="test" />
         <div class='order'>
             <p><label for="order{{ test.count }}">Order</label>
@@ -182,7 +182,7 @@ new lessons with those items.</p>
     {% endfor %}
 {% endif %}
 
-{% if resources or notes or test or tasks %}
+{% if resources or notes or tests or tasks %}
 </div>
 <a href="javascript:void(0);" onclick="javascript:add_lesson_item({{resources|length}});"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add New Task</a>
 
@@ -260,7 +260,7 @@ the lesson you can display on your board.</p>
                 Actions <span class="caret"></span>
               </button>
               <ul class="dropdown-menu" role="menu">
-                <li><a href="{% url 'uploader:lesson' lesson.code %}">
+                <li><a href="{% url 'uploader:lesson' lesson.slug %}">
                     <span class="glyphicon glyphicon-modal-window" aria-hidden="true"></span>
                     View
                     </a></li>

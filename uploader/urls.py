@@ -66,13 +66,14 @@ urlpatterns = patterns('',
     url(r'^user/lessons', views.user_lessons, name='user_lessons'),
     url(r'^user/grading/add/', views.grading, name='grading'),
     url(r'^user/grading/', views.user_grading, name='user_grading'),
+    url(r'^user/tests/', views.user_tests, name='user_tests'),
     url(r'^user/(?P<username>[\w\d-]+)/$', views.profile, name='profile'),
     
     url(r'lesson/(?P<slug>[\w\d-]+)/$', views.lesson, name='lesson'),
 
     
-    url(r'^notes/(?P<slug>[\w\d-]+)/$', views.view_notes_d, name='view_notes_d'),
-    url(r'^notes/(?P<slug>[\w\d-]+)/edit/$', views.notes_d, name='notes_d'),
+    url(r'^notes/(?P<id>[\d-]+)/$', views.view_notes_id, name='view_notes_id'),
+    # url(r'^notes/(?P<slug>[\w\d-]+)/edit/$', views.notes_d, name='notes_d'),
     
     url(r'^students/signup/$', views.student_signup, name='student_signup'),
     url(r'^teachers/signup/$', views.teacher_signup, name='teacher_signup'),
@@ -105,6 +106,7 @@ urlpatterns = patterns('',
     url(r'^(?P<subject_slug>[\w\d-]+)/(?P<exam_slug>[\w\d-]+)/(?P<syllabus_slug>[\w\d-]+)/(?P<unit_slug>[\w\d-]+)/(?P<slug>[\w\d-]+)/lessons/$', views.unit_topic_lessons, name='unit_topic_lessons'),
     url(r'^(?P<subject_slug>[\w\d-]+)/(?P<exam_slug>[\w\d-]+)/(?P<syllabus_slug>[\w\d-]+)/(?P<unit_slug>[\w\d-]+)/(?P<slug>[\w\d-]+)/notes/edit/$', views.notes, name='notes'),
     url(r'^(?P<subject_slug>[\w\d-]+)/(?P<exam_slug>[\w\d-]+)/(?P<syllabus_slug>[\w\d-]+)/(?P<unit_slug>[\w\d-]+)/(?P<slug>[\w\d-]+)/questions/$', views.questions, name='questions'),
+    url(r'^(?P<subject_slug>[\w\d-]+)/(?P<exam_slug>[\w\d-]+)/(?P<syllabus_slug>[\w\d-]+)/(?P<unit_slug>[\w\d-]+)/(?P<slug>[\w\d-]+)/questions/add/$', views.question, name='question'),
     url(r'^(?P<subject_slug>[\w\d-]+)/(?P<exam_slug>[\w\d-]+)/(?P<syllabus_slug>[\w\d-]+)/(?P<unit_slug>[\w\d-]+)/(?P<slug>[\w\d-]+)/$', views.unit_topic, name='unit_topic'),
     url(r'^(?P<slug>[\w\d-]+)/$', views.subject, name='subject'),
 

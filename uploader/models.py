@@ -114,7 +114,7 @@ class Syllabus(models.Model):
         null=True,
         blank=True,
         help_text='Date of last teaching')
-    slug = models.SlugField(unique=True, max_length=100)
+    slug = models.SlugField(max_length=100)
     pub_date = models.DateTimeField('Date published')
 
     def __unicode__(self):
@@ -138,6 +138,7 @@ class Syllabus(models.Model):
     class Meta:
         ordering = ('exam_board', 'exam_level', 'subject')
         verbose_name_plural = "Syllabuses"
+        unique_together = ('exam_board', 'exam_level', 'slug')
 
 
 class SyllabusAdmin(admin.ModelAdmin):
@@ -155,7 +156,7 @@ class Unit(models.Model):
         null=True,
         help_text='A brief overview of the content'
     )
-    slug = models.SlugField(unique=True, max_length=100)
+    slug = models.SlugField(max_length=100)
     pub_date = models.DateTimeField('Date published')
 
     def __unicode__(self):
@@ -163,6 +164,7 @@ class Unit(models.Model):
 
     class Meta:
         ordering = ('title',)
+        unique_together = ('syllabus', 'slug')
 
 
 class UnitAdmin(admin.ModelAdmin):
@@ -199,7 +201,7 @@ class UnitTopic(models.Model):
         null=True,
         help_text='E.g. the expected topics taught'
     )
-    slug = models.SlugField(unique=True, max_length=100)
+    slug = models.SlugField(max_length=100)
     pub_date = models.DateTimeField('Date published')
 
     def __unicode__(self):
@@ -207,6 +209,7 @@ class UnitTopic(models.Model):
 
     class Meta:
         ordering = ('title',)
+        unique_together = ('unit', 'slug')
 
 
 class UnitTopicAdmin(admin.ModelAdmin):
