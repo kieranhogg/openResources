@@ -153,7 +153,7 @@ def embed_resources(text):
     
 
 def get_screenshot(url):
-    get_url = 'http://api.embed.ly/1/oembed?url=' + url + '&maxwidth=500&key=' + settings.MICAWBER_EMBEDLY_KEY
+    get_url = 'http://api.embed.ly/1/oembed?url=' + url + '&maxwidth=700&key=' + settings.MICAWBER_EMBEDLY_KEY
     r = requests.get(get_url)
     try:
         thumb = json.loads(r.text)['thumbnail_url']
@@ -164,7 +164,7 @@ def get_screenshot(url):
     
 
 def get_embed(url):
-    get_url = 'http://api.embed.ly/1/oembed?url=' + url + '&maxwidth=400&key=' + settings.MICAWBER_EMBEDLY_KEY
+    get_url = 'http://api.embed.ly/1/oembed?url=' + url + '&maxwidth=800&key=' + settings.MICAWBER_EMBEDLY_KEY
     r = requests.get(get_url)
     json = r.json()
     if 'html' in json:
