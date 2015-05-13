@@ -75,7 +75,7 @@ urlpatterns = patterns('',
     url(r'lesson/(?P<slug>[\w\d-]+)/$', views.lesson, name='lesson'),
 
     
-    url(r'^notes/(?P<code>[\d-]+)/$', views.view_notes_code, name='view_notes_code'),
+    url(r'^notes/(?P<code>[\w\d-]+)/$', views.view_notes_code, name='view_notes_code'),
     # url(r'^notes/(?P<slug>[\w\d-]+)/edit/$', views.notes_d, name='notes_d'),
     
     url(r'^students/signup/$', views.student_signup, name='student_signup'),
