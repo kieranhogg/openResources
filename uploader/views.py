@@ -844,7 +844,7 @@ def lesson(request, slug, code=None):
         if group_lesson.count() == 0 and not l.public:
            return HttpResponseForbidden("You do not have access to view this lesson")
         elif group_lesson.count() > 0:
-            pass # viewing group lesson
+            public = True
         elif l.public:
             public = True
 
@@ -943,56 +943,6 @@ def lesson_show(request, group_code, code):
 
     return render(request, 'uploader/lesson_show.html',
                   {'lesson': l})
-
-
-@login_required
-def add_item_to_lesson(request, slug, type):
-
-    if type == 'resource':
-        resource = get_object_or_404(Resource, slug=slug)
-        if resource:
-            if ('resources' not in request.session or
-                    request.session['resources'] is None):
-                request.session['resources'] = (slug,)
-            elif slug not in request.session['resources']:
-                request.session['resources'].append(slug)
-            request.session.modified = True
-            messages.success(request, "Added to a new lesson, go to My " +
-                                      "Folder > Lessons to view")
-    
-    # notes uses ID not slug as it's not unique
-    elif type == 'notes':
-        unit_topic = get_object_or_404(UnitTopic, pk=slug)
-        notes = get_object_or_404(Note, unit_topic=unit_topic)
-        if notes:
-            if ('notes' not in request.session or
-                    request.session['notes'] is None):
-                request.session['notes'] = (slug,)
-            elif slug not in request.session['notes']:
-                request.session['notes'].append(slug)
-            request.session.modified = True
-            messages.success(request, "Added to a new lesson, go to My " +
-                                      "Folder > Lessons to view")
-    
-    # tests uses code, they used to be linked to unit_topics but no more
-    elif type == 'test':
-        test = get_object_or_404(Test, code=slug)
-        if request.session.get('tests', None) is None:
-            request.session['tests'] = (slug,)
-        elif slug not in request.session['tests']:
-            request.session['tests'].append(slug)
-        request.session.modified = True
-        messages.success(request, "Added to a new lesson, go to My " +
-                                  "Folder > Lessons to view")
-
-    elif type == 'task':
-        if request.session.get('tasks', None) is None:
-            request.session['tasks'] = (slug,)
-        elif slug not in request.session['tasks']:
-            request.session['tasks'].append(slug)
-        request.session.modified = True
-
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 
 def leaderboard(request):
