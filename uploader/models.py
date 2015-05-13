@@ -227,7 +227,7 @@ class Note(models.Model):
     code = models.SlugField(max_length=4, unique=True)
         
     def get_absolute_url(self):
-        return reverse('uploader:view_notes_id', args=[self.id])
+        return reverse('uploader:view_notes_code', args=[self.code])
 
 
 class NoteAdmin(admin.ModelAdmin):

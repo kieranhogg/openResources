@@ -1066,12 +1066,12 @@ def notes(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
                       {'form': form, 'unit_topic': unit_topic})
 
 
-def view_notes_id(request, id):
+def view_notes_code(request, code):
     """This is used for linking to notes form the lesson page. It's a bit
     long winded but makes sense as we need this all to resolve the URL
     """
     
-    notes = get_object_or_404(Note, pk=id)
+    notes = get_object_or_404(Note, code=code)
     unit_topic = notes.unit_topic
     unit = unit_topic.unit
     syllabus = unit.syllabus
