@@ -1,0 +1,356 @@
+{% extends 'uploader/base.html' %}
+{% block body_block %}
+{% load bootstrap %}
+{% load static %}
+<script>
+function isPositiveInteger(n) {
+    return n == "0" || ((n | 0) > 0 && n % 1 == 0);
+}
+
+function lesson_item(taskCount, type, id, title) {
+    var html = '<div id="' + taskCount + '" class="col-xs-6 col-md-3"><div class=" thumbnail"><h3>';
+    if (type == 'task') {
+        html += '<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>';
+    }
+    else if (type == 'resource') {
+        html += '<span class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span>';
+    }
+    else if (type == 'notes') {
+        html += '<span class="glyphicon glyphicon-book" aria-hidden="true"></span>';
+    }
+    else if (type == 'test') {
+        html += '<span class="glyphicon glyphicon-check" aria-hidden="true"></span>';
+    }
+    
+    html += ' ' + title + '</h3><input type="hidden" \
+    name="types[]" value=" '+ type + '" /><input type="hidden" name="ids[]" \
+    style="width: 20px" value="' + id + '" /><p><label for="instructions[]">Instructions</label>\
+    <textarea rows="4" name="instructions[]" class="form-control"></textarea></p> \
+    <div class="lesson_actions"><a href="javascript:void(0);" onclick="move($(this), \'back\');">\
+    <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span></a> \
+    <a href="javascript:void(0);" onclick="move($(this), \'forward\');">\
+    <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span> \
+    <a href="javascript:void(0);" onclick="$(this).parent().parent().parent().remove();" >\
+    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></div></div>';
+    
+    return html;
+}
+function move(object, direction) {
+    var id = object.parent().parent().parent().attr('id');
+
+    if (direction == 'back') {
+        var div2 = '#' + id + ':parent';
+        var div1 = '#' + ( id - 1);
+    }
+    else {
+        var div1 = '#' + id;
+        id++;
+        var div2 = '#' + id + ':parent';
+        id--;
+    }
+
+    $(div2).each(function () {
+        $(this).insertBefore($(this).prev(div1));
+    
+    });
+    if (direction == 'back') {
+        $(div1).attr("id", id);
+        id--;
+        $(div2).attr("id", id);
+    }
+    else {
+        id++
+        $(div1).attr("id",id);
+        id--;
+        $(div2).attr("id", id);
+    }
+}
+
+var taskCount = 1
+function add_lesson_item(type) {
+    if (type == 'resource') {
+        var id = $('select[name=resource]').val()
+        var title = $('select[name=resource] option:selected' ).text();
+        if (isPositiveInteger(id)) {
+            $('.row').append(lesson_item(taskCount, type, id, title));
+            taskCount++;
+        }
+    }
+    else if (type == 'test') {
+        var id = $('select[name=test]').val()
+        var title = $('select[name=test] option:selected' ).text();
+        if (isPositiveInteger(id)) {
+            $('.row').append(lesson_item(taskCount, type, id, title));
+            taskCount++;
+        }
+    }
+    else if (type == 'quick') {
+        var code = $('input[name=quick_code]').val()
+        var quick_type = $('select[name=quick_type]').val()
+        type = quick_type;
+        var id = 0;
+        var title = "None";
+        
+        $.getJSON("/lookup/quick/" + type + "/" + code, null, function(data) {
+            id = data.id; 
+            title = data.title
+            $('.row').append(lesson_item(taskCount, type, id, title));
+            taskCount++;
+        });
+        
+        
+    }
+    else if(type == 'task') {
+        title = 'Task'
+        $('.row').append(lesson_item(taskCount, type, '', title));
+        taskCount++;
+    }
+    
+}
+$(function() {
+
+$('#pre_post').change(function () {
+    var len = $("select[name='groups'] option:selected").length;
+    if (len > 0) {
+        var lines = $('textarea[name=objectives]').val().split('\n');
+        var html = '<div class="form-group"><input name="pre_post_vals[]" class="form-control" placeholder="e.g. You are able to recite pi to 100 places" /></div>';
+        if (lines.length == 0) {
+            $('#pre_post_content').append(html);
+        }
+        else {
+            for(var i = 0;i < lines.length;i++){
+                var content = lines[i].replace('* ', ''); 
+                var html = '<div class="form-group"><input name="pre_post_vals[]" class="form-control" value="' + content + '" /></div>';
+    
+                content = content.replace('To be able to', 'You can');
+                $('#pre_post_content').append(html);
+            }
+        }
+        if (this.checked) {
+            $('#hidden_pre_post').show();
+            $('#pre_post_content').show();
+        }
+        else {
+            $('#hidden_pre_post').hide();
+            $('#pre_post_content').hide();
+            $('#pre_post_content').empty();
+        }
+    }
+    else {
+        alert("Please select at least one group first");
+        $('#pre_post').attr('checked', false);
+    }
+});
+});
+</script>
+<h1>{% block head_title %}Lesson Creator{% endblock %}</h1>
+    {% if form.errors %}
+        <div class="alert alert-danger" role="alert">
+            <ul>
+                {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+<form role="form" action method="post">
+    {% csrf_token %}
+<h2>Lesson items</h2>
+
+<!--{% if resources %}-->
+
+<!--    {% for resource in resources %}-->
+<!--          <div class="col-xs-6 col-md-3">-->
+<!--              <div class="thumbnail">-->
+<!--            <h3>Resource: {{ resource }}-->
+<!--                <a href="javascript:void(0);" onclick="$(this).closest('div').remove();">-->
+<!--                <span style="color: #999; font-size:0.8em" class="glyphicon glyphicon-trash" aria-hidden="true"></span>-->
+<!--                </a>-->
+<!--            </h3>-->
+<!--            <input type="hidden" name="slug{{ resource.count }}" value="{{ resource.slug }}" />-->
+<!--            <input type="hidden" name="type{{ resource.count }}" value="resources" />-->
+<!--            <div class='order'>-->
+<!--                <p>-->
+<!--                    <span class="label label-danger">required</span>-->
+<!--                    <label for="order{{ resource.count }}">Order</label>-->
+<!--                    <input name="order{{ resource.count }}" style="width: 40px" value="{{ resource.count }}" />-->
+                    
+<!--                </p>-->
+<!--            </div>-->
+<!--            <div class="instructions">-->
+<!--                <p><label for="instructions{{resource.count}}">Instructions</label>-->
+<!--                    <textarea name="instructions{{resource.count}}" class="form-control" value="{{ form_data.val }}"></textarea>-->
+<!--                </p>-->
+<!--            </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    {% endfor %}-->
+    
+
+<!--{% endif %}-->
+        
+<!--{% if notes %}-->
+<!--    {% for note in notes %}-->
+<!--    <div class="col-xs-6 col-md-3">-->
+<!--              <div class="thumbnail">-->
+<!--        <h3>Notes: {{ note.content.unit_topic }} <a href="javascript:void(0);" onclick="$(this).closest('div').remove();">-->
+<!--            <span style="color: #999; font-size:0.8em" class="glyphicon glyphicon-trash" aria-hidden="true"></span>-->
+<!--        </a></h3>-->
+        
+<!--        <input type="hidden" name="slug{{ note.count }}" value="{{ note.id }}" />-->
+<!--        <input type="hidden" name="type{{ note.count }}" value="notes" />-->
+<!--        <div class='order'>-->
+<!--            <p><label for="order{{ note.count }}">Order</label>-->
+<!--            <input name="order{{ note.count }}" style="width: 20px" value="{{ note.count }}" /></p>-->
+<!--        </div>-->
+<!--        <div class="instructions">-->
+<!--            <p><label for="instructions{{note.count}}">Instructions</label>-->
+<!--                <textarea name="instructions{{note.count}}" class="form-control"></textarea>-->
+<!--            </p>-->
+<!--        </div>-->
+<!--                </div>-->
+<!--        </div>-->
+<!--    {% endfor %}-->
+<!--{% endif %}-->
+
+<!--{% if tests %}-->
+<!--    {% for test in tests %}-->
+<!--    <div class="col-xs-6 col-md-3">-->
+<!--              <div class="thumbnail">-->
+<!--        <h3>Test: {{ test }} <a href="javascript:void(0);" onclick="$(this).closest('div').remove();">-->
+<!--        <span style="color: #999; font-size:0.8em" class="glyphicon glyphicon-trash" aria-hidden="true"></span>-->
+<!--        </a></h3>-->
+        
+<!--        <input type="hidden" name="slug{{ test.count }}" value="{{ test.code }}" />-->
+<!--        <input type="hidden" name="type{{ test.count }}" value="test" />-->
+<!--        <div class='order'>-->
+<!--            <p><label for="order{{ test.count }}">Order</label>-->
+<!--            <input name="order{{ test.count }}" style="width: 20px" value="{{ test.count }}" /></p>-->
+<!--        </div>-->
+<!--        <div class="instructions">-->
+<!--            <p><label for="instructions{{test.count}}">Instructions</label>-->
+<!--                <textarea name="instructions{{test.count}}" class="form-control"></textarea>-->
+<!--            </p>-->
+<!--        </div>-->
+<!--                </div>-->
+<!--        </div>-->
+<!--    {% endfor %}-->
+<!--{% endif %}-->
+
+<!--{% if tasks %}-->
+<!--    {% for task in tasks %}-->
+<!--    <div class="col-xs-6 col-md-3">-->
+<!--              <div class="thumbnail">-->
+<!--        <h3>Task <a href="javascript:void(0);" onclick="$(this).closest('div').remove();"> -->
+<!--        <span style="color: #999; font-size:0.8em" class="glyphicon glyphicon-trash" aria-hidden="true"></span>-->
+<!--        </a></h3>-->
+        
+<!--        <input type="hidden" name="type{{ task }}" value="task" />-->
+<!--        <div class='order'>-->
+<!--            <p><label for="order{{ task }}">Order</label>-->
+<!--            <input name="order{{ task }}" style="width: 20px" value="{{ task }}" />-->
+<!--        </div>-->
+<!--        <div class="instructions">-->
+<!--            <p><label for="instructions{{ task }}">Instructions</label>-->
+<!--                <textarea name="instructions{{ task }}" class="form-control"></textarea>-->
+<!--            </p>-->
+<!--        </div>-->
+<!--        </div>-->
+<!--        </div>-->
+<!--    {% endfor %}-->
+<!--{% endif %}-->
+
+<div class='row' style="border: 1px #999 dashed; padding-top: 20px">
+
+    <div class="col-xs-6 col-md-3">
+        <div class="thumbnail text-center">
+            <h3>Add blank task</h3>
+                <a href="javascript:void(0);" onclick="javascript:add_lesson_item('task');">
+                    <span class="glyphicon glyphicon-plus-sign" style="font-size:8em; color:#999" aria-hidden="true"></span>
+                </a>
+        </div>
+    </div>
+
+</div>
+<h3>Add Items</h3>
+  <div style="margin-bottom: 50px">
+    <div class="text-center" style="width: 33%; float: left">
+        <select name='resource'>
+        <option>Add Resource</option>
+        {% for resource in user_resources %}
+            <option value='{{ resource.id }}'>{{ resource }}</option>
+        {% endfor %}
+        </select>
+        <a class='btn btn-default btn-xs' href="javascript:void(0);" onclick='add_lesson_item("resource")'>Add</a>
+        </div>
+    <div class="text-center" style="width: 33%; float: left;">
+    <select name='test'>
+    <option>Add Test</option>
+    {% for test in user_tests %}
+        <option value='{{ test.id }}'>{{ test }}</option>
+    {% endfor %}
+
+</select>
+<a class='btn btn-default btn-xs' href="javascript:void(0);" onclick='add_lesson_item("test")'>Add</a>
+</div>
+
+<div class="text-center" style="width: 33%; float: left">
+<input name='quick_code' placeholder='Enter quickcode' />
+<select name='quick_type'>
+    <option value="resource">Resource</option>
+    <option value="notes">Notes</option>
+    <option value="test">Test</option>
+</select>
+<a class='btn btn-default btn-xs' href="javascript:void(0);" onclick='add_lesson_item("quick")'>Add</a>
+</div>
+</div>
+
+<h2>Lesson Details</h2  >
+{% for field in form %}
+<div>
+    {% if field.field.required %}<span class="label label-danger">required</span>{% endif %}
+    {{ field|bootstrap }}
+</div>
+{% endfor %}
+
+<h3>Extras</h3>
+<div class="checkbox">
+    <label>
+    <input type="checkbox" name="public" checked="checked" />
+    Lesson is visible to others?
+    (Recommended unless there are school-specific instructions in the lesson)
+    </label>
+</div>
+<div class="checkbox">
+    <label>
+    <input id="pre_post" type="checkbox" name="pre_post" value="{{ form_data.pre_post }}">
+    Include a pre/post check of student understanding? (At least one group must be selected)</label>
+</div>
+<div id="hidden_pre_post" style="display:none">
+    <h3>Pre/post assessment points</h3>
+    <p>To be be phrased: e.g. "You can...", "You are able to..."</p>
+    <div id="pre_post_content" style="display:none"></div>
+    <p><a href="javascript:void(0);" onclick="add_pre_post();"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add another</a></p>
+</div>
+<div class="form-group">
+    <p>
+    <label for="objectives"><h4>Lesson Presentation</h4></label>
+    <input type="file" name="presentation" />
+    Upload an optional lesson presentation</p>  
+</div>
+<div class="checkbox">
+    <p>
+        <label>
+        <input type="checkbox" name="show_presentation_to_students">
+        Show lesson presentation to students?</label>
+    </p>
+</div>
+    <div class="form-group text-center">
+        <button type="submit" name="submit" value="delete" class="btn btn-danger">
+            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+            Clear Lesson</button>
+        <button type="submit" name="submit" value="submit" class="btn btn-success">Create Lesson</button>
+</div>
+    </form>
+
+{% endblock %}
