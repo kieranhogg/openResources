@@ -224,7 +224,7 @@ class Note(models.Model):
     slug = models.SlugField(
         unique=True,
         max_length=100)  # don't use this yet but may in future
-    code = models.SlugField(max_length=4)
+    code = models.SlugField(max_length=4, unique=True)
         
     def get_absolute_url(self):
         return reverse('uploader:view_notes_id', args=[self.id])
