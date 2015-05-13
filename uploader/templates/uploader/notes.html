@@ -30,12 +30,12 @@ $(document).ready(function () {
 </a>
 {% if user.teacherprofile %}
 <div id="add-to-lesson">
-<a href="{% url 'uploader:add_item_to_lesson' unit_topic.id 'notes' %}">
-    <button class='btn btn-default'>
-    <span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span>
-    Add to lesson
-    </button>
-</a>
+    <a href="javascript:void(0);" onclick='javascript:window.prompt("Copy quickcode to add to a lesson", "{{ notes.code }}");'>
+        <button class='btn btn-info'>
+            <span class="glyphicon glyphicon-flash" aria-hidden="true"></span>
+            {{ notes.code }}
+        </button>
+    </a>
 </div>
 {% endif %}
 {% include 'uploader/unit_topic_tabs.html' %}

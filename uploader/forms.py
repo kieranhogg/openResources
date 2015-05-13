@@ -75,7 +75,7 @@ class LinkResourceForm(forms.ModelForm):
 class NotesForm(forms.ModelForm):
     class Meta:
         model = Note
-        exclude = ('slug','unit_topic')
+        exclude = ('slug','unit_topic', 'code')
     
     # def __init__(self, *args, **kwargs):
     #     super(NotesForm, self).__init__(*args, **kwargs)

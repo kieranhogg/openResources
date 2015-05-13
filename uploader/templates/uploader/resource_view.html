@@ -34,10 +34,10 @@ function vote(resourceID, rating)
 <div id="resource_details">
     {% if user.teacherprofile %}
     <div id="add-to-lesson">
-    <a href="{% url 'uploader:add_item_to_lesson' resource.slug 'resource' %}">
-        <button class='btn btn-primary'>
-            <span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span>
-        Add to lesson
+    <a href="javascript:void(0);" onclick='javascript:window.prompt("Copy quickcode to add to a lesson", "{{ resource.code }}");'>
+        <button class='btn btn-info'>
+            <span class="glyphicon glyphicon-flash" aria-hidden="true"></span>
+            {{ resource.code }}
         </button>
     </a>
     </div>

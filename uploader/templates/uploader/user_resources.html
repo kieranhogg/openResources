@@ -97,11 +97,6 @@ their own page.</p>
                 Actions <span class="caret"></span>
               </button>
               <ul class="dropdown-menu" role="menu">
-                <li><a href="{% url 'uploader:add_item_to_lesson' resource.slug 'resource' %}">
-                    <span class="glyphicon glyphicon-blackboard" aria-hidden="true" title=""></span>
-                    Add to lesson
-                    </a></li>
-                <li>
                 {% if resource.file %}
                     <a href="{% url 'uploader:link_file' resource.file.slug %}">
                 {% elif resource.bookmark %}

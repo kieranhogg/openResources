@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, url
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.sitemaps.views import sitemap
 from django.views.generic.base import TemplateView
 
 from uploader import views
@@ -18,6 +19,7 @@ urlpatterns = patterns('',
     
     url(r'^lookup/syllabus/(?P<subject_id>\d+)/$', views.get_syllabuses, name='get_syllabuses'),
     url(r'^lookup/unit/(?P<syllabus_id>\d+)/$', views.get_units, name='get_units'),
+    url(r'^lookup/quick/(?P<type>[\w]+)/(?P<code>[\w\d]+)/$', views.get_object_from_code, name='get_object_from_code'),
     url(r'^lookup/unit_topic/(?P<unit_id>\d+)/$', views.get_unit_topics, name='get_unit_topics'),
     url(r'^lookup/url_description/(?P<url>.+)$', views.get_url_description, name='get_url_description'),
     url(r'^bulk/bookmark/(?P<action>.+)/(?P<ids>.+)/$', views.bulk_bookmark_update, name='bulk_bookmark_update'),
@@ -35,6 +37,7 @@ urlpatterns = patterns('',
     url(r'^lesson/(?P<code>[\w\d-]+)/edit', views.edit_lesson, name='edit_lesson'),
     url(r'^lesson/(?P<code>[\w\d-]+)/delete', views.delete_lesson, name='delete_lesson'),
     url(r'^lesson/(?P<code>[\w\d-]+)/link', views.link_lesson, name='link_lesson'),
+    url(r'^lesson/new/$', views.lesson_creator, name='lesson_creator'),
     url(r'^lesson_item/(?P<id>[\d-]+)/edit', views.edit_lesson_item, name='edit_lesson_item'),
     #url(r'^resource/(?P<slug>[\w\d-]+)/edit$', views.resource, name='resource'),
     

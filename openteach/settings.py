@@ -26,6 +26,11 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.static",
 )
 
+TEMPLATE_LOADERS = (
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader'
+)
+
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 
 AUTHENTICATION_BACKENDS = (
@@ -56,6 +61,7 @@ INSTALLED_APPS = (
     'jquery',
     'bootstrapform',
     'bootstrap3_datetime',
+    'django.contrib.sitemaps'
     # haystack called at the bottom of the file
 )
 

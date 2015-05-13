@@ -224,6 +224,7 @@ class Note(models.Model):
     slug = models.SlugField(
         unique=True,
         max_length=100)  # don't use this yet but may in future
+    code = models.SlugField(max_length=4)
         
     def get_absolute_url(self):
         return reverse('uploader:view_notes_id', args=[self.id])
@@ -413,7 +414,7 @@ class Resource(models.Model):
         unique_together = ('file', 'bookmark', 'subject', 'syllabus', 'unit', 'unit_topic')
 
     def title(self):
-        return self.file.title if self.file else self.bookmark.title
+        return str(self.file.title) if self.file else str(self.bookmark.title)
 
     def description(self):
         return self.file.description if self.file else self.bookmark.description
@@ -693,7 +694,7 @@ class TestResult(models.Model):
 class Lesson(models.Model):
     title = models.CharField(max_length=200)
     slug = models.SlugField(unique=True, max_length=100)
-    code = models.SlugField(unique=True, max_length=3, null=True, blank=True)
+    code = models.SlugField(unique=True, max_length=4, null=True, blank=True)
     uploader = models.ForeignKey(settings.AUTH_USER_MODEL)
     objectives = models.TextField(blank=True, null=True)
     pre_post = models.BooleanField(default=False)

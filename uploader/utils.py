@@ -1,14 +1,15 @@
-import requests, json, shutil, os, random, string, urllib
+import requests, json, markdown, shutil, os, random, string, urllib
 from tempfile import NamedTemporaryFile
-from django.utils.text import slugify
+
+from django.db.models.base import ModelBase
 from django.conf import settings
 from django.core.files.base import File as DjangoFile
 from django.conf import settings
 from django.http import (HttpResponse, HttpResponseRedirect, JsonResponse, 
     Http404, HttpResponseForbidden)
 from django.shortcuts import get_object_or_404
-                              
-import markdown
+from django.utils.text import slugify
+
 from uploader.models import *
 
 
@@ -96,30 +97,26 @@ def get_resource_rating(resource_id, use='display'):
         return float(total) / float(count)
 
 
-def random_key(length, item=None):
+def generate_code(model=None, length=4):
     unique = False
     
+    loops = 1
     while not unique:
         key = ''
         for i in range(length):
             key += random.choice(string.lowercase + string.digits)
-        if not item:
+        if not model:
             unique = True
         else:
-            if item == 'Test':
-                if Test.objects.filter(code=key).count() == 0:
-                    unique = True
-            elif item == 'Assignment':
-                if Assignment.objects.filter(code=key).count() == 0:
-                    unique = True
-            elif item == 'Lesson':
-                if Lesson.objects.filter(code=key).count() == 0:
-                    unique = True
-            elif item == 'Resource':
-                if Resource.objects.filter(code=key).count() == 0:
+            if type(model) is ModelBase:
+                if model.objects.filter(code=key).count() == 0:
                     unique = True
             else:
-                raise Exception('Type not implemented')
+                raise Exception('Not a valid model')
+        
+        loops += 1
+        if loops > 10:
+            raise Exception('Tried 10 codes for ' + str(model) + ' and stil not unique')
 
     return key
     
@@ -127,7 +124,7 @@ def random_key(length, item=None):
 def group_code():
     # TODO check DB
     # a length of 3 gives us: 238328 codes
-    return random_key(3)
+    return generate_code(3)
 
 
 def extract(url):
