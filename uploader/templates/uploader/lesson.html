@@ -199,7 +199,7 @@ $(function () {
           <p>{{ item.instructions|safe }}</p>
           {% endif %}
           
-        <p class='text-center'><a class='btn btn-default' href="{% url 'uploader:view_notes_id' item.content.id %}">
+        <p class='text-center'><a class='btn btn-default' href="{% url 'uploader:view_notes_code' item.content.code %}">
             View notes
         </a>
         </p>
