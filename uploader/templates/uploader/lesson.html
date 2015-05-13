@@ -121,7 +121,7 @@ $(function () {
 </div>
 <div id="lesson_tasks" style="display:none">
 
-{% elif pre_posts and lesson.uploader == user %}
+{% elif pre_posts and not lesson.public %}
 <h3>Pre and Post assessment</h3>
   <div id="columnchart_material" style="width: 80%; height: 400px; margin: 0 auto">Loading chart...</div>
 {% else %}
