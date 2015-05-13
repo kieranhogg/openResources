@@ -1,0 +1,61 @@
+{% extends 'uploader/base.html' %}
+{% block body_block %}
+{% load static %}
+<script type="text/javascript">
+$(document).ready(function(){
+    $.fn.dataTable.moment( 'DD MMM YY' );
+        $('#questions').dataTable({
+        "order": [[ 2, "desc" ]],
+    });
+});
+</script>
+<h1>{% block head_title %}My Tests{% endblock %}</h1>
+
+{% if tests %}
+<table class="table table-striped" id="questions" style="font-size:0.9em">
+    <thead>
+    <tr>
+        <th>Unit Topic</th>
+        <th>Group</th>
+        <!--<th>Rating</th>-->
+        <th>Deadline</th>
+        <th class='no-sort'>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for test in tests %}
+    <tr> 
+        <td>{{ test.unit_topic }}</td>
+        <td>{{ test.group }}</td>
+        <td style='text-align: center'>{{ test.deadline|date:"d M Y" }}</td>
+        <td style='text-align: center'>
+            <!--<a href="">-->
+            <!--    <button class="btn">-->
+            <!--    <img src="{% static 'uploader/img/18x18/add.png' %}" />-->
+            <!--    Link-->
+            <!--    </button>-->
+            <!--</a>-->
+            <!--<a href="">-->
+            <!--    <button class="btn">-->
+            <!--    <img src="{% static 'uploader/img/18x18/edit.png' %}" />-->
+            <!--    Edit-->
+            <!--    </button>-->
+            <!--</a>-->
+            <!--<a href="" onclick="javascript:return confirm('DELETE this bookmark?')">-->
+            <!--    <img src="{% static 'uploader/img/18x18/delete.png' %}" />-->
+            <!--    <button class="btn_danger">-->
+            <!--    Delete-->
+            <!--    </button>-->
+            <!--</a>-->
+            <a href="{% url 'uploader:add_item_to_lesson' test.code 'test' %}">
+                <button type="button" class="btn btn-default">
+                Add to lesson
+                </button>
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+{% endblock %}
