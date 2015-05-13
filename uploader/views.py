@@ -1774,8 +1774,8 @@ def user_tests(request):
 
 
 def lesson_creator(request):
-    user_resources = Resource.objects.filter(uploader=request.user)
-    user_tests = Test.objects.filter(teacher=request.user)
+    user_resources = Resource.objects.filter(uploader=request.user)[:30]
+    user_tests = Test.objects.filter(teacher=request.user)[:30]
     form = LessonForm(request.POST or None)
     
     if request.POST and form.is_valid():

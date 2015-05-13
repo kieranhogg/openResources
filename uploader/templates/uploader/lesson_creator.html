@@ -278,7 +278,7 @@ $('#pre_post').change(function () {
         <select name='resource'>
         <option>Add Resource</option>
         {% for resource in user_resources %}
-            <option value='{{ resource.id }}'>{{ resource }}</option>
+            <option value='{{ resource.id }}'>{{ resource|truncatechars:50 }}</option>
         {% endfor %}
         </select>
         <a class='btn btn-default btn-xs' href="javascript:void(0);" onclick='add_lesson_item("resource")'>Add</a>
