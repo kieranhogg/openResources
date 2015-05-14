@@ -546,6 +546,7 @@ class Image(models.Model):
     credit = models.CharField(max_length=300, blank=True, null=True,
                               help_text='Give credit if required')
     licence = models.ForeignKey(Licence)
+    code = models.SlugField(max_length=4)
     pub_date = models.DateTimeField(auto_now_add=True)
 
 
