@@ -1600,7 +1600,7 @@ def mark_assignment(request, assignment_code, submission_id=None, absent=None, s
                 # fields = []
                 grade_fields = GradeOptions.objects.filter(grading=assignment.grading).order_by('order')
                 for field in grade_fields:
-                    fields.append((field.value, field.representation))
+                    fields.append((field.value, field.grade))
                 form.fields['grade_options'].choices = fields
                 form.fields['grade_options'].queryset = fields
 
