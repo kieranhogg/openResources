@@ -267,8 +267,8 @@ def syllabuses(request, subject_slug, exam_slug):
     e.g. {AQA, OCR} GCSE Maths
     """
     items = hierachy_from_slugs(subject_slug, exam_slug)
-    subject = items['subject_slug']
-    level = item['exam_level']
+    subject = items['subject']
+    level = items['exam_level']
 
     syllabus_list = Syllabus.objects.filter(
         subject=subject,
