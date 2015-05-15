@@ -198,7 +198,6 @@ def unit_topic(
     question = MultipleChoiceQuestion.objects.filter(unit_topic=unit_topic)
     questions = question.count()
     lessons = Lesson.objects.filter(unit_topic=unit_topic, public=True)
-    logger.error(lessons.query)
     lessons = lessons.count()
     related = (UnitTopicLink.objects.filter(unit_topic_1=unit_topic) |
                UnitTopicLink.objects.filter(unit_topic_2=unit_topic))

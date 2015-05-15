@@ -158,7 +158,7 @@ def get_embed_card(url):
     return '<a class="embedly-card" href="%s">Link</a><script async src="//cdn.embedly.com/widgets/platform.js" charset="UTF-8"></script>' % url
     
     
-def hierachy_from_slugs(subject_slug, exam_slug, syllabus_slug, unit_slug=None, slug=None):
+def hierachy_from_slugs(subject_slug, exam_slug, syllabus_slug=None, unit_slug=None, slug=None):
     items = {}
     
     subject = get_object_or_404(Subject, slug=subject_slug)
@@ -167,8 +167,9 @@ def hierachy_from_slugs(subject_slug, exam_slug, syllabus_slug, unit_slug=None, 
     exam_level = get_object_or_404(ExamLevel, slug=exam_slug)
     items['exam_level'] = exam_level
     
-    syllabus = get_object_or_404(Syllabus, slug=syllabus_slug, exam_level=exam_level, subject=subject)
-    items['syllabus'] = syllabus
+    if syllabus_slug:
+        syllabus = get_object_or_404(Syllabus, slug=syllabus_slug, exam_level=exam_level, subject=subject)
+        items['syllabus'] = syllabus
     
     if unit_slug:
         unit = get_object_or_404(Unit, slug=unit_slug, syllabus=syllabus)
