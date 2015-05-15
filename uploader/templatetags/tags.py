@@ -3,7 +3,7 @@ import re
 from django import template
 
 from uploader.models import Subject
-from uploader.utils import get_embed, get_embed_card
+from uploader.utils import get_embed, get_embed_card, shorten_lesson_url
 
 register = template.Library()
 
@@ -93,3 +93,7 @@ def embed(url):
         return embed
     else:
         return get_embed_card(url)
+        
+@register.simple_tag(takes_context=True)
+def short_lesson_url(context, lesson_group):
+    return shorten_lesson_url(context['request'], lesson_group.lesson.code, lesson_group.group.code)

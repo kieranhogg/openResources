@@ -101,10 +101,7 @@ class NotesForm(forms.ModelForm):
 class ImageForm(forms.ModelForm):
     class Meta:
         model = Image
-        widgets = {
-            'uploader': forms.HiddenInput(),
-        }
-        fields = '__all__'
+        exclude = ('height', 'width', 'uploader', 'code')
 
         
 class MultipleChoiceQuestionForm(forms.ModelForm):

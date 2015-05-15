@@ -549,7 +549,7 @@ class Image(models.Model):
     height = models.PositiveIntegerField(blank=True, null=True)
     width = models.PositiveIntegerField(blank=True, null=True)
     code = models.SlugField(max_length=4)
-    alt = models.CharField(max_length=200)
+    alt_text = models.CharField(max_length=200)
     pub_date = models.DateTimeField(auto_now_add=True)
 
 

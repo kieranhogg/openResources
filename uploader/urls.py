@@ -60,7 +60,7 @@ urlpatterns = patterns('',
     url(r'^file/(?P<slug>[\w\d-]+)/edit/$', views.file, name='file'),
     url(r'^file/(?P<slug>[\w\d-]+)/delete/$', views.delete_file, name='delete_file'),
     
-    url(r'^/user/profile/$', views.profile, name='profile'),
+    url(r'^user/profile/$', views.profile, name='profile'),
     url(r'^user/resources', views.user_resources, name='user_resources'),
     url(r'^user/files', views.user_files, name='user_files'),
     url(r'^user/bookmarks', views.user_bookmarks, name='user_bookmarks'),

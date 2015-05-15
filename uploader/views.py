@@ -47,14 +47,14 @@ def index(request):
 
         subjects = Subject.objects.filter(active=1)
 
-        # get messages TODO use constants
-        user_messages = Message.objects.filter(user_to=request.user.id)
-        announce_messages = Message.objects.filter(type=2)
-        sticky_messages = Message.objects.filter(type=3)
+        # # get messages TODO use constants
+        # user_messages = Message.objects.filter(user_to=request.user.id)
+        # announce_messages = Message.objects.filter(type=2)
+        # sticky_messages = Message.objects.filter(type=3)
 
         context = {
             'subjects': subjects,
-            'user_messages': user_messages | announce_messages | sticky_messages,
+            # 'user_messages': user_messages | announce_messages | sticky_messages,
             'homepage': True
         }
         return render(request, 'uploader/index.html', context)
@@ -62,11 +62,6 @@ def index(request):
         if hasattr(request.user, 'teacherprofile'):
             groups = Group.objects.filter(teacher=request.user)
             
-            # to mark
-            for group in groups:
-                students = StudentGroup.objects.filter(group=group)
-                # group.assignments_to_mark = AssignmentSubmission.objects.filter(student__in=students, status='Unmarked').count()
-
             tests = Test.objects.filter(group__in=groups)[:5]
             lessons = GroupLesson.objects.filter(set_by=request.user).order_by('-date', '-pub_date')[:5]
             assignments = Assignment.objects.filter(group__in=groups).order_by('-deadline', '-pub_date')[:5]
@@ -79,53 +74,35 @@ def index(request):
             context = {'groups': groups, 'tests': tests, 'lessons': lessons, 'assignments': assignments}
             return render(request, 'uploader/teacher_home.html', context)
         else:
-            # FIXME use a filter
             groups = StudentGroup.objects.filter(student=request.user)
-            group_ids = (1,)
-            assignments = Assignment.objects.filter(group_id__in=group_ids)
+            assignments = Assignment.objects.filter(group__in=groups)
 
-            test_list = {}
-            for group in groups:
-                tests = Test.objects.filter(group=group.group)
-                if tests.count() > 0:
-                    test_list[group.group.name] = tests
-                    for test in tests:
-                        try:
-                            result = TestResult.objects.get(
-                                test=test,
-                                user=request.user)
-                            test.result = result
-                        except TestResult.DoesNotExist:
-                            pass
+            tests = Test.objects.filter(group__in=groups)
 
             return render(
-                request, 'uploader/student_home.html', {'tests': test_list, 'assignments': assignments})
+                request, 'uploader/student_home.html', {'tests': tests, 'assignments': assignments})
 
 
 def subjects(request):
+    """
+    Shows a list of all subjects that are active for the resources page
+    """
     subjects = Subject.objects.filter(active=1)
-
-    context = {
-        'subjects': subjects,
-    }
-    return render(request, 'uploader/subjects.html', context)
+    return render(request, 'uploader/subjects.html', {'subjects': subjects})
 
 
 @login_required
 def favourites(request):
-    context = {}
-    if request.user.is_authenticated():
-        try:
-            subjects = request.user.teacherprofile.subjects.all()
-        except ObjectDoesNotExist:
-            subjects = request.user.studentprofile.subjects.all()
+    """
+    Shows a list of the current user's favourite items
+    """
+    subjects = get_user_profile(request.user).subjects.all()
+    syllabuses = SyllabusFavourite.objects.filter(user=request.user)
+    units = UnitFavourite.objects.filter(user=request.user)
+    unit_topics = UnitTopicFavourite.objects.filter(user=request.user)
 
-        syllabuses = SyllabusFavourite.objects.filter(user=request.user)
-        units = UnitFavourite.objects.filter(user=request.user)
-        unit_topics = UnitTopicFavourite.objects.filter(user=request.user)
-
-        context = {'subjects': subjects, 'syllabuses': syllabuses, 'units': units,
-                   'unit_topics': unit_topics}
+    context = {'subjects': subjects, 'syllabuses': syllabuses, 'units': units,
+               'unit_topics': unit_topics}
 
     return render(request, 'uploader/favourites.html', context)
 
@@ -159,7 +136,6 @@ def add_favourite(request, slug, thing):
             messages.error(request, "Already in favourites")
 
     messages.success(request, "Added to favourites")
-
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 
@@ -181,7 +157,6 @@ def remove_favourite(request, slug, thing):
         utf.delete()
 
     messages.success(request, "Removed from favourites")
-
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 
@@ -198,7 +173,11 @@ def subject(request, slug):
 
 
 def syllabus_resources(request, subject_slug, exam_slug, slug):
-    syllabus = get_object_or_404(Syllabus, slug=slug)
+    """ Shows the resources with only a syllabus set
+    """
+    items = hierachy_from_slugs(subject_slug, exam_slug, slug)
+    syllabus = items['syllabus']
+    
     resources = Resource.objects.filter(
         syllabus__id=syllabus.id,
         unit__isnull=True,
@@ -242,7 +221,8 @@ def unit_topic(
 
 def unit_topic_resources(
         request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
-    
+    """Fetches related resources for a unit topic
+    """
     items = hierachy_from_slugs(subject_slug, exam_slug, syllabus_slug, unit_slug, slug)
     unit_topic = items['unit_topic']
     # resources = Resource.objects.filter(unit_topic=unit_topic).values()
@@ -260,6 +240,8 @@ def unit_topic_resources(
     
     
 def unit_topic_lessons(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
+    """Finds the publuc lessons for a particular unit topic
+    """
     items = hierachy_from_slugs(subject_slug, exam_slug, syllabus_slug, unit_slug, slug)
     unit_topic = items['unit_topic']
     lessons = Lesson.objects.filter(unit_topic=unit_topic, public=True)
@@ -268,7 +250,11 @@ def unit_topic_lessons(request, subject_slug, exam_slug, syllabus_slug, unit_slu
         {'lessons': lessons, 'unit_topic': unit_topic})
 
 def unit_resources(request, subject_slug, exam_slug, syllabus_slug, unit_slug):
-    unit = get_object_or_404(Unit, slug=unit_slug)
+    """Finds the resources for a unit
+    """
+    items = hierachy_from_slugs(subject_slug, exam_slug, syllabus_slug, unit_slug)
+    unit = items['unit']
+
     resources = Resource.objects.filter(
         unit__id=unit.id,
         unit_topic__isnull=True)
@@ -281,8 +267,9 @@ def syllabuses(request, subject_slug, exam_slug):
     """View list of syllabuses for a subject and level,
     e.g. {AQA, OCR} GCSE Maths
     """
-    subject = get_object_or_404(Subject, slug=subject_slug)
-    level = get_object_or_404(ExamLevel, slug=exam_slug)
+    items = hierachy_from_slugs(subject_slug, exam_slug)
+    subject = items['subject_slug']
+    level = item['exam_level']
 
     syllabus_list = Syllabus.objects.filter(
         subject=subject,
@@ -321,8 +308,9 @@ def syllabus(request, subject_slug, exam_slug, slug):
 def unit(request, subject_slug, exam_slug, syllabus_slug, slug):
     """A single unit view
     """
-    syllabus = get_object_or_404(Syllabus, slug=syllabus_slug)
-    unit = get_object_or_404(Unit, slug=slug, syllabus=syllabus)
+    items = hierachy_from_slugs(subject_slug, exam_slug, syllabus_slug, slug)
+    syllabus = items['syllabus']
+    unit = items['unit']
     unit_topics = UnitTopic.objects.filter(unit__id=unit.id).order_by(
         'section', 'pub_date')
     for unit_topic in unit_topics:
@@ -365,6 +353,8 @@ def view_resource(request, slug, embed=False):
         'rating': get_resource_rating(resource.id),
         'rating_val': get_resource_rating(resource.id, 'values')
     }
+    
+    # Get the file preview from box
     if resource.file:
         if 'image' in resource.file.mimetype:
             resource.file.image = True
@@ -517,11 +507,6 @@ def file(request, slug=None):
 def bookmark(request, slug=None):
     bookmark = None
 
-    # stick the referer in so if we're coming from deep in user bookmarks
-    # we get back to the same place
-    if 'edit' not in request.META.get('HTTP_REFERER', ""):
-        request.session['refer'] = request.META.get('HTTP_REFERER', None)
-
     if slug:
         bookmark = get_object_or_404(Bookmark, slug=slug)
         if bookmark.uploader != request.user and not request.user.is_superuser():
@@ -562,8 +547,7 @@ def bookmark(request, slug=None):
                     reverse('uploader:link_bookmark', args=[bookmark.slug]))
             else:
                 form.save()
-                return HttpResponseRedirect(
-                    request.session['refer'] or reverse('uploader:user_bookmarks'))
+                return HttpResponseRedirect(reverse('uploader:user_bookmarks'))
 
     else:
         form = BookmarkForm(instance=bookmark)
@@ -618,23 +602,9 @@ def link_resource(request, type, obj):
                 resource.code = generate_code(Resource)
                 # work out slug
                 if resource.file is not None:
-                    resource.slug = resource.file.slug
+                    resource.slug = safe_slugify(resource.file.slug, Resource)
                 else:
-                    resource.slug = resource.bookmark.slug
-
-                # check if we already have one with that name, append number if
-                # so
-                starts_with = resource.slug + '-'
-                starting_matches = Resource.objects.filter(
-                    slug__startswith=starts_with).count()
-                exact = Resource.objects.filter(
-                    slug=resource.slug).count()
-
-                num_results = exact + starting_matches
-
-                if num_results > 0:
-                    append = num_results + 1
-                    resource.slug += '-' + str(append)
+                    resource.slug = safe_slugify(resource.bookmark.slug, Resource)
 
                 if request.user.is_authenticated():
                     # if we're logged in auto-approve
@@ -651,12 +621,13 @@ def link_resource(request, type, obj):
             test.unit_topic = UnitTopic.objects.get(
                 pk=request.POST.get('unit_topic'))
             test.save()
-            # FIXME my tests
-            return redirect(reverse('uploader:index'))
+            
+            return redirect(reverse('uploader:user_tests'))
         elif type == 'lesson':
             lesson.unit_topic = UnitTopic.objects.get(
                 pk=request.POST.get('unit_topic'))
             lesson.save()
+            
             return redirect(reverse('uploader:user_lessons'))
     elif 'skip' in request.POST: 
        # we've skipped the linking so redirect back to the correct place
@@ -666,8 +637,8 @@ def link_resource(request, type, obj):
             url = reverse('uploader:user_bookmarks')
         elif type == 'file':
             url = reverse('uploader:user_files')
-        elif type == 'test': # FIXME user_tests
-            url = reverse('uploader:index')
+        elif type == 'test':
+            url = reverse('uploader:user_tests')
         elif type == 'lesson':
             url = reverse('uploader:user_lessons')
             
@@ -687,21 +658,18 @@ def link_resource(request, type, obj):
     return render(request, 'uploader/link_resource.html', {'form': form, 'type': type,
                                                            'subject': subject})
 
-
+@login_required
 def score_points(user, action):
+    """Adds user poinst depending on their action
+    """
     points = {
         "Add Resource": 25,
         "Rate": 1
     }
-    user_profile = None
-    if user.teacherprofile:
-        user_profile = TeacherProfile.objects.get(user=user.id)
-    elif user.studentprofile:
-        user_profile = StudentProfile.objects.get(user=user.id)
-
-    if user_profile:
-        user_profile.score += points[action]
-        user_profile.save()
+    user = User.objects.get(user=user)
+    user_profile = get_user_profile(user)
+    user_profile.score += points[action]
+    user_profile.save()
 
 
 @login_required
@@ -1057,7 +1025,9 @@ def upload_image(request):
     )
 
     if request.method == 'POST' and form.is_valid():
-        image = form.save()
+        image = form.save(commit=False)
+        image.code = generate_code(Image)
+        image.save()
         # FIXME
         return HttpResponseRedirect(
             reverse('uploader:view_image', args=[image.id]))

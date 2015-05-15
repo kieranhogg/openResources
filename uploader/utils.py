@@ -45,24 +45,6 @@ def safe_slugify(text, model):
     return text
     
 def render_markdown(text):
-    # headers = {'Content-Type': 'text/plain'}
-    # #data = notes.content.encode('utf-8')
-    # data = None
-    # if type(text) == bytes:  # sometimes body is str sometimes bytes...
-    #     data = text
-    # else:
-    #     data = text.encode('utf-8')
-    
-    # url = None
-    # #if len(settings.GITHUB_CLIENT_SECRET) == 40 and len(settings.GITHUB_CLIENT_ID) == 20:
-    # url = ('https://api.github.com/markdown/raw?clientid=' + 
-    #       settings.GITHUB_CLIENT_ID + "&client_secret=" + 
-    #       settings.GITHUB_CLIENT_SECRET)
-    # #else:
-    # #    url = 'https://api.github.com/markdown/raw'
-
-    # r = requests.post(url, headers=headers, data=data)
-    # return r.text.encode('utf-8')
     return markdown.markdown(text, extensions=['markdown.extensions.tables',
         'markdown.extensions.fenced_code', 'markdown.extensions.codehilite',
         'markdown.extensions.toc'])
@@ -74,12 +56,14 @@ def shorten_url(url):
     get_url = 'http://tinyurl.com/api-create.php?url=%s' % url
     r = requests.get(get_url)
     return r.text
+
     
 def shorten_lesson_url(request, group_code, lesson_code):
     local_url = request.build_absolute_uri(
         reverse('uploader:lesson', args=[group_code, lesson_code]))
 
     return shorten_url(local_url)
+
     
 def get_resource_rating(resource_id, use='display'):
     """Calculate a resource's rating
@@ -120,12 +104,6 @@ def generate_code(model=None, length=4):
 
     return key
     
-    
-def group_code():
-    # TODO check DB
-    # a length of 3 gives us: 238328 codes
-    return generate_code(3)
-
 
 def extract(url):
     """extracts information from a URL using embed.ly API
@@ -139,9 +117,10 @@ def extract(url):
 def embed_resources(text):
     import re
     card_html = '<a class="embedly-card" href="%s">%s</a><script async src="//cdn.embedly.com/widgets/platform.js" charset="UTF-8"></script>'
-    pattern = re.compile(r'\(resource\)\[([\da-z]{4}?)\]')
-  
-    for match in re.finditer(pattern, text):
+    resource_pattern = re.compile(r'\@\[resource\]\(([\da-z]{4}?)\)')
+    image_pattern = re.compile(r'\@\[image\]\(([\da-z]{4}?)\)')
+    
+    for match in re.finditer(resource_pattern, text):
         try:
             resource = Resource.objects.get(code=match.group(1))
             replace = card_html % (resource.bookmark.link, resource.bookmark.title)
@@ -200,4 +179,22 @@ def hierachy_from_slugs(subject_slug, exam_slug, syllabus_slug, unit_slug=None, 
         items['unit_topic'] = unit_topic
         
     return items
+    
+    
+def user_type(user):
+    if not user.is_authenticated():
+        return False
+    elif hasattr(user, 'teacherprofile'):
+        return 'teacher'
+    elif hasattr(user, 'studentprofile'):
+        return 'student'
+    
+
+def get_user_profile(user):
+    if not user_type(user):
+        return False
+    elif user_type(user) == 'teacher':
+        return user.teacherprofile
+    elif user_type(user) == 'student':
+        return user.studentprofile
     
