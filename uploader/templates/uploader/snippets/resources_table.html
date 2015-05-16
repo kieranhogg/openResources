@@ -23,14 +23,17 @@
         </td>
         <td>
          {{ resource.bookmark.description|truncatewords:20 }} 
-         {% if resource.avg_rating %}
-             ({{ resource.avg_rating }})
-         {% endif %}
+         <!--{% if resource.avg_rating %}-->
+         <!--    ({{ resource.avg_rating }})-->
+         <!--{% endif %}-->
          </td>
     {% else %}
     <td>
         <span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span>
             <a href="{% url 'uploader:view_resource' resource|slugify %}">{{ resource }}</a>
+    </td>
+    <td>
+        {{ resource.file.description|truncatewords:20 }}
     </td>
     {% endif %}
     </tr>
