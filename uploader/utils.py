@@ -96,10 +96,10 @@ def extract(url):
     api_url = "http://api.embed.ly/1/extract?key=" + settings.MICAWBER_EMBEDLY_KEY + "&url=" + url + "&maxwidth=500"
     r = requests.get(api_url)
     try:
-        json = json.loads(r.text)
+        url = json.loads(r.text)
     except ValueError: # stops error emails when lookup times out
-        json = None
-    return json
+        url = None
+    return url
 
 
 def embed_resources(text):
