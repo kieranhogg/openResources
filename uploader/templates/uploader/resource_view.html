@@ -69,7 +69,7 @@ function vote(rating)
       ><i></i>
       
       <input type="radio" name="rating" value="5" onclick='vote(5)'
-      {% if resource.rating < 5.0 and resource.rating >= 4.5 %} checked="checked" {% endif %}
+      {% if resource.rating <= 5.0 and resource.rating >= 4.5 %} checked="checked" {% endif %}
       ><i></i>
       
     </span>
