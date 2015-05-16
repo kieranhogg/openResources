@@ -192,6 +192,9 @@ def syllabus_resources(request, subject_slug, exam_slug, slug):
         syllabus__id=syllabus.id,
         unit__isnull=True,
         unit_topic__isnull=True)
+        
+    # rating is a function so we can't sort by it naturally
+    resources = sorted(resources, None, key=lambda a: a.rating, reverse=True)
 
     context = {'syllabus': syllabus, 'resources': resources}
     return render(request, 'uploader/syllabus_resources.html', context)
@@ -234,15 +237,10 @@ def unit_topic_resources(
     """
     items = hierachy_from_slugs(subject_slug, exam_slug, syllabus_slug, unit_slug, slug)
     unit_topic = items['unit_topic']
-    # resources = Resource.objects.filter(unit_topic=unit_topic).values()
-
-    # FIXME when Django 1.8 gets COALESCE we get set a default
-    # (https://code.djangoproject.com/ticket/10929)
-
-    # resources = Resource.objects.filter(unit_topic=unit_topic).annotate(avg_rating=Coalesce(Avg('rating__rating'), 3.0)).order_by('-avg_rating')
-    resources = Resource.objects.filter(
-        unit_topic=unit_topic).annotate(
-        avg_rating=Avg('rating__rating')).order_by('-avg_rating')
+    resources = Resource.objects.filter(unit_topic=unit_topic)
+    
+    # rating is a function so we can't sort by it naturally
+    resources = sorted(resources, None, key=lambda a: a.rating, reverse=True)
 
     context = {'unit_topic': unit_topic, 'resources': resources}
     return render(request, 'uploader/unit_topic_resources.html', context)
@@ -267,6 +265,9 @@ def unit_resources(request, subject_slug, exam_slug, syllabus_slug, unit_slug):
     resources = Resource.objects.filter(
         unit__id=unit.id,
         unit_topic__isnull=True)
+        
+    # rating is a function so we can't sort by it naturally
+    resources = sorted(resources, None, key=lambda a: a.rating, reverse=True)
 
     context = {'unit': unit, 'resources': resources}
     return render(request, 'uploader/unit_resources.html', context)

@@ -5,6 +5,13 @@ $(function () {
 })
 </script>
 <table class='table table-condensed table-striped'>
+    <thead>
+        <th>Type</th>
+        <th>Title</th>
+        <th>Rating</th>
+        <th>Description</th>
+    </thead>
+    <tbody>
 {% for resource in resources %}
     <tr>
     {% if resource.bookmark %}
@@ -46,6 +53,7 @@ $(function () {
     {% endif %}
     </tr>
 {% endfor %}
+</tbody>
 </table>
 {% else %}
 No resources :( <a href="{% url 'uploader:add_resource' %}">Add some?</a>
