@@ -357,7 +357,7 @@ def view_resource(request, slug, embed=False):
     else:
         template = 'uploader/resource_view.html'
 
-    context = {'resource': resource, 'form': form}
+    context = {'resource': resource}
     
     # Get the file preview from box
     if resource.file:
