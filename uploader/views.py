@@ -9,6 +9,7 @@ import urllib2
 import mimetypes
 import datetime
 
+from django.apps import apps
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
@@ -351,16 +352,13 @@ def view_resource(request, slug, embed=False):
     """A single resource view
     """
     resource = get_object_or_404(Resource, slug=slug)
+    form = VoteForm()
     if embed:
         template = 'uploader/resource_view_embed.html'
     else:
         template = 'uploader/resource_view.html'
 
-    context = {
-        'resource': resource,
-        'rating': get_resource_rating(resource.id),
-        'rating_val': get_resource_rating(resource.id, 'values')
-    }
+    context = {'resource': resource, 'form': form}
     
     # Get the file preview from box
     if resource.file:
@@ -708,9 +706,7 @@ def profile(request, username=None):
 def user_resources(request, user_id=None):
     if not user_id:
         user_id = request.user
-    resources = Resource.objects.filter(uploader=user_id).annotate(
-        avg_rating=Avg('rating__rating')).order_by('-pub_date')
-
+    resources = Resource.objects.filter(uploader=user_id).order_by('-pub_date')
     return render(request, 'uploader/user_resources.html',
                   {'resources': resources})
 
@@ -919,32 +915,30 @@ def lesson_show(request, group_code, code):
                   {'lesson': l})
 
 
-def leaderboard(request):
-    context = {}
+# def leaderboard(request):
+#     context = {}
 
-    # check if we have enough users yet...
-    user_count = User.objects.count()
+#     # check if we have enough users yet...
+#     user_count = User.objects.count()
 
-    if user_count >= 10:
-        users = User.objects.filter().order_by('-teacherprofile__score')[:10]
-        for user in users:
-            user.resource_count = Resource.objects.filter(
-                uploader=user).count()
-            user.rating_count = Rating.objects.filter(user=user).count()
-        context = {'users': users}
+#     if user_count >= 10:
+#         users = User.objects.filter().order_by('-teacherprofile__score')[:10]
+#         for user in users:
+#             user.resource_count = Resource.objects.filter(
+#                 uploader=user).count()
+#         context = {'users': users}
 
-    resource_count = Rating.objects.count()
-    # assumes ratings are mostly unique
-    if resource_count >= 10:
+#     # assumes ratings are mostly unique
+#     if resource_count >= 10:
 
-        resources = Resource.objects.filter().order_by('-rating')[:10]
+#         resources = Resource.objects.filter().order_by('-rating')[:10]
 
-        for resource in resources:
-            resource.rating = get_resource_rating(resource.id)
+#         for resource in resources:
+#             resource.rating = get_resource_rating(resource.id)
 
-        context['resources'] = resources
+#         context['resources'] = resources
 
-    return render(request, 'uploader/leaderboard.html', context)
+#     return render(request, 'uploader/leaderboard.html', context)
 
 
 def licences(request):
@@ -1840,24 +1834,28 @@ def get_unit_topics(request, unit_id):
             {'id': unit_topic.id, 'unit_topic': str(unit_topic), 'section': section})
     return JsonResponse(unit_topics_dict, safe=False)
 
-
-def rate(request, resource_id, rating):
+def vote(request, content_type, object_id, vote):
     """just silently ignore non-logged in ratings
     """
-    if request.user.is_authenticated():
-        _rating = Rating()
-        _rating.user = request.user
-        _rating.resource = get_object_or_404(Resource, pk=resource_id)
-        _rating.rating = rating
+    if not request.user.is_authenticated():
+        return HttpResponse("Please login to vote")
+    else:
+        model = apps.get_model(app_label='uploader', model_name=content_type)
+        vote = Vote(
+            user=request.user,
+            content_type=ContentType.objects.get_for_model(model),
+            object_id=object_id,
+            vote=vote
+        )
+    try:
+        vote.save()
+        score_points(request.user, "Rate")
+        return HttpResponse("Thank you for voting")
+    except IntegrityError as e:
+        return HttpResponse("You have already voted")
+        pass
 
-        try:
-            _rating.save()
-            score_points(request.user.id, "Rate")
-        except IntegrityError as e:
-            # silently ignore duplicate votes
-            pass
-
-    return HttpResponse('')
+    
 
 
 def get_url_description(request, url):

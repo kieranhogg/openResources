@@ -82,9 +82,9 @@ urlpatterns = patterns('',
     url(r'^teachers/signup/$', views.teacher_signup, name='teacher_signup'),
 
     
-    url(r'^leaderboard', views.leaderboard, name='leaderboard'),
+    # url(r'^leaderboard', views.leaderboard, name='leaderboard'),
     
-    url(r'^rate/(?P<resource_id>\d+)/(?P<rating>\d+)/$', views.rate, name='rate'),
+    url(r'^vote/(?P<content_type>[\w]+)/(?P<object_id>[\d]+)/(?P<vote>[\d])/$', views.vote, name='vote'),
     
     url(r'^licences', views.licences, name='licences'),
     

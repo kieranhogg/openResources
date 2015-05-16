@@ -65,7 +65,7 @@ their own page.</p>
         {% endif %}
         </td>
         <td><a href="{% url 'uploader:view_resource' resource.slug %}">{{ resource }}</a></td>
-        <td style='text-align: center'>{{ resource.avg_rating }}</td></t>
+        <td style='text-align: center'>{{ resource.rating }}</td></t>
         <td>{{ resource.subject }}</td>
         <td>
             <a href="{% url 'uploader:syllabus' resource.syllabus.subject.slug resource.syllabus.exam_level.slug resource.syllabus.slug %}">

@@ -64,22 +64,6 @@ def shorten_lesson_url(request, group_code, lesson_code):
 
     return shorten_url(local_url)
 
-    
-def get_resource_rating(resource_id, use='display'):
-    """Calculate a resource's rating
-    """
-    ratings = Rating.objects.filter(resource__id = resource_id)
-    # TODO hide < a certain number too?
-    if len(ratings) == 0:
-        return 3.0
-    else:
-        total = 0
-        count = 0
-        for rating in ratings:
-            total = total + rating.rating
-            count = count + 1
-        return float(total) / float(count)
-
 
 def generate_code(model=None, length=4):
     unique = False

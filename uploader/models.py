@@ -10,6 +10,7 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from django.db.models import Avg
 from django.db.models.signals import pre_delete, post_save
 from django.dispatch.dispatcher import receiver
 from django.utils.safestring import mark_safe
@@ -228,6 +229,12 @@ class Note(models.Model):
         
     def get_absolute_url(self):
         return reverse('uploader:view_notes_code', args=[self.code])
+        
+    def rating(self):
+        votes = Vote.objects.filter(object_id=self.id, content_type=ContentType.objects.get_for_model(self)).aggregate(average=Avg('vote'))
+        if votes['average'] is None:
+            votes['average'] = 3.0        
+        return votes['average']
 
 
 class NoteAdmin(admin.ModelAdmin):
@@ -393,7 +400,7 @@ class Resource(models.Model):
         blank=True,
     )
     approved = models.BooleanField(default=False)
-    code = models.SlugField(max_length=4, null=True, blank=True)
+    code = models.SlugField(max_length=4, unique=True, null=True, blank=True)
     slug = models.SlugField(unique=True, max_length=100)
     pub_date = models.DateTimeField(
         'Date published',
@@ -424,6 +431,12 @@ class Resource(models.Model):
     
     def get_absolute_url(self):
         return reverse('uploader:view_resource', args=[self.slug])
+        
+    def rating(self):
+        votes = Vote.objects.filter(object_id=self.id, content_type=ContentType.objects.get_for_model(self)).aggregate(average=Avg('vote'))
+        if votes['average'] is None:
+            votes['average'] = 3.0
+        return votes['average']
 
 
 class ResourceAdmin(admin.ModelAdmin):
@@ -442,25 +455,18 @@ class ResourceAdmin(admin.ModelAdmin):
         self.message_user(request, "%s successfully approved." % message_bit)
 
 
-class Rating(models.Model):
+class Vote(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
-    resource = models.ForeignKey(Resource)
-    rating = models.IntegerField(
+    content_type = models.ForeignKey(ContentType, blank=True, null=True)
+    object_id = models.PositiveIntegerField(blank=True, null=True)
+    content_object = GenericForeignKey('content_type', 'object_id')
+    vote = models.IntegerField(
         max_length=1, choices=(
-            (0, "0"), (1, "1"), (2, "2"), (3, "3"), (4, "4"), (5, '5')))
+            (0, "0 - Useless"), (1, "1 - Very Poor"), (2, "2 - Poor"), (3, "3 - Okay"), (4, "4 - Useful"), (5, '5 - Amazing')))
     pub_date = models.DateTimeField(auto_now_add=True, blank=True)
 
-    def __unicode__(self):
-        return str(self.resource) + ': ' + str(self.get_rating_display())
-
     class Meta:
-        # ordering = ('-pub_date',)
-        unique_together = ["user", "resource"]
-
-
-class RatingAdmin(admin.ModelAdmin):
-    list_display = ('resource', 'rating', 'user', 'pub_date')
-
+        unique_together = ['user', 'content_type', 'object_id']
 
 class TeacherProfile(models.Model):
     TITLES = (
@@ -548,7 +554,7 @@ class Image(models.Model):
     licence = models.ForeignKey(Licence)
     height = models.PositiveIntegerField(blank=True, null=True)
     width = models.PositiveIntegerField(blank=True, null=True)
-    code = models.SlugField(max_length=4)
+    code = models.SlugField(max_length=4, unique=True)
     alt_text = models.CharField(max_length=200)
     pub_date = models.DateTimeField(auto_now_add=True)
 
@@ -561,6 +567,12 @@ class Question(models.Model):
 
     class Meta:
         abstract = True
+        
+    def rating(self):
+        votes = Vote.objects.filter(object_id=self.id, content_type=ContentType.objects.get_for_model(self)).aggregate(average=Avg('vote'))
+        if votes['average'] is None:
+            votes['average'] = 3.0
+        return votes['average']
 
 
 class MultipleChoiceQuestion(Question):
@@ -640,6 +652,12 @@ class Test(models.Model):
 
     class Meta:
         ordering = ('-deadline', '-pub_date')
+        
+    def rating(self):
+        votes = Vote.objects.filter(object_id=self.id, content_type=ContentType.objects.get_for_model(self)).aggregate(average=Avg('vote'))
+        if votes['average'] is None:
+            votes['average'] = 3.0        
+        return votes['average']
 
 
 class UserAnswer(models.Model):
@@ -710,6 +728,12 @@ class Lesson(models.Model):
 
     def __unicode__(self):
         return self.title
+        
+    def rating(self):
+        votes = Vote.objects.filter(object_id=self.id, content_type=ContentType.objects.get_for_model(self)).aggregate(average=Avg('vote'))
+        if votes['average'] is None:
+            votes['average'] = 3.0        
+        return votes['average']
 
 
 class LessonItem(models.Model):
@@ -818,10 +842,17 @@ class Assignment(models.Model):
     comments_only = models.BooleanField(default=False)
     offline = models.BooleanField(default=False, help_text='Students will not submit anything before entering marks, e.g. paper-based activity or test')
     grading = models.ForeignKey('Grading', blank=True, null=True)
+    public = models.BooleanField(default=False)
     pub_date = models.DateTimeField(auto_now_add=True)
 
     def unmarked(self):
         return AssignmentSubmission.objects.filter(status=1, assignment=self).count()
+        
+    def rating(self):
+        votes = Vote.objects.filter(object_id=self.id, content_type=ContentType.objects.get_for_model(self)).aggregate(average=Avg('vote'))
+        if votes['average'] is None:
+            votes['average'] = 3.0        
+        return votes['average']
 
 def assignment_location(instance, filename):
         code = instance.assignment_submission.assignment.code
