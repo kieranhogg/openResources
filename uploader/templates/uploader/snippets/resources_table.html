@@ -1,4 +1,9 @@
 {% if resources %}
+<script>
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
+</script>
 <table class='table table-condensed table-striped'>
 {% for resource in resources %}
     <tr>
@@ -33,7 +38,7 @@
         <span class="glyphicon glyphicon-paperclip" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="File"></span>
     </td>
     <td>
-            <a href="{% url 'uploader:view_resource' resource|slugify %}">{{ resource }}</a>
+        <a href="{% url 'uploader:view_resource' resource|slugify %}">{{ resource }}</a>
     </td>
     <td>
         {{ resource.file.description|truncatewords:20 }}
