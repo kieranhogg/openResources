@@ -2,20 +2,5 @@
 {% block body_block %}
 
 <h1>{% block head_title %}{{ unit }} Unit Resources{% endblock %}</h1>
-
-<div id='resouce_list'>
-  <ul>
-    {% for resource in resources %}
-      {% if resource.file %}
-        <li data-type="file"><a href="{% url 'uploader:view_resource' resource.slug %}">
-            {{ resource }}</a>
-        </li>
-        {% else %}
-        <li data-type="bookmark"><a href="{% url 'uploader:view_resource' resource.slug %}">
-            {{ resource }}</a>
-        </li>
-        {% endif %}
-    {% endfor %}
-  </ul>
-</div>
+{% resources_table resources %}
 {% endblock %}

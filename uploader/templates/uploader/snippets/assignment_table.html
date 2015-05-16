@@ -3,19 +3,30 @@
 <table class='table' style=" display: table; table-layout: fixed; width: 100%;">
     <tr>
         <th>Assignment</th>
-        {% if not group %}<th>Group</th>{% endif %}
-        <th>Set</th>
+        {% if not group and teacher_or_student == 'teacher' %}
+            <th>Group</th>
+            <th>Set</th>
+        {% elif teacher_or_student == 'student' %}
+            <th>Class</th>
+        {% endif %}
         <th>Deadline</th>
-        <th></th>
+        
+        {% if teacher_or_student == 'student' %}
+            <th>Status</th>
+        {% endif %}
+            <th></th>
+        
         {% for assignment in assignments %}
+            {% if teacher_or_student == 'teacher' %}
             <tr>
                 <td>
-                    <a href="{% url 'uploader:view_assignment' assignment.code %}">{{ assignment.title }}</a>
+                <a href="{% url 'uploader:view_assignment' assignment.code %}">{{ assignment.title }}</a>
                 </td>
-                {% if not group %}<td>{{ assignment.group }}</td>{% endif %}
-                <td>{{ assignment.pub_date }}</td>
+                {% if not group %}
+                    <td>{{ assignment.group }}</td>
+                {% endif %}
                 <td>{{ assignment.deadline }}</td>
-                {% if teacher_or_student == 'teacher' %}
+            <td>{{ assignment.pub_date }}</td>
                     <td align='right'>
                         <a href="{% url 'uploader:assignment' assignment.code %}" class='btn btn-sm btn-info'>
                             <span style="font-size: 0.9em" class="glyphicon glyphicon-edit" aria-hidden="true"></span>
@@ -26,10 +37,26 @@
                             Delete
                         </a>
                     </td>
+            {% else %}
+                {% if assignment.get_status_display == 'Marked' %}
+                <tr class='success'>
+                {% elif assignment.get_status_display == 'Not Marked' %}
+                <tr>
                 {% else %}
-                    <td>student</td>
+                <tr class='danger'>
                 {% endif %}
+                <td>{{ assignment.assignment.title }}</td>
+                <td>{{ assignment.assignment.group }}</td>
+                <td>{{ assignment.assignment.deadline }}</td>
+                <td>{{ assignment.get_status_display }}</td>
+                <td>
+                    <a class='btn btn-default btn-xs' href="{% url 'uploader:view_assignment' assignment.assignment.code %}">
+                        View feedback
+                    </a>
+                </td>
+            {% endif %}
             </tr>
+
         {% endfor %}
     </tr>
 </table>

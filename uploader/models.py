@@ -855,10 +855,8 @@ class AssignmentSubmission(models.Model):
     )
     assignment = models.ForeignKey(Assignment)
     student = models.ForeignKey(settings.AUTH_USER_MODEL)
-
     feedback = models.TextField(blank=True, null=True)
     result = models.IntegerField(blank=True, null=True)
-    
     feedback_file = models.FileField(upload_to=assignment_location, blank=True, null=True)
     status = models.IntegerField(choices=FEEDBACK_STATUS, default=UNMARKED)
     audio_feedback = models.FileField(upload_to=assignment_location, blank=True, null=True)
@@ -924,6 +922,10 @@ class AssignmentSubmission(models.Model):
                 type = 'lo'
             
             return type
+            
+    def on_time(self):
+        return self.submitted < self.assignment.deadline
+
                             
     
 class Grading(models.Model):
@@ -942,7 +944,22 @@ class Grading(models.Model):
     pub_date = models.DateTimeField(auto_now_add=True)
     
     def __unicode__(self):
-        return str(self.title) + str(': ') + str(self.get_type_display())
+        if self.public:
+            grading = "[Public] "
+        else:
+            grading = "[User] "
+
+        grading += str(self.title)
+            
+        if self.description:
+            grading +=  str(': ') + str(self.description)
+        
+        grading += " (" + str(self.get_type_display()) + ")"
+        return grading
+        
+    class Meta:
+        ordering = ('-public', 'title')
+    
     
     
 class GradeOptions(models.Model):

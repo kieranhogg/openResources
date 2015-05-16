@@ -79,6 +79,9 @@ def link_embed():
     subjects = Subject.objects.all()
     return {'subjects': subjects}
 
+@register.inclusion_tag('uploader/snippets/resources_table.html')
+def resources_table(resources):
+    return {'resources': resources}
 
 @register.filter
 def embed(url):

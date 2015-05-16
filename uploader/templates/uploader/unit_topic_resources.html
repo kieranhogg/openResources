@@ -1,4 +1,5 @@
 {% extends 'uploader/base.html' %}
+{% load tags %}
 {% block body_block %}
 <ol class="breadcrumb">
     <li><a href="{% url 'uploader:subjects' %}">Home</a></li>
@@ -16,35 +17,6 @@
 </ol>
 <h1>{% block head_title %}{{ unit_topic.title }} Resources{% endblock %}</h1>
 {% include 'uploader/unit_topic_tabs.html' %}
-{% if resources %}
-{% for resource in resources %}
-    {% if resource.bookmark %}
-        {% if resource.bookmark.type == 'video' %}
-        <span class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span>
-        {% elif resource.bookmark.type == 'news' %}
-        <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
-        {% elif resource.bookmark.type == 'image' %}
-        <span class="glyphicon glyphicon-image" aria-hidden="true"></span>
-        {% elif resource.bookmark.type == 'info' %}
-        <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
-        {% elif resource.bookmark.type == 'blog' %}
-        <span class="glyphicon glyphicon-comment" aria-hidden="true"></span>
-        {% else %}
-        <span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span>
-        {% endif %}
-        <a href="{% url 'uploader:view_resource' resource|slugify %}">{{ resource }}</a>:
-         {{ resource.bookmark.description|truncatewords:20 }} 
-         {% if resource.avg_rating %}
-             ({{ resource.avg_rating }})
-         {% endif %}
-         </p>
-    {% else %}
-        <p><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span>
-            <a href="{% url 'uploader:view_resource' resource|slugify %}">{{ resource }}</a></p>
-    {% endif %}
-{% endfor %}
-</ul>
-{% else %}
-No resources :( <a href="{% url 'uploader:add_resource' %}">Add some?</a>
-{% endif %}
+
+{% resources_table resources %}
 {% endblock %}

@@ -48,9 +48,10 @@ urlpatterns = patterns('',
     url(r'^group/(?P<group_code>[\w\d-]+)/lesson/(?P<code>[\w\d-]+)/show/$', views.lesson_show, name='lesson_show'),
     url(r'^group/(?P<group_code>[\w\d-]+)/lesson/(?P<code>[\w\d-]+)/present/$', views.lesson_present, name='lesson_present'),
     
-    url(r'^bookmark/add/$', views.bookmark, name='bookmark'),
+    # url(r'^bookmark/add/(?P<url>[-_./\w\d-]+)$', views.bookmark, name='bookmark'),
+    url(r'^bookmark/add/', views.bookmark, name='bookmark'),
     url(r'^bookmark/link/(?P<slug>[\w\d-]+)/$', views.link_bookmark, name='link_bookmark'),
-    url(r'^bookmark/add/stage_two/$', views.link_resource, name='link_resource'),
+    # url(r'^bookmark/add/stage_two/$', views.link_resource, name='link_resource'),
     url(r'^bookmark/(?P<slug>[\w\d-]+)/edit/$', views.bookmark, name='bookmark'),
     url(r'^bookmark/(?P<slug>[\w\d-]+)/delete/$', views.delete_bookmark, name='delete_bookmark'),
 

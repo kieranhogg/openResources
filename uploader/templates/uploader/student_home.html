@@ -3,32 +3,12 @@
 {% load static %}
 {% load tags %}
 {% get_static_prefix as STATIC_PREFIX %}
-<h1>{{ user.studentprofile }}'s Home</h1>
+<h1>{% block head_title %}{{ user.studentprofile }}'s Home{% endblock %}</h1>
 <h2>Assignments</h2>
     {% assignment_table "student" assignments %}
 <h2>Tests</h2>
-<table class='table'>
-{% for group, tests in tests.iteritems %}
-<tr>
-    <th>Class</th><th>Topic</th><th>Result</th><th>Deadline</th><th></th></tr>
-    {% for test in tests %}
-        <td>{{ group }}</td>
-        <td>{{ test }}</td>
-        <td>{{ test.result.score }} / {{ test.total }}</td>
-        <td>{{ test.deadline }}</td>
-        <td>
-            {% if test.result.score %}
-            <a href="{% url 'uploader:test_feedback' test.code %}">
-            <button class='btn btn-info'>View Feedback</button>
-            </a>
-            {% else %}
-            <a href="{% url 'uploader:test' test.code %}">
-                <button class='btn btn-success'>Take test</button>
-            </a>
-            {% endif %}
-        </td>
-    </tr>
-    {% endfor %}
-{% endfor %}
+    {% test_table "student" tests %}
+<h2>Lessons</h2>
+    {% lesson_table "student" lessons %}
 </table>
 {% endblock %}

@@ -49,44 +49,44 @@ function vote(resourceID, rating)
     </strong>
     </div>
     
-    <div id="rating">
-        <a href="javascript:void(0)" onclick="javascript:vote({{ resource.id}}, 5)">
-            {% if rating_val > 4.9 %}
-                <span>★</span>
-            {% else %}
-                <span>☆</span>
-            {% endif %}
-        </a>
-        <a href="javascript:void(0)" onclick="javascript:vote({{ resource.id}}, 4)">
-            {% if rating_val >= 4 %}
-                <span>★</span>
-            {% else %}
-                <span>☆</span>
-            {% endif %}
-        </a>
-        <a href="javascript:void(0)" onclick="javascript:vote({{ resource.id}}, 3)">
-            {% if rating_val >= 3 %}
-                <span>★</span>
-            {% else %}
-                <span>☆</span>
-            {% endif %}
-        </a>
-        <a href="javascript:void(0)" onclick="javascript:vote({{ resource.id}}, 2)">
-            {% if rating_val >= 2 %}
-                <span>★</span>
-            {% else %}
-                <span>☆</span>
-            {% endif %}
-        </a>
-        <a href="javascript:void(0)" onclick="javascript:vote({{ resource.id}}, 1)">
-            {% if rating_val >= 1 %}
-                <span>★</span>
-            {% else %}
-                <span>☆</span>
-            {% endif %}
-        </a>
-        <div class="rating_value text-center">{{ rating }}</div>
-    </div>
+    <!--<div id="rating">-->
+    <!--    <a href="javascript:void(0)" onclick="javascript:vote({{ resource.id}}, 5)">-->
+    <!--        {% if rating_val > 4.9 %}-->
+    <!--            <span>★</span>-->
+    <!--        {% else %}-->
+    <!--            <span>☆</span>-->
+    <!--        {% endif %}-->
+    <!--    </a>-->
+    <!--    <a href="javascript:void(0)" onclick="javascript:vote({{ resource.id}}, 4)">-->
+    <!--        {% if rating_val >= 4 %}-->
+    <!--            <span>★</span>-->
+    <!--        {% else %}-->
+    <!--            <span>☆</span>-->
+    <!--        {% endif %}-->
+    <!--    </a>-->
+    <!--    <a href="javascript:void(0)" onclick="javascript:vote({{ resource.id}}, 3)">-->
+    <!--        {% if rating_val >= 3 %}-->
+    <!--            <span>★</span>-->
+    <!--        {% else %}-->
+    <!--            <span>☆</span>-->
+    <!--        {% endif %}-->
+    <!--    </a>-->
+    <!--    <a href="javascript:void(0)" onclick="javascript:vote({{ resource.id}}, 2)">-->
+    <!--        {% if rating_val >= 2 %}-->
+    <!--            <span>★</span>-->
+    <!--        {% else %}-->
+    <!--            <span>☆</span>-->
+    <!--        {% endif %}-->
+    <!--    </a>-->
+    <!--    <a href="javascript:void(0)" onclick="javascript:vote({{ resource.id}}, 1)">-->
+    <!--        {% if rating_val >= 1 %}-->
+    <!--            <span>★</span>-->
+    <!--        {% else %}-->
+    <!--            <span>☆</span>-->
+    <!--        {% endif %}-->
+    <!--    </a>-->
+    <!--    <div class="rating_value text-center">{{ rating }}</div>-->
+    <!--</div>-->
     <div id="thankyou" style="display:none">
         Thank you for rating.
     </div>

@@ -7,7 +7,7 @@
     <p class='well'>{{ assignment.description }}</p>
     
     {% if previous_submissions %}
-    <h2>Previous Submissions</h2>
+    <h2>Submissions</h2>
 
         {% for previous_submission in previous_submissions %}
         <div class="panel panel-default">
@@ -38,6 +38,10 @@
               <h3>Feedback</h3>
               <p class='well'>
                   {{ previous_submission.feedback }}
+              </p>
+              <h3>Grade</h3>
+              <p>
+                {{ previous_submission.grade }}
               </p>
           </div>
 
