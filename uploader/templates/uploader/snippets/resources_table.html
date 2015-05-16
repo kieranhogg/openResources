@@ -15,7 +15,7 @@ $(function () {
 {% for resource in resources %}
     <tr>
     {% if resource.bookmark %}
-        <td>
+        <td align='center'>
         {% if resource.bookmark.type == 'video' %}
         <span class="glyphicon glyphicon-facetime-video" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Video"></span>
         {% elif resource.bookmark.type == 'news' %}
@@ -33,7 +33,7 @@ $(function () {
         <td>
         <a href="{% url 'uploader:view_resource' resource|slugify %}">{{ resource }}</a>
         </td>
-        <td>{{ resource.rating }}</td>
+        <td align='center'>>{{ resource.rating }}</td>
         <td>
          {{ resource.bookmark.description|truncatewords:20 }} 
          <!--{% if resource.avg_rating %}-->
@@ -41,12 +41,13 @@ $(function () {
          <!--{% endif %}-->
          </td>
     {% else %}
-    <td>
+    <td align='center'>>
         <span class="glyphicon glyphicon-paperclip" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="File"></span>
     </td>
     <td>
         <a href="{% url 'uploader:view_resource' resource|slugify %}">{{ resource }}</a>
     </td>
+    <td align='center'>>{{ resource.rating }}</td>
     <td>
         {{ resource.file.description|truncatewords:20 }}
     </td>
