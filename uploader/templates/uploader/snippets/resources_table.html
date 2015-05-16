@@ -29,7 +29,9 @@
          </td>
     {% else %}
     <td>
-        <span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span>
+        <span class="glyphicon glyphicon-paperclip" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="File"></span>
+    </td>
+    <td>
             <a href="{% url 'uploader:view_resource' resource|slugify %}">{{ resource }}</a>
     </td>
     <td>
