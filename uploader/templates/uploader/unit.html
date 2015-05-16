@@ -32,7 +32,7 @@
     {{ unit.description|linebreaks }}
 </div>
 {% endif %}
-{% if resources %}
+{% if unit_topics|length == 0 and resources %}
 <p>I found no unit topics linked to {{ unit }}, below are resources for this unit.</p>
 <div id='resouce_list'>
   <ul>
@@ -57,7 +57,7 @@
     </p>
     <p>
         <a href="{% url 'uploader:unit_resources' unit.syllabus.subject.slug unit.syllabus.exam_level.slug unit.syllabus.slug unit.slug %}">
-            View unit resources
+            View unit resources <span class='badge'>{% if resources|length == 0 %}0{% else %}{{ resources|length }}{% endif %}</span>
         </a>
     </p>
     <br />

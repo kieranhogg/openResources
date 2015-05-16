@@ -59,7 +59,7 @@
 <p>E.g. syllabus schemes of work.</p>
 <p>
     <a href="{% url 'uploader:syllabus_resources' syllabus.subject.slug syllabus.exam_level.slug syllabus.slug %}">
-        View syllabus resources
+        View syllabus resources <span class='badge'>{{ resources }}</span>
     </a>
 </p>
 {% if syllabus.exam_board.board_name == "National Curriculum" %}

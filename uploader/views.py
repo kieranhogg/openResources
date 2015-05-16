@@ -301,6 +301,11 @@ def syllabus(request, subject_slug, exam_slug, slug):
     syllabus = items['syllabus']
     syllabus.description = render_markdown(syllabus.description)
     units = Unit.objects.filter(syllabus=syllabus).order_by('order', 'title')
+    
+    resources = Resource.objects.filter(
+        syllabus__id=syllabus.id,
+        unit__isnull=True,
+        unit_topic__isnull=True).count()
 
     favourite = False
     if request.user.is_authenticated():
@@ -311,7 +316,10 @@ def syllabus(request, subject_slug, exam_slug, slug):
         except ObjectDoesNotExist:
             pass
 
-    context = {'syllabus': syllabus, 'units': units, 'favourite': favourite}
+    context = {
+        'syllabus': syllabus, 'units': units, 'favourite': favourite,
+        'resources': resources
+    }
     return render(request, 'uploader/syllabus.html', context)
 
 
@@ -335,10 +343,7 @@ def unit(request, subject_slug, exam_slug, syllabus_slug, slug):
         except ObjectDoesNotExist as TypeError:
             pass
 
-    resources = None
-
-    if unit_topics.count() == 0:
-        resources = Resource.objects.filter(unit__id=unit.id)
+    resources = Resource.objects.filter(unit__id=unit.id)
 
     context = {
         'resources': resources,
