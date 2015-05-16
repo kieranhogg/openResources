@@ -666,7 +666,6 @@ def link_resource(request, type, obj):
     return render(request, 'uploader/link_resource.html', {'form': form, 'type': type,
                                                            'subject': subject})
 
-@login_required
 def score_points(user, action):
     """Adds user poinst depending on their action
     """
