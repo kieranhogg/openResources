@@ -6,10 +6,10 @@ $(function () {
 </script>
 <table class='table table-condensed table-striped'>
     <thead>
-        <th align='center'>Type</th>
-        <th align='center'>Title</th>
-        <th align='center'>Rating</th>
-        <th align='center'>Description</th>
+        <th class='text-center'>Type</th>
+        <th class='text-center'>Title</th>
+        <th class='text-center'>Rating</th>
+        <th class='text-center'>Description</th>
     </thead>
     <tbody>
 {% for resource in resources %}
@@ -33,7 +33,7 @@ $(function () {
         <td>
         <a href="{% url 'uploader:view_resource' resource|slugify %}">{{ resource }}</a>
         </td>
-        <td align='center'>>{{ resource.rating }}</td>
+        <td align='center'>{{ resource.rating }}</td>
         <td>
          {{ resource.bookmark.description|truncatewords:20 }} 
          <!--{% if resource.avg_rating %}-->
