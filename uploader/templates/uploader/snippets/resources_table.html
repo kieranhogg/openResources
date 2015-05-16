@@ -2,8 +2,9 @@
 <table class='table table-condensed table-striped'>
 {% for resource in resources %}
     <tr>
-        <td>
+        
     {% if resource.bookmark %}
+        <td>
         {% if resource.bookmark.type == 'video' %}
         <span class="glyphicon glyphicon-facetime-video" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Video"></span>
         {% elif resource.bookmark.type == 'news' %}
