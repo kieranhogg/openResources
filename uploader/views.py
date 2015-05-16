@@ -75,12 +75,21 @@ def index(request):
             return render(request, 'uploader/teacher_home.html', context)
         else:
             groups = StudentGroup.objects.filter(student=request.user)
-            assignments = Assignment.objects.filter(group__in=groups)
+            # assignments = Assignment.objects.filter(group__in=groups)
+            submissions = AssignmentSubmission.objects.filter(student=request.user).distinct('assignment').order_by('assignment', '-submitted')
 
+            # assignments.assignmentsubmission_set.filter(student=request.user)
+            lessons = GroupLesson.objects.filter(group__in=groups)
             tests = Test.objects.filter(group__in=groups)
-
+            
+            context = {
+                'tests': tests, 
+                'assignments': submissions, 
+                'tests': tests
+            }
+    
             return render(
-                request, 'uploader/student_home.html', {'tests': tests, 'assignments': assignments})
+                request, 'uploader/student_home.html', context)
 
 
 def subjects(request):
@@ -503,7 +512,7 @@ def file(request, slug=None):
         request, 'uploader/add_file.html', {'form': form, 'media': form.media})
 
 
-def bookmark(request, slug=None):
+def bookmark(request, slug=None, url=None):
     bookmark = None
 
     if slug:
@@ -512,9 +521,9 @@ def bookmark(request, slug=None):
             return HttpResponseForbidden("No stairway, denied!")
     else:
         if request.user.is_authenticated():
-            bookmark = Bookmark(uploader=request.user)
+            bookmark = Bookmark(uploader=request.user, link=url or None)
         else:
-            bookmark = Bookmark()
+            bookmark = Bookmark(link=url or None)
 
     if request.POST:
         form = BookmarkForm(request.POST, instance=bookmark)
@@ -665,7 +674,6 @@ def score_points(user, action):
         "Add Resource": 25,
         "Rate": 1
     }
-    user = User.objects.get(user=user)
     user_profile = get_user_profile(user)
     user_profile.score += points[action]
     user_profile.save()
@@ -1403,7 +1411,8 @@ def link_test(request, code):
     test = get_object_or_404(Test, code=code)
     return link_resource(request, 'test', test)
     
-    
+
+@login_required    
 def lesson_present(request, group_code, code):
     lesson = get_object_or_404(Lesson, code=code)
     group = get_object_or_404(Group, code=group_code)
@@ -1420,7 +1429,8 @@ def denied(request):
         msg = ""
     return render(request, 'uploader/permission_denied.html', {'msg': msg})
     
-    
+
+@login_required    
 def delete_lesson(request, code):
     lesson = get_object_or_404(Lesson, code=code)
     if lesson.uploader == request.user:
@@ -1432,6 +1442,7 @@ def delete_lesson(request, code):
         return render(request, 'uploader/permission_denied.html')
 
 
+@login_required
 def assignment(request, code=None):
     if code:
         assignment = get_object_or_404(Assignment, code=code)
@@ -1458,6 +1469,7 @@ def assignment(request, code=None):
     return render(request, 'uploader/assignment.html', {'form': form})
     
 
+@login_required
 def delete_assignment(request, code):
     assignment = get_object_or_404(Assignment, code=code)
     
@@ -1466,7 +1478,9 @@ def delete_assignment(request, code):
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', reverse('uploader:index')))
     else:
         return render(request, 'uploader/permission_denied.html', {})
-    
+
+
+@login_required    
 def view_assignment(request, code):
     """Shows an assignment view, for teacher this is a list of submissions,
     for students it allows them to submit an assignment and see previous 
@@ -1478,7 +1492,7 @@ def view_assignment(request, code):
     
     template = 'uploader/student_assignment.html'
     
-    if hasattr(request.user, 'teacherprofile'):
+    if user_type(request.user) == 'teacher':
         students = StudentGroup.objects.filter(group=assignment.group)
         student_ids = students.values('student_id')
         
@@ -1551,8 +1565,8 @@ def view_assignment(request, code):
         else:
             template = 'uploader/student_assignment.html'
             form = AssignmentSubmissionFileForm(request.POST or None)
-            previous_submissions = AssignmentSubmissionFile.objects.filter(
-                assignment_submission__student=request.user, assignment_submission__assignment=assignment)
+            previous_submissions = AssignmentSubmission.objects.filter(
+                student=request.user, assignment=assignment)
             context['form'] = form
             context['previous_submissions'] = previous_submissions
 
@@ -1634,6 +1648,7 @@ def user_grading(request):
     return render(request, 'uploader/grading.html', context)
 
 
+@user_passes_test(is_teacher, login_url='/denied')
 def grading(request, id=None):
     form = GradingForm(request.POST or None)
     if request.POST:
@@ -1686,12 +1701,14 @@ def grading(request, id=None):
     return render(request, 'uploader/add_grading.html', {'form': form})
 
 
+@login_required
 def user_tests(request):
     tests = Test.objects.filter(teacher=request.user)
 
     return render(request, 'uploader/user_tests.html', {'tests': tests})
 
 
+@user_passes_test(is_teacher, login_url='/denied')
 def lesson_creator(request):
     user_resources = Resource.objects.filter(uploader=request.user)[:30]
     user_tests = Test.objects.filter(teacher=request.user)[:30]
