@@ -323,10 +323,3 @@ class GradingForm(forms.ModelForm):
     class Meta:
         model = Grading
         fields = ('title',)
-        
-
-class VoteForm(forms.ModelForm):
-    
-    class Meta:
-        model = Vote
-        fields = ('vote',)

@@ -352,7 +352,6 @@ def view_resource(request, slug, embed=False):
     """A single resource view
     """
     resource = get_object_or_404(Resource, slug=slug)
-    form = VoteForm()
     if embed:
         template = 'uploader/resource_view_embed.html'
     else:

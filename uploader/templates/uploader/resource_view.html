@@ -76,14 +76,6 @@ function vote(rating)
     </div>
     <p><small>Rating: <strong>{{ resource.rating }}</strong>/5.0</small></p>
 
-    <!--<div></div>-->
-    <form class='form-inline'>
-    {{ form|bootstrap }}
-    <p><button class='btn btn-success' type='submit'>Rate</button></p>
-    </form>
-    <div id="thankyou" style="display:none">
-        Thank you for rating.
-    </div>
     {% if resource.file.uploader or resource.bookmark.uploader %}
     <div id="uploader" style="clear:both;">
         <p><strong>Added by:</strong>
