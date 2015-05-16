@@ -1,0 +1,41 @@
+{% if resources %}
+<table class='table table-condensed table-striped'>
+{% for resource in resources %}
+    <tr>
+        <td>
+    {% if resource.bookmark %}
+        {% if resource.bookmark.type == 'video' %}
+        <span class="glyphicon glyphicon-facetime-video" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Video"></span>
+        {% elif resource.bookmark.type == 'news' %}
+        <span class="glyphicon glyphicon-list-alt" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="News article"></span>
+        {% elif resource.bookmark.type == 'image' %}
+        <span class="glyphicon glyphicon-image" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Image"></span>
+        {% elif resource.bookmark.type == 'info' %}
+        <span class="glyphicon glyphicon-info-sign" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Informational source"></span>
+        {% elif resource.bookmark.type == 'blog' %}
+        <span class="glyphicon glyphicon-comment" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Blog article or site"></span>
+        {% else %}
+        <span class="glyphicon glyphicon-bookmark" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Website"></span>
+        {% endif %}
+        </td>
+        <td>
+        <a href="{% url 'uploader:view_resource' resource|slugify %}">{{ resource }}</a>
+        </td>
+        <td>
+         {{ resource.bookmark.description|truncatewords:20 }} 
+         {% if resource.avg_rating %}
+             ({{ resource.avg_rating }})
+         {% endif %}
+         </td>
+    {% else %}
+    <td>
+        <span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span>
+            <a href="{% url 'uploader:view_resource' resource|slugify %}">{{ resource }}</a>
+    </td>
+    {% endif %}
+    </tr>
+{% endfor %}
+</table>
+{% else %}
+No resources :( <a href="{% url 'uploader:add_resource' %}">Add some?</a>
+{% endif %}
