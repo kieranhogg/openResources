@@ -211,6 +211,11 @@ class UnitTopic(models.Model):
     class Meta:
         ordering = ('title',)
         unique_together = ('unit', 'slug')
+        
+    def get_absolute_url(self):
+        return reverse('uploader:unit_topic', 
+            args=[self.unit.syllabus.subject.slug, self.unit.syllabus.exam_level.slug,
+                  self.unit.syllabus.slug, self.unit.slug, self.slug])
 
 
 class UnitTopicAdmin(admin.ModelAdmin):

@@ -1,4 +1,4 @@
-import requests, json, markdown, shutil, os, random, string, urllib, diff_match_patch as dmp
+import requests, json, markdown, shutil, os, random, string, urllib, re, diff_match_patch as dmp
 from tempfile import NamedTemporaryFile
 
 from django.db.models.base import ModelBase
@@ -102,11 +102,12 @@ def extract(url):
     return url
 
 
-def embed_resources(text):
-    import re
+def embed_resources(text, syllabus):
+    # FIXME multiple fors
     card_html = '<a class="embedly-card" href="%s">%s</a><script async src="//cdn.embedly.com/widgets/platform.js" charset="UTF-8"></script>'
     resource_pattern = re.compile(r'\@\[resource\]\(([\da-z]{4}?)\)')
     image_pattern = re.compile(r'\@\[image\]\(([\da-z]{4}?)\)')
+    wiki_pattern = re.compile(r'\[\[([ a-zA-Z]+?)\]\]')
     
     for match in re.finditer(resource_pattern, text):
         try:
@@ -115,6 +116,25 @@ def embed_resources(text):
             text = text.replace(match.group(0), replace)
         except Resource.DoesNotExist:
             pass
+        
+    for match in re.finditer(wiki_pattern, text):
+        logger.error("wiki found")
+        try:
+            unit_topic = UnitTopic.objects.get(title=match.group(1), unit__syllabus=syllabus)
+            replace = '<a href="%s">%s</a>' % (unit_topic.get_absolute_url(), match.group(1))
+            text = text.replace(match.group(0), replace)
+        except UnitTopic.DoesNotExist:
+            pass
+    
+    for match in re.finditer(image_pattern, text):
+        try:
+            image = Image.objects.get(code=match.group(1))
+            replace = "<img src='%s%s' alt='%s' title='%s' />" % ( 
+                settings.MEDIA_URL, image.image, image.alt_text, image.alt_text)
+            text = text.replace(match.group(0), replace)
+        except Resource.DoesNotExist:
+            pass
+    
     return text
     
 
