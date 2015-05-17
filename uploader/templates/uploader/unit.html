@@ -35,7 +35,7 @@
 {% endif %}
 {% if unit_topics|length == 0 and resources %}
 <p>I found no unit topics linked to {{ unit }}, below are resources for this unit.</p>
-{% resource_table resources %}
+{% resources_table resources %}
 {% elif unit_topics %}
     <h2>Unit Resources</h2>
     <p>
