@@ -343,7 +343,7 @@ def unit(request, subject_slug, exam_slug, syllabus_slug, slug):
         except ObjectDoesNotExist as TypeError:
             pass
 
-    resources = Resource.objects.filter(unit__id=unit.id)
+    resources = Resource.objects.filter(unit__id=unit.id, unit_topic=None)
 
     context = {
         'resources': resources,
