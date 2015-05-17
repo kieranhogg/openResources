@@ -8,6 +8,7 @@ import time
 import urllib2
 import mimetypes
 import datetime
+import diff_match_patch
 
 from django.apps import apps
 from django.contrib import messages
@@ -961,32 +962,103 @@ def notes_d(request, slug):
 def notes(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
     items = hierachy_from_slugs(subject_slug, exam_slug, syllabus_slug, unit_slug, slug)
     unit_topic = items['unit_topic']
-    notes = Note.objects.filter(unit_topic=unit_topic)
-
-    if notes.count() > 0:
-        note = notes[0]
-    else:
+    
+    try:
+        note = Note.objects.get(unit_topic=unit_topic)
+        old_content = note.content
+    except Note.DoesNotExist:
         note = None
+        
+    
 
     form = NotesForm(request.POST or None, instance=note or None,
                      label_suffix='')
 
-    if request.method == 'POST':
+    if request.POST:
+        new_note = form.save(commit=False)
         if not note:
-            note = form.save(commit=False)
-            note.unit_topic = unit_topic
-
-            note.slug = safe_slugify(note.unit_topic.title, Note)
-            note.code = generate_code(Note)
+            new_note.unit_topic = unit_topic
+            new_note.slug = safe_slugify(unit_topic.title, Note)
+            new_note.code = generate_code(Note)
+            new_note.save()
+            NoteHistory(note=new_note,
+                        type='full',
+                        content=request.POST['content'],
+                        user=request.user,
+                        comment=None).save()
 
         if form.is_valid():
-            form.save()
+            # if it's the same content, no point in adding a diff
+            if note and old_content != new_note.content:
+                # store the history
+                revs = NoteHistory.objects.filter(note=note)
+    
+                # first go or 20 diffs have passed
+                if not Note or revs.count() == 0 or revs.count() % 20 == 0:
+                    NoteHistory(note=note,
+                                type='full',
+                                content=request.POST['content'],
+                                user=request.user,
+                                comment=None).save()
+                else:
+                    last_full = NoteHistory.objects.filter(note=note, type='full').order_by('-pub_date')
+                    last_full = last_full[0]
+                    
+                    diff_match_patch.Diff_Timeout = 0
+                    diff_obj = diff_match_patch.diff_match_patch()
+                    
+                    diff = diff_obj.diff_main(last_full.content, request.POST['content'])
+                    diff_obj.diff_cleanupEfficiency(diff)
+                    patch = diff_obj.patch_toText(diff_obj.patch_make(diff))
+                    
+                    NoteHistory(note=note,
+                                type='diff',
+                                content=patch,
+                                user=request.user,
+                                parent=last_full,
+                                comment=None).save()
+                            
+                new_note.save()
+                            
             return HttpResponseRedirect(reverse('uploader:view_notes',
                                                 args=[subject_slug, exam_slug, syllabus_slug, unit_slug,
                                                       unit_topic.slug]))
     else:
         return render(request, "uploader/add_notes.html",
                       {'form': form, 'unit_topic': unit_topic})
+
+
+@login_required
+@permission_required(
+    'notes.can_edit', '/denied?msg=For editing rights, please email contact@eduresourc.es')
+def notes_history(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
+    items = hierachy_from_slugs(subject_slug, exam_slug, syllabus_slug, unit_slug, slug)
+    unit_topic = items['unit_topic']
+    
+    note = Note.objects.get(unit_topic=unit_topic)
+    
+    history = NoteHistory.objects.filter(note=note).order_by('pub_date')
+    
+    last_full = None
+    for item in history:
+        if item.type == 'full':
+            last_full = item
+            item.length = len(item.content)
+            item.patch = "full"
+        else:
+            diff_match_patch.Diff_Timeout = 0
+            diff_obj = diff_match_patch.diff_match_patch()
+            patch = diff_obj.patch_apply(diff_obj.patch_fromText(item.content), item.parent.content)
+            item.new_content = str(patch[0].encode('ascii'))
+            logger.error(item.new_content)
+            # diff = diff_obj.diff_main(item.parent.content, item.content)
+            # diff_obj.diff_cleanupSemantic(diff)
+            # item.diff = diff_obj.diff_prettyHtml(diff)
+            # logger.error(item.diff)
+
+    history = history.reverse()
+
+    return render(request, 'uploader/notes_history.html', {'history': history})
 
 
 def view_notes_code(request, code):

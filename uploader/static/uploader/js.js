@@ -64,7 +64,6 @@ $(function() {
 
 
 // we set subject on the previous page, fill this in and pre-fill syllabuses
-
     var subject = '{{subject}}';
     if (subject != "") {
         $('[name=subject]').val(subject);

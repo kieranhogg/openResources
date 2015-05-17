@@ -235,6 +235,16 @@ class Note(models.Model):
         if votes['average'] is None:
             votes['average'] = 3.0        
         return votes['average']
+        
+
+class NoteHistory(models.Model):
+    note = models.ForeignKey(Note)
+    type = models.CharField(max_length=4, choices=(('full', 'full'), ('diff', 'diff')))
+    content = models.TextField()
+    parent = models.ForeignKey('self', null=True, blank=True)
+    comment = models.CharField(max_length=300, null=True, blank=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    pub_date = models.DateTimeField(auto_now_add=True)
 
 
 class NoteAdmin(admin.ModelAdmin):

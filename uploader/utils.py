@@ -1,4 +1,4 @@
-import requests, json, markdown, shutil, os, random, string, urllib
+import requests, json, markdown, shutil, os, random, string, urllib, diff_match_patch as dmp
 from tempfile import NamedTemporaryFile
 
 from django.db.models.base import ModelBase
@@ -190,7 +190,6 @@ def get_user_profile(user):
     
     
 class diff_object:
-    import diff_match_patch as dmp
     text1 = None
     text2 = None
     diff = None
