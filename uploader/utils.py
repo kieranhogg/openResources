@@ -122,12 +122,14 @@ def embed_resources(text, syllabus):
         try:
             unit_topic = UnitTopic.objects.get(title=match.group(1), unit__syllabus=syllabus)
             url = unit_topic.get_absolute_url()
+            title = match.group(1)
             anchor = ""
             if match.group(2):
                 anchor = match.group(2)
                 anchor = anchor.replace(" ", "-")
                 anchor = '#' + anchor.lower()
-            replace = '<a href="%snotes/%s">%s</a>' % (url, anchor, match.group(1))
+                title = match.group(2)
+            replace = '<a href="%snotes/%s">%s</a>' % (url, anchor, title)
             text = text.replace(match.group(0), replace)
         except UnitTopic.DoesNotExist:
             pass
