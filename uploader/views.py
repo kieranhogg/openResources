@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from __future__ import division
 
 import re
@@ -1043,20 +1044,16 @@ def notes_history(request, subject_slug, exam_slug, syllabus_slug, unit_slug, sl
     for item in history:
         if item.type == 'full':
             last_full = item
-            item.length = len(item.content)
-            item.patch = "full"
         else:
             diff_match_patch.Diff_Timeout = 0
             diff_obj = diff_match_patch.diff_match_patch()
             patch = diff_obj.patch_apply(diff_obj.patch_fromText(item.content), item.parent.content)
-            item.new_content = str(patch[0].encode('ascii'))
-            logger.error(item.new_content)
-            # diff = diff_obj.diff_main(item.parent.content, item.content)
-            # diff_obj.diff_cleanupSemantic(diff)
-            # item.diff = diff_obj.diff_prettyHtml(diff)
-            # logger.error(item.diff)
+            item.content = patch[0]
+            diff = diff_obj.diff_main(item.parent.content, item.content)
+            diff_obj.diff_cleanupSemantic(diff)
+            item.diff = diff_obj.diff_prettyHtml(diff)
 
-    history = history.reverse()
+    #FIXME reversing the queryset seems to reset it to the original values
 
     return render(request, 'uploader/notes_history.html', {'history': history})
 

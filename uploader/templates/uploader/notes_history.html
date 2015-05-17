@@ -3,15 +3,15 @@
 <h1>{% block head_title %}Notes History{% endblock %}</h1>
 
 <ul>
-{% for item in history %}
+{% for item in history reversed %}
 
 <li>
-    {{ item.id }} ({{item.parent.id}}) {{ item.user }} - {{ item.pub_date }} ({{ item.new_content|length }} bytes) {% if item.comment %} <em>({{ item.comment }})</em>{% endif %}
-</li>
-<p>content: {{ item.new_content.0 }}</p>
-<!--<p>diff: {{ item.diff | safe }}</p>-->
-<p>parent: {{ item.parent.content }}</p>
-<hr />
+    {{ item.user }} - {{ item.pub_date }} ({{ item.content|length }} bytes) {% if item.comment %} <em>({{ item.comment }})</em>{% endif %} 
+    
+</li><a href="javascript:void(0);" onclick="$('#diff{{ forloop.counter }}').toggle();">Show/hide diff</a>
+<div id='diff{{forloop.counter}}' style='display:none'>
+<p>{{ item.diff | safe }}</p>
+</div>
 {% endfor %}
 </ul>
 {% endblock %}
