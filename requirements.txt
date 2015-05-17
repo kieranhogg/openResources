@@ -17,5 +17,4 @@ django-bootstrap3-datetimepicker
 markdown
 Pygments
 django-haystack
-django-timezones
-pytz
+diff-match-patch

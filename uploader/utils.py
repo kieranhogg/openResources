@@ -187,3 +187,49 @@ def get_user_profile(user):
     elif user_type(user) == 'student':
         return user.studentprofile
     
+    
+    
+class diff_object:
+    import diff_match_patch as dmp
+    text1 = None
+    text2 = None
+    diff = None
+    patch = None
+
+    def set_diff(self, text1, text2):
+        text1 = text1
+        text2 = text2
+        diff = dmp.diff_main(text1, text2)
+    
+    
+    def diff_to_html(self):
+        if not diff:
+            raise Exception("Please set a diff first")
+        else:
+            return diff_prettyHtml(diff)
+            
+    
+    def set_patch(self, text1, text2):
+        patch = dmp.patch_make(text1, text2)
+        
+    
+    def patch_to_text(self):
+        if not diff:
+            raise Exception("Please set a patch first")
+        else:
+            return dmp.patch_toText(patch)
+        
+    
+    def patch_to_html(self):
+        if not diff:
+            raise Exception("Please set a patch first")
+        else:
+            return dmp.path_toHtml(patch)
+        
+    
+    def apply_patch(self, new_text):
+        if not diff:
+            raise Exception("Please set a patch first")
+        else:
+            return dmp.patch_apply(patch, new_text)
+        

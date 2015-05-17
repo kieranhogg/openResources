@@ -34,21 +34,7 @@
 {% endif %}
 {% if unit_topics|length == 0 and resources %}
 <p>I found no unit topics linked to {{ unit }}, below are resources for this unit.</p>
-<div id='resouce_list'>
-  <ul>
-    {% for resource in resources %}
-      {% if resource.file %}
-        <li data-type="file"><a href="{% url 'uploader:view_resource' resource.slug %}">
-            {{ resource }}</a>
-        </li>
-        {% else %}
-        <li data-type="bookmark"><a href="{% url 'uploader:view_resource' resource.slug %}">
-            {{ resource }}</a>
-        </li>
-        {% endif %}
-    {% endfor %}
-  </ul>
-</div>
+{% resource_table resources %}
 {% elif unit_topics %}
     <h2>Unit Resources</h2>
     <p>
