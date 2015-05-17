@@ -121,7 +121,7 @@ def embed_resources(text, syllabus):
         logger.error("wiki found")
         try:
             unit_topic = UnitTopic.objects.get(title=match.group(1), unit__syllabus=syllabus)
-            replace = '<a href="%s">%s</a>' % (unit_topic.get_absolute_url(), match.group(1))
+            replace = '<a href="%s/notes/">%s</a>' % (unit_topic.get_absolute_url(), match.group(1))
             text = text.replace(match.group(0), replace)
         except UnitTopic.DoesNotExist:
             pass
