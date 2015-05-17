@@ -1,0 +1,17 @@
+{% extends 'uploader/base.html' %}
+{% block body_block %}
+<h1>{% block head_title %}Notes History{% endblock %}</h1>
+
+<ul>
+{% for item in history %}
+
+<li>
+    {{ item.id }} ({{item.parent.id}}) {{ item.user }} - {{ item.pub_date }} ({{ item.new_content|length }} bytes) {% if item.comment %} <em>({{ item.comment }})</em>{% endif %}
+</li>
+<p>content: {{ item.new_content.0 }}</p>
+<!--<p>diff: {{ item.diff | safe }}</p>-->
+<p>parent: {{ item.parent.content }}</p>
+<hr />
+{% endfor %}
+</ul>
+{% endblock %}
