@@ -107,7 +107,7 @@ def embed_resources(text, syllabus):
     card_html = '<a class="embedly-card" href="%s">%s</a><script async src="//cdn.embedly.com/widgets/platform.js" charset="UTF-8"></script>'
     resource_pattern = re.compile(r'\@\[resource\]\(([\da-z]{4}?)\)')
     image_pattern = re.compile(r'\@\[image\]\(([\da-z]{4}?)\)')
-    wiki_pattern = re.compile(r'\[\[([ a-zA-Z]+?)\]\]')
+    wiki_pattern = re.compile(r'\[\[([ a-zA-Z]+)#*([ a-zA-Z]*?)\]\]')
     
     for match in re.finditer(resource_pattern, text):
         try:
@@ -121,7 +121,13 @@ def embed_resources(text, syllabus):
         logger.error("wiki found")
         try:
             unit_topic = UnitTopic.objects.get(title=match.group(1), unit__syllabus=syllabus)
-            replace = '<a href="%s/notes/">%s</a>' % (unit_topic.get_absolute_url(), match.group(1))
+            url = unit_topic.get_absolute_url()
+            anchor = ""
+            if match.group(2):
+                anchor = match.group(2)
+                anchor = anchor.replace(" ", "-")
+                anchor = '#' + anchor.lower()
+            replace = '<a href="%snotes/%s">%s</a>' % (url, anchor, match.group(1))
             text = text.replace(match.group(0), replace)
         except UnitTopic.DoesNotExist:
             pass
