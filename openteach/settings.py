@@ -154,6 +154,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+NOTES_LOCK_TIME = 20
+
 try:
     from local_settings import *
 except ImportError:

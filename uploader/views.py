@@ -967,7 +967,7 @@ def notes(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
         note = Note.objects.get(unit_topic=unit_topic)
         locked = False
         if note.locked and note.locked_by is not request.user:
-            note.locked_until = note.locked_at + datetime.timedelta(minutes=10)
+            note.locked_until = note.locked_at + datetime.timedelta(minutes=settings.NOTES_LOCK_TIME)
             if note.locked_until >= pytz.utc.localize(datetime.datetime.now()):
                 locked = True
         
@@ -976,7 +976,7 @@ def notes(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
             note.locked_by = request.user
             logger.error(request.user)
             note.locked_at = pytz.utc.localize(datetime.datetime.now())
-            note.locked_until = note.locked_at + datetime.timedelta(minutes=10)
+            note.locked_until = note.locked_at + datetime.timedelta(minutes=settings.NOTES_LOCK_TIME)
             note.save()
 
         form = NotesForm(request.POST or None, instance=note or None,
