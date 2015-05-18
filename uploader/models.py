@@ -578,6 +578,10 @@ class Image(models.Model):
     code = models.SlugField(max_length=4, unique=True)
     alt_text = models.CharField(max_length=200)
     pub_date = models.DateTimeField(auto_now_add=True)
+    
+    
+class ImageAdmin(admin.ModelAdmin):
+    list_display = ('image', 'credit', 'licence', 'code', 'alt_text')
 
 
 class Question(models.Model):
