@@ -241,6 +241,10 @@ class Note(models.Model):
             votes['average'] = 3.0        
         return votes['average']
         
+    def __unicode__(self):
+        return self.unit_topic.title
+
+        
 
 class NoteHistory(models.Model):
     note = models.ForeignKey(Note)
@@ -251,6 +255,10 @@ class NoteHistory(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
     pub_date = models.DateTimeField(auto_now_add=True)
 
+
+class NoteHistoryAdmin(admin.ModelAdmin):
+    list_display = ('note', 'type', 'comment', 'user')
+    
 
 class NoteAdmin(admin.ModelAdmin):
     list_display = ('unit_topic', 'content')

@@ -1111,7 +1111,7 @@ def upload_image(request):
 @login_required
 def view_image(request, image_id):
     image = get_object_or_404(Image, pk=image_id)
-    return render(request, 'uploader/image.html', {'url': image.image.url})
+    return render(request, 'uploader/image.html', {'image': image})
 
 
 @login_required

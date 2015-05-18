@@ -2,36 +2,48 @@
 {% load bootstrap %}
 {% block body_block %}
 {% load static %}
-<link rel="stylesheet" type="text/css" href="{% static 'uploader/meltdown.css' %}">
 <style type="text/css">
 /* Place both meltdowns at the top for easier testings (in a large enough window): */
 .meltdown_wrap { display: inline-block; vertical-align: top; }
 </style>
 <h1>{% block head_title %}{{ unit_topic.title }} Notes{% endblock %}</h1>
-<p>Notes are written in Markdown format, common tags are as follows:
+<p>Notes are written in Markdown format <a class='btn btn-default btn-xs' href="javascript:void(0);" onclick="$('#syntax').toggle();">View/hide syntax</a>
 </p>
-<p><pre>
-    # title
-    ## subtitle
-    ### subsubtitle
-    .. etc
+<div id='syntax' style='display:none'>
+<h3>Formatting</h3>
+<pre>
+# title
+## subtitle
+### subsubtitle
+.. etc
+
+*This text will be italic*
+**This text will be bold**
+
+* Bullet lists
+* start
+* with bullets
+
+1. Numbered lists
+2. start 
+3. with numbers
+</pre>
+<h3>Linking</h3>
+<pre>
+
+[Link title](http://address.com) - Link to a website
+[[Topic]] or [[Topic#Title]] - Link to another page's notes (only works within the same syllabus)
+@[image](code) - Add an uploaded image using its quickcode
+@[resource](code) - Embed a resource using its quickcode
     
-    *This text will be italic*
-    **This text will be bold**
-    
-    * Bullet lists
-    * start
-    * with bullets
-    
-    1. Numbered lists
-    2. start 
-    3. with numbers
-</pre></p>
-<p>Please note the preview does not always display correctly, so check the final saved version to be sure.</p>
+</pre></div>
+<p><strong>Note:</strong> the preview does not always display correctly, so check the final saved version to be sure.</p>
 
 <form role="form" action method="post" novalidate>
     {% csrf_token %}
-    {{ form|bootstrap }}
+    {{ form.content|bootstrap }}
+    <label>Change description (optional)</label>
+    <input class='form-input' />
 
 <div class="form-group text-center">
     <button type="submit" class="btn btn-success">Update</button>
