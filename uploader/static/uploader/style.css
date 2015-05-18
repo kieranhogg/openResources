@@ -538,3 +538,10 @@ a.btn.btn-default {
 /*    box-sizing: content-box !important;*/
 /*    color: red !important;*/
 /*}*/
+.diff {
+    color: #333;
+}
+ins, del {
+    color: black;
+    font-size: 150%;
+}

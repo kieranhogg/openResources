@@ -9,7 +9,7 @@
     {{ item.user }} - {{ item.pub_date }} ({{ item.content|length }} bytes) {% if item.comment %} <em>({{ item.comment }})</em>{% endif %} 
     
 </li><a href="javascript:void(0);" onclick="$('#diff{{ forloop.counter }}').toggle();">Show/hide diff</a>
-<div id='diff{{forloop.counter}}' style='display:none'>
+<div class='diff' id='diff{{forloop.counter}}' style='display:none'>
 <p>{{ item.diff | safe }}</p>
 </div>
 {% endfor %}
