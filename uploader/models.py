@@ -2,6 +2,7 @@ from __future__ import division
 
 import logging
 import os
+import pytz
 
 from django.core.urlresolvers import reverse
 from django.conf import settings
@@ -231,6 +232,9 @@ class Note(models.Model):
         unique=True,
         max_length=100)  # don't use this yet but may in future
     code = models.SlugField(max_length=4, unique=True)
+    locked = models.BooleanField(default=False)
+    locked_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
+    locked_at = models.DateTimeField(blank=True, null=True)
         
     def get_absolute_url(self):
         return reverse('uploader:view_notes_code', args=[self.code])
@@ -243,7 +247,6 @@ class Note(models.Model):
         
     def __unicode__(self):
         return self.unit_topic.title
-
         
 
 class NoteHistory(models.Model):
@@ -497,6 +500,7 @@ class Vote(models.Model):
     class Meta:
         unique_together = ['user', 'content_type', 'object_id']
 
+
 class TeacherProfile(models.Model):
     TITLES = (
         ('Mr', 'Mr'),
@@ -511,6 +515,7 @@ class TeacherProfile(models.Model):
     surname = models.CharField(max_length=100)
     subjects = models.ManyToManyField(Subject, null=True, blank=True)
     score = models.IntegerField(default=0)
+    timezone = models.CharField(max_length=100, default='UTC')
 
     def __unicode__(self):
         return unicode(self.title + ' ' + self.surname)
@@ -522,6 +527,8 @@ class StudentProfile(models.Model):
     surname = models.CharField(max_length=100)
     subjects = models.ManyToManyField(Subject, null=True, blank=True)
     score = models.IntegerField(default=0)
+    timezone = models.CharField(max_length=100, default='UTC')
+
 
     def __unicode__(self):
         return unicode(self.forename + ' ' + self.surname)

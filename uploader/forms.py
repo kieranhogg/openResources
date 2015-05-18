@@ -1,4 +1,4 @@
-import mimetypes
+import mimetypes, pytz
 from django import forms
 from django.conf import settings
 from django.contrib.auth.models import Group as DjangoGroup
@@ -225,12 +225,16 @@ class TeacherForm(forms.Form):
         return new_user
         
 class TeacherProfileForm(forms.ModelForm):
+    timezone = forms.ChoiceField(choices=[(x, x) for x in pytz.common_timezones])
+    
     class Meta:
         model = TeacherProfile
         exclude = ('user', 'score', 'profile_setup')
 
         
 class StudentProfileForm(forms.ModelForm):
+    timezone = forms.ChoiceField(choices=[(x, x) for x in pytz.common_timezones])
+    
     class Meta:
         model = StudentProfile
         exclude = ('user', 'score', 'profile_setup')

@@ -38,7 +38,9 @@
     
 </pre></div>
 <p><strong>Note:</strong> the preview does not always display correctly, so check the final saved version to be sure.</p>
-
+<div class="alert alert-info" role="alert">Note locked until {% localtime on %}
+    {{ locked_at }}
+{% endlocaltime %}</div>
 <form role="form" action method="post" novalidate>
     {% csrf_token %}
     {{ form.content|bootstrap }}

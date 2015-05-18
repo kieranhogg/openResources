@@ -5,7 +5,7 @@
         <th>Assignment</th>
         {% if not group and teacher_or_student == 'teacher' %}
             <th>Group</th>
-            <th>Set</th>
+            <!--<th>Set</th>-->
         {% elif teacher_or_student == 'student' %}
             <th>Class</th>
         {% endif %}
@@ -26,7 +26,7 @@
                     <td>{{ assignment.group }}</td>
                 {% endif %}
                 <td>{{ assignment.deadline }}</td>
-            <td>{{ assignment.pub_date }}</td>
+                <!--<td>{{ assignment.pub_date }}</td>-->
                     <td align='right'>
                         <a href="{% url 'uploader:assignment' assignment.code %}" class='btn btn-sm btn-info'>
                             <span style="font-size: 0.9em" class="glyphicon glyphicon-edit" aria-hidden="true"></span>

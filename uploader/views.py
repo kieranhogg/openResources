@@ -29,6 +29,7 @@ from django.http import (HttpResponse, HttpResponseRedirect, JsonResponse,
 from django.shortcuts import (render, get_object_or_404, get_list_or_404,
                               render_to_response, redirect)
 from django.template import Context, loader, RequestContext
+from django.utils import timezone
 
 from boxview import boxview
 
@@ -40,11 +41,9 @@ from uploader.utils import *
 logging.basicConfig()
 logger = logging.getLogger(__name__)
 
-
 def index(request):
     """Homepage view depending on logged in and user type
     """
-
     if not request.user.is_authenticated():
 
         subjects = Subject.objects.filter(active=1)
@@ -965,11 +964,13 @@ def notes(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
     
     try:
         note = Note.objects.get(unit_topic=unit_topic)
+        note.locked = True
+        note.locked_by = request.user
+        note.locked_at = datetime.datetime.now()
+        note.save()
         old_content = note.content
     except Note.DoesNotExist:
         note = None
-        
-    
 
     form = NotesForm(request.POST or None, instance=note or None,
                      label_suffix='')
@@ -1025,7 +1026,7 @@ def notes(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
                                                       unit_topic.slug]))
     else:
         return render(request, "uploader/add_notes.html",
-                      {'form': form, 'unit_topic': unit_topic})
+                      {'form': form, 'unit_topic': unit_topic, 'note': note})
 
 
 @login_required
