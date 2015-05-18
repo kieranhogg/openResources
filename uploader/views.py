@@ -966,17 +966,16 @@ def notes(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
     try:
         note = Note.objects.get(unit_topic=unit_topic)
         locked = False
-        logger.error(note.locked_at)
-        logger.error(datetime.datetime.now())
         if note.locked and note.locked_by is not request.user:
-            note.locked_until = note.locked_at.replace(tzinfo=None) + datetime.timedelta(minutes=10)
-            if note.locked_until >= datetime.datetime.now():
+            note.locked_until = note.locked_at + datetime.timedelta(minutes=10)
+            if note.locked_until >= pytz.utc.localize(datetime.datetime.now()):
                 locked = True
         
-        if not locked:
+        if not locked or request.POST.get('renew'):
             note.locked = True
             note.locked_by = request.user
-            note.locked_at = datetime.datetime.now()
+            logger.error(request.user)
+            note.locked_at = pytz.utc.localize(datetime.datetime.now())
             note.locked_until = note.locked_at + datetime.timedelta(minutes=10)
             note.save()
 
@@ -1036,7 +1035,7 @@ def notes(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
                                 comment=None).save()
                             
                 new_note.save()
-                if request.POST.get('renew', None) is None:
+                if not request.POST.get('renew', None):
                     return HttpResponseRedirect(reverse('uploader:view_notes',
                                                         args=[subject_slug, exam_slug, syllabus_slug, unit_slug,
                                                               unit_topic.slug]))

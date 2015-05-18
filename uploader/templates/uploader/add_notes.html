@@ -40,12 +40,12 @@
 <p><strong>Note:</strong> the preview does not always display correctly, so check the final saved version to be sure.</p>
 <div class="alert alert-info" role="alert">
 	<span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
-	Note locked by 
-	{% if note.locked_by == request.user %}
-		you
-	{% else %}
-		<strong>{{ note.locked_by }}</strong>
-	{% endif %}
+	Note locked <!--by -->
+	<!--{% if note.locked_by == request.user %}-->
+	<!--	you-->
+	<!--{% else %}-->
+	<!--	<strong>{{ note.locked_by }}</strong>-->
+	<!--{% endif %}-->
 	 for editing until <strong>{{ note.locked_until }}</strong>
 </div>
 <form role="form" action method="post" novalidate>
