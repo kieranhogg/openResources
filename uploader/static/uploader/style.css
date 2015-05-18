@@ -540,6 +540,10 @@ a.btn.btn-default {
 /*}*/
 .diff {
     color: #333;
+    margin-top: 20px;
+    border: 1px dashed;
+    padding: 15px;
+    color: #999;
 }
 ins, del {
     color: black;
