@@ -102,7 +102,7 @@ def extract(url):
     return url
 
 
-def embed_resources(text, syllabus):
+def embed_resources(request, text, syllabus):
     # FIXME multiple fors
     card_html = '<a class="embedly-card" href="%s">%s</a><script async src="//cdn.embedly.com/widgets/platform.js" charset="UTF-8"></script>'
     resource_pattern = re.compile(r'\@\[resource\]\(([\da-z]{4}?)\)')
@@ -112,7 +112,10 @@ def embed_resources(text, syllabus):
     for match in re.finditer(resource_pattern, text):
         try:
             resource = Resource.objects.get(code=match.group(1))
-            replace = card_html % (resource.bookmark.link, resource.bookmark.title)
+            if resource.type() == 'bookmark':
+                replace = card_html % (resource.bookmark.link, resource.title())
+            else:
+                replace = card_html % (resource.get_absolute_url(), resource.title())
             text = text.replace(match.group(0), replace)
         except Resource.DoesNotExist:
             pass

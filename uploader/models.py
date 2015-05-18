@@ -452,6 +452,12 @@ class Resource(models.Model):
         if votes['average'] is None:
             votes['average'] = 3.0
         return votes['average']
+        
+    def type(self):
+        if self.bookmark:
+            return 'bookmark'
+        else:
+            return 'file'
 
 
 class ResourceAdmin(admin.ModelAdmin):
