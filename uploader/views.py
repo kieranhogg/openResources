@@ -962,18 +962,34 @@ def notes(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
     items = hierachy_from_slugs(subject_slug, exam_slug, syllabus_slug, unit_slug, slug)
     unit_topic = items['unit_topic']
     
+    # check if it's locked, if it's not add a lock
     try:
         note = Note.objects.get(unit_topic=unit_topic)
-        note.locked = True
-        note.locked_by = request.user
-        note.locked_at = datetime.datetime.now()
-        note.save()
+        locked = False
+        logger.error(note.locked_at)
+        logger.error(datetime.datetime.now())
+        if note.locked and note.locked_by is not request.user:
+            note.locked_until = note.locked_at.replace(tzinfo=None) + datetime.timedelta(minutes=10)
+            if note.locked_until >= datetime.datetime.now():
+                locked = True
+        
+        if not locked:
+            note.locked = True
+            note.locked_by = request.user
+            note.locked_at = datetime.datetime.now()
+            note.locked_until = note.locked_at + datetime.timedelta(minutes=10)
+            note.save()
+
+        form = NotesForm(request.POST or None, instance=note or None,
+             label_suffix='')
+
+        if note.locked_by != request.user:
+            form.fields['content'].widget.attrs['disabled'] = 'disabled'
+
         old_content = note.content
+    
     except Note.DoesNotExist:
         note = None
-
-    form = NotesForm(request.POST or None, instance=note or None,
-                     label_suffix='')
 
     if request.POST:
         new_note = form.save(commit=False)
@@ -1020,13 +1036,13 @@ def notes(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
                                 comment=None).save()
                             
                 new_note.save()
-                            
-            return HttpResponseRedirect(reverse('uploader:view_notes',
-                                                args=[subject_slug, exam_slug, syllabus_slug, unit_slug,
-                                                      unit_topic.slug]))
-    else:
-        return render(request, "uploader/add_notes.html",
-                      {'form': form, 'unit_topic': unit_topic, 'note': note})
+                if request.POST.get('renew', None) is None:
+                    return HttpResponseRedirect(reverse('uploader:view_notes',
+                                                        args=[subject_slug, exam_slug, syllabus_slug, unit_slug,
+                                                              unit_topic.slug]))
+                                                          
+    return render(request, "uploader/add_notes.html",
+                  {'form': form, 'unit_topic': unit_topic, 'note': note})
 
 
 @login_required
