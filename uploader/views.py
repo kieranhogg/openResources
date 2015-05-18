@@ -1067,7 +1067,7 @@ def notes_history(request, subject_slug, exam_slug, syllabus_slug, unit_slug, sl
             diff = diff_obj.diff_main(item.parent.content, item.content)
             diff_obj.diff_cleanupSemantic(diff)
             item.diff = diff_obj.diff_prettyHtml(diff)
-
+            
     #FIXME reversing the queryset seems to reset it to the original values
 
     return render(request, 'uploader/notes_history.html', {'history': history})

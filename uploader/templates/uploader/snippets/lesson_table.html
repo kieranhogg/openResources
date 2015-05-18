@@ -1,14 +1,20 @@
 {% load tags %}
 {% if lessons %}
+<script>
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
+</script>
 <p>Clicking <strong>present</strong> will show you a large screen version of 
 the lesson you can display on your board.</p>
-<table class="table table-striped">
+<div class='table-responsive'>
+<table class='table table-striped table-condensed'>
     <th>Lesson</th>
     {% if not group %}<th>Group</th>{% endif %}
     <th>Unit Topic</th>
     <th>Short link</th>
     <th>Date</th>
-    <th>Feedback <span class="glyphicon glyphicon-question-sign" style="font-size: 0.9em" aria-hidden="true" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Average post lesson understanding (of out 5)"></span></th>
+    <th>Feedback <span class="glyphicon glyphicon-question-sign" style="font-size: 0.9em" aria-hidden="true" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Average post-lesson understanding (of out 5)"></span></th>
     <th></th>
     
 {% for lesson in lessons %}
@@ -37,27 +43,19 @@ the lesson you can display on your board.</p>
         <td>
     {% endif %}
     </td>
-    <td class='text-center'>
-        <div class="btn-group">
-              <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                Actions <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu" role="menu">
-                <li><a href="{% url 'uploader:lesson' lesson.group.code lesson.lesson.code %}">
-                    <span class="glyphicon glyphicon-modal-window" aria-hidden="true"></span>
+    <td align='right'>
+                 <a class='btn btn-default btn-xs' href="{% url 'uploader:lesson' lesson.group.code lesson.lesson.code %}">
+                    <span style="font-size:100%" class="glyphicon glyphicon-modal-window" aria-hidden="true"></span>
                     View
-                    </a></li>
-                <li>
-                    <a href="{% url 'uploader:lesson_show' lesson.group.code lesson.lesson.code %}">
-                    <span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span>
+                    </a>
+                    <a class='btn btn-default btn-xs' href="{% url 'uploader:lesson_show' lesson.group.code lesson.lesson.code %}">
+                    <span style="font-size:100%" class="glyphicon glyphicon-blackboard" aria-hidden="true"></span>
                     Present</a>
-                </li>
-              </ul>
-            </div>
     </td>
 </tr>
 {% endfor %}
 </table>
+</div>
 {% else %}
 <p>No lessons</p>
 {% endif %}
