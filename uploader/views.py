@@ -1110,11 +1110,11 @@ def upload_image(request):
         request.POST or None,
         request.FILES or None,
         label_suffix='',
-        initial={'uploader': request.user}  # FIXME initial
     )
 
-    if request.method == 'POST' and form.is_valid():
+    if request.POST and form.is_valid():
         image = form.save(commit=False)
+        image.uploader=User.objects.get(pk=request.user.id),
         image.code = generate_code(Image)
         image.save()
         # FIXME

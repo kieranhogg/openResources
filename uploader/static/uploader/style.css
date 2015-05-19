@@ -549,6 +549,3 @@ ins, del {
     color: black;
     font-size: 150%;
 }
-.navbar-collapse.in {
-	overflow-y: visible;
-}

@@ -104,7 +104,7 @@
         {% elif student.student.submission %}
             <a href="{% url 'uploader:mark_assignment' assignment.code student.student.submission.id %}" class='btn btn-sm btn-default'>Mark</a>
         {% elif assignment.offline %}
-            <a href="{% url 'uploader:mark_assignment_no_submission' assignment.code student.student.id %}" class='btn btn-sm btn-default'>Mark</a>
+            <a href="{% url 'uploader:mark_assignment' assignment.code student.student.id %}" class='btn btn-sm btn-default'>Mark</a>
         {% else %}
             <a href="{% url 'uploader:mark_assignment' assignment.code 'absent' student.student.id %}" class='btn btn-sm btn-default'>Absent</a>
         {% endif %}

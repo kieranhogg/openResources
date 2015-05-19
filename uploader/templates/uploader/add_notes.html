@@ -52,16 +52,19 @@
     {% csrf_token %}
     {{ form.content|bootstrap }}
     <label>Change description (optional)</label>
-    <input class='form-input' {% if note.locked %} disabled='disabled' {% endif %}/>
+    <input class='form-input'  {% if note.locked and note.locked_by != request.user %} disabled='disabled' {% endif %}/>
+
+<p id='image-button'><a href="javascript:void(0);" onclick="$('#image').show();$('#image-button').hide();" class='btn btn-xl btn-default'>Upload image</a></p>
+<div id='image' style='display:none'>
+<h2>Upload Image</h2>
+<p>Use this form to upload an image to our servers to use in the notes.</p>
+<iframe src="/upload_image" width="100%" height="400" frameborder="0"></iframe>
+</div>
 
 <div class="form-group text-center">
     <input type="submit" name="renew" class="btn btn-info" value="Renew lock" {% if note.locked and note.locked_by != request.user %} disabled='disabled' {% endif %} />
     <input type="submit" name="submit" class="btn btn-success" value="Update" {% if note.locked and note.locked_by != request.user %} disabled='disabled' {% endif %} />
-</div>    
-<h2>Upload Image</h2>
-<p>Use this form to upload an image to our servers to use in the notes.</p>
-<iframe src="/upload_image" width="100%" height="300" frameborder="0"></iframe>
-
+</div>
 <script src="{% static 'uploader/rangyinputs-jquery.min.js' %}"></script>
 <script src="{% static 'uploader/element_resize_detection.js' %}"></script>
 <script src="{% static 'uploader/js-markdown-extra.js' %}"></script>
