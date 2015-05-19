@@ -1659,7 +1659,16 @@ def view_assignment(request, code):
 
 def mark_assignment(request, assignment_code, submission_id=None, absent=None, student_id=None):
     assignment = get_object_or_404(Assignment, code=assignment_code)
-    submission = get_object_or_404(AssignmentSubmission, pk=submission_id)
+    
+    if assignment.offline: 
+        try:
+            submission = get_object_or_404(AssignmentSubmission, pk=submission_id)
+        except Submission.DoesNotExist:
+            student = get_object_or_404(User, pk=student_id)
+            submission = AssignmentSubmission(assignment=assignment, student=student)
+            submission.save()
+    else:
+        submission = get_object_or_404(AssignmentSubmission, pk=submission_id)
 
     if absent == 'absent':
         student = get_object_or_404(User, pk=student_id)
