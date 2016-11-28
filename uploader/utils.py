@@ -35,7 +35,7 @@ def safe_slugify(text, model):
     database to find duplicate slugs and appends an increasing number if a
     duplicate is found. Max length is 100
     """
-    text = slugify(unicode(text))
+    text = slugify(text)
     text = (text[:100]) if len(text) > 100 else text
     num_slugs = model.objects.filter(slug__startswith=text).count()
     

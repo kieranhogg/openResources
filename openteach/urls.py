@@ -3,9 +3,9 @@ from django.contrib import admin
 
 from openteach import settings
 
-if not settings.DEBUG:
-    from haystack.forms import HighlightedSearchForm
-    from haystack.views import SearchView
+#if not settings.DEBUG:
+#from haystack.forms import HighlightedSearchForm
+#from haystack.views import SearchView
 
 urlpatterns = patterns('',
     #(r'^grappelli/', include('grappelli.urls')),
@@ -15,11 +15,11 @@ urlpatterns = patterns('',
     url(r'^uploader/', include('uploader.urls', namespace="uploader")),
 )
 
-if not settings.DEBUG:
-    additional_patterns = patterns(
-        url(r'^search/$', SearchView(form_class=HighlightedSearchForm)),
-    )
-    urlpatterns += additional_patterns 
+#if not settings.DEBUG:
+#additional_patterns = patterns(
+#    url(r'^search/$', SearchView(form_class=HighlightedSearchForm)),
+#)
+#urlpatterns += additional_patterns 
 
 additional_patterns = patterns(
     url(r'', include('uploader.urls', namespace="uploader")),

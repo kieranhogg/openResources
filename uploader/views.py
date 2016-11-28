@@ -5,7 +5,6 @@ import requests
 import logging
 import json
 import time
-import urllib2
 import mimetypes
 import datetime
 import diff_match_patch

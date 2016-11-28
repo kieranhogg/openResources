@@ -3,7 +3,7 @@ boto
 django-boto
 django-storages
 mock
-wsgiref
+#wsgiref
 #django-registration
 django-allauth
 django-gravatar2

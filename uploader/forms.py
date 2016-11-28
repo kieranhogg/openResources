@@ -7,7 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.text import slugify
 from django.shortcuts import get_object_or_404
 from django.core.mail import send_mail
-from bootstrap3_datetime.widgets import DateTimePicker
+#from bootstrap3_datetime.widgets import DateTimePicker
 from uploader.models import *
 
 
@@ -263,9 +263,9 @@ class GroupForm(forms.ModelForm):
         
 
 class TestForm(forms.ModelForm):
-    deadline = forms.DateTimeField(required=False,
-        widget=DateTimePicker(options={"format": "YYYY-MM-DD HH:mm",
-                                       "pickSeconds": False}))
+    #deadline = forms.DateTimeField(required=False,
+    #    widget=DateTimePicker(options={"format": "YYYY-MM-DD HH:mm",
+    #                                   "pickSeconds": False}))
     class Meta:
         model = Test
         fields = ('group', 'subject', 'total', 'deadline', 'use_own_questions')
@@ -286,8 +286,8 @@ class TestForm(forms.ModelForm):
             return self.cleaned_data['use_own_questions']
             
 class AssignmentForm(forms.ModelForm):
-    deadline = forms.DateTimeField(widget=DateTimePicker(options={"format": "YYYY-MM-DD HH:mm",
-                                       "pickSeconds": False}))
+    #deadline = forms.DateTimeField(widget=DateTimePicker(options={"format": "YYYY-MM-DD HH:mm",
+    #                                   "pickSeconds": False}))
     
     class Meta:
         model = Assignment
@@ -310,9 +310,9 @@ class AssignmentSubmissionFileForm(forms.ModelForm):
 
 
 class GroupLessonForm(forms.ModelForm):
-    date = forms.DateTimeField(required=False,
-    widget=DateTimePicker(options={"format": "YYYY-MM-DD",
-                                       "pickTime": False}))
+    #date = forms.DateTimeField(required=False,
+    #widget=DateTimePicker(options={"format": "YYYY-MM-DD",
+    #                                   "pickTime": False}))
     class Meta:
         model = GroupLesson
         fields = ('lesson', 'date', 'period')

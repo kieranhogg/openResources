@@ -19,8 +19,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.contrib.auth.context_processors.auth",
     "django.contrib.messages.context_processors.messages",
     # allauth specific context processors
-    "allauth.account.context_processors.account",
-    "allauth.socialaccount.context_processors.socialaccount",
+    #"allauth.account.context_processors.account",
+    #"allauth.socialaccount.context_processors.socialaccount",
     'openteach.context_processors.global_settings',
     "django.core.context_processors.media",
     "django.core.context_processors.static",
@@ -156,12 +156,9 @@ STATIC_URL = '/static/'
 
 NOTES_LOCK_TIME = 20
 
-try:
-    from local_settings import *
-except ImportError:
-    pass
-
-if not DEBUG:
-    INSTALLED_APPS += ('haystack',)
+from .local_settings import *
+SECRET_KEY = '+-@080fqgx^r-a=uu^vj2x=jio(=p3y=z&duf13!z=5t#m4pn2'
+#if not DEBUG:
+#INSTALLED_APPS += ('haystack',)
     
-assert len(SECRET_KEY) > 20, 'Please set SECRET_KEY in local_settings.py'
+#assert len(SECRET_KEY) > 20, 'Please set SECRET_KEY in local_settings.py'

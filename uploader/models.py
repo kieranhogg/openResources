@@ -2,7 +2,6 @@ from __future__ import division
 
 import logging
 import os
-import pytz
 
 from django.core.urlresolvers import reverse
 from django.conf import settings
@@ -26,7 +25,7 @@ class Subject(models.Model):
     slug = models.SlugField(unique=True, max_length=100)
     pub_date = models.DateTimeField('Date published')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.subject_name
 
     class Meta:
@@ -42,7 +41,7 @@ class ExamBoard(models.Model):
     board_name = models.CharField('Exam Board Name', max_length=200)
     pub_date = models.DateTimeField('Date published')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.board_name
 
     class Meta:
@@ -83,7 +82,7 @@ class ExamLevel(models.Model):
     slug = models.SlugField(max_length=100, unique=True)
     pub_date = models.DateTimeField('Date published')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.level_name
 
     class Meta:
@@ -119,7 +118,7 @@ class Syllabus(models.Model):
     slug = models.SlugField(max_length=100)
     pub_date = models.DateTimeField('Date published')
 
-    def __unicode__(self):
+    def __str__(self):
         # Fix for BTEC and IB oddities as the qualification and exam board
         # are the same and read badly
         if ('BTEC' in str(self.exam_board) or
@@ -161,7 +160,7 @@ class Unit(models.Model):
     slug = models.SlugField(max_length=100)
     pub_date = models.DateTimeField('Date published')
 
-    def __unicode__(self):
+    def __str__(self):
         return str(self.title)
 
     class Meta:
@@ -178,7 +177,7 @@ class UnitAdmin(admin.ModelAdmin):
 class Topic(models.Model):
     title = models.CharField(max_length=200)
 
-    def __unicode__(self):
+    def __str__(self):
         return str(self.title)
 
     class Meta:
@@ -206,7 +205,7 @@ class UnitTopic(models.Model):
     slug = models.SlugField(max_length=100)
     pub_date = models.DateTimeField('Date published')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
     class Meta:
@@ -245,7 +244,7 @@ class Note(models.Model):
             votes['average'] = 3.0        
         return votes['average']
         
-    def __unicode__(self):
+    def __str__(self):
         return self.unit_topic.title
         
 
@@ -273,7 +272,7 @@ class Licence(models.Model):
     description = models.TextField(null=True)
     link = models.URLField('URL', max_length=200, null=True, blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return str(self.name)
 
     class Meta:
@@ -345,7 +344,7 @@ class File(models.Model):
         blank=True
     )
 
-    def __unicode__(self):
+    def __str__(self):
         return self.filename
 
     class Meta:
@@ -396,7 +395,7 @@ class Bookmark(models.Model):
         blank=True
     )
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
     class Meta:
@@ -434,7 +433,7 @@ class Resource(models.Model):
         blank=True
     )
 
-    def __unicode__(self):
+    def __str__(self):
         if self.file is not None:
             return str(self.file.title)
         elif self.bookmark is not None:
@@ -517,8 +516,8 @@ class TeacherProfile(models.Model):
     score = models.IntegerField(default=0)
     timezone = models.CharField(max_length=100, default='UTC')
 
-    def __unicode__(self):
-        return unicode(self.title + ' ' + self.surname)
+    def __str__(self):
+        return str(self.title + ' ' + self.surname)
 
 
 class StudentProfile(models.Model):
@@ -530,8 +529,8 @@ class StudentProfile(models.Model):
     timezone = models.CharField(max_length=100, default='UTC')
 
 
-    def __unicode__(self):
-        return unicode(self.forename + ' ' + self.surname)
+    def __str__(self):
+        return (self.forename + ' ' + self.surname)
 
 
 class TeacherProfileAdmin(admin.ModelAdmin):
@@ -570,7 +569,7 @@ class Message(models.Model):
     sticky_date = models.DateTimeField(null=True)
     pub_date = models.DateTimeField(auto_now_add=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return str(self.message)
 
     class Meta:
@@ -623,7 +622,7 @@ class MultipleChoiceQuestion(Question):
         choices=(
             (1, "1"), (2, "2"), (3, "3"), (4, "4")))
 
-    def __unicode__(self):
+    def __str__(self):
         return str(self.text)
 
 
@@ -638,7 +637,7 @@ class MultipleChoiceAnswer(Answer):
     text = models.CharField(max_length=300)
     number = models.IntegerField()
 
-    def __unicode__(self):
+    def __str__(self):
         return self.text
 
 
@@ -656,7 +655,7 @@ class Group(models.Model):
     class Meta:
         unique_together = ["name", "teacher"]
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -679,7 +678,7 @@ class Test(models.Model):
     total = models.IntegerField(default=10, help_text='If the total is ' +
                                 ' greater than the number of available questions, it will be changed')
 
-    def __unicode__(self):
+    def __str__(self):
         rep = None
         if self.unit_topic:
             rep = self.unit_topic
@@ -688,7 +687,7 @@ class Test(models.Model):
         elif self.syllabus:
             rep = self.syllabus
 
-        return unicode(rep)
+        return (rep)
 
     class Meta:
         ordering = ('-deadline', '-pub_date')
@@ -766,7 +765,7 @@ class Lesson(models.Model):
     unit_topic = models.ForeignKey(UnitTopic, null=True, blank=True)
     pub_date = models.DateTimeField(auto_now_add=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
         
     def rating(self):
@@ -793,7 +792,7 @@ class LessonPrePost(models.Model):
     group_lesson = models.ForeignKey('GroupLesson')
     text = models.CharField(max_length=255)
     
-    def __unicode__(self):
+    def __str__(self):
         return self.text
 
 
@@ -861,7 +860,7 @@ class GroupLesson(models.Model):
     period = models.IntegerField(null=True, blank=True, choices=(
          (1, "P1"), (2, "P2"), (3, "P3"), (4, "P4"), (5, "P5"), (6, "P6")))
          
-    def __unicode__(self):
+    def __str__(self):
         return str(self.group) + " | " + str(self.lesson)
     
 
@@ -1014,7 +1013,7 @@ class Grading(models.Model):
     public = models.BooleanField(default=False)
     pub_date = models.DateTimeField(auto_now_add=True)
     
-    def __unicode__(self):
+    def __str__(self):
         if self.public:
             grading = "[Public] "
         else:
