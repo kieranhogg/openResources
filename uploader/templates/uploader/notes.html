@@ -11,20 +11,20 @@ $(document).ready(function () {
 });
 </script>
 <ol class="breadcrumb">
-    <li><a href="{% url 'uploader:subjects' %}">Home</a></li>
-    <li><a href="{% url 'uploader:subject' unit_topic.unit.syllabus.subject.slug %}">
+    <li><a href="% url 'uploader:subjects' %}">Home</a></li>
+    <li><a href="% url 'uploader:subject' unit_topic.unit.syllabus.subject.slug %}">
         {{ unit_topic.unit.syllabus.subject.subject_name|truncatechars:25 }}</a></li>
-    <li><a href="{% url 'uploader:syllabuses' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug %}">
+    <li><a href="% url 'uploader:syllabuses' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug %}">
      {{ unit_topic.unit.syllabus.exam_level.level_name|truncatechars:25 }}</a></li>
-    <li><a href="{% url 'uploader:syllabus' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug %}"> 
+    <li><a href="% url 'uploader:syllabus' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug %}"> 
      {{ unit_topic.unit.syllabus|truncatechars:25 }}</a></li>
-    <li><a href="{% url 'uploader:unit' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug %}">
+    <li><a href="% url 'uploader:unit' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug %}">
      {{ unit_topic.unit.title|truncatechars:25 }}</a></li>
-    <li><a href="{% url 'uploader:unit_topic' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug  %}">
+    <li><a href="% url 'uploader:unit_topic' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug  %}">
      {{ unit_topic.title|truncatechars:25 }}</a></li>
     <li class='active'>Notes</li>
 </ol>
-<a class='btn btn-default' href="{% url 'uploader:notes' unit_topic.unit.syllabus.subject.slug unit_topic.unit.syllabus.exam_level.slug unit_topic.unit.syllabus.slug unit_topic.unit.slug unit_topic.slug %}">
+<a class='btn btn-default' href="{% url 'uploader:notes' topic.category.subject.slug topic.category.slug topic.slug %}">
         <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
     Edit
 </a>
@@ -38,7 +38,7 @@ $(document).ready(function () {
     </a>
 </div>
 {% endif %}
-{% include 'uploader/unit_topic_tabs.html' %}
+{% include 'uploader/topic_tabs.html' %}
 <div id="notes">
 {% if notes %}
     {{ notes.content|safe }}

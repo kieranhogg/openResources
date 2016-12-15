@@ -11,7 +11,7 @@ $(function() {
             var me = this;
             var json = '';
             $.ajax({ type: "GET",   
-             url: "/lookup/url_description/"+encodeURIComponent(url),   
+             url: "/lookup/url_description/?url="+encodeURIComponent(url),   
              async: true,
              beforeSend: loadStart,
              success : function(text)

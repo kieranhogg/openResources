@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.sitemaps.views import sitemap
@@ -6,10 +6,10 @@ from django.views.generic.base import TemplateView
 
 from uploader import views
 
-urlpatterns = patterns('',
+urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^denied/$', views.denied, name='denied'),
-    
+ 
     url(r'^assignment/add/$', views.assignment, name='assignment'),
     url(r'^assignment/(?P<code>[\w\d]+)/$', views.view_assignment, name='view_assignment'),
     url(r'^assignment/(?P<code>[\w\d]+)/edit/$', views.assignment, name='assignment'),
@@ -21,7 +21,7 @@ urlpatterns = patterns('',
     url(r'^lookup/unit/(?P<syllabus_id>\d+)/$', views.get_units, name='get_units'),
     url(r'^lookup/quick/(?P<type>[\w]+)/(?P<code>[\w\d]+)/$', views.get_object_from_code, name='get_object_from_code'),
     url(r'^lookup/unit_topic/(?P<unit_id>\d+)/$', views.get_unit_topics, name='get_unit_topics'),
-    url(r'^lookup/url_description/(?P<url>.+)$', views.get_url_description, name='get_url_description'),
+    url(r'^lookup/url_description/$', views.get_url_description, name='get_url_description'),
     url(r'^bulk/bookmark/(?P<action>.+)/(?P<ids>.+)/$', views.bulk_bookmark_update, name='bulk_bookmark_update'),
     url(r'^pre-post/(?P<action>.+)/(?P<id>.+)/$', views.pre_post, name='pre_post'),
     
@@ -99,20 +99,29 @@ urlpatterns = patterns('',
     
     url(r'^add-question/(?P<slug>[\w\d-]+)', views.question, name='question'),
     
-    url(r'^(?P<subject_slug>[\w\d-]+)/(?P<exam_slug>[\w\d-]+)/(?P<slug>[\w\d-]+)/$', views.syllabus, name='syllabus'),
-    url(r'^(?P<subject_slug>[\w\d-]+)/(?P<exam_slug>[\w\d-]+)/(?P<slug>[\w\d-]+)/resources/$', views.syllabus_resources, name='syllabus_resources'),
-    url(r'^(?P<subject_slug>[\w\d-]+)/(?P<exam_slug>[\w\d-]+)/$', views.syllabuses, name='syllabuses'),
-    url(r'^(?P<subject_slug>[\w\d-]+)/(?P<exam_slug>[\w\d-]+)/(?P<syllabus_slug>[\w\d-]+)/(?P<slug>[\w\d-]+)/$', views.unit, name='unit'),
-    url(r'^(?P<subject_slug>[\w\d-]+)/(?P<exam_slug>[\w\d-]+)/(?P<syllabus_slug>[\w\d-]+)/(?P<unit_slug>[\w\d-]+)/resources/$', views.unit_resources, name='unit_resources'),
-    url(r'^(?P<subject_slug>[\w\d-]+)/(?P<exam_slug>[\w\d-]+)/(?P<syllabus_slug>[\w\d-]+)/(?P<unit_slug>[\w\d-]+)/(?P<slug>[\w\d-]+)/resources/$', views.unit_topic_resources, name='unit_topic_resources'),
-    url(r'^(?P<subject_slug>[\w\d-]+)/(?P<exam_slug>[\w\d-]+)/(?P<syllabus_slug>[\w\d-]+)/(?P<unit_slug>[\w\d-]+)/(?P<slug>[\w\d-]+)/notes/$', views.view_notes, name='view_notes'),
-    url(r'^(?P<subject_slug>[\w\d-]+)/(?P<exam_slug>[\w\d-]+)/(?P<syllabus_slug>[\w\d-]+)/(?P<unit_slug>[\w\d-]+)/(?P<slug>[\w\d-]+)/lessons/$', views.unit_topic_lessons, name='unit_topic_lessons'),
-    url(r'^(?P<subject_slug>[\w\d-]+)/(?P<exam_slug>[\w\d-]+)/(?P<syllabus_slug>[\w\d-]+)/(?P<unit_slug>[\w\d-]+)/(?P<slug>[\w\d-]+)/notes/edit/$', views.notes, name='notes'),
-    url(r'^(?P<subject_slug>[\w\d-]+)/(?P<exam_slug>[\w\d-]+)/(?P<syllabus_slug>[\w\d-]+)/(?P<unit_slug>[\w\d-]+)/(?P<slug>[\w\d-]+)/notes/history/$', views.notes_history, name='notes_history'),
-    url(r'^(?P<subject_slug>[\w\d-]+)/(?P<exam_slug>[\w\d-]+)/(?P<syllabus_slug>[\w\d-]+)/(?P<unit_slug>[\w\d-]+)/(?P<slug>[\w\d-]+)/questions/$', views.questions, name='questions'),
-    url(r'^(?P<subject_slug>[\w\d-]+)/(?P<exam_slug>[\w\d-]+)/(?P<syllabus_slug>[\w\d-]+)/(?P<unit_slug>[\w\d-]+)/(?P<slug>[\w\d-]+)/questions/add/$', views.question, name='question'),
-    url(r'^(?P<subject_slug>[\w\d-]+)/(?P<exam_slug>[\w\d-]+)/(?P<syllabus_slug>[\w\d-]+)/(?P<unit_slug>[\w\d-]+)/(?P<slug>[\w\d-]+)/$', views.unit_topic, name='unit_topic'),
-    url(r'^(?P<slug>[\w\d-]+)/$', views.subject, name='subject'),
+    url(r'^(?P<subject_slug>[\w\d-]+)/(?P<category_slug>[\w\d-]+)/(?P<topic_slug>[\w\d-]+)/resources$', views.topic_resources, name='topic_resources'),
+    url(r'^(?P<subject_slug>[\w\d-]+)/(?P<category_slug>[\w\d-]+)/(?P<topic_slug>[\w\d-]+)$', views.topic, name='topic'),
+    
+    url(r'^(?P<subject_slug>[\w\d-]+)/(?P<category_slug>[\w\d-]+)/$', views.category, name='category'),
+    url(r'^(?P<subject_slug>[\w\d-]+)/$', views.subject, name='subject'),
+    
+    url(r'^(?P<subject_slug>[\w\d-]+)/(?P<category_slug>[\w\d-]+)/(?P<topic_slug>[\w\d-]+)/notes/$', views.view_notes, name='view_notes'),
+    url(r'^(?P<subject_slug>[\w\d-]+)/(?P<category_slug>[\w\d-]+)/(?P<topic_slug>[\w\d-]+)/notes/edit$', views.notes, name='notes'),
+
+    # url(r'^(?P<subject_slug>[\w\d-]+)/(?P<exam_slug>[\w\d-]+)/(?P<slug>[\w\d-]+)/$', views.syllabus, name='syllabus'),
+    # url(r'^(?P<subject_slug>[\w\d-]+)/(?P<exam_slug>[\w\d-]+)/(?P<slug>[\w\d-]+)/resources/$', views.syllabus_resources, name='syllabus_resources'),
+    # url(r'^(?P<subject_slug>[\w\d-]+)/(?P<exam_slug>[\w\d-]+)/$', views.syllabuses, name='syllabuses'),
+    # url(r'^(?P<subject_slug>[\w\d-]+)/(?P<exam_slug>[\w\d-]+)/(?P<syllabus_slug>[\w\d-]+)/(?P<slug>[\w\d-]+)/$', views.unit, name='unit'),
+    # url(r'^(?P<subject_slug>[\w\d-]+)/(?P<exam_slug>[\w\d-]+)/(?P<syllabus_slug>[\w\d-]+)/(?P<unit_slug>[\w\d-]+)/resources/$', views.unit_resources, name='unit_resources'),
+    # url(r'^(?P<subject_slug>[\w\d-]+)/(?P<exam_slug>[\w\d-]+)/(?P<syllabus_slug>[\w\d-]+)/(?P<unit_slug>[\w\d-]+)/(?P<slug>[\w\d-]+)/resources/$', views.unit_topic_resources, name='unit_topic_resources'),
+    # url(r'^(?P<subject_slug>[\w\d-]+)/(?P<exam_slug>[\w\d-]+)/(?P<syllabus_slug>[\w\d-]+)/(?P<unit_slug>[\w\d-]+)/(?P<slug>[\w\d-]+)/notes/$', views.view_notes, name='view_notes'),
+    # url(r'^(?P<subject_slug>[\w\d-]+)/(?P<exam_slug>[\w\d-]+)/(?P<syllabus_slug>[\w\d-]+)/(?P<unit_slug>[\w\d-]+)/(?P<slug>[\w\d-]+)/lessons/$', views.unit_topic_lessons, name='unit_topic_lessons'),
+    # url(r'^(?P<subject_slug>[\w\d-]+)/(?P<exam_slug>[\w\d-]+)/(?P<syllabus_slug>[\w\d-]+)/(?P<unit_slug>[\w\d-]+)/(?P<slug>[\w\d-]+)/notes/edit/$', views.notes, name='notes'),
+    # url(r'^(?P<subject_slug>[\w\d-]+)/(?P<exam_slug>[\w\d-]+)/(?P<syllabus_slug>[\w\d-]+)/(?P<unit_slug>[\w\d-]+)/(?P<slug>[\w\d-]+)/notes/history/$', views.notes_history, name='notes_history'),
+    # url(r'^(?P<subject_slug>[\w\d-]+)/(?P<exam_slug>[\w\d-]+)/(?P<syllabus_slug>[\w\d-]+)/(?P<unit_slug>[\w\d-]+)/(?P<slug>[\w\d-]+)/questions/$', views.questions, name='questions'),
+    # url(r'^(?P<subject_slug>[\w\d-]+)/(?P<exam_slug>[\w\d-]+)/(?P<syllabus_slug>[\w\d-]+)/(?P<unit_slug>[\w\d-]+)/(?P<slug>[\w\d-]+)/questions/add/$', views.question, name='question'),
+    # url(r'^(?P<subject_slug>[\w\d-]+)/(?P<exam_slug>[\w\d-]+)/(?P<syllabus_slug>[\w\d-]+)/(?P<unit_slug>[\w\d-]+)/(?P<slug>[\w\d-]+)/$', views.unit_topic, name='unit_topic'),
+    # url(r'^(?P<slug>[\w\d-]+)/$', views.subject, name='subject'),
 
     # static pages
     url(r'^about',
@@ -125,4 +134,6 @@ urlpatterns = patterns('',
     TemplateView.as_view(template_name='uploader/signup.html'),
     name='signup'),
 
-) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+] 
+
+#+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

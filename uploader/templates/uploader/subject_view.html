@@ -7,26 +7,9 @@
     <li class="active">{{ subject.subject_name }}</li>
 </ol>
 <h1>{% block head_title %}{{ subject.subject_name }}{% endblock %}</h1>
-<!--<img src="{% static 'uploader/img/18x18/subjects/' %}{{ subject.subject_name|slugify }}_large.jpg" />-->
-<p>Choose which level of syllabus you are looking for:</p>
-<div id="resouce_list">
-    <!--<h2>Any</h2>
-    <ul>
-        <li>
-            General {{ subject }} resources
-            </a> 
-            (you are likely to find better resources in syllabuses)</li>
-    </ul>
-    -->
-    {% regroup exam_levels by country as country_list %}
-    {% for country in country_list %}
-        <h2>{{ country.grouper }}</h2>
-        <ul>
-            {% for item in country.list %}
-              <!--<li>{{ item.name }}: {{ item.population }}</li>-->
-              <li><a href="{% url 'uploader:syllabuses' subject.slug item.slug %}">{{ item.level_name }}</a></li> 
-            {% endfor %}
-        </ul>
-    {% endfor %}
-    {% endblock %}
-</div>
+<img src="{% static 'uploader/img/18x18/subjects/' %}{{ subject.subject_name|slugify }}_large.jpg" />
+<h2>Categories</h2>
+{% for category in categories %}
+<li><a href="{% url 'uploader:category' subject.slug category.slug %}">{{category}}</a></li>
+{% endfor %}
+{% endblock %}

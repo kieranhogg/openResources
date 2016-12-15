@@ -3,6 +3,7 @@ from __future__ import division
 import re
 import requests
 import logging
+import pytz
 import json
 import time
 import mimetypes
@@ -169,15 +170,15 @@ def remove_favourite(request, slug, thing):
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 
-def subject(request, slug):
+def subject(request, subject_slug):
     """View one subject, shows exam levels, e.g. GCSE
     """
-    subject = get_object_or_404(Subject, slug=slug)
-
+    subject = get_object_or_404(Subject, slug=subject_slug)
     # Sort by country first to enable grouping
     exam_levels = ExamLevel.objects.order_by('country', 'level_number')
-
-    context = {'exam_levels': exam_levels, 'subject': subject}
+    #categories = Category.objects.filter(subject=subject)
+    categories = Category.objects.all()
+    context = {'exam_levels': exam_levels, 'subject': subject, 'categories': categories}
     return render(request, 'uploader/subject_view.html', context)
 
 
@@ -229,6 +230,22 @@ def unit_topic(
                'lessons': lessons}
     return render(request, 'uploader/unit_topic.html', context)
 
+def topic(request, subject_slug, category_slug, topic_slug):
+    topic = Topic.objects.get(slug=topic_slug)
+    resources = len(Resource.objects.filter(topic=topic)) 
+    notes = Note.objects.filter(topic=topic)
+    context = {'topic': topic, 'resources': resources, 'notes': notes}
+
+    return render(request, 'uploader/topic.html', context)
+
+def category(request, subject_slug, category_slug):
+    
+    category = Category.objects.get(slug=category_slug)
+    topics = Topic.objects.filter(category=category)
+
+    context = {'category': category, 'topics': topics}
+    return render(request, 'uploader/category.html', context)
+
 
 def unit_topic_resources(
         request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
@@ -244,7 +261,13 @@ def unit_topic_resources(
     context = {'unit_topic': unit_topic, 'resources': resources}
     return render(request, 'uploader/unit_topic_resources.html', context)
     
-    
+def topic_resources(request, subject_slug, category_slug, topic_slug):
+    topic = get_object_or_404(Topic, slug=topic_slug)
+    resources = Resource.objects.filter(topic=topic)
+   
+    context = {'resources': resources, 'topic': topic}
+    return render(request, 'uploader/unit_resources.html', context)
+
 def unit_topic_lessons(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
     """Finds the publuc lessons for a particular unit topic
     """
@@ -562,9 +585,7 @@ def bookmark(request, slug=None, url=None):
     else:
         form = BookmarkForm(instance=bookmark)
 
-    return render_to_response('uploader/add_bookmark.html', {
-        'form': form,
-    }, context_instance=RequestContext(request))
+    return render(request, 'uploader/add_bookmark.html', {'form': form })
 
 
 def link_file(request, slug):
@@ -957,13 +978,12 @@ def notes_d(request, slug):
 @login_required
 @permission_required(
     'notes.can_edit', '/denied?msg=For editing rights, please email contact@eduresourc.es')
-def notes(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
-    items = hierachy_from_slugs(subject_slug, exam_slug, syllabus_slug, unit_slug, slug)
-    unit_topic = items['unit_topic']
-    
+def notes(request, subject_slug, category_slug, topic_slug):
+    topic = Topic.objects.get(slug=topic_slug)
+    form = NotesForm()
     # check if it's locked, if it's not add a lock
     try:
-        note = Note.objects.get(unit_topic=unit_topic)
+        note = Note.objects.get(topic=topic)
         locked = False
         if note.locked and note.locked_by is not request.user:
             note.locked_until = note.locked_at + datetime.timedelta(minutes=settings.NOTES_LOCK_TIME)
@@ -992,9 +1012,10 @@ def notes(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
     if request.POST:
         new_note = form.save(commit=False)
         if not note:
-            new_note.unit_topic = unit_topic
-            new_note.slug = safe_slugify(unit_topic.title, Note)
+            new_note.topic = topic
+            new_note.slug = safe_slugify(topic.title, Note)
             new_note.code = generate_code(Note)
+            new_note.content = request.POST['content']
             new_note.save()
             NoteHistory(note=new_note,
                         type='full',
@@ -1004,12 +1025,12 @@ def notes(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
 
         if form.is_valid():
             # if it's the same content, no point in adding a diff
-            if note and old_content != new_note.content:
+            if note and (old_content != new_note.content):
                 # store the history
                 revs = NoteHistory.objects.filter(note=note)
     
                 # first go or 20 diffs have passed
-                if not Note or revs.count() == 0 or revs.count() % 20 == 0:
+                if not note or revs.count() == 0 or revs.count() % 20 == 0:
                     NoteHistory(note=note,
                                 type='full',
                                 content=request.POST['content'],
@@ -1032,15 +1053,14 @@ def notes(request, subject_slug, exam_slug, syllabus_slug, unit_slug, slug):
                                 user=request.user,
                                 parent=last_full,
                                 comment=None).save()
-                            
-                new_note.save()
-                if not request.POST.get('renew', None):
-                    return HttpResponseRedirect(reverse('uploader:view_notes',
-                                                        args=[subject_slug, exam_slug, syllabus_slug, unit_slug,
-                                                              unit_topic.slug]))
+            new_note.topic = topic                
+            new_note.save()
+    
+        if not request.POST.get('renew', None):
+            return HttpResponseRedirect(reverse('uploader:view_notes',  args=[subject_slug, category_slug, topic_slug]))
                                                           
     return render(request, "uploader/add_notes.html",
-                  {'form': form, 'unit_topic': unit_topic, 'note': note})
+                  {'form': form, 'topic': topic, 'note': note})
 
 
 @login_required
@@ -1089,17 +1109,17 @@ def view_notes_code(request, code):
     return redirect(url, permanent=True)
 
 
-def view_notes(request, subject_slug, exam_slug, syllabus_slug, unit_slug,
-               slug):
-    items = hierachy_from_slugs(subject_slug, exam_slug, syllabus_slug, unit_slug, slug)
-    unit_topic = items['unit_topic']
-    notes_list = Note.objects.filter(unit_topic=unit_topic)
-    notes = None
-    if notes_list.count() > 0:
-        notes = notes_list[0]
-        rendered_text = render_markdown(embed_resources(request, notes.content, items['syllabus']))
-        notes.content = rendered_text
-    context = {'notes': notes, 'unit_topic': unit_topic}
+def view_notes(request, subject_slug, category_slug, topic_slug):
+    topic = Topic.objects.get(slug=topic_slug)
+    try:
+        notes = Note.objects.get(topic=topic)
+    except Note.DoesNotExist:
+        notes = None
+
+    if notes:
+        notes.content = render_markdown(embed_resources(request, notes.content))
+
+    context = {'notes': notes, 'topic': topic}
     return render(request, 'uploader/notes.html', context)
 
 
@@ -1955,9 +1975,10 @@ def vote(request, content_type, object_id, vote):
     
 
 
-def get_url_description(request, url):
+def get_url_description(request):
     json = {}
-    url_info = extract(url)
+    from urllib.parse import unquote
+    url_info = extract(unquote(request.GET['url']))
     try:
         json['description'] = url_info['description'] or ""
         json['title'] = url_info['title'] or ""

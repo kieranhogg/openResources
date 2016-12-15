@@ -11,25 +11,62 @@ Django settings
 # Build paths inside the project like this: os.path.join(BASE_DIR,', #...)
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-TEMPLATE_DIRS = (os.path.join(BASE_DIR, 'templates'),)
+# TEMPLATE_DIRS = (os.path.join(BASE_DIR, 'templates'),
+#         os.path.join(BASE_DIR, 'uploader', 'templates'))
 
-TEMPLATE_CONTEXT_PROCESSORS = (
-    # Required by allauth template tags
-    "django.core.context_processors.request",
-    "django.contrib.auth.context_processors.auth",
-    "django.contrib.messages.context_processors.messages",
-    # allauth specific context processors
-    #"allauth.account.context_processors.account",
-    #"allauth.socialaccount.context_processors.socialaccount",
-    'openteach.context_processors.global_settings',
-    "django.core.context_processors.media",
-    "django.core.context_processors.static",
-)
+# TEMPLATE_CONTEXT_PROCESSORS = (
+#     # Required by allauth template tags
+#     "django.core.context_processors.request",
+#     "django.contrib.auth.context_processors.auth",
+#     "django.contrib.messages.context_processors.messages",
+#     # allauth specific context processors
+#     #"allauth.account.context_processors.account",
+#     #"allauth.socialaccount.context_processors.socialaccount",
+#     'openteach.context_processors.global_settings',
+#     "django.core.context_processors.media",
+#     "django.core.context_processors.static",
+# )
 
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader'
-)
+# TEMPLATE_LOADERS = (
+#     'django.template.loaders.filesystem.Loader',
+#     'django.template.loaders.app_directories.Loader'
+# )
+
+# TEMPLATES = [
+#     {
+#         'BACKEND': 'django.template.backends.django.DjangoTemplates',
+#         'DIRS': [os.path.join(BASE_DIR, 'templates')],
+#         'APP_DIRS': True,
+#         'OPTIONS': {
+#             'context_processors': [
+#                 'django.template.context_processors.debug',
+#                 'django.template.context_processors.request',
+#                 'django.contrib.auth.context_processors.auth',
+#                 'django.contrib.messages.context_processors.messages',
+#             ],
+#         },
+#     },
+# ]
+
+# ROOT_URLCONF = 'openteach.urls'
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates'),
+            ],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 
@@ -40,11 +77,11 @@ AUTHENTICATION_BACKENDS = (
     "allauth.account.auth_backends.AuthenticationBackend",
 )
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['resources.kieranhogg.com', ]
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 INSTALLED_APPS = (
-    # 'grappelli',
+    #'grappelli',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -124,7 +161,8 @@ PREVIEW_CONTENT_TYPES = ['application/pdf',
 MAX_UPLOAD_SIZE = 52428800 # 50mb
 
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE_CLASSES = [
+    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -132,8 +170,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'uploader.middleware.TimezoneMiddleware'
-)
+]
 
 ROOT_URLCONF = 'openteach.urls'
 
@@ -142,7 +179,7 @@ WSGI_APPLICATION = 'openteach.wsgi.application'
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
 
-LANGUAGE_CODE = 'en-gb'
+# LANGUAGE_CODE = 'en_GB'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_L10N = True

@@ -15,6 +15,8 @@ from django.db.models.signals import pre_delete, post_save
 from django.dispatch.dispatcher import receiver
 from django.utils.safestring import mark_safe
 
+from autoslug import AutoSlugField
+
 logging.basicConfig()
 logger = logging.getLogger(__name__)
 
@@ -174,8 +176,30 @@ class UnitAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("title",)}
 
 
+class Category(models.Model):
+    title = models.CharField(max_length=100)
+    description = models.TextField(blank=True, null=True)
+    subject = models.ForeignKey(Subject)
+    slug = AutoSlugField(unique=True, populate_from='title', editable=True)
+    pub_date = models.DateTimeField('Date published', auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name_plural = 'categories'
+
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('title', 'subject', 'description', 'slug', 'pub_date')
+    #list_filter = ('subject',)
+
+
 class Topic(models.Model):
     title = models.CharField(max_length=200)
+    description = models.TextField(blank=True, null=True)
+    category = models.ForeignKey(Category)
+    slug = AutoSlugField(unique=True, populate_from='title', editable=True)
+    pub_date = models.DateTimeField('Date published', auto_now_add=True)
 
     def __str__(self):
         return str(self.title)
@@ -185,7 +209,7 @@ class Topic(models.Model):
 
 
 class TopicAdmin(admin.ModelAdmin):
-    list_display = ('title',)
+    list_display = ('title', 'category', 'description', 'slug', 'pub_date')
 
 
 class UnitTopic(models.Model):
@@ -225,7 +249,8 @@ class UnitTopicAdmin(admin.ModelAdmin):
 
 
 class Note(models.Model):
-    unit_topic = models.OneToOneField(UnitTopic)
+    unit_topic = models.OneToOneField(UnitTopic, blank=True, null=True)
+    topic = models.OneToOneField(Topic, blank=True, null=True)
     content = models.TextField()
     slug = models.SlugField(
         unique=True,
@@ -245,8 +270,13 @@ class Note(models.Model):
         return votes['average']
         
     def __str__(self):
-        return self.unit_topic.title
-        
+        try:
+            return self.unit_topic.title
+        except AttributeError:
+            try:
+                return self.topic.title
+            except AttributeError:
+                return "No title"
 
 class NoteHistory(models.Model):
     note = models.ForeignKey(Note)
@@ -263,7 +293,7 @@ class NoteHistoryAdmin(admin.ModelAdmin):
     
 
 class NoteAdmin(admin.ModelAdmin):
-    list_display = ('unit_topic', 'content')
+    list_display = ('unit_topic', 'topic', 'content')
     prepopulated_fields = {"slug": ("unit_topic",)}
 
 
@@ -417,13 +447,14 @@ class Resource(models.Model):
     # Don't really need but its for the forms, FIXME?
     subject = models.ForeignKey(Subject)
     # TODO do we really need a syllabus?
-    syllabus = models.ForeignKey(Syllabus)
+    syllabus = models.ForeignKey(Syllabus, null=True, blank=True)
     unit = models.ForeignKey(Unit, null=True, blank=True)
     unit_topic = models.ForeignKey(
         UnitTopic,
         null=True,
         blank=True,
     )
+    topic = models.ForeignKey(Topic, null=True, blank=True)
     approved = models.BooleanField(default=False)
     code = models.SlugField(max_length=4, unique=True, null=True, blank=True)
     slug = models.SlugField(unique=True, max_length=100)
@@ -472,7 +503,7 @@ class Resource(models.Model):
 
 class ResourceAdmin(admin.ModelAdmin):
     list_display = ('file', 'slug', 'bookmark', 'uploader', 'subject', 'syllabus',
-                    'unit', 'unit_topic', 'approved', 'pub_date')
+                    'unit', 'unit_topic', 'topic', 'approved', 'pub_date')
     list_filter = ('approved',)
     actions = ['approve']
 
@@ -509,7 +540,7 @@ class TeacherProfile(models.Model):
         ('Dr', 'Dr'),
     )
     user = models.OneToOneField(settings.AUTH_USER_MODEL, parent_link=True)
-    title = models.CharField(max_length='7', choices=TITLES)
+    title = models.CharField(max_length=7, choices=TITLES)
     forename = models.CharField(max_length=100)
     surname = models.CharField(max_length=100)
     subjects = models.ManyToManyField(Subject, null=True, blank=True)
@@ -642,11 +673,11 @@ class MultipleChoiceAnswer(Answer):
 
 
 class Group(models.Model):
-    name = models.CharField(max_length='100')
+    name = models.CharField(max_length=100)
     teacher = models.ForeignKey(settings.AUTH_USER_MODEL)
-    year = models.CharField(max_length='3', help_text='E.g. 7, 12, FS1', null=True, blank=True)
+    year = models.CharField(max_length=3, help_text='E.g. 7, 12, FS1', null=True, blank=True)
     subject = models.ForeignKey(Subject, null=True, blank=True)
-    code = models.SlugField(max_length='4', unique=True)
+    code = models.SlugField(max_length=4, unique=True)
     pub_date = models.DateTimeField(auto_now_add=True)
     
     def unmarked_assignments(self):
@@ -672,7 +703,7 @@ class Test(models.Model):
         blank=True,
         null=True)
     group = models.ForeignKey(Group)
-    code = models.SlugField(max_length='5', unique=True)
+    code = models.SlugField(max_length=5, unique=True)
     pub_date = models.DateTimeField(auto_now_add=True)
     deadline = models.DateTimeField(blank=True, null=True)
     total = models.IntegerField(default=10, help_text='If the total is ' +
@@ -711,29 +742,31 @@ class UserAnswer(models.Model):
         unique_together = (("user", "question"),)
 
 
-class MultipleChoiceUserAnswer(UserAnswer):
-    answer_chosen = models.ForeignKey(MultipleChoiceAnswer)
+#class MultipleChoiceUserAnswer(UserAnswer):
+#    answer_chosen = models.ForeignKey(MultipleChoiceAnswer)
+#    question = models.ForeignKey(MultipleChoiceQuestion)
+#    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+#
+#    def question(self):
+#        return super.question
+#    question.short_name = "Question"
+#
+#    def user(self):
+#        return super.user
+#    user.short_name = "User"
+#
+#    def answered(self):
+#        return super.answered
+#    answered.short_name = "Answered"
+#
+#    def correct(self):
+#        return super.correct
+#    correct.short_name = "Correct"
 
-    def question(self):
-        return super.question
-    question.short_name = "Question"
 
-    def user(self):
-        return super.user
-    user.short_name = "User"
-
-    def answered(self):
-        return super.answered
-    answered.short_name = "Answered"
-
-    def correct(self):
-        return super.correct
-    correct.short_name = "Correct"
-
-
-class MultipleChoiceUserAnswerAdmin(admin.ModelAdmin):
-    list_display = ('question', 'user', 'correct', 'answered',
-                    'answer_chosen')
+#class MultipleChoiceUserAnswerAdmin(admin.ModelAdmin):
+#    list_display = ('question', 'user', 'correct', 'answered',
+#                    'answer_chosen')
 
 
 class StudentGroup(models.Model):
@@ -1061,3 +1094,34 @@ class NumericalGrade(models.Model):
 @receiver(pre_delete, sender=File)
 def mymodel_delete(sender, instance, **kwargs):
     instance.file.delete(False)
+
+
+class UnitTopicTopicLink(models.Model):
+    unit_topic = models.ForeignKey(UnitTopic)
+    topic = models.ForeignKey(Topic)
+
+
+class UnitTopicTopicLinkAdmin(admin.ModelAdmin):
+    list_display = ('unit_topic', 'topic')
+
+class BookmarkTopic(models.Model):
+    bookmark = models.ForeignKey(Bookmark)
+    topic = models.ForeignKey(Topic, blank=True, null=True)
+    added_by = models.ForeignKey(settings.AUTH_USER_MODEL)
+    pub_date = models.DateTimeField(auto_now_add=True)
+
+
+class BookmarkTopicAdmin(admin.ModelAdmin):
+    list_display = ('bookmark', 'topic')
+
+
+class FileTopic(models.Model):
+    file = models.ForeignKey(File)
+    topic = models.ForeignKey(Topic, blank=True, null=True)
+    added_by = models.ForeignKey(settings.AUTH_USER_MODEL)
+    pub_date = models.DateTimeField(auto_now_add=True)
+
+
+class FileTopicAdmin(admin.ModelAdmin):
+    list_display = ('file', 'topic')
+

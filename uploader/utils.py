@@ -1,4 +1,5 @@
 import requests, json, markdown, shutil, os, random, string, urllib, re, diff_match_patch as dmp
+from urllib.parse import unquote
 from tempfile import NamedTemporaryFile
 
 from django.db.models.base import ModelBase
@@ -70,9 +71,8 @@ def generate_code(model=None, length=4):
     
     loops = 1
     while not unique:
-        key = ''
-        for i in range(length):
-            key += random.choice(string.lowercase + string.digits)
+        key = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(length))
+
         if not model:
             unique = True
         else:
@@ -92,7 +92,7 @@ def generate_code(model=None, length=4):
 def extract(url):
     """extracts information from a URL using embed.ly API
     """
-    # url = urllib.unquote(encoded_url).decode('utf8')
+    #url = unquote(url)
     api_url = "http://api.embed.ly/1/extract?key=" + settings.MICAWBER_EMBEDLY_KEY + "&url=" + url + "&maxwidth=500"
     r = requests.get(api_url)
     try:
@@ -102,7 +102,7 @@ def extract(url):
     return url
 
 
-def embed_resources(request, text, syllabus):
+def embed_resources(request, text, syllabus=None):
     # FIXME multiple fors
     card_html = '<a class="embedly-card" href="%s">%s</a><script async src="//cdn.embedly.com/widgets/platform.js" charset="UTF-8"></script>'
     resource_pattern = re.compile(r'\@\[resource\]\(([\da-z]{4}?)\)')

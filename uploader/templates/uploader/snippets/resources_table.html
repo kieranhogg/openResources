@@ -32,7 +32,12 @@ $(function () {
         {% endif %}
         </td>
         <td>
-        <a href="{% url 'uploader:view_resource' resource|slugify %}">{{ resource }}</a>
+            {% if resource.bookmark %}
+        <a href="{% url 'uploader:view_resource' resource.bookmark.slug|slugify %}">{{ resource.bookmark }}</a>
+        {% else %}
+
+       <a href="{% url 'uploader:view_resource' resource.file.slug|slugify %}">{{ resource.bookmark }}</a>
+       {% endif %}
         </td>
         <td align='center'>{{ resource.rating }}</td>
         <td>
